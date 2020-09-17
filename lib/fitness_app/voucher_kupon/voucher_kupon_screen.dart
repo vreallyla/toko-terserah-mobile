@@ -168,7 +168,7 @@ class cartKupon extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.fromLTRB(20, 0, 20, 15),
-      height: sizeu.width / 5 + 60,
+      height: sizeu.width / 5 + 40,
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -210,7 +210,7 @@ class cartKupon extends StatelessWidget {
             margin: EdgeInsets.only(right: 10),
             child: Center(
               child: Text(
-                'Potongan',
+                'KLAIM',
                 style:
                     TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
               ),
@@ -261,16 +261,17 @@ class cartKupon extends StatelessWidget {
                     maxLines: 2,
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text(
-                    'Klaim',
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 15),
+                // Container(
+                //   padding: EdgeInsets.only(top: 10),
+                //   child: Text(
+                //     'Klaim',
+                //     overflow: TextOverflow.ellipsis,
+                //     textAlign: TextAlign.justify,
+                //     style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 15),
                    
-                  ),
-                )
+                //   ),
+                // )
+              
               ],
             ),
           ),

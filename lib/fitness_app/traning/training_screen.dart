@@ -82,7 +82,9 @@ class _TrainingScreenState extends State<TrainingScreen>
                   padding: EdgeInsets.only(right: 5),
                   child: RaisedButton(
                     padding: EdgeInsets.all(10),
-                    onPressed: () {},
+                    onPressed: () {
+                       Navigator.pushNamed(context, '/login');
+                    },
                     color: Colors.white,
                     child: Text(
                       'Masuk',
