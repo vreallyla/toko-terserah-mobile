@@ -110,7 +110,7 @@ class cardSearch extends StatelessWidget {
                     onPressed: () {},
                     color: Colors.green,
                     child: Text(
-                      'Check',
+                      'Cari',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -168,7 +168,7 @@ class cartKupon extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.fromLTRB(20, 0, 20, 15),
-      height: 100,
+      height: sizeu.width / 5 + 60,
       padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -191,50 +191,89 @@ class cartKupon extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: sizeu.width - 40 - 30 - 160,
-                child: Text(
-                  'SEMOGABERKAH',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+        children: [
+          Container(
+            width: sizeu.width / 5,
+            height: sizeu.width / 5,
+            decoration: BoxDecoration(
+              color: Colors.black45,
+              borderRadius: const BorderRadius.only(
+                bottomRight: Radius.circular(8.0),
+                bottomLeft: Radius.circular(8.0),
+                topLeft: Radius.circular(8.0),
+                topRight: Radius.circular(8.0),
               ),
-              Container(
-                width: 160,
-                alignment: Alignment.topRight,
-                child: Row(
-                  // crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Potongan : ',
-                      style: TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
-                    Text(
-                      'Rp150.000,-',
-                      style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              )
-            ],
+            ),
+
+            margin: EdgeInsets.only(right: 10),
+            child: Center(
+              child: Text(
+                'Potongan',
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+            ),
+            // child: Image(image: AssetImage('assets/fitness_app/logo.png')),
           ),
           Container(
-            padding: EdgeInsets.only(top: 10),
-            child: Text(
-              'Lorem epsum dolor siamet Lorem epsum dolor siamet  Lorem epsum dolor siamet Lorem epsum dolor siamet Lorem epsum dolor siamet  ',
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.justify,
-              maxLines: 2,
+            width: sizeu.width - 40 - 30 - sizeu.width / 5 - 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.topLeft,
+                  // width: sizeu.width - 40 - 30 - 160,
+                  child: Text(
+                    'SEMOGABERKAH',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  // width: 160,
+                  // alignment: Alignment.topRight,
+                  child: Row(
+                    // crossAxisAlignment: CrossAxisAlignment.end,
+                    // mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      // Text(
+                      //   'Potongan : ',
+                      //   style: TextStyle(fontSize: 12, color: Colors.black54),
+                      // ),
+                      Text(
+                        '-Rp150.000',
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    'loremß epsum dolor siamet Lorem epsum dolor siamet  Lorem epsum dolor siamet Lorem epsum dolor siamet Lorem epsum dolor siamet  ',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.justify,
+                    maxLines: 2,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Text(
+                    'Klaim',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.justify,
+                    style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 15),
+                   
+                  ),
+                )
+              ],
             ),
-          )
+          ),
         ],
       ),
     );
