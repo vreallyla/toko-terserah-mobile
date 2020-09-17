@@ -31,11 +31,7 @@ class _VoucherKuponScreenState extends State<VoucherKuponScreen> {
         ),
         body: Container(
           child: ListView(
-            children: <Widget>[
-              cardSearch(),
-              titleVoucher(),
-              cartKupon()
-            ],
+            children: <Widget>[cardSearch(), titleVoucher(), cartKupon()],
           ),
         ),
       ),
@@ -170,7 +166,79 @@ class cartKupon extends StatelessWidget {
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
 
-    return Container(height: 10,)}
+    return Container(
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 15),
+      height: 100,
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomRight: Radius.circular(8.0),
+          bottomLeft: Radius.circular(8.0),
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+        boxShadow: [
+          //background color of box
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 0.5, // soften the shadow
+            spreadRadius: .5, //extend the shadow
+            offset: Offset(
+              .5, // Move to right 10  horizontally
+              .5, // Move to bottom 10 Vertically
+            ),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: sizeu.width - 40 - 30 - 160,
+                child: Text(
+                  'SEMOGABERKAH',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                width: 160,
+                alignment: Alignment.topRight,
+                child: Row(
+                  // crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      'Potongan : ',
+                      style: TextStyle(fontSize: 12, color: Colors.black54),
+                    ),
+                    Text(
+                      'Rp150.000,-',
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            child: Text(
+              'Lorem epsum dolor siamet Lorem epsum dolor siamet  Lorem epsum dolor siamet Lorem epsum dolor siamet Lorem epsum dolor siamet  ',
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.justify,
+              maxLines: 2,
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
 
 // end stack end
