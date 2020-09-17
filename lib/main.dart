@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fitness_app/fitness_app_home_screen.dart';
 import 'fitness_app/produk_detail/product_detail.dart';
+import 'fitness_app/cart_list/cart_list.dart';
+import 'fitness_app/voucher_kupon/voucher_kupon_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +34,10 @@ class MyApp extends StatelessWidget {
         // When navigating to the "/" route, build the FirstScreen widget.
        '/': (context) => FitnessAppHomeScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
-        '/produk': (context) => ProductDetail()
+        '/produk': (context) => ProductDetail(),
+        '/cart_list': (context) => CartList(),
+        '/voucher_kupon' : (context) => VoucherKuponScreen(),
+        
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,
