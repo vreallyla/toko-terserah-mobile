@@ -37,12 +37,12 @@ class _RangeSliderViewState extends State<RangeSliderView> {
                   Container(
                     width: 54,
                     child: Text(
-                      '\$${_values.start.round()}',
+                      '\Rp. ${_values.start.round()}',
                       textAlign: TextAlign.center,
                     ),
                   ),
                   Expanded(
-                    flex: 1000 - _values.start.round(),
+                    flex: 10000000 - _values.start.round(),
                     child: const SizedBox(),
                   ),
                 ],
@@ -54,14 +54,14 @@ class _RangeSliderViewState extends State<RangeSliderView> {
                     child: const SizedBox(),
                   ),
                   Container(
-                    width: 54,
+                    width: 200,
                     child: Text(
-                      '\$${_values.end.round()}',
+                      '\Rp. ${_values.end.round()}',
                       textAlign: TextAlign.center,
                     ),
                   ),
                   Expanded(
-                    flex: 1000 - _values.end.round(),
+                    flex: 10000000 - _values.end.round(),
                     child: const SizedBox(),
                   ),
                 ],
@@ -75,10 +75,10 @@ class _RangeSliderViewState extends State<RangeSliderView> {
             child: RangeSlider(
               values: _values,
               min: 0.0,
-              max: 1000.0,
-              activeColor: HotelAppTheme.buildLightTheme().primaryColor,
+              max: 10000000,
+              activeColor: Colors.green,
               inactiveColor: Colors.grey.withOpacity(0.4),
-              divisions: 1000,
+              divisions: 10000,
               onChanged: (RangeValues values) {
                 try {
                   setState(() {
