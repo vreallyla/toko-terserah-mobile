@@ -28,7 +28,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   double distValue = 50.0;
 
   List<NewItem> items = <NewItem>[
-    new NewItem(false, 'Filter Harga', SizedBox(), new Icon(Icons.expand_more)),
+    new NewItem(false, 'Filter dan Kategori', SizedBox(), new Icon(Icons.expand_more)),
     //give all your items here
   ];
 
@@ -38,7 +38,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     items = <NewItem>[
       new NewItem(
           items[0].isExpanded,
-          'Filter',
+          'Filter dan Kategori',
           Column(
             children: <Widget>[
               kategorifilter(),
