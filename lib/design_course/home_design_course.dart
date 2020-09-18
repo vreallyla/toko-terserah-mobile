@@ -4,48 +4,92 @@ import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
 import 'design_course_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
+import 'package:best_flutter_ui_templates/hotel_booking/range_slider_view.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
   _DesignCourseHomeScreenState createState() => _DesignCourseHomeScreenState();
 }
 
+class NewItem {
+  bool isExpanded;
+  String header;
+  Widget body;
+  Icon iconpic;
+  NewItem(this.isExpanded, this.header, this.body, this.iconpic);
+}
+
 class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   CategoryType categoryType = CategoryType.ui;
+  String dropdownValue;
+  String subdropdownValue;
   TextEditingController editingController = TextEditingController();
-  List<String> _listOfStrings = [
-    "Inducesmile.com",
-    "Blue",
-    "Red",
-    "Cyan",
-    "Flutter",
-    "React",
-    "Node.js",
-    "Android",
-    "Kotlin"
+  RangeValues _values = const RangeValues(100, 600);
+  double distValue = 50.0;
+
+  List<NewItem> items = <NewItem>[
+    new NewItem(false, 'Filter Harga', SizedBox(), new Icon(Icons.expand_more)),
+    //give all your items here
   ];
-  List<String> _suggestedString = [];
 
-  _onChanged(String value) {
-    setState(() {
-      _suggestedString = _listOfStrings
-          .where((string) => string.toLowerCase().contains(value.toLowerCase()))
-          .toList();
-    });
-  }
-
+  ListView List_Criteria;
   @override
   Widget build(BuildContext context) {
+    items = <NewItem>[
+      new NewItem(
+          items[0].isExpanded,
+          'Filter',
+          Column(
+            children: <Widget>[
+              kategorifilter(),
+              priceBarFilter(),
+            ],
+          ),
+          new Icon(Icons.expand_more)),
+      //give all your items here
+    ];
+    List_Criteria = ListView(
+      shrinkWrap: true,
+      children: [
+        ExpansionPanelList(
+          expansionCallback: (int index, bool isExpanded) {
+            setState(() {
+              items[0].isExpanded = !isExpanded;
+              print(items[0].isExpanded);
+            });
+          },
+          children: items.map((NewItem item) {
+            return new ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                print(item.isExpanded);
+                return new ListTile(
+                    title: new Text(
+                  item.header,
+                  textAlign: TextAlign.left,
+                  style: new TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.green,
+                    fontWeight: FontWeight.w200,
+                  ),
+                ));
+              },
+              isExpanded: item.isExpanded,
+              body: item.body,
+            );
+          }).toList(),
+        ),
+      ],
+    );
     return Container(
       color: DesignCourseAppTheme.nearlyWhite,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: PreferredSize(
-            preferredSize: Size.fromHeight(43.0), child: HeaderPage()),
+            preferredSize: Size.fromHeight(40), child: HeaderPage()),
         body: Column(
           children: <Widget>[
             SizedBox(
-              height: MediaQuery.of(context).padding.top,
+              height: MediaQuery.of(context).padding.top / 90,
             ),
             // getAppBarUI(),
             Expanded(
@@ -56,101 +100,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                     children: <Widget>[
                       //  getSearchBarUI(),
                       getCategoryUI(),
-                      Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: MediaQuery.of(context).padding.top / 5,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 16, right: 16, top: 1, bottom: 1),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                SizedBox(
-                                  height: 40,
-                                  width: 270,
-                                  child: TextField(
-                                    onChanged: _onChanged,
-                                    controller: editingController,
-                                    autocorrect: true,
-                                    decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: Colors.white,
-                                        labelText: "Kategori Produk",
-                                        labelStyle:
-                                            TextStyle(color: Colors.grey),
-                                        hintText: "Kategori Produk",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        contentPadding:
-                                            const EdgeInsets.all(1.0),
-                                        prefixIcon: Icon(
-                                          Icons.category,
-                                          color: Colors.grey,
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.grey, width: 1.0),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25.0))),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Colors.grey, width: 5.0),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(25.0)))),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 1,
-                                    right: 1,
-                                  ),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 3),
-                                        child: Icon(
-                                          Icons.filter_list,
-                                          color: Colors.black,
-                                          size: 25,
-                                        ),
-                                      ),
-                                      _suggestedString.length != 0
-                                          ? Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 25.0),
-                                              child: Card(
-                                                child: ListView(
-                                                  children: _suggestedString
-                                                      .map((string) {
-                                                    return ListTile(
-                                                      title: Text(string),
-                                                    );
-                                                  }).toList(),
-                                                ),
-                                              ),
-                                            )
-                                          : SizedBox(),
-                                      // Text(
-                                      //   '15 May',
-                                      //   textAlign: TextAlign.left,
-                                      //   style: TextStyle(
-                                      //     fontFamily: FintnessAppTheme.fontName,
-                                      //     fontWeight: FontWeight.normal,
-                                      //     fontSize: 18,
-                                      //     letterSpacing: -0.2,
-                                      //     color: FintnessAppTheme.darkerText,
-                                      //   ),
-                                      // ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
+
+                      List_Criteria,
+
+                      //  priceBarFilter(),
                       Flexible(
                         child: getPopularCourseUI(),
                       ),
@@ -165,6 +118,75 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     );
   }
 
+  Widget kategorifilter() {
+    return Row(
+      children: <Widget>[
+        DropdownButtonHideUnderline(
+          child: ButtonTheme(
+            buttonColor: Colors.black,
+            alignedDropdown: true,
+            child: DropdownButton(
+              value: dropdownValue,
+              // icon: Icon(Icons.arrow_downward),
+              //iconSize: 24,
+              elevation: 16,
+              hint: Text('--Kategori--'),
+              style: TextStyle(color: FintnessAppTheme.green),
+              underline: Container(
+                height: 2,
+                color: FintnessAppTheme.green,
+              ),
+              onChanged: (String newValue) {
+                setState(() {
+                  dropdownValue = newValue;
+                });
+              },
+              items: <String>[
+                'Aksesoris Hewan Peliharaan',
+                'Bahan & Bumbu Masak',
+                'Buah & Sayur'
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget priceBarFilter() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Filter Harga',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: MediaQuery.of(context).size.width > 360 ? 18 : 16,
+                fontWeight: FontWeight.normal),
+          ),
+        ),
+        RangeSliderView(
+          values: _values,
+          onChangeRangeValues: (RangeValues values) {
+            _values = values;
+          },
+        ),
+        const SizedBox(
+          height: 8,
+        )
+      ],
+    );
+  }
+
   Widget getCategoryUI() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -172,16 +194,16 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.only(top: 1.0, left: 18, right: 16),
-          child: Text(
-            'Kategori dan Jenis Produk',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 22,
-              letterSpacing: 0.27,
-              color: DesignCourseAppTheme.darkerText,
-            ),
-          ),
+          // child: Text(
+          //   'Kategori dan Jenis Produk',
+          //   textAlign: TextAlign.left,
+          //   style: TextStyle(
+          //     fontWeight: FontWeight.w600,
+          //     fontSize: 22,
+          //     letterSpacing: 0.27,
+          //     color: DesignCourseAppTheme.darkerText,
+          //   ),
+          // ),
         ),
         const SizedBox(
           height: 16,
@@ -453,13 +475,13 @@ class HeaderPage extends StatelessWidget {
             height: MediaQuery.of(context).padding.top,
           ),
           Padding(
-            padding: EdgeInsets.only(left: 16, right: 16, top: 1, bottom: 1),
+            padding: EdgeInsets.only(left: 12, right: 16, top: 0, bottom: 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(
                   height: 40,
-                  width: 270,
+                  width: 280,
                   child: TextField(
                     onChanged: (value) {},
                     controller: editingController,
@@ -490,7 +512,7 @@ class HeaderPage extends StatelessWidget {
                 //),
                 Padding(
                   padding: const EdgeInsets.only(
-                    left: 1,
+                    left: 20,
                     right: 1,
                   ),
                   child: Row(
@@ -499,14 +521,6 @@ class HeaderPage extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 3),
                         child: Icon(
                           Icons.notifications,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3),
-                        child: Icon(
-                          Icons.shopping_cart,
                           color: Colors.black,
                           size: 25,
                         ),
@@ -532,4 +546,10 @@ class HeaderPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class ActorFilterEntry {
+  const ActorFilterEntry(this.name, this.initials);
+  final String name;
+  final String initials;
 }
