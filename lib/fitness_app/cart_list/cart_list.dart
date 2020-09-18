@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -65,7 +63,7 @@ class footerApp extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: size.width / 2 - 30,
+              width: size.width / 2 - 40,
               child: new Row(
                 children: <Widget>[
                   Checkbox(
@@ -86,7 +84,7 @@ class footerApp extends StatelessWidget {
             ),
             Container(
               width: size.width / 2 - 60,
-              height: 50,
+              height: 70,
               padding: EdgeInsets.only(top: 5, bottom: 5),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +94,7 @@ class footerApp extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      'Rp15.000.000,-',
+                      'Rp15.000.000',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 18,
@@ -224,36 +222,36 @@ class cardCart extends StatelessWidget {
                         alignment: Alignment.topLeft,
                         width: sizeu.width - 50 - sizeu.width / 4 - 10,
                         child: Text(
-                          'Rp 40.000,-',
+                          'Rp 40.000',
                           maxLines: 2,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Card(
-                            color: Colors.red[100],
-                            child: Container(
-                                margin: EdgeInsets.all(2),
-                                child: Text(
-                                  '-10%',
-                                  style: TextStyle(
-                                    color: Colors.red[800],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                )),
-                          ),
-                          Text(
-                            'Rp50.000,00',
-                            style: TextStyle(
-                                fontSize: 15,
-                                decoration: TextDecoration.lineThrough),
-                            textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     Card(
+                      //       color: Colors.red[100],
+                      //       child: Container(
+                      //           margin: EdgeInsets.all(2),
+                      //           child: Text(
+                      //             '-10%',
+                      //             style: TextStyle(
+                      //               color: Colors.red[800],
+                      //               fontWeight: FontWeight.bold,
+                      //               fontSize: 12,
+                      //             ),
+                      //           )),
+                      //     ),
+                      //     Text(
+                      //       'Rp50.000,00',
+                      //       style: TextStyle(
+                      //           fontSize: 15,
+                      //           decoration: TextDecoration.lineThrough),
+                      //       textAlign: TextAlign.left,
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 ),
