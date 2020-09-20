@@ -122,7 +122,7 @@ class footerApp extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      'Rp15.000.000',
+                      'Rp 4.000.000',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 18,
