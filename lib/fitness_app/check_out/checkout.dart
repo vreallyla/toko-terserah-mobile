@@ -113,7 +113,7 @@ class FooterApp extends StatelessWidget {
             Container(
               width: size.width - 120,
               height: 70,
-              padding: EdgeInsets.only(top: 5, bottom: 5, left: 20),
+              padding: EdgeInsets.only(top: 15, bottom: 5, left: 20),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
