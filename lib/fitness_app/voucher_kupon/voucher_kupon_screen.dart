@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 
 class VoucherKuponScreen extends StatefulWidget {
   const VoucherKuponScreen({Key key, this.animationController})
@@ -16,23 +14,21 @@ class _VoucherKuponScreenState extends State<VoucherKuponScreen> {
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.grey[200],
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: const Text(
-            'Voucher',
-            style: TextStyle(color: Colors.black),
-          ),
+    return new Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[200],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        body: Container(
-          child: ListView(
-            children: <Widget>[cardSearch(), titleVoucher(), cartKupon()],
-          ),
+        title: const Text(
+          'Voucher',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+      body: Container(
+        child: ListView(
+          children: <Widget>[cardSearch(), titleVoucher(), cartKupon()],
         ),
       ),
     );
@@ -268,10 +264,9 @@ class cartKupon extends StatelessWidget {
                 //     overflow: TextOverflow.ellipsis,
                 //     textAlign: TextAlign.justify,
                 //     style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 15),
-                   
+
                 //   ),
                 // )
-              
               ],
             ),
           ),

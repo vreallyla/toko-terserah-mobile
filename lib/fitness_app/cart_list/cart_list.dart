@@ -13,34 +13,32 @@ class _CartListState extends State<CartList> {
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.grey[200],
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: const Text(
-            'Keranjang',
-            style: TextStyle(color: Colors.black),
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-              color: Colors.black,
-            )
-          ],
+    return new Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[200],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        bottomNavigationBar: footerApp(),
-        body: Container(
-          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: ListView(
-            children: <Widget>[
-              cardCart(),
-            ],
-          ),
+        title: const Text(
+          'Keranjang',
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.notifications),
+            onPressed: () {},
+            color: Colors.black,
+          )
+        ],
+      ),
+      bottomNavigationBar: footerApp(),
+      body: Container(
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child: ListView(
+          children: <Widget>[
+            cardCart(),
+          ],
         ),
       ),
     );
@@ -103,13 +101,17 @@ class footerApp extends StatelessWidget {
                   ]),
             ),
             InkWell(
+              onTap: () {
+                // Navigate to the second screen using a named route.
+                Navigator.pushNamed(context, '/checkout');
+              },
               child: Container(
                 height: 50,
                 color: Colors.green[300],
                 alignment: Alignment.center,
                 width: 90,
                 child: Text(
-                  'Bayar',
+                  'Check Out',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

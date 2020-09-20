@@ -11,8 +11,7 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
-    return MaterialApp(
-        home: Scaffold(
+    return new Scaffold(
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(70.0), child: HeaderPage()),
       bottomNavigationBar: PreferredSize(
@@ -76,7 +75,7 @@ class _ProductDetailState extends State<ProductDetail> {
           ],
         ),
       ),
-    ));
+    );
   }
 }
 // end stack end
@@ -331,10 +330,10 @@ class JudulNHarga extends StatelessWidget {
                       child: Container(
                         child: Row(
                           children: <Widget>[
-                            Text("Stok : ", style: TextStyle(fontSize: 16)),
+                            Text("Stok : ", style: TextStyle(fontSize: 13)),
                             new Text("500 pcs ",
                                 style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 13,
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold)),
                           ],
@@ -348,10 +347,10 @@ class JudulNHarga extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Row(
                         children: <Widget>[
-                          Text("Berat : ", style: TextStyle(fontSize: 16)),
+                          Text("Berat : ", style: TextStyle(fontSize: 13)),
                           new Text("0.12 kg ",
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 13,
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold)),
                         ],
@@ -364,10 +363,10 @@ class JudulNHarga extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Row(
                         children: <Widget>[
-                          Text("Minim : ", style: TextStyle(fontSize: 16)),
+                          Text("Minim : ", style: TextStyle(fontSize: 13)),
                           new Text("50 pcs ",
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 13,
                                   color: Colors.green,
                                   fontWeight: FontWeight.bold)),
                         ],

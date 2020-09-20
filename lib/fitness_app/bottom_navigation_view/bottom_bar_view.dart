@@ -166,10 +166,10 @@ class _BottomBarViewState extends State<BottomBarView>
                           focusColor: Colors.transparent,
                           onTap: () {
                             widget.addClick();
-                             Navigator.pushNamed(context, '/cart_list');
+                            Navigator.pushNamed(context, '/cart_list');
                           },
                           child: Icon(
-                            Icons.add_shopping_cart,
+                            Icons.shopping_cart,
                             color: FintnessAppTheme.white,
                             size: 32,
                           ),

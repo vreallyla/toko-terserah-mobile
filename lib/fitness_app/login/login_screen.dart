@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key, this.animationController}) : super(key: key);
@@ -15,24 +13,22 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.grey[200],
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: const Text(
-            'Masuk',
-            style: TextStyle(color: Colors.black),
-          ),
+    return new Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[200],
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        body: Container(
-          color: Colors.white,
-          child: ListView(
-            children: <Widget>[formLogin(), dividerText()],
-          ),
+        title: const Text(
+          'Masuk',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: ListView(
+          children: <Widget>[formLogin(), dividerText()],
         ),
       ),
     );
@@ -141,10 +137,10 @@ class dividerText extends StatelessWidget {
     final sizeu = MediaQuery.of(context).size;
 
     return Container(
-      
       child: Row(children: <Widget>[
         Expanded(child: Divider()),
-        Container(padding:EdgeInsets.only(left:10,right:10),child: Text("OR")),
+        Container(
+            padding: EdgeInsets.only(left: 10, right: 10), child: Text("OR")),
         Expanded(child: Divider()),
       ]),
     );
