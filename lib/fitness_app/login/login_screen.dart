@@ -28,14 +28,22 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         color: Colors.white,
         child: ListView(
+<<<<<<< HEAD
           children: <Widget>[formLogin(), dividerText()],
+=======
+          children: <Widget>[FormLogin(), DividerText()],
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
         ),
       ),
     );
   }
 }
 
+<<<<<<< HEAD
 class formLogin extends StatelessWidget {
+=======
+class FormLogin extends StatelessWidget {
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
@@ -131,10 +139,17 @@ class formLogin extends StatelessWidget {
   }
 }
 
+<<<<<<< HEAD
 class dividerText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
+=======
+class DividerText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // final sizeu = MediaQuery.of(context).size;
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
 
     return Container(
       child: Row(children: <Widget>[

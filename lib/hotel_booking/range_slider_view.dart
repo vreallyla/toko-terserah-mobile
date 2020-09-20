@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import 'package:best_flutter_ui_templates/hotel_booking/hotel_app_theme.dart';
+=======
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
 import 'package:flutter/material.dart';
 
 class RangeSliderView extends StatefulWidget {

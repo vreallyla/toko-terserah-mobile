@@ -33,7 +33,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     //give all your items here
   ];
 
+<<<<<<< HEAD
   ListView List_Criteria;
+=======
+  ListView listcriteria;
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
   @override
   Widget build(BuildContext context) {
     items = <NewItem>[
@@ -49,7 +53,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           new Icon(Icons.expand_more)),
       //give all your items here
     ];
+<<<<<<< HEAD
     List_Criteria = ListView(
+=======
+    listcriteria = ListView(
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
       shrinkWrap: true,
       children: [
         ExpansionPanelList(
@@ -102,7 +110,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       //  getSearchBarUI(),
                       getCategoryUI(),
 
+<<<<<<< HEAD
                       List_Criteria,
+=======
+                      listcriteria,
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
 
                       //  priceBarFilter(),
                       Flexible(

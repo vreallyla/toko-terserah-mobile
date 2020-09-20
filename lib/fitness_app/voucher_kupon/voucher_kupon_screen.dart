@@ -28,14 +28,22 @@ class _VoucherKuponScreenState extends State<VoucherKuponScreen> {
       ),
       body: Container(
         child: ListView(
+<<<<<<< HEAD
           children: <Widget>[cardSearch(), titleVoucher(), cartKupon()],
+=======
+          children: <Widget>[CardSearch(), TitleVoucher(), CartKupon()],
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
         ),
       ),
     );
   }
 }
 
+<<<<<<< HEAD
 class cardSearch extends StatelessWidget {
+=======
+class CardSearch extends StatelessWidget {
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
@@ -120,7 +128,11 @@ class cardSearch extends StatelessWidget {
   }
 }
 
+<<<<<<< HEAD
 class titleVoucher extends StatelessWidget {
+=======
+class TitleVoucher extends StatelessWidget {
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
@@ -157,7 +169,11 @@ class titleVoucher extends StatelessWidget {
   }
 }
 
+<<<<<<< HEAD
 class cartKupon extends StatelessWidget {
+=======
+class CartKupon extends StatelessWidget {
+>>>>>>> 65c59d35668ec4328ca4e727ea2d3328da249e3c
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
