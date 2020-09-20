@@ -25,7 +25,7 @@ class _CheckOutState extends State<CheckOut> {
     //give all your items here
   ];
 
-  ListView List_Checkout;
+  ExpansionPanelList List_Checkout;
   @override
   Widget build(BuildContext context) {
     items = <NewItem>[
@@ -36,38 +36,34 @@ class _CheckOutState extends State<CheckOut> {
       //give all your items here
     ];
     //final wh_ = MediaQuery.of(context).size;
-    List_Checkout = ListView(
-      shrinkWrap: true,
-      children: [
-        ExpansionPanelList(
-          expansionCallback: (int index, bool isExpanded) {
-            setState(() {
-              items[index].isExpanded = !isExpanded;
-              print(items[index].isExpanded);
-            });
+    List_Checkout = ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          items[index].isExpanded = !isExpanded;
+          print(items[index].isExpanded);
+        });
+      },
+      children: items.map((NewItem item) {
+        return new ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            print(item.isExpanded);
+            return new ListTile(
+                title: new Text(
+              item.header,
+              textAlign: TextAlign.left,
+              style: new TextStyle(
+                fontSize: 18.0,
+                color: Colors.green,
+                fontWeight: FontWeight.w200,
+              ),
+            ));
           },
-          children: items.map((NewItem item) {
-            return new ExpansionPanel(
-              headerBuilder: (BuildContext context, bool isExpanded) {
-                print(item.isExpanded);
-                return new ListTile(
-                    title: new Text(
-                  item.header,
-                  textAlign: TextAlign.left,
-                  style: new TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.green,
-                    fontWeight: FontWeight.w200,
-                  ),
-                ));
-              },
-              isExpanded: item.isExpanded,
-              body: item.body,
-            );
-          }).toList(),
-        ),
-      ],
+          isExpanded: item.isExpanded,
+          body: item.body,
+        );
+      }).toList(),
     );
+
     return new Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
@@ -91,7 +87,12 @@ class _CheckOutState extends State<CheckOut> {
       body: Container(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: ListView(
-          children: <Widget>[cardCart(), List_Checkout, ApplyVoucher()],
+          children: <Widget>[
+            Container(
+                child: Column(
+              children: [cardCart(), List_Checkout, ApplyVoucher()],
+            )),
+          ],
         ),
       ),
     );
@@ -112,7 +113,7 @@ class footerApp extends StatelessWidget {
             Container(
               width: size.width - 120,
               height: 70,
-              padding: EdgeInsets.only(top: 5, bottom: 5),
+              padding: EdgeInsets.only(top: 5, bottom: 5, left: 20),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -158,6 +159,7 @@ class ApplyVoucher extends StatelessWidget {
     final sizeu = MediaQuery.of(context).size;
 
     return Container(
+      margin: EdgeInsets.only(top: 25),
       height: 160,
       padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
       decoration: BoxDecoration(
@@ -297,7 +299,7 @@ class DetailAlamat extends StatelessWidget {
                 fontSize: 15,
               ),
               textAlign: TextAlign.start,
-              maxLines: 7,
+              maxLines: 4,
             ),
           ),
           // Padding(
