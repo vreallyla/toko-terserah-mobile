@@ -33,7 +33,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     //give all your items here
   ];
 
-  ListView List_Criteria;
+  ListView listcriteria;
   @override
   Widget build(BuildContext context) {
     items = <NewItem>[
@@ -49,7 +49,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           new Icon(Icons.expand_more)),
       //give all your items here
     ];
-    List_Criteria = ListView(
+    listcriteria = ListView(
       shrinkWrap: true,
       children: [
         ExpansionPanelList(
@@ -102,7 +102,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       //  getSearchBarUI(),
                       getCategoryUI(),
 
-                      List_Criteria,
+                      listcriteria,
 
                       //  priceBarFilter(),
                       Flexible(

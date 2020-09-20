@@ -32,12 +32,12 @@ class _CartListState extends State<CartList> {
           )
         ],
       ),
-      bottomNavigationBar: footerApp(),
+      bottomNavigationBar: FooterApp(),
       body: Container(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: ListView(
           children: <Widget>[
-            cardCart(),
+            CardCart(),
           ],
         ),
       ),
@@ -45,7 +45,7 @@ class _CartListState extends State<CartList> {
   }
 }
 
-class footerApp extends StatelessWidget {
+class FooterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -95,7 +95,7 @@ class footerApp extends StatelessWidget {
                       'Rp15.000.000',
                       style: TextStyle(
                           color: Colors.green,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold),
                     ),
                   ]),
@@ -127,7 +127,7 @@ class footerApp extends StatelessWidget {
   }
 }
 
-class cardCart extends StatelessWidget {
+class CardCart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;

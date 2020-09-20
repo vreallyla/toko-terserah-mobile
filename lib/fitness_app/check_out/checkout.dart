@@ -25,7 +25,7 @@ class _CheckOutState extends State<CheckOut> {
     //give all your items here
   ];
 
-  ExpansionPanelList List_Checkout;
+  ExpansionPanelList listcheckout;
   @override
   Widget build(BuildContext context) {
     items = <NewItem>[
@@ -36,7 +36,7 @@ class _CheckOutState extends State<CheckOut> {
       //give all your items here
     ];
     //final wh_ = MediaQuery.of(context).size;
-    List_Checkout = ExpansionPanelList(
+    listcheckout = ExpansionPanelList(
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
           items[index].isExpanded = !isExpanded;
@@ -83,14 +83,14 @@ class _CheckOutState extends State<CheckOut> {
           )
         ],
       ),
-      bottomNavigationBar: footerApp(),
+      bottomNavigationBar: FooterApp(),
       body: Container(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: ListView(
           children: <Widget>[
             Container(
                 child: Column(
-              children: [cardCart(), List_Checkout, ApplyVoucher()],
+              children: [CardCart(), listcheckout, ApplyVoucher()],
             )),
           ],
         ),
@@ -99,7 +99,7 @@ class _CheckOutState extends State<CheckOut> {
   }
 }
 
-class footerApp extends StatelessWidget {
+class FooterApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -409,7 +409,7 @@ class DetailPengiriman extends StatelessWidget {
   }
 }
 
-class cardCart extends StatelessWidget {
+class CardCart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
