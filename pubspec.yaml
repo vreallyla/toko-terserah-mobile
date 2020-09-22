@@ -33,6 +33,7 @@ dependencies:
   intl: ^0.16.0
   floating_search_bar: ^0.3.0
   carousel_slider: ^2.2.1
+  barcode_flutter: ^1.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

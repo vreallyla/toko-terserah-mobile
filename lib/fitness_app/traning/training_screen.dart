@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../fintness_app_theme.dart';
+import './profil_card_view.dart';
+import 'package:barcode_flutter/barcode_flutter.dart';
+// import '../../bar_icons.dart';
 
 class TrainingScreen extends StatefulWidget {
   const TrainingScreen({Key key, this.animationController}) : super(key: key);
@@ -52,168 +55,268 @@ class _TrainingScreenState extends State<TrainingScreen>
   }
 
   void addAllListData() {
-    listViews.add(Container(
-      height: 160,
-      decoration: BoxDecoration(
-        // borderRadius: const BorderRadius.only(
-        //   bottomRight: Radius.circular(20),
-        //   bottomLeft: Radius.circular(20),
-        //   topLeft: Radius.circular(0),
-        //   topRight: Radius.circular(0),
-        // ),
-        color: Colors.green[700],
-      ),
-      padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-      margin: EdgeInsets.only(bottom: 30),
-      child: Column(children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(bottom: 15),
-          child: Text(
-            'Mari bergabung dengan kami dan temukan kemudahannya...',
-            style: TextStyle(color: Colors.white, fontSize: 15),
-            textAlign: TextAlign.justify,
-          ),
+    bool sudah_login = true;
+
+    if (sudah_login) {
+      const int count = 9;
+      listViews.add(
+        ProfilCardView(
+          mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController,
+                  curve: Interval((1 / count) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          mainScreenAnimationController: widget.animationController,
         ),
-        Row(
-          children: <Widget>[
-            Expanded(
-                flex: 1,
-                child: Container(
-                  padding: EdgeInsets.only(right: 5),
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(10),
-                    onPressed: () {
-                       Navigator.pushNamed(context, '/login');
-                    },
-                    color: Colors.white,
-                    child: Text(
-                      'Masuk',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green),
+      );
+    } else {
+      listViews.add(Container(
+        height: 160,
+        decoration: BoxDecoration(
+          // borderRadius: const BorderRadius.only(
+          //   bottomRight: Radius.circular(20),
+          //   bottomLeft: Radius.circular(20),
+          //   topLeft: Radius.circular(0),
+          //   topRight: Radius.circular(0),
+          // ),
+          color: Colors.green[700],
+        ),
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+        margin: EdgeInsets.only(bottom: 30),
+        child: Column(children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(bottom: 15),
+            child: Text(
+              'Mari bergabung dengan kami dan temukan kemudahannya...',
+              style: TextStyle(color: Colors.white, fontSize: 15),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: EdgeInsets.only(right: 5),
+                    child: RaisedButton(
+                      padding: EdgeInsets.all(10),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                      color: Colors.white,
+                      child: Text(
+                        'Masuk',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green),
+                      ),
                     ),
-                  ),
-                )),
-            Expanded(
-                flex: 1,
-                child: Container(
-                  padding: EdgeInsets.only(left: 5),
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(10),
-                    onPressed: () {},
-                    color: Colors.green,
-                    child: Text(
-                      'Daftar',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                  )),
+              Expanded(
+                  flex: 1,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 5),
+                    child: RaisedButton(
+                      padding: EdgeInsets.all(10),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/register');
+                      },
+                      color: Colors.green,
+                      child: Text(
+                        'Daftar',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
                     ),
-                  ),
-                )),
-          ],
-        )
-      ]),
+                  )),
+            ],
+          )
+        ]),
+      ));
+    }
+
+    if (sudah_login) {
+      listViews.add(rowButton(
+        'Lihat Barcode',
+        FaIcon(
+          FontAwesomeIcons.barcode,
+          color: Colors.grey,
+        ),
+        false,
+        false,
+        '',
+        'barcode',
+      ));
+
+      listViews.add(rowButton(
+        'Daftar Alamat',
+        FaIcon(
+          FontAwesomeIcons.streetView,
+          color: Colors.grey,
+        ),
+        true,
+        false,
+        'Daftarkan untuk mempermudah transaksi',
+        'barcode',
+      ));
+
+      listViews.add(rowButton(
+        'Keluar',
+        Icon(Icons.exit_to_app, color: Colors.grey),
+        true,
+        true,
+        '',
+        'barcode',
+      ));
+    }
+
+    listViews.add(rowButton(
+      'Hubungi Kami',
+      Icon(Icons.phone, color: Colors.grey),
+      false,
+      false,
+      'Hubungi langsung tim kami',
+      'barcode',
     ));
 
-    listViews.add(Container(
-      height: 70,
-      color: Colors.white,
-      padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-      child: Row(
-        children: <Widget>[
-          Icon(Icons.phone, color: Colors.grey),
-          Container(
-              padding: EdgeInsets.only(left: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Hubungi Kami',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      )),
-                  Text('Hubungi langsung tim kami',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey,
-                      )),
-                ],
-              ))
-        ],
-      ),
+    listViews.add(rowButton(
+      'Syarat & Ketentuan',
+      Icon(Icons.library_books, color: Colors.grey),
+      true,
+      false,
+      '',
+      'barcode',
     ));
 
-    listViews.add(Container(
-      height: 70,
-      decoration: borderTop(),
-      padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-      child: Row(
-        children: <Widget>[
-          Icon(Icons.library_books, color: Colors.grey),
-          Container(
-              padding: EdgeInsets.only(left: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Syarat & Ketentuan',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ],
-              ))
-        ],
-      ),
+    listViews.add(rowButton(
+      'Kebijakan Privasi',
+      Icon(Icons.lock_outline, color: Colors.grey),
+      true,
+      false,
+      '',
+      'barcode',
     ));
-
-    listViews.add(Container(
-      height: 70,
-      decoration: borderTop(),
-      padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-      child: Row(
-        children: <Widget>[
-          Icon(Icons.lock_outline, color: Colors.grey),
-          Container(
-              padding: EdgeInsets.only(left: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Kebijakan Privasi',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ],
-              ))
-        ],
-      ),
-    ));
-
-    // listViews.add(
-    //   TitleView(
-    //     titleTxt: 'Your program',
-    //     subTxt: 'Details',
-    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController,
-    //         curve:
-    //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController,
-    //   ),
-    // );
   }
 
-  BoxDecoration borderTop() {
-    return BoxDecoration(
-      border: Border(
-        top: BorderSide(width: 0.8, color: Colors.black26),
+  Widget rowButton(String titlen, Widget icon, bool conBorder, bool conMargin,
+      String sub_title, String eventn) {
+    List textTitle = <Widget>[];
+    double wid = conBorder ? 0.5 : 0;
+    Color warna = conBorder ? Colors.black26 : Colors.white;
+    double marginr = conMargin ? 15 : 0;
+
+    textTitle.add(Text(titlen,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        )));
+
+    if (sub_title.length > 0) {
+      textTitle.add(Text(sub_title,
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.grey,
+          )));
+    }
+
+    return InkWell(
+      onTap: () {
+        eclick(eventn);
+      },
+      child: Container(
+        height: 70,
+        margin: EdgeInsets.only(bottom: marginr),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(width: wid, color: warna),
+          ),
+          color: Colors.white,
+        ),
+        padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+        child: Row(
+          children: <Widget>[
+            icon,
+            Container(
+                padding: EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: textTitle,
+                ))
+          ],
+        ),
       ),
-      color: Colors.white,
     );
+  }
+
+  void eclick(String no) {
+    switch (no) {
+      case "barcode":
+        {
+          showDialog(
+            
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10.0)), //this right here
+                  child: Container(
+                    height: 200,
+                    color: Colors.black,
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left:30,bottom:10),
+                            child: Text(
+                                'Scan Barcode ke Kasir Toko Terserah...',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18)),
+                          ),
+                          Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.all(5),
+                            height: 100,
+                            child: BarCodeImage(
+                              params: Code39BarCodeParams(
+                                "1234ABCD",
+                                lineWidth:
+                                    2.0, // width for a single black/white bar (default: 2.0)
+                                barHeight:
+                                    90.0, // height for the entire widget (default: 100.0)
+                                withText:
+                                    true, // Render with text label or not (default: false)
+                              ),
+                              onError: (error) {
+                                // Error handler
+                                print('error = $error');
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+        }
+        break;
+
+      default:
+        {
+          //statements;
+        }
+        break;
+    }
   }
 
   Future<bool> getData() async {

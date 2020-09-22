@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../register/register_screen_i.dart';
+import '../login/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key key, this.animationController}) : super(key: key);
+class RegisterScreenI extends StatefulWidget {
+  const RegisterScreenI({Key key, this.animationController}) : super(key: key);
 
   final AnimationController animationController;
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _RegisterScreenIState createState() => _RegisterScreenIState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenIState extends State<RegisterScreenI> {
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -23,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Masuk',
+          'Daftar',
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Belum punya Akun? ',
+                  'Punya Akun? ',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -47,11 +47,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                RegisterScreenI()));
+                            builder: (BuildContext context) => LoginScreen()));
                   },
                   child: Text(
-                    'Daftar Sekarang',
+                    'Masuk Sekarang',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -90,7 +89,7 @@ class FormLogin extends StatelessWidget {
     final sizeu = MediaQuery.of(context).size;
 
     return Container(
-      height: 230 + sizeu.width / 10,
+      height: 160 + sizeu.width / 10,
       padding: EdgeInsets.fromLTRB(
           sizeu.width / 10, sizeu.width / 10, sizeu.width / 10, 15),
       decoration: BoxDecoration(
@@ -137,39 +136,14 @@ class FormLogin extends StatelessWidget {
             ),
           ),
           Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Password',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              textAlign: TextAlign.left,
-              onChanged: (text) => {},
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Password',
-              ),
-            ),
-          ),
-          Container(
-              margin: EdgeInsets.only(top: 25),
+              margin: EdgeInsets.only(top: 15),
               width: sizeu.width - sizeu.width / 5,
               height: 40,
-              child: RaisedButton(
+              child: RaisedButton( 
                 onPressed: () {},
                 color: Colors.green,
                 child: Text(
-                  'Masuk',
+                  'Daftar',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, color: Colors.white),
                 ),
