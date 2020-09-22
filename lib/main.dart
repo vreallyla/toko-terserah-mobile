@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fitness_app/fitness_app_home_screen.dart';
 import 'fitness_app/produk_detail/product_detail.dart';
+import 'fitness_app/produk_detail/gambarulasan.dart';
 import 'fitness_app/cart_list/cart_list.dart';
 import 'fitness_app/check_out/checkout.dart';
 import 'fitness_app/voucher_kupon/voucher_kupon_screen.dart';
 import 'fitness_app/login/login_screen.dart';
 import 'fitness_app/register/register_screen_i.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +43,8 @@ class MyApp extends StatelessWidget {
         '/voucher_kupon': (context) => VoucherKuponScreen(),
         '/login': (context) => LoginScreen(),
         '/checkout': (context) => CheckOut(),
-        '/register':(context) =>RegisterScreenI(),
+        '/register': (context) => RegisterScreenI(),
+        '/gambarulasan': (context) => GambarUlasan(),
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,

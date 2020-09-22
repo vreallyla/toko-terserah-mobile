@@ -36,7 +36,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   ListView listcriteria;
   @override
   Widget build(BuildContext context) {
-    const test = 'a';
+//    const test = 'a';
     items = <NewItem>[
       new NewItem(
           items[0].isExpanded,

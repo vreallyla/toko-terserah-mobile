@@ -453,20 +453,26 @@ class HeaderPage extends StatelessWidget {
                   ),
                   child: Row(
                     children: <Widget>[
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 3),
+                      //   child: Icon(
+                      //     Icons.notifications,
+                      //     color: Colors.black,
+                      //     size: 25,
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(left: 3),
-                        child: Icon(
-                          Icons.notifications,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3),
-                        child: Icon(
-                          Icons.shopping_cart,
-                          color: Colors.black,
-                          size: 25,
+                        child: InkWell(
+                          onTap: () {
+                            // Navigate to the second screen using a named route.
+                            Navigator.pushNamed(context, '/cart_list');
+                          },
+                          child: Icon(
+                            Icons.shopping_cart,
+                            color: Colors.black,
+                            size: 25,
+                          ),
                         ),
                       ),
                       // Text(
@@ -636,6 +642,7 @@ class UlasanProduk extends StatelessWidget {
                 gambarReview(context),
                 gambarReview(context),
                 gambarReview(context),
+                gambarReviewlengkap(context),
               ],
             ),
           ),
@@ -900,6 +907,31 @@ Container gambarReview(BuildContext context) {
       ),
     ),
   );
+}
+
+Container gambarReviewlengkap(BuildContext context) {
+  final size = MediaQuery.of(context).size;
+
+  return Container(
+      padding: EdgeInsets.only(left: 4, right: 4),
+      child: InkWell(
+        onTap: () {
+          // Navigate to the second screen using a named route.
+          Navigator.pushNamed(context, '/gambarulasan');
+        },
+        child: Flexible(
+          flex: 1,
+          child: Container(
+            alignment: Alignment.center,
+            width: (size.width - 58) / 4,
+            height: (size.width - 58) / 4,
+            color: Colors.black26,
+            child: Text(
+              'Selengkapnya',
+            ),
+          ),
+        ),
+      ));
 }
 
 BoxDecoration borderTop() {
