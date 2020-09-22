@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:photo_view/photo_view.dart';
 
 class GambarUlasan extends StatefulWidget {
   const GambarUlasan({Key key, this.animationController}) : super(key: key);
@@ -12,61 +13,10 @@ class GambarUlasan extends StatefulWidget {
   _GambarUlasanState createState() => _GambarUlasanState();
 }
 
-class NewItem {
-  bool isExpanded;
-  String header;
-  Widget body;
-  Icon iconpic;
-  NewItem(this.isExpanded, this.header, this.body, this.iconpic);
-}
-
 class _GambarUlasanState extends State<GambarUlasan> {
-  List<NewItem> items = <NewItem>[
-    new NewItem(
-        false, 'Alamat Pengiriman', SizedBox(), new Icon(Icons.expand_more)),
-    new NewItem(
-        false, 'Opsi Pengiriman', SizedBox(), new Icon(Icons.expand_more)),
-    //give all your items here
-  ];
-
-  ExpansionPanelList listGambarUlasan;
   @override
   Widget build(BuildContext context) {
-    items = <NewItem>[
-      new NewItem(items[0].isExpanded, 'Alamat Pengiriman', DetailAlamat(),
-          new Icon(Icons.expand_more)),
-      new NewItem(items[1].isExpanded, 'Opsi Pengiriman', DetailPengiriman(),
-          new Icon(Icons.expand_more)),
-      //give all your items here
-    ];
     //final wh_ = MediaQuery.of(context).size;
-    listGambarUlasan = ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          items[index].isExpanded = !isExpanded;
-          print(items[index].isExpanded);
-        });
-      },
-      children: items.map((NewItem item) {
-        return new ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            print(item.isExpanded);
-            return new ListTile(
-                title: new Text(
-              item.header,
-              textAlign: TextAlign.left,
-              style: new TextStyle(
-                fontSize: 18.0,
-                color: Colors.green,
-                fontWeight: FontWeight.w200,
-              ),
-            ));
-          },
-          isExpanded: item.isExpanded,
-          body: item.body,
-        );
-      }).toList(),
-    );
 
     return new Scaffold(
         appBar: AppBar(
@@ -100,12 +50,21 @@ class _GambarUlasanState extends State<GambarUlasan> {
                     itemBuilder: (context, index) {
                       return Padding(
                           padding: EdgeInsets.all(5),
-                          child: Container(
-                              decoration: new BoxDecoration(
-                                  image: new DecorationImage(
-                                      image: new NetworkImage(
-                                          snapshot.data[index]),
-                                      fit: BoxFit.cover))));
+                          child: InkWell(
+                            onTap: () {
+                              // Navigate to the second screen using a named route.
+                              PhotoView(
+                                imageProvider:
+                                    NetworkImage(snapshot.data[index]),
+                              );
+                            },
+                            child: Container(
+                                decoration: new BoxDecoration(
+                                    image: new DecorationImage(
+                                        image: new NetworkImage(
+                                            snapshot.data[index]),
+                                        fit: BoxFit.cover))),
+                          ));
                     });
               }
               return Center(child: CircularProgressIndicator());
