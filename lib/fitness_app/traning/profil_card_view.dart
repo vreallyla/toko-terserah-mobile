@@ -260,7 +260,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
     );
   }
 
-  Stack cardIconProgress(
+  Widget cardIconProgress(
       double colProgress, String judul, Widget iconn, bool ada_data) {
     List layer = <Widget>[];
 
@@ -296,8 +296,13 @@ class _ProfilCardViewState extends State<ProfilCardView>
             color: Colors.green.withOpacity(.9),
           )));
     }
-    return Stack(
-      children: layer,
+    return InkWell(
+      onTap: (){
+        Navigator.pushNamed(context, '/proses_beli');
+      },
+          child: Stack(
+        children: layer,
+      ),
     );
   }
 }

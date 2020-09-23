@@ -13,6 +13,8 @@ import 'fitness_app/voucher_kupon/voucher_kupon_screen.dart';
 import 'fitness_app/login/login_screen.dart';
 import 'fitness_app/register/register_screen_i.dart';
 import 'fitness_app/produk_detail/galleryitem.dart';
+import 'fitness_app/bought_proccess/bought_proccess_screen.dart';
+import 'fitness_app/transaksi_detail/transaksi_detail_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,8 @@ class MyApp extends StatelessWidget {
         '/gambarulasan': (context) => GambarUlasan(),
         GalleryItem.routeName: (context) => GalleryItem(),
         '/pertanyaandetail': (context) => PertanyaanDetail(),
+        '/proses_beli': (context) => BoughtProccessScreen(),
+        '/transaksi_detail': (context) => TransaksiDetailScreen()
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,
