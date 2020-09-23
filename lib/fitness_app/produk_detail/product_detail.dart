@@ -641,7 +641,6 @@ class UlasanProduk extends StatelessWidget {
                 gambarReview(context),
                 gambarReview(context),
                 gambarReview(context),
-                gambarReview(context),
                 gambarReviewlengkap(context),
               ],
             ),

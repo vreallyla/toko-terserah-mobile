@@ -257,7 +257,6 @@ class _TrainingScreenState extends State<TrainingScreen>
       case "barcode":
         {
           showDialog(
-            
               context: context,
               builder: (BuildContext context) {
                 return Dialog(
@@ -274,7 +273,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
-                            padding: EdgeInsets.only(left:30,bottom:10),
+                            padding: EdgeInsets.only(left: 30, bottom: 10),
                             child: Text(
                                 'Scan Barcode ke Kasir Toko Terserah...',
                                 style: TextStyle(

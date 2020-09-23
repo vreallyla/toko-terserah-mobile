@@ -11,6 +11,7 @@ import 'fitness_app/check_out/checkout.dart';
 import 'fitness_app/voucher_kupon/voucher_kupon_screen.dart';
 import 'fitness_app/login/login_screen.dart';
 import 'fitness_app/register/register_screen_i.dart';
+import 'fitness_app/produk_detail/galleryitem.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         '/checkout': (context) => CheckOut(),
         '/register': (context) => RegisterScreenI(),
         '/gambarulasan': (context) => GambarUlasan(),
+        GalleryItem.routeName: (context) => GalleryItem(),
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,
