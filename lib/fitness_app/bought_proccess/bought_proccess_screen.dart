@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../fintness_app_theme.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BoughtProccessScreen extends StatefulWidget {
   const BoughtProccessScreen({Key key, this.animationController})
@@ -63,14 +61,14 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen> {
               child: ListView(
                 children: [
                   cardBought(
-                    MediaQuery.of(context).size,
-                    'inv/01/2020/08',
-                    'barang dicoba',
-                    '20 Sept 2020',
-                    '3',
-                    '30.000,-',
-                    'belum bayar',
-                  ),
+                      MediaQuery.of(context).size,
+                      'inv/01/2020/08',
+                      'barang dicoba',
+                      '20 Sept 2020',
+                      '3',
+                      '30.000,-',
+                      'belum bayar',
+                      context),
                 ],
               ),
             ),
@@ -79,44 +77,46 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen> {
               child: ListView(
                 children: [
                   cardBought(
-                    MediaQuery.of(context).size,
-                    'inv/01/2020/08',
-                    'barang dicoba 2',
-                    '20 Sept 2020',
-                    '3',
-                    '40.000,-',
-                    'dikemas',
-                  ),
+                      MediaQuery.of(context).size,
+                      'inv/01/2020/08',
+                      'barang dicoba 2',
+                      '20 Sept 2020',
+                      '3',
+                      '40.000,-',
+                      'dikemas',
+                      context),
                 ],
               ),
-            ),Container(
+            ),
+            Container(
               color: Colors.grey.withOpacity(.4),
               child: ListView(
                 children: [
                   cardBought(
-                    MediaQuery.of(context).size,
-                    'inv/01/2020/08',
-                    'barang dicoba 3',
-                    '20 Sept 2020',
-                    '3',
-                    '30.000,-',
-                    'dikirim',
-                  ),
+                      MediaQuery.of(context).size,
+                      'inv/01/2020/08',
+                      'barang dicoba 3',
+                      '20 Sept 2020',
+                      '3',
+                      '30.000,-',
+                      'dikirim',
+                      context),
                 ],
               ),
-            ),Container(
+            ),
+            Container(
               color: Colors.grey.withOpacity(.4),
               child: ListView(
                 children: [
                   cardBought(
-                    MediaQuery.of(context).size,
-                    'inv/01/2020/08',
-                    'barang dicoba 4',
-                    '20 Sept 2020',
-                    '3',
-                    '30.000,-',
-                    'selesai',
-                  ),
+                      MediaQuery.of(context).size,
+                      'inv/01/2020/08',
+                      'barang dicoba 4',
+                      '20 Sept 2020',
+                      '3',
+                      '30.000,-',
+                      'selesai',
+                      context),
                 ],
               ),
             ),
@@ -131,12 +131,19 @@ Widget judulTab(String judul) {
   return Center(child: Text(judul, style: TextStyle(fontSize: 12)));
 }
 
-Widget tagCard(String judul, final sizeu,String tanggal, String inv,String jmlhPlus) {
+Widget tagCard(
+  String judul,
+  final sizeu,
+  String tanggal,
+  String inv,
+  String jmlhPlus,
+  final context,
+) {
   return InkWell(
-    onTap: (){
-
+    onTap: () {
+      Navigator.pushNamed(context, '/transaksi_detail');
     },
-      child: Column(
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
@@ -158,82 +165,81 @@ Widget tagCard(String judul, final sizeu,String tanggal, String inv,String jmlhP
             ),
           ),
         ),
-      Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              width: sizeu.width - 30,
-              padding: EdgeInsets.only(left: 10, right: 10, top: 7),
-              child: Text(
-                tanggal,
-                style: TextStyle(color: Colors.black54),
-              )),
-          Container(
-              width: sizeu.width - 30,
-              padding: EdgeInsets.only(left: 10, right: 10, top: 7, bottom: 7),
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: .5, color: Colors.black26),
-                ),
-              ),
-              child: Text(
-                inv,
-                style: TextStyle(fontWeight: FontWeight.w500),
-              )),
-        ],
-      ),
-    );
-,
-Container(
-      width: sizeu.width - 30,
-      height: 105,
-      padding: EdgeInsets.only(left: 10, right: 10, top: 10),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(width: .5, color: Colors.black26),
-        ),
-      ),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Container(width: 70, height: 70, color: Colors.grey),
         Container(
-            padding: EdgeInsets.only(left: 5, right: 10),
-            width: sizeu.width - 30 - 20 - 70 - 5,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  judul,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 3,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 3),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  width: sizeu.width - 30,
+                  padding: EdgeInsets.only(left: 10, right: 10, top: 7),
                   child: Text(
-                    '(+ $jmlhPlus Produk Lainnya)',
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                    tanggal,
+                    style: TextStyle(color: Colors.black54),
+                  )),
+              Container(
+                  width: sizeu.width - 30,
+                  padding:
+                      EdgeInsets.only(left: 10, right: 10, top: 7, bottom: 7),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: .5, color: Colors.black26),
+                    ),
                   ),
-                )
-              ],
-            ))
-      ]),
-    );
-
+                  child: Text(
+                    inv,
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  )),
+            ],
+          ),
+        ),
+        Container(
+          width: sizeu.width - 30,
+          height: 105,
+          padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(width: .5, color: Colors.black26),
+            ),
+          ),
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(width: 70, height: 70, color: Colors.grey),
+                Container(
+                    padding: EdgeInsets.only(left: 5, right: 10),
+                    width: sizeu.width - 30 - 20 - 70 - 5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          judul,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 3,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Text(
+                            '(+ $jmlhPlus Produk Lainnya)',
+                            style:
+                                TextStyle(fontSize: 13, color: Colors.black54),
+                          ),
+                        )
+                      ],
+                    ))
+              ]),
+        )
       ],
     ),
   );
 }
 
-
 Widget trackCard(final sizeu) {
   return InkWell(
-    onTap: (){
-      
-    },
-      child: Container(
+    onTap: () {},
+    child: Container(
       width: sizeu.width - 30,
       height: 35,
       padding: EdgeInsets.only(left: 10, right: 10, top: 10),
@@ -242,7 +248,8 @@ Widget trackCard(final sizeu) {
           bottom: BorderSide(width: .5, color: Colors.black26),
         ),
       ),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      child:
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
         Container(
           width: sizeu.width - 30 - 20 - 20,
           child: Row(
@@ -276,38 +283,44 @@ Widget trackCard(final sizeu) {
 }
 
 Container totalCard(final sizeu, String total, bool rating) {
-List dataFooter=<Widget>[];
+  List dataFooter = <Widget>[];
 
-dataFooter.add(Container(
-          width: sizeu.width - 30-95-100 ,
-          // color: Colors.green,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Total Pembayaran',
-                style: TextStyle(fontSize: 13, color: Colors.black54),
-              ),
-              Text(
-                'Rp' + total,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.green[800],
-                    fontWeight: FontWeight.w500),
-              ),
-            ],
+  dataFooter.add(
+    Container(
+      width: sizeu.width - 30 - 95 - 100,
+      // color: Colors.green,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Total Pembayaran',
+            style: TextStyle(fontSize: 13, color: Colors.black54),
           ),
-        ),
-        );
-  
-  if(rating){
+          Text(
+            'Rp' + total,
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.green[800],
+                fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    ),
+  );
+
+  if (rating) {
     dataFooter.add(Container(
-          width: 100,
-          child: RaisedButton(onPressed: (){},
-          color: Colors.green,
-          child: Text('Nilai',style: TextStyle(color: Colors.white,fontSize: 15, fontWeight: FontWeight.w500),),),
-        )
-      );
+      width: 100,
+      child: RaisedButton(
+        onPressed: () {},
+        color: Colors.green,
+        child: Text(
+          'Nilai',
+          style: TextStyle(
+              color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
+        ),
+      ),
+    ));
   }
 
   return Container(
@@ -319,15 +332,8 @@ dataFooter.add(Container(
   );
 }
 
-Container cardBought(
-  final sizeu,
-  String inv,
-  String judul,
-  String tanggal,
-  String jmlhPlus,
-  String total,
-  String jenis,
-) {
+Container cardBought(final sizeu, String inv, String judul, String tanggal,
+    String jmlhPlus, String total, String jenis, final context) {
   String tagTab;
   double hei;
   List dataCard = <Widget>[];
@@ -337,8 +343,8 @@ Container cardBought(
       {
         tagTab = 'Menunggu Pembayaran';
         hei = 250;
-        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv,jmlhPlus));
-        
+        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+
         dataCard.add(totalCard(sizeu, total, false));
 
         // statements;
@@ -349,8 +355,8 @@ Container cardBought(
       {
         tagTab = 'Pesanan Sedang Disiapkan';
         hei = 280;
-        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv,jmlhPlus));
-        
+        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+
         dataCard.add(trackCard(sizeu));
         dataCard.add(totalCard(sizeu, total, false));
         //statements;
@@ -361,8 +367,8 @@ Container cardBought(
         //statements;
         tagTab = 'Pesanan Sedang Dikirim';
         hei = 280;
-        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv,jmlhPlus));
-        
+        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+
         dataCard.add(trackCard(sizeu));
         dataCard.add(totalCard(sizeu, total, false));
       }
@@ -371,9 +377,9 @@ Container cardBought(
       {
         //statements;
         tagTab = 'Pesanan Telah Selesai';
-        hei = hei = 250; 
-        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv,jmlhPlus));
-        
+        hei = hei = 250;
+        dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+
         dataCard.add(totalCard(sizeu, total, true));
       }
       break;
