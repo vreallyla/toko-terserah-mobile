@@ -29,11 +29,11 @@ class _GambarUlasanState extends State<GambarUlasan> {
             style: TextStyle(color: Colors.black),
           ),
           actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {},
-              color: Colors.black,
-            )
+            // IconButton(
+            //   icon: Icon(Icons.notifications),
+            //   onPressed: () {},
+            //   color: Colors.black,
+            // )
           ],
         ),
         body: Center(

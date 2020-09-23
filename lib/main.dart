@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fitness_app/fitness_app_home_screen.dart';
 import 'fitness_app/produk_detail/product_detail.dart';
+import 'fitness_app/produk_detail/pertanyaan_detail.dart';
 import 'fitness_app/produk_detail/gambarulasan.dart';
 import 'fitness_app/cart_list/cart_list.dart';
 import 'fitness_app/check_out/checkout.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/register': (context) => RegisterScreenI(),
         '/gambarulasan': (context) => GambarUlasan(),
         GalleryItem.routeName: (context) => GalleryItem(),
+        '/pertanyaandetail': (context) => PertanyaanDetail(),
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,

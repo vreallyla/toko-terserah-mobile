@@ -774,15 +774,21 @@ class PertanyaanProduk extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  width: size.width / 3 - 15,
-                  alignment: Alignment.centerRight,
-                  child: Text('Lihat Semua',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      )),
+                InkWell(
+                  onTap: () {
+                    // Navigate to the second screen using a named route.
+                    Navigator.pushNamed(context, '/pertanyaandetail');
+                  },
+                  child: Container(
+                    width: size.width / 3 - 15,
+                    alignment: Alignment.centerRight,
+                    child: Text('Lihat Semua',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
                 ),
               ],
             ),
