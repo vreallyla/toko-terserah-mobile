@@ -147,7 +147,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         ),
         false,
         false,
-        '',
+        'Gunakan barcode dikasir',
         'barcode',
       ));
 
