@@ -590,16 +590,22 @@ class UlasanProduk extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       )),
                 ),
-                Container(
-                  width: size.width / 2 - 15,
-                  alignment: Alignment.centerRight,
-                  child: Text('Lihat Semua',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                      )),
-                ),
+                InkWell(
+                  onTap: () {
+                    // Navigate to the second screen using a named route.
+                    Navigator.pushNamed(context, '/ulasandetail');
+                  },
+                  child: Container(
+                    width: size.width / 2 - 15,
+                    alignment: Alignment.centerRight,
+                    child: Text('Lihat Semua',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        )),
+                  ),
+                )
               ],
             ),
           ),

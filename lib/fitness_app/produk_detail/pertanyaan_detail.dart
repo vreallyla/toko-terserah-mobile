@@ -81,8 +81,6 @@ Container cardPertanyaan(String nama, String tanggal, String konten) {
 class PertanyaanProduk extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return ListView(padding: EdgeInsets.only(left: 15, right: 15), children: [
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
