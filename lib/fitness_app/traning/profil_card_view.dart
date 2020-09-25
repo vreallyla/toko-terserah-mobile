@@ -46,7 +46,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
     double colProgress = (sizeu.width - 20) / 4;
 
     return Container(
-      height: 169,
+      height: 200,
       decoration: BoxDecoration(
         // borderRadius: const BorderRadius.only(
         //   bottomRight: Radius.circular(20),
@@ -62,7 +62,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
           Stack(
             children: <Widget>[
               Container(
-                height: 110,
+                height: 140,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/fitness_app/bg_users.jpg'),
@@ -72,7 +72,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
               ),
               Container(
-                height: 110,
+                height: 140,
                 decoration: BoxDecoration(
                     color: Colors.white,
                     gradient: LinearGradient(
@@ -89,10 +89,10 @@ class _ProfilCardViewState extends State<ProfilCardView>
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
               ),
               Container(
-                height: 110,
+                height: 140,
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       width: 70,
@@ -115,6 +115,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                       width: sizeu.width - 70 - 10 - 40,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
                             padding: EdgeInsets.only(bottom: 5),
@@ -160,7 +161,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                                     Text(
                                       ' 20 Sep 2020',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: 11,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                       maxLines: 3,
@@ -190,7 +191,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                                     Text(
                                       ' 12 minggu lalu',
                                       style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: 11,
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500),
                                       maxLines: 3,

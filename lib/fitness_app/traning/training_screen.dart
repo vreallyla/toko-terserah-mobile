@@ -159,7 +159,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         ),
         true,
         false,
-        'Daftarkan untuk mempermudah transaksi',
+        '',
         'barcode',
       ));
 
