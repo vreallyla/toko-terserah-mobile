@@ -59,155 +59,160 @@ class _ProfilCardViewState extends State<ProfilCardView>
       margin: EdgeInsets.only(bottom: 20),
       child: Column(
         children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Container(
-                height: 140,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/fitness_app/bg_users.jpg'),
-                    fit: BoxFit.cover,
+          InkWell(
+            onTap: (){
+               Navigator.pushNamed(context, '/profile_detail');
+            },
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  height: 140,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/fitness_app/bg_users.jpg'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+                ),
+                Container(
+                  height: 140,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      gradient: LinearGradient(
+                          begin: FractionalOffset.topCenter,
+                          end: FractionalOffset.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.2),
+                            Colors.black.withOpacity(.6),
+                          ],
+                          stops: [
+                            0.0,
+                            1.0
+                          ])),
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+                ),
+                Container(
+                  height: 140,
+                  padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.green[200], 
+                              width: 3.0,
+                            ),
+                            borderRadius: const BorderRadius.only(
+                              bottomRight: Radius.circular(50),
+                              bottomLeft: Radius.circular(50),
+                              topLeft: Radius.circular(50),
+                              topRight: Radius.circular(50),
+                            ),
+                            color: Colors.grey),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(left: 10),
+                        width: sizeu.width - 70 - 10 - 40,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                'Fahmi Rizky Maulidy',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: Offset(0, .0),
+                                      blurRadius: 3.0,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 2,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+                                  margin: EdgeInsets.only(bottom: 5),
+                                  // width: 118,
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      bottomRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20),
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                    color: Colors.black54,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.solidCalendarCheck,
+                                        size: 13,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        ' 20 Sep 2020',
+                                        style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                        maxLines: 3,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+                                  margin: EdgeInsets.only(bottom: 5, left: 5),
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.only(
+                                      bottomRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20),
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                    color: Colors.black54,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      FaIcon(
+                                        FontAwesomeIcons.solidClock,
+                                        size: 13,
+                                        color: Colors.white,
+                                      ),
+                                      Text(
+                                        ' 12 minggu lalu',
+                                        style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500),
+                                        maxLines: 3,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-              ),
-              Container(
-                height: 140,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    gradient: LinearGradient(
-                        begin: FractionalOffset.topCenter,
-                        end: FractionalOffset.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.2),
-                          Colors.black.withOpacity(.6),
-                        ],
-                        stops: [
-                          0.0,
-                          1.0
-                        ])),
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-              ),
-              Container(
-                height: 140,
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.green[200], 
-                            width: 3.0,
-                          ),
-                          borderRadius: const BorderRadius.only(
-                            bottomRight: Radius.circular(50),
-                            bottomLeft: Radius.circular(50),
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50),
-                          ),
-                          color: Colors.grey),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 10),
-                      width: sizeu.width - 70 - 10 - 40,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              'Fahmi Rizky Maulidy',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                shadows: <Shadow>[
-                                  Shadow(
-                                    offset: Offset(0, .0),
-                                    blurRadius: 3.0,
-                                    color: Colors.black,
-                                  ),
-                                ],
-                              ),
-                              maxLines: 2,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
-                                margin: EdgeInsets.only(bottom: 5),
-                                // width: 118,
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    bottomRight: Radius.circular(20),
-                                    bottomLeft: Radius.circular(20),
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                  color: Colors.black54,
-                                ),
-                                child: Row(
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.solidCalendarCheck,
-                                      size: 13,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      ' 20 Sep 2020',
-                                      style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                      maxLines: 3,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
-                                margin: EdgeInsets.only(bottom: 5, left: 5),
-                                decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.only(
-                                    bottomRight: Radius.circular(20),
-                                    bottomLeft: Radius.circular(20),
-                                    topLeft: Radius.circular(20),
-                                    topRight: Radius.circular(20),
-                                  ),
-                                  color: Colors.black54,
-                                ),
-                                child: Row(
-                                  children: [
-                                    FaIcon(
-                                      FontAwesomeIcons.solidClock,
-                                      size: 13,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      ' 12 minggu lalu',
-                                      style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500),
-                                      maxLines: 3,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
