@@ -50,6 +50,10 @@ class _CourseInfoScreenState extends State<CourseInfoScreen>
       color: DesignCourseAppTheme.nearlyWhite,
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            // Use Brightness.light for dark status bar
+            // or Brightness.dark for light status bar
+            brightness: Brightness.light),
         body: Stack(
           children: <Widget>[
             Column(

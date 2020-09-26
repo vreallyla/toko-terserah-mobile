@@ -24,6 +24,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
     return Container(
       color: HotelAppTheme.buildLightTheme().backgroundColor,
       child: Scaffold(
+        appBar: AppBar(
+            // Use Brightness.light for dark status bar
+            // or Brightness.dark for light status bar
+            brightness: Brightness.light),
         backgroundColor: Colors.transparent,
         body: Column(
           children: <Widget>[

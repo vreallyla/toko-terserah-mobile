@@ -18,6 +18,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
+        brightness: Brightness.light,
         backgroundColor: Colors.grey[200],
         title: const Text(
           'Rincian Pesanan',

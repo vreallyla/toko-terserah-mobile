@@ -17,6 +17,7 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
 
     return new Scaffold(
       appBar: AppBar(
+        brightness: Brightness.light,
         backgroundColor: Colors.grey[200],
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -139,7 +140,7 @@ class FormLogin extends StatelessWidget {
               margin: EdgeInsets.only(top: 15),
               width: sizeu.width - sizeu.width / 5,
               height: 40,
-              child: RaisedButton( 
+              child: RaisedButton(
                 onPressed: () {},
                 color: Colors.green,
                 child: Text(

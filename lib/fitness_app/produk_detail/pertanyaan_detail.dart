@@ -16,6 +16,7 @@ class _PertanyaanDetailState extends State<PertanyaanDetail> {
     return new Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.grey[200],
+          brightness: Brightness.light,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),

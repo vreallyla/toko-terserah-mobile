@@ -22,6 +22,7 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen> {
           iconTheme: IconThemeData(
             color: Colors.black, //change your color here
           ),
+          brightness: Brightness.light,
           backgroundColor: Colors.grey[200],
           title: const Text(
             'Daftar Transaksi',

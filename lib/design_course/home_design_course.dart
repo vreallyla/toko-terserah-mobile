@@ -517,29 +517,6 @@ class HeaderPage extends StatelessWidget {
                     left: 20,
                     right: 1,
                   ),
-                  child: Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3),
-                        child: Icon(
-                          Icons.notifications,
-                          color: Colors.black,
-                          size: 25,
-                        ),
-                      ),
-                      // Text(
-                      //   '15 May',
-                      //   textAlign: TextAlign.left,
-                      //   style: TextStyle(
-                      //     fontFamily: FintnessAppTheme.fontName,
-                      //     fontWeight: FontWeight.normal,
-                      //     fontSize: 18,
-                      //     letterSpacing: -0.2,
-                      //     color: FintnessAppTheme.darkerText,
-                      //   ),
-                      // ),
-                    ],
-                  ),
                 ),
               ],
             ),

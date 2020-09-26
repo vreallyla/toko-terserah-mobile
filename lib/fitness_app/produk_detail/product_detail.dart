@@ -49,7 +49,10 @@ class _ProductDetailState extends State<ProductDetail> {
                       style: TextStyle(color: Colors.white),
                     ),
                     color: Colors.green,
-                    onPressed: () {},
+                    onPressed: () {
+                      // Navigate to the second screen using a named route.
+                      Navigator.pushNamed(context, '/cart_list');
+                    },
                   ),
                 ),
               ),
@@ -470,6 +473,20 @@ class HeaderPage extends StatelessWidget {
                           },
                           child: Icon(
                             Icons.shopping_cart,
+                            color: Colors.black,
+                            size: 25,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 3),
+                        child: InkWell(
+                          onTap: () {
+                            // Navigate to the second screen using a named route.
+                            Navigator.pushNamed(context, '/');
+                          },
+                          child: Icon(
+                            Icons.home,
                             color: Colors.black,
                             size: 25,
                           ),

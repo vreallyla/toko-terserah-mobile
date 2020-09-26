@@ -21,6 +21,7 @@ class _VoucherKuponScreenState extends State<VoucherKuponScreen> {
           icon: Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        brightness: Brightness.light,
         title: const Text(
           'Voucher',
           style: TextStyle(color: Colors.black),

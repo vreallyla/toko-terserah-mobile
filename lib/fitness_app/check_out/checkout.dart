@@ -67,6 +67,7 @@ class _CheckOutState extends State<CheckOut> {
     return new Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
+        brightness: Brightness.light,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
@@ -76,11 +77,11 @@ class _CheckOutState extends State<CheckOut> {
           style: TextStyle(color: Colors.black),
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {},
-            color: Colors.black,
-          )
+          // IconButton(
+          //   icon: Icon(Icons.notifications),
+          //   onPressed: () {},
+          //   color: Colors.black,
+          // )
         ],
       ),
       bottomNavigationBar: FooterApp(),

@@ -32,6 +32,10 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         bottom: false,
         child: Scaffold(
           backgroundColor: AppTheme.nearlyWhite,
+          appBar: AppBar(
+              // Use Brightness.light for dark status bar
+              // or Brightness.dark for light status bar
+              brightness: Brightness.light),
           body: DrawerUserController(
             screenIndex: drawerIndex,
             drawerWidth: MediaQuery.of(context).size.width * 0.75,

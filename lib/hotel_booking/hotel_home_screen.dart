@@ -46,6 +46,10 @@ class _HotelHomeScreenState extends State<HotelHomeScreen>
       data: HotelAppTheme.buildLightTheme(),
       child: Container(
         child: Scaffold(
+          appBar: AppBar(
+              // Use Brightness.light for dark status bar
+              // or Brightness.dark for light status bar
+              brightness: Brightness.light),
           body: Stack(
             children: <Widget>[
               InkWell(

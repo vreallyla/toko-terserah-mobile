@@ -18,7 +18,6 @@ class _WishlistScreenState extends State<WishlistScreen>
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
 
-
   double topBarOpacity = 0.0;
 
   @override
@@ -55,7 +54,7 @@ class _WishlistScreenState extends State<WishlistScreen>
   }
 
   void addAllListData() {
-const int count = 9;
+    const int count = 9;
 
     listViews.add(Container(
       padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
@@ -68,26 +67,22 @@ const int count = 9;
         // ),
         color: Colors.white,
       ),
-      
       margin: EdgeInsets.only(bottom: 10),
       child: new TextFormField(
-                      decoration: new InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        labelText: "Cari Wishlist",
-                        fillColor: Colors.black,
-                        border: new OutlineInputBorder(
-                          
-                          borderRadius: new BorderRadius.circular(20.0),
-                          borderSide: new BorderSide(
-                          ),
-                        ),
-                        //fillColor: Colors.green
-                      ),
-                      
-                      style: new TextStyle(
-                        fontFamily: "Poppins",
-                      ),
-                    ),
+        decoration: new InputDecoration(
+          prefixIcon: Icon(Icons.search),
+          labelText: "Cari Wishlist",
+          fillColor: Colors.black,
+          border: new OutlineInputBorder(
+            borderRadius: new BorderRadius.circular(20.0),
+            borderSide: new BorderSide(),
+          ),
+          //fillColor: Colors.green
+        ),
+        style: new TextStyle(
+          fontFamily: "Poppins",
+        ),
+      ),
     ));
 
     listViews.add(
@@ -113,13 +108,12 @@ const int count = 9;
     // );
   }
 
-  Container cardWishlist(){
-    return(
-      Container(padding:EdgeInsets.fromLTRB(10,0,10,20),
+  Container cardWishlist() {
+    return (Container(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 20),
       child: Card(
-      
         child: Container(
-          padding:EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -133,7 +127,7 @@ const int count = 9;
         ),
       ),
     ));
-    }
+  }
 
   BoxDecoration borderTop() {
     return BoxDecoration(
@@ -154,6 +148,10 @@ const int count = 9;
     return Container(
       color: FintnessAppTheme.background,
       child: Scaffold(
+        // appBar: AppBar(
+        //     // Use Brightness.light for dark status bar
+        //     // or Brightness.dark for light status bar
+        //     brightness: Brightness.light),
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[

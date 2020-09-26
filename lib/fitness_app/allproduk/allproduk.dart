@@ -124,6 +124,10 @@ class _AllProdukState extends State<AllProduk> with TickerProviderStateMixin {
       color: FintnessAppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        appBar: AppBar(
+            // Use Brightness.light for dark status bar
+            // or Brightness.dark for light status bar
+            brightness: Brightness.light),
         body: Stack(
           children: <Widget>[
             getMainListViewUI(),
@@ -293,29 +297,29 @@ class _AllProdukState extends State<AllProduk> with TickerProviderStateMixin {
                                 left: 1,
                                 right: 1,
                               ),
-                              child: Row(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 3),
-                                    child: Icon(
-                                      Icons.notifications,
-                                      color: coloricon,
-                                      size: 25,
-                                    ),
-                                  ),
-                                  // Text(
-                                  //   '15 May',
-                                  //   textAlign: TextAlign.left,
-                                  //   style: TextStyle(
-                                  //     fontFamily: FintnessAppTheme.fontName,
-                                  //     fontWeight: FontWeight.normal,
-                                  //     fontSize: 18,
-                                  //     letterSpacing: -0.2,
-                                  //     color: FintnessAppTheme.darkerText,
-                                  //   ),
-                                  // ),
-                                ],
-                              ),
+                              // child: Row(
+                              //   children: <Widget>[
+                              //     Padding(
+                              //       padding: const EdgeInsets.only(left: 3),
+                              //       child: Icon(
+                              //         Icons.notifications,
+                              //         color: coloricon,
+                              //         size: 25,
+                              //       ),
+                              //     ),
+                              //     // Text(
+                              //     //   '15 May',
+                              //     //   textAlign: TextAlign.left,
+                              //     //   style: TextStyle(
+                              //     //     fontFamily: FintnessAppTheme.fontName,
+                              //     //     fontWeight: FontWeight.normal,
+                              //     //     fontSize: 18,
+                              //     //     letterSpacing: -0.2,
+                              //     //     color: FintnessAppTheme.darkerText,
+                              //     //   ),
+                              //     // ),
+                              //   ],
+                              // ),
                             ),
                             // SizedBox(
                             //   height: 38,

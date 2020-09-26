@@ -60,6 +60,10 @@ class _CalendarPopupViewState extends State<CalendarPopupView>
   Widget build(BuildContext context) {
     return Center(
       child: Scaffold(
+        appBar: AppBar(
+            // Use Brightness.light for dark status bar
+            // or Brightness.dark for light status bar
+            brightness: Brightness.light),
         backgroundColor: Colors.transparent,
         body: AnimatedBuilder(
           animation: animationController,

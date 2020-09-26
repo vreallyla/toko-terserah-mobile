@@ -47,6 +47,10 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
       color: FintnessAppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        // appBar: AppBar(
+        //     // Use Brightness.light for dark status bar
+        //     // or Brightness.dark for light status bar
+        //     brightness: Brightness.light),
         body: FutureBuilder<bool>(
           future: getData(),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -100,18 +104,17 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   tabBody = DesignCourseHomeScreen();
                 });
               });
-            } 
-             else if (index == 2) {
+            } else if (index == 2) {
               animationController.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;
                 }
                 setState(() {
-                  tabBody = WishlistScreen(animationController: animationController);
+                  tabBody =
+                      WishlistScreen(animationController: animationController);
                 });
               });
-            } 
-            else if (index == 3) {
+            } else if (index == 3) {
               animationController.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;

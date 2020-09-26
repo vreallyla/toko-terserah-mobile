@@ -18,6 +18,7 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
+        brightness: Brightness.light,
         backgroundColor: Colors.grey[200],
         title: const Text(
           'Rincian Pesanan',
@@ -26,9 +27,20 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
       ),
       bottomNavigationBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
-        child: BottomAppBar(child: Container(
-          padding: EdgeInsets.only(left:15,right:15,),
-          child: RaisedButton(onPressed: (){},child: Text('Nilai',style: TextStyle(color: Colors.white),),color: Colors.green,))),
+        child: BottomAppBar(
+            child: Container(
+                padding: EdgeInsets.only(
+                  left: 15,
+                  right: 15,
+                ),
+                child: RaisedButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Nilai',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  color: Colors.green,
+                ))),
       ),
       body: Container(
         color: Colors.grey[300],
@@ -444,7 +456,6 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       ],
                     ),
                   ),
-                
                 ],
               ),
             ),
@@ -453,7 +464,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
         //summary cost
         Container(
           decoration: borderTop(),
-          margin: EdgeInsets.only(bottom:15),
+          margin: EdgeInsets.only(bottom: 15),
           padding: EdgeInsets.only(left: 45, top: 15, bottom: 8, right: 15),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -609,41 +620,36 @@ class TransaksiVia extends StatelessWidget {
             //         )),
             //   ),
             // )
-          
           ],
         )),
-     
-            Container(
-              margin: EdgeInsets.only(left: 15, top: 10),
-              padding: EdgeInsets.only(left: 15, bottom: 15),
-              decoration: BoxDecoration(
-                
-                color: Colors.white,
+        Container(
+          margin: EdgeInsets.only(left: 15, top: 10),
+          padding: EdgeInsets.only(left: 15, bottom: 15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              //lokasi tracker
+              Container(
+                width: size.width - 30 - 30,
+                child: Text(
+                  'Bank BCA (Transfer Otomatis)',
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14),
+                  maxLines: 2,
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  //lokasi tracker
-                  Container(
-                    width: size.width - 30 - 30,
-                    child: Text(
-                      'Bank BCA (Transfer Otomatis)',
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14),
-                      maxLines: 2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            
+            ],
+          ),
+        ),
       ]),
     );
   }
 }
-
 
 BoxDecoration borderTop() {
   return BoxDecoration(

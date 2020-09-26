@@ -11,7 +11,8 @@ class GalleryItem extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text('Simple Photo View'),
+        brightness: Brightness.dark,
+        title: Text('Lihat Gambar'),
       ),
       body: PhotoView(
         imageProvider: args,

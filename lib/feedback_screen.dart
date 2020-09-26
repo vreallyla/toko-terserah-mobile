@@ -20,6 +20,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         top: false,
         child: Scaffold(
           backgroundColor: AppTheme.nearlyWhite,
+          appBar: AppBar(
+    // Use Brightness.light for dark status bar 
+    // or Brightness.dark for light status bar
+    brightness: Brightness.light 
+  ),
           body: SingleChildScrollView(
             child: SizedBox(
               height: MediaQuery.of(context).size.height,

@@ -20,6 +20,10 @@ class _HelpScreenState extends State<HelpScreen> {
         top: false,
         child: Scaffold(
           backgroundColor: AppTheme.nearlyWhite,
+          appBar: AppBar(
+              // Use Brightness.light for dark status bar
+              // or Brightness.dark for light status bar
+              brightness: Brightness.light),
           body: Column(
             children: <Widget>[
               Container(
