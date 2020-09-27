@@ -138,7 +138,7 @@ class _UlasanDetailState extends State<UlasanDetail> {
           backgroundColor: Colors.grey[200],
           brightness: Brightness.light,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+            icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: const Text(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
+import 'CustomShowDialog.dart';
 
 class ProductDetail extends StatefulWidget {
   @override
@@ -411,16 +412,20 @@ class HeaderPage extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 16 - 8.0 * topBarOpacity,
-                bottom: 12 - 8.0 * topBarOpacity),
+                left: 0,
+                right: 0,
+                top: 12 - 2.0 * topBarOpacity,
+                bottom: 10 - 2.0 * topBarOpacity),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.black),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
                 SizedBox(
                   height: 40,
-                  width: 270,
+                  width: 252,
                   child: TextField(
                     onChanged: (value) {},
                     controller: editingController,
@@ -758,6 +763,76 @@ class UlasanProduk extends StatelessWidget {
 }
 
 class PertanyaanProduk extends StatelessWidget {
+  void showAlertDialog(BuildContext context) {
+    TextEditingController _emailController = new TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final emailField = TextFormField(
+          maxLines: 5,
+          controller: _emailController,
+          keyboardType: TextInputType.multiline,
+          style: TextStyle(
+            color: Colors.black,
+          ),
+          decoration: InputDecoration(
+            hintText: 'Pertanyaan',
+            labelText: 'Ajukan Pertanyaan Anda :',
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+            hintStyle: TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        );
+
+        return CustomAlertDialog(
+          content: Container(
+            width: MediaQuery.of(context).size.width / 1.3,
+            height: MediaQuery.of(context).size.height / 3,
+            decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: const Color(0xFFFFFF),
+              borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+            ),
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                emailField,
+                MaterialButton(
+                  onPressed: () {},
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 12,
+                    padding: EdgeInsets.all(15.0),
+                    child: Material(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(25.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Ajukan',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontFamily: 'helvetica_neue_light',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -856,19 +931,24 @@ class PertanyaanProduk extends StatelessWidget {
           ),
 
           //ajukan pertanyaan
-          Container(
-            alignment: Alignment.bottomCenter,
-            padding: EdgeInsets.only(top: 15, bottom: 15),
-            decoration: borderTop(),
-            child: Text(
-              'Ajukan Pertanyaan',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.green,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+          InkWell(
+            onTap: () {
+              showAlertDialog(context);
+            },
+            child: Container(
+              alignment: Alignment.bottomCenter,
+              padding: EdgeInsets.only(top: 15, bottom: 15),
+              decoration: borderTop(),
+              child: Text(
+                'Ajukan Pertanyaan',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -987,4 +1067,11 @@ BoxDecoration borderRight() {
     ),
     color: Colors.white,
   );
+}
+
+class Consts {
+  Consts._();
+
+  static const double padding = 16.0;
+  static const double avatarRadius = 66.0;
 }

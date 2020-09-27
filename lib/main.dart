@@ -17,6 +17,7 @@ import 'fitness_app/produk_detail/galleryitem.dart';
 import 'fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'fitness_app/transaksi_detail/transaksi_detail_screen.dart';
 import 'fitness_app/profil_detail/profile_detail_screen.dart';
+import 'fitness_app/traning/alamat_list.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  //  final AnimationController animationController;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -57,6 +59,7 @@ class MyApp extends StatelessWidget {
         '/transaksi_detail': (context) => TransaksiDetailScreen(),
         '/ulasandetail': (context) => UlasanDetail(),
         '/profile_detail': (context) => ProfileDetailScreen(),
+        '/listalamat': (context) => AlamatList(),
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,

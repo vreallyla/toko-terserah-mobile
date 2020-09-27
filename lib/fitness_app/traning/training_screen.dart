@@ -4,11 +4,13 @@ import '../fintness_app_theme.dart';
 import './profil_card_view.dart';
 import 'package:barcode_flutter/barcode_flutter.dart';
 // import '../../bar_icons.dart';
+import 'dart:async';
 
 class TrainingScreen extends StatefulWidget {
   const TrainingScreen({Key key, this.animationController}) : super(key: key);
 
   final AnimationController animationController;
+
   @override
   _TrainingScreenState createState() => _TrainingScreenState();
 }
@@ -20,6 +22,130 @@ class _TrainingScreenState extends State<TrainingScreen>
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
+  Widget rowButton(String titlen, Widget icon, bool conBorder, bool conMargin,
+      String sub_title, String eventn) {
+    List textTitle = <Widget>[];
+    double wid = conBorder ? 0.5 : 0;
+    Color warna = conBorder ? Colors.black26 : Colors.white;
+    double marginr = conMargin ? 15 : 0;
+
+    textTitle.add(Text(titlen,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        )));
+
+    if (sub_title.length > 0) {
+      textTitle.add(Text(sub_title,
+          style: TextStyle(
+            fontSize: 15,
+            color: Colors.grey,
+          )));
+    }
+
+    return InkWell(
+      onTap: () {
+        eclick(eventn);
+      },
+      child: Container(
+        height: 70,
+        margin: EdgeInsets.only(bottom: marginr),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(width: wid, color: warna),
+          ),
+          color: Colors.white,
+        ),
+        padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
+        child: Row(
+          children: <Widget>[
+            icon,
+            Container(
+                padding: EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: textTitle,
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  void eclick(String no) {
+    AnimationController animationController;
+
+    switch (no) {
+      case "barcode":
+        {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10.0)), //this right here
+                  child: Container(
+                    height: 200,
+                    color: Colors.black,
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.only(left: 30, bottom: 10),
+                            child: Text(
+                                'Scan Barcode ke Kasir Toko Terserah...',
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18)),
+                          ),
+                          Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.all(5),
+                            height: 100,
+                            child: BarCodeImage(
+                              params: Code39BarCodeParams(
+                                "1234ABCD",
+                                lineWidth:
+                                    2.0, // width for a single black/white bar (default: 2.0)
+                                barHeight:
+                                    90.0, // height for the entire widget (default: 100.0)
+                                withText:
+                                    true, // Render with text label or not (default: false)
+                              ),
+                              onError: (error) {
+                                // Error handler
+                                print('error = $error');
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+        }
+        break;
+
+      case 'alamat':
+        {
+          Navigator.pushNamed(context, '/listalamat');
+        }
+        break;
+
+      default:
+        {
+          //statements;
+        }
+        break;
+    }
+  }
 
   @override
   void initState() {
@@ -160,7 +286,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         true,
         false,
         '',
-        'barcode',
+        'alamat',
       ));
 
       listViews.add(rowButton(
@@ -199,123 +325,6 @@ class _TrainingScreenState extends State<TrainingScreen>
       '',
       'barcode',
     ));
-  }
-
-  Widget rowButton(String titlen, Widget icon, bool conBorder, bool conMargin,
-      String sub_title, String eventn) {
-    List textTitle = <Widget>[];
-    double wid = conBorder ? 0.5 : 0;
-    Color warna = conBorder ? Colors.black26 : Colors.white;
-    double marginr = conMargin ? 15 : 0;
-
-    textTitle.add(Text(titlen,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        )));
-
-    if (sub_title.length > 0) {
-      textTitle.add(Text(sub_title,
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.grey,
-          )));
-    }
-
-    return InkWell(
-      onTap: () {
-        eclick(eventn);
-      },
-      child: Container(
-        height: 70,
-        margin: EdgeInsets.only(bottom: marginr),
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(width: wid, color: warna),
-          ),
-          color: Colors.white,
-        ),
-        padding: EdgeInsets.fromLTRB(20, 15, 20, 15),
-        child: Row(
-          children: <Widget>[
-            icon,
-            Container(
-                padding: EdgeInsets.only(left: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: textTitle,
-                ))
-          ],
-        ),
-      ),
-    );
-  }
-
-  void eclick(String no) {
-    switch (no) {
-      case "barcode":
-        {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Dialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(10.0)), //this right here
-                  child: Container(
-                    height: 200,
-                    color: Colors.black,
-                    child: Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(left: 30, bottom: 10),
-                            child: Text(
-                                'Scan Barcode ke Kasir Toko Terserah...',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18)),
-                          ),
-                          Container(
-                            color: Colors.white,
-                            padding: EdgeInsets.all(5),
-                            height: 100,
-                            child: BarCodeImage(
-                              params: Code39BarCodeParams(
-                                "1234ABCD",
-                                lineWidth:
-                                    2.0, // width for a single black/white bar (default: 2.0)
-                                barHeight:
-                                    90.0, // height for the entire widget (default: 100.0)
-                                withText:
-                                    true, // Render with text label or not (default: false)
-                              ),
-                              onError: (error) {
-                                // Error handler
-                                print('error = $error');
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              });
-        }
-        break;
-
-      default:
-        {
-          //statements;
-        }
-        break;
-    }
   }
 
   Future<bool> getData() async {
@@ -436,5 +445,14 @@ class _TrainingScreenState extends State<TrainingScreen>
         )
       ],
     );
+  }
+
+  startTime() async {
+    var duration = new Duration(seconds: 6);
+    return new Timer(duration, route);
+  }
+
+  route() {
+    Navigator.pushNamed(context, '/listalamat');
   }
 }
