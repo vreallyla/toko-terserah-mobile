@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../register/register_screen_i.dart';
+import './form_login_view.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key, this.animationController}) : super(key: key);
@@ -72,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Container(
               child: ListView(
                 children: <Widget>[
-                  FormLogin(),
+                  formLoginView(),
                   DividerText(),
                   otherMethodButton(),
                 ],
@@ -80,102 +81,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class FormLogin extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final sizeu = MediaQuery.of(context).size;
-
-    return Container(
-      height: 230 + sizeu.width / 10,
-      padding: EdgeInsets.fromLTRB(
-          sizeu.width / 10, sizeu.width / 10, sizeu.width / 10, 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          //background color of box
-          // BoxShadow(
-          //   color: Colors.black12,
-          //   blurRadius: 0.5, // soften the shadow
-          //   spreadRadius: .5, //extend the shadow
-          //   offset: Offset(
-          //     .5, // Move to right 10  horizontally
-          //     .5, // Move to bottom 10 Vertically
-          //   ),
-          // ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Email',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              textAlign: TextAlign.left,
-              onChanged: (text) => {},
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Email',
-              ),
-            ),
-          ),
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Password',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              textAlign: TextAlign.left,
-              onChanged: (text) => {},
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Password',
-              ),
-            ),
-          ),
-          Container(
-              margin: EdgeInsets.only(top: 25),
-              width: sizeu.width - sizeu.width / 5,
-              height: 40,
-              child: RaisedButton(
-                onPressed: () {},
-                color: Colors.green,
-                child: Text(
-                  'Masuk',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              )),
-        ],
       ),
     );
   }

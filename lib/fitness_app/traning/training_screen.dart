@@ -181,7 +181,7 @@ class _TrainingScreenState extends State<TrainingScreen>
   }
 
   void addAllListData() {
-    bool sudah_login = true;
+    bool sudah_login = false;
 
     if (sudah_login) {
       const int count = 9;
