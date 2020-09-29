@@ -1,0 +1,120 @@
+{
+    "error": false,
+    "data": {
+        "detail": {
+            "id": 36,
+            "barcode": "2127338",
+            "gambar": "placeholder.jpg",
+            "galeri": [
+                "placeholder.jpg",
+                "placeholder.jpg"
+            ],
+            "kode_barang": "A274",
+            "nama": "A Quasi Rem Quis 30",
+            "permalink": "a-quasi-rem-quis-30",
+            "berat": "125",
+            "harga": "49000",
+            "stock": "3",
+            "deskripsi": "Velit asperiores ratione sunt est et. Facere nesciunt fugiat tenetur assumenda.",
+            "detail": "<h2>Detail Produk: A Quasi Rem Quis 30</h2><ul><li>Eius aliquam ut quas est magni aliquid commodi.</li><li>Delectus corporis amet voluptatum natus recusandae.</li><li>Magni fugit veniam fugit earum quaerat ut aut.</li><li>Fuga ipsa dolorum veniam.</li><li>Sint est dolore voluptatem odio architecto enim sapiente.</li></ul>",
+            "is_diskon": 1,
+            "diskon": "25",
+            "harga_diskon": "36750",
+            "isGrosir": 0,
+            "min_qty": null,
+            "harga_grosir": null,
+            "isDiskonGrosir": 0,
+            "diskonGrosir": null,
+            "harga_diskon_grosir": null,
+            "created_at": "2020-09-27T10:50:37.000000Z",
+            "updated_at": "2020-09-27T10:50:37.000000Z",
+            "sub_kategori_id": 6,
+            "get_ulasan": [],
+            "get_qn_a": [
+                {
+                    "id": 133,
+                    "user_id": 1,
+                    "produk_id": 36,
+                    "tanya": "Provident vel necessitatibus voluptas qui alias est?",
+                    "jawab": "Et amet eum numquam maiores expedita eum molestias. Nostrum voluptates saepe est ut. Animi ratione magni aut suscipit. Odit odit illo quis nihil consequatur accusantium.",
+                    "created_at": "2020-09-27T10:50:39.000000Z",
+                    "updated_at": "2020-09-27T10:50:39.000000Z"
+                },
+                {
+                    "id": 134,
+                    "user_id": 2,
+                    "produk_id": 36,
+                    "tanya": "Voluptatem amet impedit similique optio a libero quis dolorum?",
+                    "jawab": "Optio a adipisci unde error a ut impedit. Sit ex incidunt eaque repellendus quam est iusto sit. Animi et quas est cumque adipisci quia reiciendis iure.",
+                    "created_at": "2020-09-27T10:50:39.000000Z",
+                    "updated_at": "2020-09-27T10:50:39.000000Z"
+                },
+                {
+                    "id": 135,
+                    "user_id": 3,
+                    "produk_id": 36,
+                    "tanya": "Iusto cumque expedita aperiam consequatur porro?",
+                    "jawab": "Ratione cumque sed esse vel sed soluta sunt. Quas fugit officiis autem eos facilis. Ullam dolorem assumenda suscipit dignissimos.",
+                    "created_at": "2020-09-27T10:50:39.000000Z",
+                    "updated_at": "2020-09-27T10:50:39.000000Z"
+                },
+                {
+                    "id": 136,
+                    "user_id": 4,
+                    "produk_id": 36,
+                    "tanya": "Doloremque voluptas iure et ex?",
+                    "jawab": "Aut aspernatur nulla et assumenda facilis omnis et. Ea culpa sunt molestias. Ipsam fugit autem quia sunt laborum.",
+                    "created_at": "2020-09-27T10:50:39.000000Z",
+                    "updated_at": "2020-09-27T10:50:39.000000Z"
+                }
+            ]
+        },
+        "review": [],
+        "qna": [
+            {
+                "id": 133,
+                "user_id": 1,
+                "produk_id": 36,
+                "tanya": "Provident vel necessitatibus voluptas qui alias est?",
+                "jawab": "Et amet eum numquam maiores expedita eum molestias. Nostrum voluptates saepe est ut. Animi ratione magni aut suscipit. Odit odit illo quis nihil consequatur accusantium.",
+                "created_at": "2020-09-27T10:50:39.000000Z",
+                "updated_at": "2020-09-27T10:50:39.000000Z",
+                "user": "Fiqy Ainuzzaqy",
+                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+            },
+            {
+                "id": 134,
+                "user_id": 2,
+                "produk_id": 36,
+                "tanya": "Voluptatem amet impedit similique optio a libero quis dolorum?",
+                "jawab": "Optio a adipisci unde error a ut impedit. Sit ex incidunt eaque repellendus quam est iusto sit. Animi et quas est cumque adipisci quia reiciendis iure.",
+                "created_at": "2020-09-27T10:50:39.000000Z",
+                "updated_at": "2020-09-27T10:50:39.000000Z",
+                "user": "Kawaca Thamrin",
+                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+            },
+            {
+                "id": 135,
+                "user_id": 3,
+                "produk_id": 36,
+                "tanya": "Iusto cumque expedita aperiam consequatur porro?",
+                "jawab": "Ratione cumque sed esse vel sed soluta sunt. Quas fugit officiis autem eos facilis. Ullam dolorem assumenda suscipit dignissimos.",
+                "created_at": "2020-09-27T10:50:39.000000Z",
+                "updated_at": "2020-09-27T10:50:39.000000Z",
+                "user": "Sakura Wijayanti",
+                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+            },
+            {
+                "id": 136,
+                "user_id": 4,
+                "produk_id": 36,
+                "tanya": "Doloremque voluptas iure et ex?",
+                "jawab": "Aut aspernatur nulla et assumenda facilis omnis et. Ea culpa sunt molestias. Ipsam fugit autem quia sunt laborum.",
+                "created_at": "2020-09-27T10:50:39.000000Z",
+                "updated_at": "2020-09-27T10:50:39.000000Z",
+                "user": "Prayogo Hidayat M.Ak",
+                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+            }
+        ]
+    }
+}
