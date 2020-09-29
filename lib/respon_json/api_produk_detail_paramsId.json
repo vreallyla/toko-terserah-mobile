@@ -80,7 +80,7 @@
                 "created_at": "2020-09-27T10:50:39.000000Z",
                 "updated_at": "2020-09-27T10:50:39.000000Z",
                 "user": "Fiqy Ainuzzaqy",
-                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+                "user_ava": "https://via.placeholder.com/150"
             },
             {
                 "id": 134,
@@ -91,7 +91,7 @@
                 "created_at": "2020-09-27T10:50:39.000000Z",
                 "updated_at": "2020-09-27T10:50:39.000000Z",
                 "user": "Kawaca Thamrin",
-                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+                "user_ava": "https://via.placeholder.com/150"
             },
             {
                 "id": 135,
@@ -102,7 +102,7 @@
                 "created_at": "2020-09-27T10:50:39.000000Z",
                 "updated_at": "2020-09-27T10:50:39.000000Z",
                 "user": "Sakura Wijayanti",
-                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+                "user_ava": "https://via.placeholder.com/150"
             },
             {
                 "id": 136,
@@ -113,7 +113,7 @@
                 "created_at": "2020-09-27T10:50:39.000000Z",
                 "updated_at": "2020-09-27T10:50:39.000000Z",
                 "user": "Prayogo Hidayat M.Ak",
-                "user_ava": "http://localhost:8000/storage/produk/banner/placeholder.jpg"
+                "user_ava": "https://via.placeholder.com/150"
             }
         ]
     }
