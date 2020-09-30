@@ -2,57 +2,142 @@ import 'dart:convert';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:http/http.dart' as http;
-// import 'package:localstorage/localstorage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String tokenFixed = '';
+
+_setToken(String token) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('token', token);
+}
+
+_destroyToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String tokenFixed = prefs.getString('token');
+
+  if(tokenFixed !=null){
+await prefs.remove("token");
+  }
+
+  
+}
+
+_getToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  tokenFixed = prefs.getString('token');
+  //  prefs.getString('token');
+}
 
 class LoginModel {
   bool error;
-  var data;
+  String data;
 
   LoginModel({
     this.error,
     this.data,
   });
 
-  factory LoginModel.createLoginModel(Map<String, dynamic> object) {
+  factory LoginModel.loopJson(Map<String, dynamic> object) {
     return LoginModel(
       error: object['error'],
       data: object['data'],
     );
   }
 
-  static Future<LoginModel> connectToAPI(String email, String pass) async {
+  static Future<LoginModel> loginManual(String email, String pass) async {
     // final LocalStorage storage = new LocalStorage('auth');
-    String apiURL = BASE_URL + "api/auth/login";
+    String apiURL = BASE_URL + PATH_AUTH +"login";
 
     var apiResult = await http.post(apiURL,
         body: {"email": email, "password": pass},
         headers: {"Accept": "application/json"});
-    // print(jsonDecode(apiResult.body));
 
-    // return LoginModel.createLoginModel(
-    //     {"error": apiResult.statusCode, "data": {}});
+    print('login status code : ' + apiResult.statusCode.toString());
 
     try {
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);
-        // Object res = LoginModel.createLoginModel(jsonObject);
 
         print('post login success');
-        print(jsonObject['token']);
+
+        _setToken(jsonObject['token']);
         return LoginModel(
           error: false,
-          data: jsonObject,
+          data: MSG_SUKSES['MSG_EMAIL'].toString(),
         );
-      } else if (apiResult.statusCode == 401) {
-        print('error 401');
-        useCode(true, "MSG_WRONG");
-
-        return LoginModel.createLoginModel(RES);
+      } else if (apiResult.statusCode == 404) {
+        return LoginModel(
+          error: true,
+          data: MSG_FAIL['MSG_LOGIN_EXC'].toString(),
+        );
+      }
+      else if (apiResult.statusCode == 400) {
+        return LoginModel(
+          error: true,
+          data: MSG_FAIL['MSG_AKTIVASI'].toString(),
+        );
+      }
+       else {
+        return LoginModel(
+          error: true,
+          data: MSG_FAIL['MSG_WRONG'],
+        );
       }
     } catch (e) {
       print('error catch');
       print(e);
-      return null;
+      return LoginModel(
+        error: true,
+        data: MSG_FAIL['MSG_SYSTEM'],
+      );
+    }
+  }
+
+  static Future<LoginModel> logout() async {
+    
+
+    try {
+      _getToken();
+
+    String apiURL = BASE_URL + PATH_AUTH +"logout";
+
+    // var apiResult = await http.post(apiURL, headers: {
+    //   "Accept": "application/json",
+    //   "Authorization": "Bearer " + ( tokenFixed !=null? tokenFixed : '')
+    // });
+
+    // print('logout status code : ' + apiResult.statusCode.toString());
+    
+      // if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+      //   final ress=json.decode(apiResult.body);
+      //   print(ress);
+
+        _destroyToken();
+      
+        return LoginModel(
+          error: false,
+          data: MSG_SUKSES['MSG_LOGOUT'].toString(),
+        );
+      // } else if (apiResult.statusCode == 404) {
+      //   return LoginModel(
+      //     error: true,
+      //     data: MSG_FAIL['MSG_LOGIN_EXC'].toString(),
+      //   );
+      // } else {
+      //   return LoginModel(
+      //     error: true,
+      //     data: MSG_FAIL['MSG_WRONG'],
+      //   );
+      // }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return LoginModel(
+        error: true,
+        data: MSG_FAIL['MSG_SYSTEM'],
+      );
     }
   }
 }

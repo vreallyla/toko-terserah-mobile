@@ -1,8 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
+import 'package:best_flutter_ui_templates/model/login_model.dart';
+import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../fintness_app_theme.dart';
 import './profil_card_view.dart';
 import 'package:barcode_flutter/barcode_flutter.dart';
+
 // import '../../bar_icons.dart';
 import 'dart:async';
 
@@ -20,8 +29,15 @@ class _TrainingScreenState extends State<TrainingScreen>
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
+  bool sudah_login = false;
+  bool is_loading = true;
+  bool is_connect = true;
+  String tokenFixed;
+  var res;
+
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
+
   Widget rowButton(String titlen, Widget icon, bool conBorder, bool conMargin,
       String sub_title, String eventn) {
     List textTitle = <Widget>[];
@@ -138,7 +154,99 @@ class _TrainingScreenState extends State<TrainingScreen>
           Navigator.pushNamed(context, '/listalamat');
         }
         break;
+      case 'keluar':
+        {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10.0)), //this right here
+                  child: Container(
+                    height: 160,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              alignment: Alignment.bottomRight,
+                              padding: EdgeInsets.only(right: 8, bottom: 15),
+                              child: FaIcon(
+                                FontAwesomeIcons.times,
+                                color: Colors.black54,
+                                size: 16,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            child: Text('Apa anda yakin keluar',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18)),
+                          ),
+                          Container(
+                              color: Colors.white,
+                              padding: EdgeInsets.all(5),
+                              height: 100,
+                              child: Row(
+                                children: [
+                                  Spacer(
+                                    flex: 1,
+                                  ),
+                                  RaisedButton(
+                                    child: Text(
+                                      'Ya',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    color: Colors.green,
+                                    onPressed: () {
+                                      LoginModel.logout().then((value) {
+                                        if (!value.error) {
+                                          sudah_login = false;
 
+                                          setState(() {
+                                            addAllListData();
+                                          });
+                                        }
+                                        Navigator.pop(context);
+                                      });
+                                    },
+                                  ),
+                                  Spacer(
+                                    flex: 1,
+                                  ),
+                                  RaisedButton(
+                                    child: Text(
+                                      'Tidak',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    color: Colors.red[500],
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  Spacer(
+                                    flex: 1,
+                                  ),
+                                ],
+                              ))
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+        }
+        break;
       default:
         {
           //statements;
@@ -147,12 +255,22 @@ class _TrainingScreenState extends State<TrainingScreen>
     }
   }
 
+  _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    tokenFixed = prefs.getString('token');
+    await check_connecti();
+    //  prefs.getString('token');
+  }
+
   @override
   void initState() {
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
+    _getToken();
     addAllListData();
 
     scrollController.addListener(() {
@@ -180,11 +298,68 @@ class _TrainingScreenState extends State<TrainingScreen>
     super.initState();
   }
 
-  void addAllListData() {
-    bool sudah_login = false;
+  void check_connecti() async {
+    if (tokenFixed != null) {
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          this.getData();
+          new Future.delayed(Duration(seconds: 0), () {
+            UserModel.akunRes().then((value) {
 
+              if(value.error){
+
+              }else{
+                sudah_login = true;
+                res=jsonDecode(value.data);
+                print(res['user']['created_at']);
+                
+                
+              }
+              is_loading = false;
+
+              
+              setState(() {
+                addAllListData();
+              });
+            });
+          });
+        }
+      } on SocketException catch (_) {
+        is_connect = false;
+      }
+    } else {
+      is_loading = false;
+    }
+  }
+
+  void _loginMasuk(BuildContext context) async {
+    var result = await Navigator.pushNamed(context, '/login');
+    setState(() {
+      listViews.clear();
+    });
+    // Scaffold.of(context).showSnackBar(SnackBar(
+    //   content: Text("$result"),
+    //   duration: Duration(seconds: 3),
+    // ));
+
+    var data = jsonDecode(result);
+
+    if (data["load"]) {
+      sudah_login = true;
+      setState(() {
+        addAllListData();
+      });
+    }
+  }
+
+  void addAllListData() {
+    setState(() {
+      listViews.clear();
+    });
     if (sudah_login) {
       const int count = 9;
+      listViews = <Widget>[];
       listViews.add(
         ProfilCardView(
           mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -227,7 +402,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                     child: RaisedButton(
                       padding: EdgeInsets.all(10),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/login');
+                        _loginMasuk(context);
                       },
                       color: Colors.white,
                       child: Text(
@@ -295,7 +470,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         true,
         true,
         '',
-        'barcode',
+        'keluar',
       ));
     }
 
@@ -340,7 +515,9 @@ class _TrainingScreenState extends State<TrainingScreen>
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[
-            getMainListViewUI(),
+            (!is_connect
+                ? no_connection()
+                : (!is_loading ? getMainListViewUI() : loading_req())),
             getAppBarUI(),
             SizedBox(
               height: MediaQuery.of(context).padding.bottom,
@@ -393,8 +570,8 @@ class _TrainingScreenState extends State<TrainingScreen>
                   decoration: BoxDecoration(
                     color: FintnessAppTheme.white.withOpacity(topBarOpacity),
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
+                        // bottomLeft: Radius.circular(32.0),
+                        ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
                           color: FintnessAppTheme.grey

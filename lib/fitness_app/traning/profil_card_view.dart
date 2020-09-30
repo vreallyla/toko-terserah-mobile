@@ -60,8 +60,8 @@ class _ProfilCardViewState extends State<ProfilCardView>
       child: Column(
         children: <Widget>[
           InkWell(
-            onTap: (){
-               Navigator.pushNamed(context, '/profile_detail');
+            onTap: () {
+              Navigator.pushNamed(context, '/profile_detail');
             },
             child: Stack(
               children: <Widget>[
@@ -102,17 +102,22 @@ class _ProfilCardViewState extends State<ProfilCardView>
                         width: 70,
                         height: 70,
                         decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Colors.green[200], 
-                              width: 3.0,
-                            ),
-                            borderRadius: const BorderRadius.only(
-                              bottomRight: Radius.circular(50),
-                              bottomLeft: Radius.circular(50),
-                              topLeft: Radius.circular(50),
-                              topRight: Radius.circular(50),
-                            ),
-                            color: Colors.grey),
+                          image: DecorationImage(
+                            image:
+                                AssetImage('assets/fitness_app/user-default.png'),
+                            fit: BoxFit.cover,
+                          ),
+                          border: Border.all(
+                            color: Colors.green[200],
+                            width: 3.0,
+                          ),
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(50),
+                            bottomLeft: Radius.circular(50),
+                            topLeft: Radius.circular(50),
+                            topRight: Radius.circular(50),
+                          ),
+                        ),
                       ),
                       Container(
                         margin: EdgeInsets.only(left: 10),
@@ -303,10 +308,10 @@ class _ProfilCardViewState extends State<ProfilCardView>
           )));
     }
     return InkWell(
-      onTap: (){
+      onTap: () {
         Navigator.pushNamed(context, '/proses_beli');
       },
-          child: Stack(
+      child: Stack(
         children: layer,
       ),
     );

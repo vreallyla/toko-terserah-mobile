@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../register/register_screen_i.dart';
@@ -22,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
         brightness: Brightness.light,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.pop(context,jsonEncode({"load":true})),
         ),
         title: const Text(
           'Masuk',
@@ -126,19 +128,19 @@ class otherMethodButton extends StatelessWidget {
               height: 40,
               child: RaisedButton(
                 onPressed: () {},
-                color: Color(0xFFF2F2F2),
+                color: Color(0xFFF74933),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     FaIcon(
                       FontAwesomeIcons.google,
                       size: 15,
-                      color: Colors.red,
+                      color: Colors.white,
                     ),
                     Text(
                       '  Google',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
+                          fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],
                 ),
