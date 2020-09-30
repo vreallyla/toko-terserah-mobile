@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Container(
               child: ListView(
                 children: <Widget>[
-                  formLoginView(),
+                  FormLoginView(),
                   DividerText(),
                   otherMethodButton(),
                 ],

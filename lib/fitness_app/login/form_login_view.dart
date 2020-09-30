@@ -3,12 +3,12 @@ import 'package:best_flutter_ui_templates/model/login_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class formLoginView extends StatefulWidget {
+class FormLoginView extends StatefulWidget {
   @override
-  _formLoginViewState createState() => _formLoginViewState();
+  _FormLoginViewState createState() => _FormLoginViewState();
 }
 
-class _formLoginViewState extends State<formLoginView> {
+class _FormLoginViewState extends State<FormLoginView> {
   TextEditingController emailInput = new TextEditingController();
   TextEditingController passwordInput = new TextEditingController();
   Widget buttonSubmit;
@@ -23,22 +23,26 @@ class _formLoginViewState extends State<formLoginView> {
   void changeButton() {
     Widget childButton;
 
-    if (!test) {
+    if (!test || loginModel != null) {
       childButton = Text(
         'Masuk',
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
       );
     } else {
-      Spinner(icon: Icons.access_alarm);
+      childButton =
+          Spinner(icon: FontAwesomeIcons.spinner, color: Colors.white);
     }
+    test = false;
+
     buttonSubmit = RaisedButton(
       onPressed: () {
-        // LoginModel.connectToAPI('tahu', 'tempe').then((value) {
-        setState(() {
-          test = true;
-          changeButton();
+        // changeButton();
+        LoginModel.connectToAPI((emailInput != null ? emailInput.text : ''),
+                (passwordInput != null ? passwordInput.text : ''))
+            .then((value) {
+          loginModel = value;
+          setState(() {});
         });
-        // });
       },
       color: Colors.green,
       child: childButton,
@@ -55,18 +59,6 @@ class _formLoginViewState extends State<formLoginView> {
           sizeu.width / 10, sizeu.width / 10, sizeu.width / 10, 15),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          //background color of box
-          // BoxShadow(
-          //   color: Colors.black12,
-          //   blurRadius: 0.5, // soften the shadow
-          //   spreadRadius: .5, //extend the shadow
-          //   offset: Offset(
-          //     .5, // Move to right 10  horizontally
-          //     .5, // Move to bottom 10 Vertically
-          //   ),
-          // ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +66,7 @@ class _formLoginViewState extends State<formLoginView> {
           Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(bottom: 10),
-              child: Text('Email',
+              child: Text('Email' + (emailInput != null ? emailInput.text : ''),
                   style: TextStyle(
                       color: Colors.black54, fontWeight: FontWeight.bold))),
           SizedBox(
@@ -100,7 +92,7 @@ class _formLoginViewState extends State<formLoginView> {
           Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Password',
+              child: Text('Password' + passwordInput.text,
                   style: TextStyle(
                       color: Colors.black54, fontWeight: FontWeight.bold))),
           SizedBox(
@@ -128,7 +120,27 @@ class _formLoginViewState extends State<formLoginView> {
               margin: EdgeInsets.only(top: 25),
               width: sizeu.width - sizeu.width / 5,
               height: 40,
-              child: buttonSubmit),
+              child: RaisedButton(
+                onPressed: () {
+                  // changeButton();
+                  passwordInput.text = 'secret';
+                  String a = 'aa';
+                  LoginModel.connectToAPI(
+                          (emailInput.text != null ? emailInput.text : ''),
+                          (passwordInput.text != null
+                              ? passwordInput.text
+                              : ''))
+                      .then((value) {
+                    // emailInput.text = value.error.toString();
+
+                    loginModel = value;
+                    print(loginModel.data);
+                    setState(() {});
+                  });
+                },
+                color: Colors.green,
+                child: Text('Masuk'),
+              )),
         ],
       ),
     );
