@@ -2,15 +2,72 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'CustomShowDialog.dart';
+import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:http/http.dart' as http;
 
 class ProductDetail extends StatefulWidget {
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
 
+Future<http.Response> fetchAlbum() {
+  return http.get(
+      'https://raw.githubusercontent.com/vreallyla/toko-terserah-mobile/master/lib/respon_json/api_produk_detail_paramsId.json');
+}
+
 class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
+    void showAddDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CustomAlertDialog(
+            content: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 3,
+              decoration: new BoxDecoration(
+                shape: BoxShape.rectangle,
+                color: const Color(0xFFFFFF),
+                borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+              ),
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  CardCart(),
+                  MaterialButton(
+                    onPressed: () {},
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height / 18,
+                      padding: EdgeInsets.all(1.0),
+                      child: Material(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(25.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Tambah Ke Keranjang',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.0,
+                                  fontFamily: 'helvetica_neue_light',
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     //final wh_ = MediaQuery.of(context).size;
     return new Scaffold(
       appBar: PreferredSize(
@@ -34,7 +91,9 @@ class _ProductDetailState extends State<ProductDetail> {
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.green)),
-                    onPressed: () {},
+                    onPressed: () {
+                      showAddDialog(context);
+                    },
                   ),
                 ),
               ),
@@ -1074,4 +1133,230 @@ class Consts {
 
   static const double padding = 16.0;
   static const double avatarRadius = 66.0;
+}
+
+class CardCart extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final sizeu = MediaQuery.of(context).size;
+
+    return Container(
+      height: sizeu.width / 2 - sizeu.width / 15,
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          bottomRight: Radius.circular(8.0),
+          bottomLeft: Radius.circular(8.0),
+          topLeft: Radius.circular(8.0),
+          topRight: Radius.circular(8.0),
+        ),
+        boxShadow: [
+          //background color of box
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 0.5, // soften the shadow
+            spreadRadius: .5, //extend the shadow
+            offset: Offset(
+              .5, // Move to right 10  horizontally
+              .5, // Move to bottom 10 Vertically
+            ),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                // Container(
+                //   width: 30,
+                //   height: sizeu.width / 4 / 1.5,
+                //   alignment: Alignment.topLeft,
+                //   // color: Colors.red,
+                //   child: Checkbox(
+                //     value: false,
+                //     onChanged: (value) {},
+                //     activeColor: Colors.green,
+                //     checkColor: Colors.white,
+                //     tristate: false,
+                //   ),
+                // ),
+                Container(
+                  height: sizeu.width / 4 / 1.5,
+                  width: sizeu.width / 4 / 1.5,
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: const BorderRadius.only(
+                      bottomRight: Radius.circular(8.0),
+                      bottomLeft: Radius.circular(8.0),
+                      topLeft: Radius.circular(8.0),
+                      topRight: Radius.circular(8.0),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: (sizeu.width / 3) + 24,
+                  width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 100 - 30,
+                  // color: Colors.red,
+                  padding: EdgeInsets.only(left: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                        child: Text(
+                          'Ini Nama Barangnya tinggal diisi disini gak apa-apa kok :)',
+                          maxLines: 2,
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Card(
+                        color: Colors.green[100],
+                        child: Container(
+                            margin: EdgeInsets.all(2),
+                            child: Text(
+                              'Grosir',
+                              style: TextStyle(
+                                color: Colors.green[800],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            )),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                        child: Text(
+                          'Rp 40.000',
+                          maxLines: 2,
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                        child: Text(
+                          'Minimal 1 Pcs',
+                          maxLines: 1,
+                          style:
+                              TextStyle(fontSize: 13, color: Colors.blueGrey),
+                        ),
+                      ),
+                      Column(children: [
+                        SpinBox(
+                          min: 1,
+                          max: 100,
+                          value: 1,
+                          onChanged: (value) => print(value),
+                        ),
+                      ]),
+                      // Row(
+                      //   children: [
+                      //     Card(
+                      //       color: Colors.red[100],
+                      //       child: Container(
+                      //           margin: EdgeInsets.all(2),
+                      //           child: Text(
+                      //             '-10%',
+                      //             style: TextStyle(
+                      //               color: Colors.red[800],
+                      //               fontWeight: FontWeight.bold,
+                      //               fontSize: 12,
+                      //             ),
+                      //           )),
+                      //     ),
+                      //     Text(
+                      //       'Rp50.000,00',
+                      //       style: TextStyle(
+                      //           fontSize: 15,
+                      //           decoration: TextDecoration.lineThrough),
+                      //       textAlign: TextAlign.left,
+                      //     ),
+                      //   ],
+                      // ),
+                    ],
+                  ),
+                ),
+              ]),
+          // Container(
+          //     height: (sizeu.width / 2 - sizeu.width / 15) -
+          //         30 -
+          //         (sizeu.width / 3 - sizeu.width / 17),
+          //     margin: EdgeInsets.only(left: sizeu.width / 4 / 1.5 + 30),
+          //     // color: Colors.yellow,
+          //     child: Row(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: <Widget>[
+          //         Container(
+          //           width: 20,
+          //           height: 30,
+          //           alignment: Alignment.topLeft,
+          //           margin: EdgeInsets.only(right: 15),
+          //           // color: Colors.red,
+          //           child: IconButton(
+          //             icon: Icon(Icons.delete),
+          //             onPressed: () {},
+          //             color: Colors.black54,
+          //           ),
+          //         ),
+          //         Container(
+          //           width: 20,
+          //           height: 30,
+          //           margin: EdgeInsets.only(right: 15),
+          //           alignment: Alignment.topLeft,
+          //           // color: Colors.yellow,
+          //           child: IconButton(
+          //             icon: Icon(Icons.favorite),
+          //             onPressed: () {},
+          //             color: Colors.black54,
+          //           ),
+          //         ),
+          //         Container(
+          //           padding: EdgeInsets.only(top: 5),
+          //           child: Row(
+          //             children: <Widget>[
+          //               ButtonTheme(
+          //                 padding: EdgeInsets.only(top: 0),
+          //                 minWidth: 10.0,
+          //                 height: 20.0,
+          //                 child: FlatButton(
+          //                   color: Colors.black26,
+          //                   onPressed: () {},
+          //                   child: Icon(Icons.remove),
+          //                 ),
+          //               ),
+          //               SizedBox(
+          //                 width: 30,
+          //                 child: TextField(
+          //                   textAlign: TextAlign.center,
+          //                   controller: TextEditingController()..text = '1',
+          //                   onChanged: (text) => {},
+          //                 ),
+          //               ),
+          //               ButtonTheme(
+          //                 padding: EdgeInsets.only(top: 0),
+          //                 minWidth: 10.0,
+          //                 height: 20.0,
+          //                 child: FlatButton(
+          //                   color: Colors.black26,
+          //                   onPressed: () {},
+          //                   child: Icon(Icons.add),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //         )
+          //       ],
+          //     )),
+        ],
+      ),
+    );
+  }
 }
