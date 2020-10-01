@@ -32,7 +32,7 @@ class _TrainingScreenState extends State<TrainingScreen>
   bool sudahLogin = false;
   bool isLoading = true;
   bool isConnect = true;
-  String tokenFixed,dataUser;
+  String tokenFixed;
   var res;
   
 
@@ -260,7 +260,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     tokenFixed = prefs.getString('token');
-    dataUser=prefs.getString('dataUser');
+
 
     if(tokenFixed!=null){
        checkConnection();
@@ -325,9 +325,6 @@ class _TrainingScreenState extends State<TrainingScreen>
                 sudahLogin = true;
                
                 print(res);
-
-                print(dataUser);
-                
                 
               }
               isLoading = false;

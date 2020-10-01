@@ -54,7 +54,7 @@ class UserModel {
         var jsonObject = json.decode(apiResult.body);
 
         print('data akun success');
-        print(json.decode(apiResult.body));
+
         print(jsonObject['status']);
 
         if (json.decode(apiResult.body)['status'] != null) {
@@ -75,6 +75,49 @@ class UserModel {
             data: jsonEncode({"message": msgSuccess['MSG_RECEIVED']}),
           );
         }
+      } else {
+        // other failed
+        return UserModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return UserModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
+  static Future<UserModel> checkEmail(String email) async {
+    String apiURL = globalBaseUrl + globalPathAuth + "check_email";
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.post(apiURL,
+          body: {"email": email}, headers: {"Accept": "application/json"});
+
+      print('check email status code : ' + apiResult.statusCode.toString());
+      var jsonObject = json.decode(apiResult.body);
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        print('check email sukses success');
+
+        print(jsonObject['message']);
+        // email dapat digunakan
+        return UserModel(
+          error: false,
+          data: jsonEncode({"message": jsonObject['message']}),
+        );
+      } else if (apiResult.statusCode == 404) {
+        //email sudah digunakan / tidak valid
+        return UserModel(
+          error: true,
+          data: jsonEncode({"message": jsonObject['message']}),
+        );
       } else {
         // other failed
         return UserModel(

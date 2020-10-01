@@ -26,6 +26,10 @@ final msgSuccess={
   "MSG_RECEIVED":'Data Diterima',
 };
 
+void dateParseJson(){
+  
+}
+
 
 Widget noConnection(){
   return Container(

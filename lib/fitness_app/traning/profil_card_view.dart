@@ -1,7 +1,15 @@
+import 'dart:convert';
+import 'dart:core';
+
+import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 //import '../../main.dart';
 
@@ -22,12 +30,44 @@ class _ProfilCardViewState extends State<ProfilCardView>
   AnimationController animationController;
   List<MealsListData> mealsListData = MealsListData.tabIconsList;
 
-  String nama,ava,bgPhoto,tglDaftar,tglUpdate;
+  String nama, ava, bgPhoto;
+  DateTime tglDaftar, tglUpdate;
+  var dataUser;
+  String diff;
+
+  
+
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    dataUser = json.decode(prefs.getString('dataUser'));
+
+    var dataUserDefault = dataUser['user'];
+    nama = dataUserDefault['name'];
+    ava = dataUserDefault['get_bio']['ava'];
+    bgPhoto = dataUserDefault['get_bio']['background'];
+    tglDaftar = DateTime.parse(dataUserDefault['created_at']);
+    tglUpdate = DateTime.parse(dataUserDefault['updated_at']);
+
+    //the birthday's date
+   
+
+
+    // await initializeDateFormatting('id', null).then((value) {
+
+    // }
+    // );
+
+    setState(() {});
+  }
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
+
+    _getUser();
+
     super.initState();
   }
 
@@ -44,6 +84,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('id', null);
     final sizeu = MediaQuery.of(context).size;
     double colProgress = (sizeu.width - 20) / 4;
 
@@ -71,7 +112,9 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   height: 140,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/fitness_app/bg_users.jpg'),
+                      image: (bgPhoto != null
+                          ? NetworkImage(bgPhoto)
+                          : AssetImage('assets/fitness_app/bg_users.jpg')),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -105,8 +148,10 @@ class _ProfilCardViewState extends State<ProfilCardView>
                         height: 70,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image:
-                                AssetImage('assets/fitness_app/user-default.png'),
+                            image: (ava != null
+                                ? NetworkImage(ava)
+                                : AssetImage(
+                                    'assets/fitness_app/user-default.png')),
                             fit: BoxFit.cover,
                           ),
                           border: Border.all(
@@ -131,7 +176,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                             Container(
                               padding: EdgeInsets.only(bottom: 5),
                               child: Text(
-                                'Fahmi Rizky Maulidy',
+                                (nama != null ? nama : 'Anonim'),
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -170,7 +215,12 @@ class _ProfilCardViewState extends State<ProfilCardView>
                                         color: Colors.white,
                                       ),
                                       Text(
-                                        ' 20 Sep 2020',
+                                        ' ' +
+                                            (tglDaftar != null
+                                                ? new DateFormat(
+                                                        "d MMM yyyy", 'id')
+                                                    .format(tglUpdate)
+                                                : 'Belum diatur'),
                                         style: TextStyle(
                                             fontSize: 11,
                                             color: Colors.white,
@@ -200,7 +250,10 @@ class _ProfilCardViewState extends State<ProfilCardView>
                                         color: Colors.white,
                                       ),
                                       Text(
-                                        ' 12 minggu lalu',
+                                        ' ' +
+                                            (tglUpdate != null
+                                                ? diffForhumans(tglUpdate)
+                                                : 'Belum diatur'),
                                         style: TextStyle(
                                             fontSize: 11,
                                             color: Colors.white,

@@ -19,6 +19,7 @@ import 'fitness_app/transaksi_detail/transaksi_detail_screen.dart';
 import 'fitness_app/profil_detail/profile_detail_screen.dart';
 import 'fitness_app/traning/alamat_list.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
