@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:expandable/expandable.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:expandable/expandable.dart';
 import 'package:icon_shadow/icon_shadow.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
@@ -13,7 +13,7 @@ enum SingingCharacter { lafayette, jefferson }
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   SingingCharacter _character = SingingCharacter.lafayette;
   Container inputForm(context) {
-    final sizeu = MediaQuery.of(context).size;
+    // final sizeu = MediaQuery.of(context).size;
     
 
     return Container(
@@ -118,7 +118,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               color: Colors.white,
 
               child: ListView(children: <Widget>[
-                atasGambar(),
+                AtasGambar(),
                 inputForm(context),
               ]),
             ),
@@ -152,7 +152,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 }
 // end stack end
 
-class atasGambar extends StatelessWidget {
+class AtasGambar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;

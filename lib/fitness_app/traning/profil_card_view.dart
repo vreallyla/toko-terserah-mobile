@@ -22,6 +22,8 @@ class _ProfilCardViewState extends State<ProfilCardView>
   AnimationController animationController;
   List<MealsListData> mealsListData = MealsListData.tabIconsList;
 
+  String nama,ava,bgPhoto,tglDaftar,tglUpdate;
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -272,7 +274,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
   }
 
   Widget cardIconProgress(
-      double colProgress, String judul, Widget iconn, bool ada_data) {
+      double colProgress, String judul, Widget iconn, bool dataAvail) {
     List layer = <Widget>[];
 
     layer.add(
@@ -297,7 +299,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
       ),
     );
 
-    if (ada_data) {
+    if (dataAvail) {
       layer.add(Container(
           margin: EdgeInsets.only(left: colProgress - (colProgress / 2.15)),
           width: 11,

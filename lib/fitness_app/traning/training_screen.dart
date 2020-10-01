@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
+// import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:flutter/material.dart';
@@ -29,17 +29,18 @@ class _TrainingScreenState extends State<TrainingScreen>
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
-  bool sudah_login = false;
-  bool is_loading = true;
-  bool is_connect = true;
-  String tokenFixed;
+  bool sudahLogin = false;
+  bool isLoading = true;
+  bool isConnect = true;
+  String tokenFixed,dataUser;
   var res;
+  
 
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
 
   Widget rowButton(String titlen, Widget icon, bool conBorder, bool conMargin,
-      String sub_title, String eventn) {
+      String subTitle, String eventn) {
     List textTitle = <Widget>[];
     double wid = conBorder ? 0.5 : 0;
     Color warna = conBorder ? Colors.black26 : Colors.white;
@@ -51,8 +52,8 @@ class _TrainingScreenState extends State<TrainingScreen>
           fontWeight: FontWeight.bold,
         )));
 
-    if (sub_title.length > 0) {
-      textTitle.add(Text(sub_title,
+    if (subTitle.length > 0) {
+      textTitle.add(Text(subTitle,
           style: TextStyle(
             fontSize: 15,
             color: Colors.grey,
@@ -90,7 +91,7 @@ class _TrainingScreenState extends State<TrainingScreen>
   }
 
   void eclick(String no) {
-    AnimationController animationController;
+    // AnimationController animationController;
 
     switch (no) {
       case "barcode":
@@ -211,7 +212,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                                     onPressed: () {
                                       LoginModel.logout().then((value) {
                                         if (!value.error) {
-                                          sudah_login = false;
+                                          sudahLogin = false;
 
                                           setState(() {
                                             addAllListData();
@@ -259,7 +260,16 @@ class _TrainingScreenState extends State<TrainingScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     tokenFixed = prefs.getString('token');
-    await check_connecti();
+    dataUser=prefs.getString('dataUser');
+
+    if(tokenFixed!=null){
+       checkConnection();
+    }else{
+      isLoading=false;
+      setState(() {
+        
+      });
+    }
     //  prefs.getString('token');
   }
 
@@ -298,25 +308,29 @@ class _TrainingScreenState extends State<TrainingScreen>
     super.initState();
   }
 
-  void check_connecti() async {
+  void checkConnection() async {
     if (tokenFixed != null) {
       try {
         final result = await InternetAddress.lookup('google.com');
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
           this.getData();
           new Future.delayed(Duration(seconds: 0), () {
+            // isConnect=false;
             UserModel.akunRes().then((value) {
+              res=jsonDecode(value.data);
 
               if(value.error){
 
               }else{
-                sudah_login = true;
-                res=jsonDecode(value.data);
-                print(res['user']['created_at']);
+                sudahLogin = true;
+               
+                print(res);
+
+                print(dataUser);
                 
                 
               }
-              is_loading = false;
+              isLoading = false;
 
               
               setState(() {
@@ -326,10 +340,16 @@ class _TrainingScreenState extends State<TrainingScreen>
           });
         }
       } on SocketException catch (_) {
-        is_connect = false;
+        isConnect = false;
+        setState(() {
+                
+              });
       }
     } else {
-      is_loading = false;
+      isLoading = false;
+      setState(() {
+        
+      });
     }
   }
 
@@ -346,7 +366,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     var data = jsonDecode(result);
 
     if (data["load"]) {
-      sudah_login = true;
+      sudahLogin = true;
       setState(() {
         addAllListData();
       });
@@ -357,7 +377,7 @@ class _TrainingScreenState extends State<TrainingScreen>
     setState(() {
       listViews.clear();
     });
-    if (sudah_login) {
+    if (sudahLogin) {
       const int count = 9;
       listViews = <Widget>[];
       listViews.add(
@@ -439,7 +459,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       ));
     }
 
-    if (sudah_login) {
+    if (sudahLogin) {
       listViews.add(rowButton(
         'Lihat Barcode',
         FaIcon(
@@ -515,9 +535,9 @@ class _TrainingScreenState extends State<TrainingScreen>
         backgroundColor: Colors.transparent,
         body: Stack(
           children: <Widget>[
-            (!is_connect
-                ? no_connection()
-                : (!is_loading ? getMainListViewUI() : loading_req())),
+            (!isConnect
+                ? noConnection()
+                : (!isLoading ? getMainListViewUI() : reqLoad())),
             getAppBarUI(),
             SizedBox(
               height: MediaQuery.of(context).padding.bottom,

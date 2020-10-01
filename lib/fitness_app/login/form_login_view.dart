@@ -14,12 +14,12 @@ class _FormLoginViewState extends State<FormLoginView> {
   TextEditingController emailInput = new TextEditingController();
   TextEditingController passwordInput = new TextEditingController();
   Widget buttonSubmit;
-  LoginModel loginModel = null;
-  var is_Loading = false;
+  LoginModel loginModel;
+  var isLoading = false;
   
 
   @override
-  void initState() {}
+  // void initState() {}
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,7 @@ class _FormLoginViewState extends State<FormLoginView> {
                   // changeButton(); 
                   passwordInput.text = 'secret';
                   emailInput.text = 'fiqy_a@icloud.com';
-                  is_Loading=true;
+                  isLoading=true;
                   loginModel=null;
                   setState(() {});
                   LoginModel.loginManual(
@@ -120,13 +120,13 @@ class _FormLoginViewState extends State<FormLoginView> {
                       loginModel = value;
                       
                     }
-                    is_Loading=false;
+                    isLoading=false;
                       setState(() {});
                     
                   });
                 },
                 color: Colors.green,
-                child: (!is_Loading
+                child: (!isLoading
                     ? Text(
                         'Masuk',
                         style: TextStyle(
@@ -139,7 +139,7 @@ class _FormLoginViewState extends State<FormLoginView> {
       ),
     ));
 
-    if (is_Loading) {
+    if (isLoading) {
       listViews.add(Container(
         height: sizeu.height,
         width: sizeu.width,

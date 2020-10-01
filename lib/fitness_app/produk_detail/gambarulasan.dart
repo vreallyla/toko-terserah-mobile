@@ -106,6 +106,7 @@ Future<List<String>> fetchGalleryData() async {
       throw Exception('Failed to load');
     }
   } on SocketException catch (e) {
+    print(e.toString());
     throw Exception('Failed to load');
   }
 }

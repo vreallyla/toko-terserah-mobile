@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: <Widget>[
                   FormLoginView(),
                   DividerText(),
-                  otherMethodButton(),
+                  OtherMethodButton(),
                 ],
               ),
             ),
@@ -108,7 +108,7 @@ class DividerText extends StatelessWidget {
   }
 }
 
-class otherMethodButton extends StatelessWidget {
+class OtherMethodButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;

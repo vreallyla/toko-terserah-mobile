@@ -6,10 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 String tokenFixed = '';
 
-_setToken(String token) async {
+_setUser(String dataa) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  await prefs.setString('token', token);
+  await prefs.setString('dataUser', dataa);
 }
 
 _getToken() async {
@@ -36,9 +36,9 @@ class UserModel {
   }
 
   static Future<UserModel> akunRes() async {
-    _getToken();
+    await _getToken();
 
-    String apiURL = BASE_URL + PATH_AUTH + "user";
+    String apiURL = globalBaseUrl + globalPathAuth + "user";
 
     print(apiURL);
 
@@ -57,24 +57,29 @@ class UserModel {
         print(json.decode(apiResult.body));
         print(jsonObject['status']);
 
-        if (json.decode(apiResult.body)['status']!=null) {
+        if (json.decode(apiResult.body)['status'] != null) {
           // token untuk kirim request habis
           return UserModel(
             error: true,
-            data: jsonEncode({"message":MSG_FAIL['MSG_TOKEN_EXP']}),
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
           );
         } else {
           //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['data']);
+
+          //set data user to shared prefrence
+          _setUser(resData);
+
           return UserModel(
             error: jsonObject['error'],
-            data: jsonEncode(json.decode(apiResult.body)['data']),
+            data: jsonEncode({"message": msgSuccess['MSG_RECEIVED']}),
           );
         }
       } else {
         // other failed
         return UserModel(
           error: true,
-          data: jsonEncode({"message":MSG_FAIL['MSG_WRONG']}),
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
         );
       }
     } catch (e) {
@@ -82,7 +87,7 @@ class UserModel {
       print(e.toString());
       return UserModel(
         error: true,
-        data: jsonEncode({"message":MSG_FAIL['MSG_SYSTEM']}),
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
       );
     }
   }

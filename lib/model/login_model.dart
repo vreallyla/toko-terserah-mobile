@@ -48,7 +48,7 @@ class LoginModel {
 
   static Future<LoginModel> loginManual(String email, String pass) async {
     // final LocalStorage storage = new LocalStorage('auth');
-    String apiURL = BASE_URL + PATH_AUTH +"login";
+    String apiURL = globalBaseUrl + globalPathAuth +"login";
 
     var apiResult = await http.post(apiURL,
         body: {"email": email, "password": pass},
@@ -65,24 +65,24 @@ class LoginModel {
         _setToken(jsonObject['token']);
         return LoginModel(
           error: false,
-          data: MSG_SUKSES['MSG_EMAIL'].toString(),
+          data: msgSuccess['MSG_EMAIL'].toString(),
         );
       } else if (apiResult.statusCode == 404) {
         return LoginModel(
           error: true,
-          data: MSG_FAIL['MSG_LOGIN_EXC'].toString(),
+          data: msgFail['MSG_LOGIN_EXC'].toString(),
         );
       }
       else if (apiResult.statusCode == 400) {
         return LoginModel(
           error: true,
-          data: MSG_FAIL['MSG_AKTIVASI'].toString(),
+          data: msgFail['MSG_AKTIVASI'].toString(),
         );
       }
        else {
         return LoginModel(
           error: true,
-          data: MSG_FAIL['MSG_WRONG'],
+          data: msgFail['MSG_WRONG'],
         );
       }
     } catch (e) {
@@ -90,7 +90,7 @@ class LoginModel {
       print(e);
       return LoginModel(
         error: true,
-        data: MSG_FAIL['MSG_SYSTEM'],
+        data: msgFail['MSG_SYSTEM'],
       );
     }
   }
@@ -99,9 +99,9 @@ class LoginModel {
     
 
     try {
-      _getToken();
+     await _getToken();
 
-    String apiURL = BASE_URL + PATH_AUTH +"logout";
+    // String apiURL = globalBaseUrl + globalPathAuth +"logout";
 
     // var apiResult = await http.post(apiURL, headers: {
     //   "Accept": "application/json",
@@ -118,17 +118,17 @@ class LoginModel {
       
         return LoginModel(
           error: false,
-          data: MSG_SUKSES['MSG_LOGOUT'].toString(),
+          data: msgSuccess['MSG_LOGOUT'].toString(),
         );
       // } else if (apiResult.statusCode == 404) {
       //   return LoginModel(
       //     error: true,
-      //     data: MSG_FAIL['MSG_LOGIN_EXC'].toString(),
+      //     data: msgFail['MSG_LOGIN_EXC'].toString(),
       //   );
       // } else {
       //   return LoginModel(
       //     error: true,
-      //     data: MSG_FAIL['MSG_WRONG'],
+      //     data: msgFail['MSG_WRONG'],
       //   );
       // }
     } catch (e) {
@@ -136,7 +136,7 @@ class LoginModel {
       print(e.toString());
       return LoginModel(
         error: true,
-        data: MSG_FAIL['MSG_SYSTEM'],
+        data: msgFail['MSG_SYSTEM'],
       );
     }
   }

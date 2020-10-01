@@ -73,7 +73,7 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
                 children: <Widget>[
                   FormLogin(),
                   DividerText(),
-                  otherMethodButton(),
+                  OtherMethodButton(),
                 ],
               ),
             ),
@@ -175,7 +175,7 @@ class DividerText extends StatelessWidget {
   }
 }
 
-class otherMethodButton extends StatelessWidget {
+class OtherMethodButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;

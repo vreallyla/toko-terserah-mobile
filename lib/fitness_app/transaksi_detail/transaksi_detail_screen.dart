@@ -44,7 +44,7 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
         color: Colors.grey[300],
         child: ListView(children: <Widget>[
           StatusTransaksi(),
-          alamatTransaksi(),
+          AlamatTransaksi(),
           TrackerTransaksi(),
           HeadDaftarTransaksi(),
           TransaksiVia(),
@@ -131,7 +131,7 @@ class StatusTransaksi extends StatelessWidget {
   }
 }
 
-class alamatTransaksi extends StatelessWidget {
+class AlamatTransaksi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

@@ -201,9 +201,9 @@ class _AlamatListState extends State<AlamatList> {
         color: Colors.grey[300],
         child: ListView(children: <Widget>[
           //StatusTransaksi(),
-          alamatTransaksi(),
-          alamatTransaksi(),
-          alamatTransaksi(),
+          AlamatTransaksi(),
+          AlamatTransaksi(),
+          AlamatTransaksi(),
           //rackerTransaksi(),
           // HeadDaftarTransaksi(),
           //TransaksiVia(),
@@ -290,7 +290,7 @@ class StatusTransaksi extends StatelessWidget {
   }
 }
 
-class alamatTransaksi extends StatelessWidget {
+class AlamatTransaksi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
