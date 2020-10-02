@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math' as math;
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
 import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../main.dart';
 import '../models/tabIcon_data.dart';
@@ -23,8 +25,27 @@ class _BottomBarViewState extends State<BottomBarView>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
+  int countCart=0;
+  var dataUser;
+
+  _getCountCart() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    dataUser = prefs.getString('dataUser');
+
+    if (dataUser != null) {
+      dataUser = await jsonDecode(dataUser);
+
+      countCart = dataUser['count_cart'];
+     
+    }
+
+    setState(() {});
+  }
+
   @override
   void initState() {
+    _getCountCart();
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -168,10 +189,32 @@ class _BottomBarViewState extends State<BottomBarView>
                             widget.addClick();
                             Navigator.pushNamed(context, '/cart_list');
                           },
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: FintnessAppTheme.white,
-                            size: 32,
+                          child: Stack(
+                            children: <Widget>[
+                              
+                              Container(
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  Icons.shopping_cart,
+                                  color: FintnessAppTheme.white,
+                                  size: 32,
+                                ),
+                              ),
+                            Container(
+                                alignment: Alignment.topRight,
+                                padding: EdgeInsets.only(top:0),
+                                child: Container(
+                                   alignment: Alignment.center,
+                                  height: 24,
+                                  width: 24,
+                                  child: Text((countCart>99?'99+':countCart.toString()),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 11),),
+                                  decoration:
+                                      BoxDecoration(color: Colors.orange,
+                                      borderRadius: BorderRadius.all(Radius.circular(20)),),
+                                      
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

@@ -35,23 +35,22 @@ class _ProfilCardViewState extends State<ProfilCardView>
   var dataUser;
   String diff;
 
-  
-
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    dataUser = json.decode(prefs.getString('dataUser'));
+    dataUser = prefs.getString('dataUser');
 
-    var dataUserDefault = dataUser['user'];
-    nama = dataUserDefault['name'];
-    ava = dataUserDefault['get_bio']['ava'];
-    bgPhoto = dataUserDefault['get_bio']['background'];
-    tglDaftar = DateTime.parse(dataUserDefault['created_at']);
-    tglUpdate = DateTime.parse(dataUserDefault['updated_at']);
+    if (dataUser != null) {
+      dataUser = await jsonDecode(dataUser);
+      var dataUserDefault = dataUser['user'];
+      nama = dataUserDefault['name'];
+      ava = dataUserDefault['get_bio']['ava'];
+      bgPhoto = dataUserDefault['get_bio']['background'];
+      tglDaftar = DateTime.parse(dataUserDefault['created_at']);
+      tglUpdate = DateTime.parse(dataUserDefault['updated_at']);
+    }
 
     //the birthday's date
-   
-
 
     // await initializeDateFormatting('id', null).then((value) {
 

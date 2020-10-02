@@ -95,11 +95,12 @@ class UserModel {
   static Future<UserModel> checkEmail(String email) async {
     String apiURL = globalBaseUrl + globalPathAuth + "check_email";
 
-    print(apiURL);
+    // print(apiURL);
+ 
 
     try {
-      var apiResult = await http.post(apiURL,
-          body: {"email": email}, headers: {"Accept": "application/json"});
+      var apiResult = await http.get(Uri.encodeFull(apiURL +'?email='+email),
+         headers: {"Accept": "application/json"});
 
       print('check email status code : ' + apiResult.statusCode.toString());
       var jsonObject = json.decode(apiResult.body);
@@ -110,13 +111,14 @@ class UserModel {
         // email dapat digunakan
         return UserModel(
           error: false,
-          data: jsonEncode({"message": jsonObject['message']}),
+          data: jsonEncode({"message": jsonObject['data']['message']}),
         );
       } else if (apiResult.statusCode == 404) {
+        
         //email sudah digunakan / tidak valid
         return UserModel(
           error: true,
-          data: jsonEncode({"message": jsonObject['message']}),
+          data: jsonEncode({"message": jsonObject['data']['message']}),
         );
       } else {
         // other failed

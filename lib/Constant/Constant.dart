@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 String globalBaseUrl = "http://101.50.0.89/";
 String globalPathAuth = "api/auth/";
 
+int lenBarcode=6;
+
 
 final msgFail = {
   "MSG_TIMEOUT": 'Connection timeout...',

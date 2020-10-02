@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/Constant/EventHelper.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
@@ -34,7 +35,7 @@ class _TrainingScreenState extends State<TrainingScreen>
   bool isConnect = true;
   String tokenFixed;
   var res;
-  
+  var kodeBarcode='123s4';
 
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
@@ -127,7 +128,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                             height: 100,
                             child: BarCodeImage(
                               params: Code39BarCodeParams(
-                                "1234ABCD",
+                                kodeBarcode,
                                 lineWidth:
                                     2.0, // width for a single black/white bar (default: 2.0)
                                 barHeight:
@@ -188,7 +189,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                             ),
                           ),
                           Container(
-                            child: Text('Apa anda yakin keluar',
+                            child: Text('Apa anda yakin keluar?',
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.w500,
@@ -260,17 +261,30 @@ class _TrainingScreenState extends State<TrainingScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     tokenFixed = prefs.getString('token');
+    kodeBarcode =  prefs.getString('dataUser');
+   print(tokenFixed);
+    isLoading=true;
 
+    _getBarcode();
+    setState(() {});
 
-    if(tokenFixed!=null){
-       checkConnection();
-    }else{
-      isLoading=false;
-      setState(() {
-        
-      });
+    if (tokenFixed != null) {
+      checkConnection();
+    } else {
+      sudahLogin=false;
+      isLoading = false;
+      setState(() {});
     }
     //  prefs.getString('token');
+  }
+
+  _getBarcode() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    kodeBarcode =  prefs.getString('dataUser');
+    kodeBarcode =
+        kodeBarcode != null ? await zerofill(jsonDecode(kodeBarcode)['user']['id'].toInt(), lenBarcode) : '000s021';
+
+    
   }
 
   @override
@@ -280,7 +294,7 @@ class _TrainingScreenState extends State<TrainingScreen>
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
 
-    _getToken();
+  _getToken();
     addAllListData();
 
     scrollController.addListener(() {
@@ -317,19 +331,20 @@ class _TrainingScreenState extends State<TrainingScreen>
           new Future.delayed(Duration(seconds: 0), () {
             // isConnect=false;
             UserModel.akunRes().then((value) {
-              res=jsonDecode(value.data);
+              res = jsonDecode(value.data);
 
-              if(value.error){
-
-              }else{
+              if (value.error) {
+              } else {
                 sudahLogin = true;
-               
-                print(res);
                 
+                if(kodeBarcode!='123s4'){
+                  _getBarcode();
+                }
+
+                print(res);
               }
               isLoading = false;
 
-              
               setState(() {
                 addAllListData();
               });
@@ -338,15 +353,11 @@ class _TrainingScreenState extends State<TrainingScreen>
         }
       } on SocketException catch (_) {
         isConnect = false;
-        setState(() {
-                
-              });
+        setState(() {});
       }
     } else {
       isLoading = false;
-      setState(() {
-        
-      });
+      setState(() {});
     }
   }
 
@@ -363,9 +374,17 @@ class _TrainingScreenState extends State<TrainingScreen>
     var data = jsonDecode(result);
 
     if (data["load"]) {
-      sudahLogin = true;
+      print('back');
+      sudahLogin=false;
+      
+        _getToken();
+   addAllListData();
+
+      
+     
+
       setState(() {
-        addAllListData();
+       
       });
     }
   }

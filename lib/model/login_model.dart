@@ -16,11 +16,10 @@ _destroyToken() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String tokenFixed = prefs.getString('token');
 
-  if(tokenFixed !=null){
-await prefs.remove("token");
+  if (tokenFixed != null) {
+    await prefs.remove("token");
+    await prefs.remove("dataUser");
   }
-
-  
 }
 
 _getToken() async {
@@ -48,7 +47,7 @@ class LoginModel {
 
   static Future<LoginModel> loginManual(String email, String pass) async {
     // final LocalStorage storage = new LocalStorage('auth');
-    String apiURL = globalBaseUrl + globalPathAuth +"login";
+    String apiURL = globalBaseUrl + globalPathAuth + "login";
 
     var apiResult = await http.post(apiURL,
         body: {"email": email, "password": pass},
@@ -72,14 +71,12 @@ class LoginModel {
           error: true,
           data: msgFail['MSG_LOGIN_EXC'].toString(),
         );
-      }
-      else if (apiResult.statusCode == 400) {
+      } else if (apiResult.statusCode == 400) {
         return LoginModel(
           error: true,
           data: msgFail['MSG_AKTIVASI'].toString(),
         );
-      }
-       else {
+      } else {
         return LoginModel(
           error: true,
           data: msgFail['MSG_WRONG'],
@@ -96,30 +93,28 @@ class LoginModel {
   }
 
   static Future<LoginModel> logout() async {
-    
-
     try {
-     await _getToken();
+      await _getToken();
 
-    // String apiURL = globalBaseUrl + globalPathAuth +"logout";
+      // String apiURL = globalBaseUrl + globalPathAuth +"logout";
 
-    // var apiResult = await http.post(apiURL, headers: {
-    //   "Accept": "application/json",
-    //   "Authorization": "Bearer " + ( tokenFixed !=null? tokenFixed : '')
-    // });
+      // var apiResult = await http.post(apiURL, headers: {
+      //   "Accept": "application/json",
+      //   "Authorization": "Bearer " + ( tokenFixed !=null? tokenFixed : '')
+      // });
 
-    // print('logout status code : ' + apiResult.statusCode.toString());
-    
+      // print('logout status code : ' + apiResult.statusCode.toString());
+
       // if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
       //   final ress=json.decode(apiResult.body);
       //   print(ress);
 
-        _destroyToken();
-      
-        return LoginModel(
-          error: false,
-          data: msgSuccess['MSG_LOGOUT'].toString(),
-        );
+      _destroyToken();
+
+      return LoginModel(
+        error: false,
+        data: msgSuccess['MSG_LOGOUT'].toString(),
+      );
       // } else if (apiResult.statusCode == 404) {
       //   return LoginModel(
       //     error: true,

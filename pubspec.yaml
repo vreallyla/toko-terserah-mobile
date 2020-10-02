@@ -43,6 +43,7 @@ dependencies:
   icon_shadow: ^1.0.1
   shared_preferences: ^0.5.12
   giffy_dialog: ^1.8.0
+  datetime_picker_formfield: ^1.0.0
 
 dev_dependencies:
   flutter_test:

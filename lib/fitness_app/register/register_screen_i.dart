@@ -1,6 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../login/login_screen.dart';
+import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+// For changing the language
+// import 'package:flutter_localizations/flutter_localizations.dart';
+// import 'package:flutter_cupertino_localizations/flutter_cupertino_localizations.dart';
+
+bool isLoading = false;
 
 class RegisterScreenI extends StatefulWidget {
   const RegisterScreenI({Key key, this.animationController}) : super(key: key);
@@ -71,12 +83,20 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
             Container(
               child: ListView(
                 children: <Widget>[
-                  FormLogin(),
+                  FormRegister(),
                   DividerText(),
                   OtherMethodButton(),
                 ],
               ),
             ),
+            (isLoading
+                ? Container(
+                    color: Colors.grey.withOpacity(0.3),
+                  )
+                : Text(
+                    'loading disapear',
+                    style: TextStyle(color: Colors.transparent, fontSize: 0),
+                  )),
           ],
         ),
       ),
@@ -84,33 +104,34 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
   }
 }
 
-class FormLogin extends StatelessWidget {
+class FormRegister extends StatefulWidget {
+  @override
+  _FormRegisterState createState() => _FormRegisterState();
+}
+
+class _FormRegisterState extends State<FormRegister> {
+  TextEditingController emailInput = new TextEditingController();
+  UserModel userModel;
+  String messageEmail;
+  bool emailDisabled = false;
+  final format = DateFormat("yyyy-MM-dd");
+
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
 
     return Container(
-      height: 160 + sizeu.width / 10,
+      height: 400 + sizeu.width / 10,
       padding: EdgeInsets.fromLTRB(
           sizeu.width / 10, sizeu.width / 10, sizeu.width / 10, 15),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          //background color of box
-          // BoxShadow(
-          //   color: Colors.black12,
-          //   blurRadius: 0.5, // soften the shadow
-          //   spreadRadius: .5, //extend the shadow
-          //   offset: Offset(
-          //     .5, // Move to right 10  horizontally
-          //     .5, // Move to bottom 10 Vertically
-          //   ),
-          // ),
-        ],
+        boxShadow: [],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          //email
           Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(bottom: 10),
@@ -121,8 +142,14 @@ class FormLogin extends StatelessWidget {
             width: sizeu.width - sizeu.width / 5,
             height: 40,
             child: TextField(
+              enabled: emailDisabled ? false : true,
               textAlign: TextAlign.left,
-              onChanged: (text) => {},
+              controller: emailInput,
+              // controller: ,
+              onChanged: (text) {
+                setState(() {});
+              },
+              onSubmitted: (_) => FocusScope.of(context).nextFocus(),
               decoration: new InputDecoration(
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
@@ -132,16 +159,99 @@ class FormLogin extends StatelessWidget {
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black38, width: 1),
                 ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black38, width: 1),
+                ),
                 hintText: 'Masukkan Email',
+                fillColor:
+                    emailDisabled ? Colors.grey.withOpacity(.3) : Colors.white,
+                filled: true,
               ),
             ),
           ),
+          //message email
+          Container(
+            padding: EdgeInsets.only(top: 4),
+            child: Text(
+              (messageEmail != null ? messageEmail : ''),
+              style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w500,
+                  fontSize: (messageEmail != null ? 13 : 0)),
+            ),
+          ),
+          //Jenis
+          Container(
+              alignment: Alignment.topLeft,
+              padding: EdgeInsets.only(bottom: 10),
+              child: Text('Jenis Kelamin',
+                  style: TextStyle(
+                      color: Colors.black54, fontWeight: FontWeight.bold))),
+          SizedBox(
+            width: sizeu.width - sizeu.width / 5,
+            height: 40,
+            child: TextField(
+              enabled: emailDisabled ? false : true,
+              textAlign: TextAlign.left,
+              controller: emailInput,
+              // controller: ,
+              onChanged: (text) {
+                setState(() {});
+              },
+              onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+              decoration: new InputDecoration(
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black54, width: 1),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black38, width: 1),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black38, width: 1),
+                ),
+                hintText: 'Masukkan Email',
+                fillColor:
+                    emailDisabled ? Colors.grey.withOpacity(.3) : Colors.white,
+                filled: true,
+              ),
+            ),
+          ),
+
+          Column(children: <Widget>[
+            Text('Basic date field (${format.pattern})'),
+            DateTimeField(
+              format: format,
+              onShowPicker: (context, currentValue) {
+                return showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1900),
+                    initialDate: currentValue ?? DateTime.now(),
+                    lastDate: DateTime(2100));
+              },
+            ),
+          ]),
           Container(
               margin: EdgeInsets.only(top: 15),
               width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                  isLoading = true;
+                  setState(() {});
+                  UserModel.checkEmail(emailInput.text).then((value) {
+                    userModel = value;
+                    messageEmail = null;
+                    isLoading = false;
+                    print(jsonDecode(userModel.data));
+                    if (userModel.error) {
+                      messageEmail = json.decode(userModel.data)['message'];
+                    } else {}
+
+                    setState(() {});
+                  });
+                },
                 color: Colors.green,
                 child: Text(
                   'Daftar',
