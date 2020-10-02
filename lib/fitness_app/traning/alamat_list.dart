@@ -356,7 +356,7 @@ class AlamatTransaksi extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
             onTapDown: _storePosition,
-            onLongPress: () {
+            onTap: () {
               showMenu(
                 position: RelativeRect.fromRect(
                     _tapPosition &
@@ -365,6 +365,15 @@ class AlamatTransaksi extends StatelessWidget {
                     ),
                 //onSelected: () => setState(() => imageList.remove(index)),
                 items: <PopupMenuEntry>[
+                  PopupMenuItem(
+                    value: dataUserDefault['get_alamat'][index],
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.edit, color: Colors.green),
+                        Text("Edit"),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem(
                     value: dataUserDefault['get_alamat'][index],
                     child: Row(
