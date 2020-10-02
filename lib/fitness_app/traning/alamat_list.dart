@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
 import '../produk_detail/CustomShowDialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:core';
 
 class AlamatList extends StatefulWidget {
   @override
   _AlamatListState createState() => _AlamatListState();
 }
 
+var dataUserDefault;
 void showAlertDialog(BuildContext context) {
   TextEditingController _namaController = new TextEditingController();
   TextEditingController _namapenerimaController = new TextEditingController();
@@ -94,7 +98,7 @@ void showAlertDialog(BuildContext context) {
         ),
       );
       final alamatField = TextFormField(
-        maxLines: 4,
+        maxLines: 2,
         controller: _alamatController,
         keyboardType: TextInputType.streetAddress,
         style: TextStyle(
@@ -114,7 +118,7 @@ void showAlertDialog(BuildContext context) {
 
       return CustomAlertDialog(
         content: Container(
-          width: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width + 200,
           height: MediaQuery.of(context).size.height / 1.6,
           decoration: new BoxDecoration(
             shape: BoxShape.rectangle,
@@ -124,6 +128,20 @@ void showAlertDialog(BuildContext context) {
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
+              InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  alignment: Alignment.bottomRight,
+                  padding: EdgeInsets.only(right: 8, bottom: 15),
+                  child: FaIcon(
+                    FontAwesomeIcons.times,
+                    color: Colors.black54,
+                    size: 16,
+                  ),
+                ),
+              ),
               namaField,
               namapenerimaField,
               telpField,
@@ -134,7 +152,7 @@ void showAlertDialog(BuildContext context) {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 12,
-                  padding: EdgeInsets.all(15.0),
+                  padding: EdgeInsets.all(12.0),
                   child: Material(
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(25.0),
@@ -163,6 +181,44 @@ void showAlertDialog(BuildContext context) {
 }
 
 class _AlamatListState extends State<AlamatList> {
+  Future<bool> getData() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 50));
+    return true;
+  }
+
+  String nama, ava, bgPhoto, telp, alamat, utama;
+  DateTime tglDaftar, tglUpdate;
+  var dataUser;
+  String diff;
+
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    dataUser = prefs.getString('dataUser');
+
+    if (dataUser != null) {
+      dataUser = await jsonDecode(dataUser);
+      print(dataUserDefault['get_alamat']);
+      dataUserDefault = dataUser['user'];
+    }
+
+    //the birthday's date
+
+    // await initializeDateFormatting('id', null).then((value) {
+
+    // }
+    // );
+
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    _getUser();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -198,16 +254,9 @@ class _AlamatListState extends State<AlamatList> {
                 ))),
       ),
       body: Container(
-        color: Colors.grey[300],
-        child: ListView(children: <Widget>[
-          //StatusTransaksi(),
-          AlamatTransaksi(),
-          AlamatTransaksi(),
-          AlamatTransaksi(),
-          //rackerTransaksi(),
-          // HeadDaftarTransaksi(),
-          //TransaksiVia(),
-        ]),
+        color: Colors.grey[200],
+        padding: EdgeInsets.fromLTRB(0, 21, 0, 0),
+        child: AlamatTransaksi(),
       ),
     );
   }
@@ -294,89 +343,134 @@ class AlamatTransaksi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    var _tapPosition;
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+    void _storePosition(TapDownDetails details) {
+      _tapPosition = details.globalPosition;
+    }
 
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-      color: Colors.white,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Container(
-            child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: 30,
-              child: FaIcon(
-                FontAwesomeIcons.locationArrow,
-                color: Colors.green,
-                size: 18,
-              ),
-            ),
-            Container(
-                width: size.width - 30 - 100 - 30,
-                child: Text('Alamat Rumah',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
-                    ))),
-            Container(
-              width: 100,
-              alignment: Alignment.centerRight,
-              child: InkWell(
-                onTap: () {},
-                child: Text('Salin',
-                    style: TextStyle(
+    return ListView.builder(
+      itemCount: dataUserDefault['get_alamat'] == null
+          ? 0
+          : dataUserDefault['get_alamat'].length,
+      itemBuilder: (BuildContext context, int index) {
+        return new GestureDetector(
+            onTapDown: _storePosition,
+            onLongPress: () {
+              showMenu(
+                position: RelativeRect.fromRect(
+                    _tapPosition &
+                        const Size(40, 40), // smaller rect, the touch area
+                    Offset.zero & overlay.size // Bigger rect, the entire screen
+                    ),
+                //onSelected: () => setState(() => imageList.remove(index)),
+                items: <PopupMenuEntry>[
+                  PopupMenuItem(
+                    value: dataUserDefault['get_alamat'][index],
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.delete, color: Colors.green),
+                        Text("Hapus"),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: dataUserDefault['get_alamat'][index],
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.home, color: Colors.green),
+                        Text("Jadikan Alamat Utama"),
+                      ],
+                    ),
+                  )
+                ],
+                context: context,
+              );
+            },
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: 30,
+                    child: FaIcon(
+                      FontAwesomeIcons.locationArrow,
                       color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    )),
+                      size: 18,
+                    ),
+                  ),
+                  Container(
+                      width: size.width - 30 - 100 - 30,
+                      child: Text('Alamat Rumah',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          ))),
+                  Container(
+                    width: 100,
+                    alignment: Alignment.centerRight,
+                    child: InkWell(
+                      onTap: () {},
+                      child: Text(
+                          dataUserDefault['get_alamat'][index]['isUtama'] == 1
+                              ? 'Utama'
+                              : '',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          )),
+                    ),
+                  )
+                ],
+              )),
+              //nama
+              Container(
+                padding: EdgeInsets.only(left: 30, top: 5),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: size.width - 30 - 30,
+                          child: Text(
+                            dataUserDefault['get_alamat'][index]['nama'],
+                            maxLines: 1,
+                          )),
+                    ]),
               ),
-            )
-          ],
-        )),
-        //nama
-        Container(
-          padding: EdgeInsets.only(left: 30, top: 5),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    width: size.width - 30 - 30,
-                    child: Text(
-                      'Fahmi Rizky Maulidy',
-                      maxLines: 1,
-                    )),
-              ]),
-        ),
-        // no telp
-        Container(
-          padding: EdgeInsets.only(left: 30, top: 5),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    width: size.width - 30 - 30,
-                    child: Text(
-                      '(+62) 081553847015',
-                      maxLines: 1,
-                    )),
-              ]),
-        ),
-        // alamat
-        Container(
-          padding: EdgeInsets.only(left: 30, top: 5),
-          child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                    width: size.width - 30 - 30,
-                    child: Text(
-                      'Jl. Menanggal no. 4, Menanggal, Surabaya',
-                      maxLines: 4,
-                    )),
-              ]),
-        ),
-      ]),
+              // no telp
+              Container(
+                padding: EdgeInsets.only(left: 30, top: 5),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: size.width - 30 - 30,
+                          child: Text(
+                            dataUserDefault['get_alamat'][index]['telp'],
+                            maxLines: 1,
+                          )),
+                    ]),
+              ),
+              // alamat
+              Container(
+                padding: EdgeInsets.only(left: 30, top: 5),
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: size.width - 30 - 30,
+                          child: Text(
+                            dataUserDefault['get_alamat'][index]['alamat'],
+                            maxLines: 4,
+                          )),
+                    ]),
+              ),
+            ]));
+      },
     );
   }
 }
