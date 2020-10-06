@@ -29,6 +29,7 @@ class NewItem {
 }
 
 class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CategoryType categoryType = CategoryType.ui;
   String dropdownValue;
   String subdropdownValue;
@@ -148,6 +149,14 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     _refreshController.loadComplete();
   }
 
+  void _openEndDrawer() {
+    _scaffoldKey.currentState.openEndDrawer();
+  }
+
+  void _closeEndDrawer() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
 //    const test = 'a';
@@ -204,16 +213,24 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
       child: Container(
         color: DesignCourseAppTheme.nearlyWhite,
         child: Scaffold(
+          key: _scaffoldKey,
           endDrawer: Drawer(
-              child: Center(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                const Text('This is the Drawer'),
-              ]))),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Text('This is the Drawer'),
+                  ElevatedButton(
+                    onPressed: _closeEndDrawer,
+                    child: const Text('Close Drawer'),
+                  ),
+                ],
+              ),
+            ),
+          ),
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
-              preferredSize: Size.fromHeight(60), child: HeaderPage()),
+              preferredSize: Size.fromHeight(60), child: headerSection()),
           body: Column(
             children: <Widget>[
               // getAppBarUI(),
@@ -243,6 +260,79 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget headerSection() {
+     double topBarOpacity = 0.0;
+    var sizeu = MediaQuery.of(context).size;
+     return Container(
+      padding: EdgeInsets.only(top: 30),
+      height: 110,
+      decoration: BoxDecoration(
+        color: FintnessAppTheme.white.withOpacity(topBarOpacity),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(0.0),
+          bottomRight: Radius.circular(0.0),
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+              color: FintnessAppTheme.grey.withOpacity(0.4 * topBarOpacity),
+              offset: const Offset(1.1, 1.1),
+              blurRadius: 10.0),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 10),
+            child: SizedBox(
+              height: 40,
+              width: sizeu.width - 48 - 10,
+              child: TextField(
+                onChanged: (value) {},
+                controller: editingController,
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: "Cari Produk",
+                    labelStyle: TextStyle(color: Colors.grey),
+                    hintText: "Cari Produk",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: const EdgeInsets.all(1.0),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 5.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: IconButton(
+                  color: Colors.blueGrey,
+                  icon: FaIcon(FontAwesomeIcons.funnelDollar),
+                  tooltip: 'Filter',
+                  onPressed: () {
+                    _openEndDrawer();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -809,7 +899,6 @@ enum CategoryType {
 final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class HeaderPage extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     double topBarOpacity = 0.0;
