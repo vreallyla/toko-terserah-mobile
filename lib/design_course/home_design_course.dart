@@ -14,6 +14,9 @@ import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'dart:async';
 import 'dart:developer';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart';
+
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
@@ -26,6 +29,18 @@ class NewItem {
   Widget body;
   Icon iconpic;
   NewItem(this.isExpanded, this.header, this.body, this.iconpic);
+}
+
+class VagasDisponivei {
+  String v_n;
+  String v_id;
+
+  VagasDisponivei({this.v_n, this.v_id});
+
+  @override
+  String toString() {
+    return '${v_n} ${v_id}';
+  }
 }
 
 class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
@@ -42,6 +57,17 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   int _limit = 10;
+
+  //select picker
+  int _counter = 0;
+  List<VagasDisponivei> _vagasDisponiveis;
+  String vaga_name;
+  List<int> selectedItems = [];
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
 
   final formatter = new NumberFormat("#,###");
 
@@ -133,6 +159,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _vagasDisponiveis = [
+      VagasDisponivei(v_id: "1", v_n: "abc"),
+      VagasDisponivei(v_id: "2", v_n: "def"),
+      VagasDisponivei(v_id: "3", v_n: "dgg"),
+    ];
     getData();
     log('data: hello');
   }
@@ -249,7 +280,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   color: Colors.white,
                   child: ListView(children: <Widget>[
+                    // kategori produk
                     Container(
+                      padding: EdgeInsets.only(bottom: 20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -259,7 +292,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                               style: TextStyle(
                                 color: Colors.green,
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -274,7 +307,57 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.only(top:5),
+                            padding: EdgeInsets.only(top: 0),
+                            child: SearchableDropdown.multiple(
+                              items: _vagasDisponiveis.map((item) {
+                                return new DropdownMenuItem<VagasDisponivei>(
+                                    child: Text(item.v_n), value: item);
+                              }).toList(),
+                              isExpanded: true,
+                              isCaseSensitiveSearch: true,
+                              searchHint: new Text(
+                                'Select ',
+                                style: new TextStyle(fontSize: 16),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedItems = value;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+                    //jenis produk
+                    Container(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              'Jenis Produk',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 40,
+                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey.withOpacity(0.2),
+                              border: Border(
+                                top: BorderSide(width: 2, color: Colors.green),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top: 5),
                             child: Row(
                               children: [
                                 Expanded(
@@ -443,7 +526,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                               style:
                                   TextStyle(fontSize: 12, color: Colors.green),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              _closeEndDrawer();
+                            },
                           )),
                       Container(
                           margin: EdgeInsets.only(left: 10),
@@ -459,7 +544,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                               style:
                                   TextStyle(fontSize: 12, color: Colors.white),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              _closeEndDrawer();
+
+                            },
                           ))
                     ],
                   ),
