@@ -1,3 +1,5 @@
+
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,9 +7,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../login/login_screen.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+
 // For changing the language
 // import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:flutter_cupertino_localizations/flutter_cupertino_localizations.dart';
@@ -119,147 +121,113 @@ class _FormRegisterState extends State<FormRegister> {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
+    
 
-    return Container(
-      height: 400 + sizeu.width / 10,
-      padding: EdgeInsets.fromLTRB(
-          sizeu.width / 10, sizeu.width / 10, sizeu.width / 10, 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          //email
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Email',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              enabled: emailDisabled ? false : true,
-              textAlign: TextAlign.left,
-              controller: emailInput,
-              // controller: ,
-              onChanged: (text) {
-                setState(() {});
-              },
-              onSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Email',
-                fillColor:
-                    emailDisabled ? Colors.grey.withOpacity(.3) : Colors.white,
-                filled: true,
-              ),
-            ),
-          ),
-          //message email
-          Container(
-            padding: EdgeInsets.only(top: 4),
-            child: Text(
-              (messageEmail != null ? messageEmail : ''),
-              style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.w500,
-                  fontSize: (messageEmail != null ? 13 : 0)),
-            ),
-          ),
-          //Jenis
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Jenis Kelamin',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              enabled: emailDisabled ? false : true,
-              textAlign: TextAlign.left,
-              controller: emailInput,
-              // controller: ,
-              onChanged: (text) {
-                setState(() {});
-              },
-              onSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Email',
-                fillColor:
-                    emailDisabled ? Colors.grey.withOpacity(.3) : Colors.white,
-                filled: true,
-              ),
-            ),
-          ),
-
-          Column(children: <Widget>[
-            Text('Basic date field (${format.pattern})'),
-            DateTimeField(
-              format: format,
-              onShowPicker: (context, currentValue) {
-                return showDatePicker(
-                    context: context,
-                    firstDate: DateTime(1900),
-                    initialDate: currentValue ?? DateTime.now(),
-                    lastDate: DateTime(2100));
-              },
-            ),
-          ]),
-          Container(
-              margin: EdgeInsets.only(top: 15),
+    return new GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Container(
+        height: 150 + (messageEmail != null ? 13 : 0) + sizeu.width / 10,
+        padding: EdgeInsets.fromLTRB(
+            sizeu.width / 10, sizeu.width / 10, sizeu.width / 10, 15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            //email
+            Container(
+                alignment: Alignment.topLeft,
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text('Email',
+                    style: TextStyle(
+                        color: Colors.black54, fontWeight: FontWeight.bold))),
+            SizedBox(
               width: sizeu.width - sizeu.width / 5,
               height: 40,
-              child: RaisedButton(
-                onPressed: () {
-                  isLoading = true;
+              child: TextField(
+                enabled: emailDisabled ? false : true,
+                textAlign: TextAlign.left,
+                controller: emailInput,
+                // controller: ,
+                onChanged: (text) {
                   setState(() {});
-                  UserModel.checkEmail(emailInput.text).then((value) {
-                    userModel = value;
-                    messageEmail = null;
-                    isLoading = false;
-                    print(jsonDecode(userModel.data));
-                    if (userModel.error) {
-                      messageEmail = json.decode(userModel.data)['message'];
-                    } else {}
-
-                    setState(() {});
-                  });
                 },
-                color: Colors.green,
-                child: Text(
-                  'Daftar',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                decoration: new InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 10),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black54, width: 1),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black38, width: 1),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black38, width: 1),
+                  ),
+                  hintText: 'Masukkan Email',
+                  fillColor: emailDisabled
+                      ? Colors.grey.withOpacity(.3)
+                      : Colors.white,
+                  filled: true,
                 ),
-              )),
-        ],
+              ),
+            ),
+            //message email
+            Container(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                (messageEmail != null ? messageEmail : ''),
+                style: TextStyle(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w500,
+                    fontSize: (messageEmail != null ? 13 : 0)),
+              ),
+            ),
+            //Jenis
+
+            Container(
+                margin: EdgeInsets.only(top: 15),
+                width: sizeu.width - sizeu.width / 5,
+                height: 40,
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    // side: BorderSide(color: Colors.red)
+                  ),
+                  onPressed: () {
+                    isLoading = true;
+                    emailInput.text='vreallyla@gmail.com';
+                    setState(() {});
+
+                    UserModel.checkEmail(emailInput.text).then((value) {
+
+                      userModel = value;
+                      messageEmail = null;
+                      isLoading = false;
+                      print(jsonDecode(userModel.data));
+                      if (userModel.error) {
+                        messageEmail = json.decode(userModel.data)['message'];
+                      } else {
+                        Navigator.pushNamed(context, '/register_ii',arguments: {'email': emailInput.text});
+                      }
+                      
+                      setState(() {});
+                    });
+                  },
+                  color: Colors.green,
+                  child: Text(
+                    'Daftar',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -304,20 +272,24 @@ class OtherMethodButton extends StatelessWidget {
               width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    // side: BorderSide(color: Colors.red)
+                  ),
                 onPressed: () {},
-                color: Color(0xFFF2F2F2),
+                color: Color(0xFFF74933),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     FaIcon(
                       FontAwesomeIcons.google,
                       size: 15,
-                      color: Colors.red,
+                      color: Colors.white,
                     ),
                     Text(
                       '  Google',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
+                          fontWeight: FontWeight.bold, color: Colors.white),
                     ),
                   ],
                 ),
@@ -327,6 +299,10 @@ class OtherMethodButton extends StatelessWidget {
               width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    // side: BorderSide(color: Colors.red)
+                  ),
                 onPressed: () {},
                 color: Colors.blue[600],
                 child: Row(

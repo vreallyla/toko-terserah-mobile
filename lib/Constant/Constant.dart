@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: non_constant_identifier_names
-String globalBaseUrl = "http://101.50.0.89/";
+// String globalBaseUrl = "http://101.50.0.89/";
+String globalBaseUrl = "http://10.60.100.178:8000/";
+
 String globalPathAuth = "api/auth/";
 
 int lenBarcode=6;
@@ -24,6 +26,7 @@ final msgFail = {
 
 final msgSuccess={
   "MSG_EMAIL":'Berhasil Masuk',
+  "MSG_REGISTER":'Register berhasil',
   'MSG_LOGOUT':'Berhasil Keluar',
   "MSG_RECEIVED":'Data Diterima',
 };
