@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart';
 import 'package:best_flutter_ui_templates/design_course/popular_course_list_view.dart';
 import 'package:best_flutter_ui_templates/main.dart';
@@ -5,6 +7,12 @@ import 'package:flutter/material.dart';
 import 'design_course_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/hotel_booking/range_slider_view.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:http/http.dart' as http;
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'dart:async';
+import 'dart:developer';
+import 'package:intl/intl.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
@@ -26,6 +34,14 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   TextEditingController editingController = TextEditingController();
   RangeValues _values = const RangeValues(100, 600);
   double distValue = 50.0;
+  AnimationController animationController;
+  Animation<dynamic> animation;
+  List dataJson;
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  int _limit = 10;
+
+  final formatter = new NumberFormat("#,###");
 
   List<NewItem> items = <NewItem>[
     new NewItem(
@@ -33,7 +49,106 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     //give all your items here
   ];
 
+  Future getData() async {
+    try {
+      var param = jsonEncode({
+      "limit": _limit.toString()
+    });
+
+      http.Response item = await http.post(globalBaseUrl + 'api/search',
+        body: param,
+          headers: {
+            "Accept": "application/json",
+            'Content-type': 'application/json'
+          });
+
+      if (item.statusCode == 200) {
+        Map<String, dynamic> products = jsonDecode(item.body);
+        print(products['data']['produk']);
+
+        setState(() {
+          dataJson = products['data']['produk'];
+        });
+      }
+    } catch (e) {
+      log("error getData : $e");
+    }
+  }
+
+  /**
+   * Fetching data from API to Model Products
+   * 
+   */
+  Future<List<Products>> testData() async {
+    try {
+      http.Response item = await http.post(globalBaseUrl + 'api/search',
+          headers: {
+            "Accept": "application/json",
+            'Content-type': 'application/json'
+          });
+
+      if (item.statusCode == 200) {
+        Map<String, dynamic> products = jsonDecode(item.body);
+        print(products['data']['produk']);
+        List produk = products['data']['produk'];
+        // for every element of arr map to _fromJson
+        // and convert the array to list
+        return produk.map((e) => _fromJson(e)).toList();
+      }
+
+      return List<Products>();
+    } catch (e) {
+      log("error testData : $e");
+    }
+  }
+
+  /**
+   * Parsing value from API to model Products
+   * 
+   */
+  Products _fromJson(Map<String, dynamic> item) {
+    log('id ke-${item['id']}');
+    return new Products(
+      id: item['id'],
+      name: item['nama'],
+      price: item['harga'],
+    );
+  }
+
   ListView listcriteria;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+    log('data: hello');
+  }
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    getData();
+    log("message : data Successfuly Refreshed");
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+
+    setState(() {
+      _limit = _limit + 10;
+    });
+    
+    getData();
+    log("message : data Successfuly Loaded");
+
+    _refreshController.loadComplete();
+  }
+
   @override
   Widget build(BuildContext context) {
 //    const test = 'a';
@@ -240,6 +355,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     );
   }
 
+/**
+ * TODO Show List grid produk toko
+ * 
+ */
   Widget getPopularCourseUI() {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
@@ -247,26 +366,201 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Text(
-          //   'Produk',
-          //   textAlign: TextAlign.left,
-          //   style: TextStyle(
-          //     fontWeight: FontWeight.w600,
-          //     fontSize: 22,
-          //     letterSpacing: 0.27,
-          //     color: DesignCourseAppTheme.darkerText,
-          //   ),
-          // ),
           Flexible(
-            child: PopularCourseListView(
-              callBack: () {
-                moveTo();
-              },
-            ),
+            child: gridProduk(),
           )
         ],
       ),
     );
+  }
+
+  Widget gridProduk() {
+    final sizeu = MediaQuery.of(context).size;
+
+    Icon iconStar() {
+      return Icon(
+        Icons.star,
+        color: Colors.green,
+        size: 12,
+      );
+    }
+
+    Icon iconStarSetengah() {
+      return Icon(
+        Icons.star_half,
+        color: Colors.green,
+        size: 12,
+      );
+    }
+
+    Icon iconStarKosong() {
+      return Icon(
+        Icons.star_border,
+        color: Colors.lightGreen,
+        size: 12,
+      );
+    }
+
+    Container starJadi(double jmlStar, String jlmVote) {
+      List dataRown = <Widget>[];
+
+      List.generate(5, (index) {
+        dataRown.add(
+          Container(
+              child: (index + 1) <= jmlStar
+                  ? iconStar()
+                  : (index < jmlStar ? iconStarSetengah() : iconStarKosong())),
+        );
+      });
+
+      dataRown.add(Text(' ($jlmVote)',
+          style: TextStyle(fontSize: 12, color: Colors.grey)));
+
+      return Container(
+          padding: EdgeInsets.only(top: 3), child: Row(children: dataRown));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 2),
+       child: SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("pull up load");
+                  } else if (mode == LoadStatus.loading) {
+                    body = Text('TUnggu');
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Load Failed!Click retry!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release to load more");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              child: ListView.builder(
+                 physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.all(5),
+                shrinkWrap: true,
+                itemCount: dataJson == null ? 0 : dataJson.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, i) {
+                  return new SizedBox(
+                    
+                    width: sizeu.width / 3,
+                    child: Stack(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 1, left: 1, right: 5, bottom: 1),
+                          child: InkWell(
+                            onTap: () {
+                              // Navigate to the second screen using a named route.
+                              Navigator.pushNamed(context, '/produk');
+                            },
+                            child: Column(
+                              children: [
+                                //rubah gambar
+                                Container(
+                                  height: sizeu.width / 2,
+                                  decoration: new BoxDecoration(
+                                    image: new DecorationImage(
+                                      image: NetworkImage(dataJson[i]["image_path"] ?? 'https://via.placeholder.com/300'),
+                                      fit: BoxFit.cover
+                                    ),
+                                    color: Colors.grey,
+                                    borderRadius: const BorderRadius.only(
+                                      bottomRight: Radius.circular(0),
+                                      bottomLeft: Radius.circular(0),
+                                      topLeft: Radius.circular(8.0),
+                                      topRight: Radius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
+
+                                //konten
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(0),
+                                      topRight: Radius.circular(0),
+                                      bottomRight: Radius.circular(8.0),
+                                      bottomLeft: Radius.circular(8.0),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.topLeft,
+                                        child: RichText(
+                                          overflow: TextOverflow.ellipsis,
+                                          strutStyle:
+                                              StrutStyle(fontSize: 12.0),
+                                          text: TextSpan(
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                              text:
+                                                  '${dataJson[i]["nama"]}' ?? '-'),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(top: 5),
+                                        alignment: Alignment.topLeft,
+                                        child: Text( 'Rp '+
+                                          formatter.format( int.parse(dataJson[i]["harga"]??'0')),
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                          maxLines: 2,
+                                        ),
+                                      ),
+                                      starJadi(3.5, '1.000'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(
+                              top: 5, left: 5, right: 5, bottom: 16),
+                          alignment: Alignment.topLeft,
+                          child: Card(
+                            color: Colors.green[100],
+                            child: Container(
+                                margin: EdgeInsets.all(3),
+                                child: Text(
+                                  'Grosir',
+                                  style: TextStyle(
+                                    color: Colors.green[800],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );  },
+              ),
+            ),
+    
+       );
   }
 
   void moveTo() {
@@ -531,4 +825,14 @@ class ActorFilterEntry {
   const ActorFilterEntry(this.name, this.initials);
   final String name;
   final String initials;
+}
+
+class Products {
+  int id;
+  String name;
+  String price;
+  String star;
+  String type;
+
+  Products({this.id, this.name, this.price, this.star, this.type});
 }

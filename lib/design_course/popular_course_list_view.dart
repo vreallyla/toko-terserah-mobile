@@ -39,7 +39,7 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
               children: List<Widget>.generate(
-                20,
+                4,
                 (int index) {
                   final int count = 20;
                   final Animation<double> animation =
@@ -151,13 +151,13 @@ class CategoryView extends StatelessWidget {
                                 children: [
                                   Container(
                                     alignment: Alignment.topLeft,
-                                    child: Text(
-                                      'Judulnya apa Judulnya apa Judulnya apa',
+                                    child: RichText(
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                      ),
-                                      maxLines: 2,
+                                      strutStyle: StrutStyle(fontSize: 12.0),
+                                      text: TextSpan(
+                                          style: TextStyle(color: Colors.black),
+                                          text:
+                                              'A very long texta as as asas :)'),
                                     ),
                                   ),
                                   Container(
