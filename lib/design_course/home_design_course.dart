@@ -204,6 +204,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
       child: Container(
         color: DesignCourseAppTheme.nearlyWhite,
         child: Scaffold(
+          endDrawer: Drawer(
+              child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                const Text('This is the Drawer'),
+              ]))),
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(60), child: HeaderPage()),
@@ -799,8 +806,10 @@ enum CategoryType {
   coding,
   basic,
 }
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class HeaderPage extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     double topBarOpacity = 0.0;
@@ -827,41 +836,50 @@ class HeaderPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: IconButton(
-              color: Colors.blueGrey,
-              icon: FaIcon(FontAwesomeIcons.ellipsisV),
-              tooltip: 'Increase volume by 10',
-              onPressed: () {},
+          Container(
+            padding: EdgeInsets.only(left: 10),
+            child: SizedBox(
+              height: 40,
+              width: sizeu.width - 48 - 10,
+              child: TextField(
+                onChanged: (value) {},
+                controller: editingController,
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    labelText: "Cari Produk",
+                    labelStyle: TextStyle(color: Colors.grey),
+                    hintText: "Cari Produk",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: const EdgeInsets.all(1.0),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey, width: 5.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+              ),
             ),
           ),
-          SizedBox(
-            height: 40,
-            width: sizeu.width - 48 - 10,
-            child: TextField(
-              onChanged: (value) {},
-              controller: editingController,
-              decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  labelText: "Cari Produk",
-                  labelStyle: TextStyle(color: Colors.grey),
-                  hintText: "Cari Produk",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  contentPadding: const EdgeInsets.all(1.0),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey, width: 5.0),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
-            ),
+          Row(
+            children: [
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: IconButton(
+                  color: Colors.blueGrey,
+                  icon: FaIcon(FontAwesomeIcons.funnelDollar),
+                  tooltip: 'Filter',
+                  onPressed: () {
+                    _scaffoldKey.currentState.openEndDrawer();
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
