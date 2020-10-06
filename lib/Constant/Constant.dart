@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 // ignore: non_constant_identifier_names
 // String globalBaseUrl = "http://101.50.0.89/";
-String globalBaseUrl = "http://10.60.100.178:8000/";
+String globalBaseUrl = "http://101.50.0.89/";
 
 String globalPathAuth = "api/auth/";
 

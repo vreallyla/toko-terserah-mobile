@@ -4,6 +4,7 @@ import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart'
 import 'package:best_flutter_ui_templates/design_course/popular_course_list_view.dart';
 import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'design_course_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/hotel_booking/range_slider_view.dart';
@@ -51,12 +52,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   Future getData() async {
     try {
-      var param = jsonEncode({
-      "limit": _limit.toString()
-    });
+      var param = jsonEncode({"limit": _limit.toString()});
 
       http.Response item = await http.post(globalBaseUrl + 'api/search',
-        body: param,
+          body: param,
           headers: {
             "Accept": "application/json",
             'Content-type': 'application/json'
@@ -142,7 +141,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     setState(() {
       _limit = _limit + 10;
     });
-    
+
     getData();
     log("message : data Successfuly Loaded");
 
@@ -197,39 +196,45 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         ),
       ],
     );
-    return Container(
-      color: DesignCourseAppTheme.nearlyWhite,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: PreferredSize(
-            preferredSize: Size.fromHeight(40), child: HeaderPage()),
-        body: Column(
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).padding.top / 90,
-            ),
-            // getAppBarUI(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: <Widget>[
-                      //  getSearchBarUI(),
-                      getCategoryUI(),
 
-                      listcriteria,
+    return new GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Container(
+        color: DesignCourseAppTheme.nearlyWhite,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: PreferredSize(
+              preferredSize: Size.fromHeight(60), child: HeaderPage()),
+          body: Column(
+            children: <Widget>[
+              // getAppBarUI(),
+              // Expanded(
+              //   child: SingleChildScrollView(
+              //     child: Container(
+              //       height: MediaQuery.of(context).size.height,
+              //       child: Column(
+              //         children: <Widget>[
+              //           //  getSearchBarUI(),
+              //           getCategoryUI(),
 
-                      //  priceBarFilter(),
-                      Flexible(
-                        child: getPopularCourseUI(),
-                      ),
-                    ],
-                  ),
-                ),
+              //           // listcriteria,
+
+              //           //  priceBarFilter(),
+              //           Flexible(
+              //             child: getPopularCourseUI(),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              Flexible(
+                child: getPopularCourseUI(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -305,53 +310,59 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
   Widget getCategoryUI() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.only(top: 1.0, left: 18, right: 16),
-          // child: Text(
-          //   'Kategori dan Jenis Produk',
-          //   textAlign: TextAlign.left,
-          //   style: TextStyle(
-          //     fontWeight: FontWeight.w600,
-          //     fontSize: 22,
-          //     letterSpacing: 0.27,
-          //     color: DesignCourseAppTheme.darkerText,
+    return Container(
+      // color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(top: 1.0, left: 18, right: 16),
+            // child: Text(
+            //   'Kategori dan Jenis Produk',
+            //   textAlign: TextAlign.left,
+            //   style: TextStyle(
+            //     fontWeight: FontWeight.w600,
+            //     fontSize: 22,
+            //     letterSpacing: 0.27,
+            //     color: DesignCourseAppTheme.darkerText,
+            //   ),
+            // ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 16, right: 16),
+          //   child: Row(
+          //     children: <Widget>[
+          //       getButtonUI(CategoryType.ui, categoryType == CategoryType.ui),
+          //       const SizedBox(
+          //         width: 16,
+          //       ),
+          //       getButtonUI(
+          //           CategoryType.coding, categoryType == CategoryType.coding),
+          //       const SizedBox(
+          //         width: 16,
+          //       ),
+          //       getButtonUI(
+          //           CategoryType.basic, categoryType == CategoryType.basic),
+          //     ],
           //   ),
           // ),
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16),
-          child: Row(
-            children: <Widget>[
-              getButtonUI(CategoryType.ui, categoryType == CategoryType.ui),
-              const SizedBox(
-                width: 16,
-              ),
-              getButtonUI(
-                  CategoryType.coding, categoryType == CategoryType.coding),
-              const SizedBox(
-                width: 16,
-              ),
-              getButtonUI(
-                  CategoryType.basic, categoryType == CategoryType.basic),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        // CategoryListView(
-        //   callBack: () {
-        //     moveTo();
-        //   },
-        // ),
-      ],
+
+          // const SizedBox(
+          //   height: 16,
+          // ),
+
+          // CategoryListView(
+          //   callBack: () {
+          //     moveTo();
+          //   },
+          // ),
+        ],
+      ),
     );
   }
 
@@ -360,16 +371,19 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
  * 
  */
   Widget getPopularCourseUI() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            child: gridProduk(),
-          )
-        ],
+    return Container(
+      color: Colors.grey.withOpacity(.2),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 0, left: 18, right: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Flexible(
+              child: gridProduk(),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -422,145 +436,186 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 2),
-       child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: true,
-              header: WaterDropHeader(),
-              footer: CustomFooter(
-                builder: (BuildContext context, LoadStatus mode) {
-                  Widget body;
-                  if (mode == LoadStatus.idle) {
-                    body = Text("pull up load");
-                  } else if (mode == LoadStatus.loading) {
-                    body = Text('TUnggu');
-                  } else if (mode == LoadStatus.failed) {
-                    body = Text("Load Failed!Click retry!");
-                  } else if (mode == LoadStatus.canLoading) {
-                    body = Text("release to load more");
-                  } else {
-                    body = Text("No more Data");
-                  }
-                  return Container(
-                    height: 55.0,
-                    child: Center(child: body),
-                  );
-                },
-              ),
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              child: ListView.builder(
-                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.all(5),
-                shrinkWrap: true,
-                itemCount: dataJson == null ? 0 : dataJson.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, i) {
-                  return new SizedBox(
-                    
-                    width: sizeu.width / 3,
-                    child: Stack(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 1, left: 1, right: 5, bottom: 1),
-                          child: InkWell(
-                            onTap: () {
-                              // Navigate to the second screen using a named route.
-                              Navigator.pushNamed(context, '/produk');
-                            },
-                            child: Column(
-                              children: [
-                                //rubah gambar
-                                Container(
-                                  height: sizeu.width / 2,
-                                  decoration: new BoxDecoration(
-                                    image: new DecorationImage(
-                                      image: NetworkImage(dataJson[i]["image_path"] ?? 'https://via.placeholder.com/300'),
-                                      fit: BoxFit.cover
-                                    ),
-                                    color: Colors.grey,
-                                    borderRadius: const BorderRadius.only(
-                                      bottomRight: Radius.circular(0),
-                                      bottomLeft: Radius.circular(0),
-                                      topLeft: Radius.circular(8.0),
-                                      topRight: Radius.circular(8.0),
-                                    ),
+      child: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: WaterDropHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context, LoadStatus mode) {
+            Widget body;
+            if (mode == LoadStatus.idle) {
+              body = Text("pull up load");
+            } else if (mode == LoadStatus.loading) {
+              body = Text('TUnggu');
+            } else if (mode == LoadStatus.failed) {
+              body = Text("Load Failed!Click retry!");
+            } else if (mode == LoadStatus.canLoading) {
+              body = Text("release to load more");
+            } else {
+              body = Text("No more Data");
+            }
+            return Container(
+              height: 55.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.all(5),
+          shrinkWrap: true,
+          itemCount: dataJson == null ? 0 : dataJson.length,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, i) {
+            return new SizedBox(
+              width: sizeu.width / 3,
+              child: Stack(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 5, left: 1, right: 5, bottom: 5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          // Navigate to the second screen using a named route.
+                          Navigator.pushNamed(context, '/produk');
+                        },
+                        child: Container(
+                          child: Column(
+                            children: [
+                              //rubah gambar
+                              Container(
+                                height: sizeu.width / 2,
+                                decoration: new BoxDecoration(
+                                  image: new DecorationImage(
+                                      image: NetworkImage(dataJson[i]
+                                              ["image_path"] ??
+                                          'https://via.placeholder.com/300'),
+                                      fit: BoxFit.cover),
+                                  color: Colors.grey,
+                                  borderRadius: const BorderRadius.only(
+                                    bottomRight: Radius.circular(0),
+                                    bottomLeft: Radius.circular(0),
+                                    topLeft: Radius.circular(8.0),
+                                    topRight: Radius.circular(8.0),
                                   ),
                                 ),
+                              ),
 
-                                //konten
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(0),
-                                      bottomRight: Radius.circular(8.0),
-                                      bottomLeft: Radius.circular(8.0),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        alignment: Alignment.topLeft,
-                                        child: RichText(
-                                          overflow: TextOverflow.ellipsis,
-                                          strutStyle:
-                                              StrutStyle(fontSize: 12.0),
-                                          text: TextSpan(
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                              text:
-                                                  '${dataJson[i]["nama"]}' ?? '-'),
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.only(top: 5),
-                                        alignment: Alignment.topLeft,
-                                        child: Text( 'Rp '+
-                                          formatter.format( int.parse(dataJson[i]["harga"]??'0')),
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold),
-                                          maxLines: 2,
-                                        ),
-                                      ),
-                                      starJadi(3.5, '1.000'),
-                                    ],
+                              //konten
+                              Container(
+                                // padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
+                                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                height: 110,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(0),
+                                    topRight: Radius.circular(0),
+                                    bottomRight: Radius.circular(8.0),
+                                    bottomLeft: Radius.circular(8.0),
                                   ),
                                 ),
-                              ],
-                            ),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.topLeft,
+                                      child: RichText(
+                                        overflow: TextOverflow.ellipsis,
+                                        strutStyle: StrutStyle(fontSize: 12.0),
+                                        text: TextSpan(
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                            text: '${dataJson[i]["nama"]}' ??
+                                                '-'),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.only(top: 5),
+                                      alignment: Alignment.topLeft,
+                                      child: Text(
+                                        'Rp' +
+                                            formatter.format(int.parse(
+                                                dataJson[i]["harga"] ?? '0')),
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Card(
+                                          color: Colors.red[100],
+                                          child: Container(
+                                              margin: EdgeInsets.all(3),
+                                              child: Text(
+                                                '-10%',
+                                                style: TextStyle(
+                                                  color: Colors.red[800],
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 9,
+                                                ),
+                                              )),
+                                        ),
+                                        Text(
+                                          'Rp50.000,00',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              decoration:
+                                                  TextDecoration.lineThrough),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                      ],
+                                    ),
+                                    starJadi(3.5, '1.000'),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 5, right: 5, bottom: 16),
-                          alignment: Alignment.topLeft,
-                          child: Card(
-                            color: Colors.green[100],
-                            child: Container(
-                                margin: EdgeInsets.all(3),
-                                child: Text(
-                                  'Grosir',
-                                  style: TextStyle(
-                                    color: Colors.green[800],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                )),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  );  },
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                        top: 15, left: 10, right: 5, bottom: 16),
+                    alignment: Alignment.topLeft,
+                    child: Card(
+                      color: Colors.green[100],
+                      child: Container(
+                          margin: EdgeInsets.all(3),
+                          child: Text(
+                            'Grosir',
+                            style: TextStyle(
+                              color: Colors.green[800],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          )),
+                    ),
+                  ),
+                ],
               ),
-            ),
-    
-       );
+            );
+          },
+        ),
+      ),
+    );
   }
 
   void moveTo() {
@@ -750,8 +805,11 @@ class HeaderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     double topBarOpacity = 0.0;
     TextEditingController editingController = TextEditingController();
+    var sizeu = MediaQuery.of(context).size;
 
     return Container(
+      padding: EdgeInsets.only(top: 30),
+      height: 110,
       decoration: BoxDecoration(
         color: FintnessAppTheme.white.withOpacity(topBarOpacity),
         borderRadius: const BorderRadius.only(
@@ -765,56 +823,46 @@ class HeaderPage extends StatelessWidget {
               blurRadius: 10.0),
         ],
       ),
-      child: Column(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           SizedBox(
-            height: MediaQuery.of(context).padding.top,
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 12, right: 16, top: 0, bottom: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 40,
-                  width: 280,
-                  child: TextField(
-                    onChanged: (value) {},
-                    controller: editingController,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        labelText: "Cari Produk",
-                        labelStyle: TextStyle(color: Colors.grey),
-                        hintText: "Cari Produk",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        contentPadding: const EdgeInsets.all(1.0),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25.0))),
-                        border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 5.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25.0)))),
-                  ),
-                ),
-                //),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 1,
-                  ),
-                ),
-              ],
+            width: 40,
+            height: 40,
+            child: IconButton(
+              color: Colors.blueGrey,
+              icon: FaIcon(FontAwesomeIcons.ellipsisV),
+              tooltip: 'Increase volume by 10',
+              onPressed: () {},
             ),
-          )
+          ),
+          SizedBox(
+            height: 40,
+            width: sizeu.width - 48 - 10,
+            child: TextField(
+              onChanged: (value) {},
+              controller: editingController,
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  labelText: "Cari Produk",
+                  labelStyle: TextStyle(color: Colors.grey),
+                  hintText: "Cari Produk",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  contentPadding: const EdgeInsets.all(1.0),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.grey,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey, width: 5.0),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)))),
+            ),
+          ),
         ],
       ),
     );
