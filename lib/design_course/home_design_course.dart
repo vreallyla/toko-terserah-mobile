@@ -117,6 +117,18 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   ListView listcriteria;
 
+  //kategori produk
+  String _gendeRadioButton = "semua"; //Initial definition of radio button value
+
+  void radioButtonChanges(String value) {
+    setState(() {
+      setState(() {
+        _gendeRadioButton = value;
+      });
+      debugPrint(_gendeRadioButton); //Debug the choice in console
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -159,6 +171,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var sizeu = MediaQuery.of(context).size;
+
 //    const test = 'a';
     items = <NewItem>[
       new NewItem(
@@ -215,17 +229,249 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         child: Scaffold(
           key: _scaffoldKey,
           endDrawer: Drawer(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text('This is the Drawer'),
-                  ElevatedButton(
-                    onPressed: _closeEndDrawer,
-                    child: const Text('Close Drawer'),
+            child: Stack(
+              children: <Widget>[
+                //header
+                Container(
+                  alignment: Alignment.bottomLeft,
+                  padding: EdgeInsets.only(left: 10, bottom: 10),
+                  height: 70,
+                  color: Colors.blueGrey.withOpacity(.2),
+                  width: sizeu.width,
+                  child: Text(
+                    'Filter',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   ),
-                ],
-              ),
+                ),
+                //body
+                Container(
+                  margin: EdgeInsets.only(top: 70, bottom: 130),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  color: Colors.white,
+                  child: ListView(children: <Widget>[
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              'Kategori Produk',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            width: 40,
+                            margin: EdgeInsets.only(top: 5, bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.blueGrey.withOpacity(0.2),
+                              border: Border(
+                                top: BorderSide(width: 2, color: Colors.green),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(top:5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _gendeRadioButton = 'semua';
+                                      });
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(8),
+                                      margin: EdgeInsets.only(right: 5),
+                                      // width: sizeu.width-(sizeu.width/5)-21,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black54,
+                                        ),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: Radio(
+                                              activeColor: Colors.green,
+                                              value: 'semua',
+                                              groupValue: _gendeRadioButton,
+                                              onChanged: radioButtonChanges,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(left: 6),
+                                            child: Text(
+                                              "Semua",
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _gendeRadioButton = 'grosir';
+                                      });
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(8),
+                                      margin: EdgeInsets.only(right: 5),
+                                      // width: sizeu.width-(sizeu.width/5)-21,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black54,
+                                        ),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: Radio(
+                                              activeColor: Colors.green,
+                                              value: 'grosir',
+                                              groupValue: _gendeRadioButton,
+                                              onChanged: radioButtonChanges,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(left: 6),
+                                            child: Text(
+                                              "Grosir",
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _gendeRadioButton = 'retail';
+                                      });
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(8),
+                                      margin: EdgeInsets.only(right: 5),
+                                      // width: sizeu.width-(sizeu.width/5)-21,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black54,
+                                        ),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: Radio(
+                                              activeColor: Colors.green,
+                                              value: 'retail',
+                                              groupValue: _gendeRadioButton,
+                                              onChanged: radioButtonChanges,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(left: 6),
+                                            child: Text(
+                                              "Retail",
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+                //footer
+                Container(
+                  margin: EdgeInsets.only(top: sizeu.height - 150),
+                  padding: EdgeInsets.only(top: 15, right: 20),
+                  // alignment: Alignment.topRight,
+                  height: 140,
+                  width: sizeu.width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                          height: 30,
+                          child: RaisedButton(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                side: BorderSide(color: Colors.green)),
+                            child: Text(
+                              'RESET',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.green),
+                            ),
+                            onPressed: () {},
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(left: 10),
+                          height: 30,
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4.0),
+                              // side: BorderSide(color: Colors.green)
+                            ),
+                            color: Colors.green,
+                            child: Text(
+                              'SET',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.white),
+                            ),
+                            onPressed: () {},
+                          ))
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey.withOpacity(.2),
+                    border: Border(
+                      top: BorderSide(
+                          width: .5, color: Colors.blueGrey.withOpacity(.2)),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           backgroundColor: Colors.transparent,
@@ -265,9 +511,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
   Widget headerSection() {
-     double topBarOpacity = 0.0;
+    double topBarOpacity = 0.0;
     var sizeu = MediaQuery.of(context).size;
-     return Container(
+    return Container(
       padding: EdgeInsets.only(top: 30),
       height: 110,
       decoration: BoxDecoration(
