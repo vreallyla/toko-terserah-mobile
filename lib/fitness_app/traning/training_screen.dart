@@ -389,6 +389,8 @@ class _TrainingScreenState extends State<TrainingScreen>
     }
   }
 
+
+
   void addAllListData() {
     setState(() {
       listViews.clear();
@@ -442,9 +444,9 @@ class _TrainingScreenState extends State<TrainingScreen>
                       },
                       color: Colors.white,
                       child: Text(
-                        'Masuk',
+                        'MASUK',
                         style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: Colors.green),
                       ),
@@ -461,9 +463,9 @@ class _TrainingScreenState extends State<TrainingScreen>
                       },
                       color: Colors.green,
                       child: Text(
-                        'Daftar',
+                        'DAFTAR',
                         style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 17,
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
                       ),

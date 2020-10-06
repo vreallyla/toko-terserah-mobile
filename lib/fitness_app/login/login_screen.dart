@@ -14,9 +14,15 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
+  
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
+    // final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    // var arguments=ModalRoute.of(context).settings.arguments;
+
+    // if (arguments != null) print(arguments);
 
     return new Scaffold(
       appBar: AppBar(

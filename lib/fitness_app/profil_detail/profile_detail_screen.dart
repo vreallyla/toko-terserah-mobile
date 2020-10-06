@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:expandable/expandable.dart';
 import 'package:icon_shadow/icon_shadow.dart';
+import 'package:intl/intl.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   @override
@@ -13,11 +14,56 @@ enum SingingCharacter { lafayette, jefferson }
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   SingingCharacter _character = SingingCharacter.lafayette;
   Container inputForm(context) {
-    // final sizeu = MediaQuery.of(context).size;
-    
+    final sizeu = MediaQuery.of(context).size;
+    String _gendeRadioButton; //Initial definition of radio button value
+    String msgJenisKelamin;
+    final myformat = DateFormat("yyyy-MM-dd");
+    DateTime selectedDate = DateTime.now();
+    TextEditingController tglLahirInput = new TextEditingController();
+    String msgTL;
+
+    Future<Null> selectDate(BuildContext context) async {
+      final DateTime picked = await showDatePicker(
+          context: context,
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.green,
+                  onPrimary: Colors.white,
+                  surface: Colors.green[100],
+                  onSurface: Colors.black,
+                ),
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: child,
+            );
+          },
+          initialDate: selectedDate,
+          firstDate: DateTime(2015, 8),
+          lastDate: DateTime(2101));
+      if (picked != null && picked != selectedDate)
+        setState(() {
+          selectedDate = picked;
+          tglLahirInput.text = myformat.format(selectedDate);
+        });
+    }
+
+    TextEditingController no_telp = new TextEditingController();
+    String msgNoTelp;
+
+    void radioButtonChanges(String value) {
+      setState(() {
+        setState(() {
+          _gendeRadioButton = value;
+        });
+        debugPrint(_gendeRadioButton); //Debug the choice in console
+      });
+    }
 
     return Container(
-      padding: EdgeInsets.only(left: 15, right: 15),
+      padding: EdgeInsets.all(20),
+      color: Colors.white,
       child: Column(
         children: [
           Container(
@@ -45,57 +91,225 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               ),
             ),
           ),
+          //gender
           Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Tanggal Lahir',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            // width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              textAlign: TextAlign.left,
-              onChanged: (text) => {},
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top: 10),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Jenis Kelamin',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _gendeRadioButton = 'pria';
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(right: 5),
+                        width: (sizeu.width - 50) / 3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Radio(
+                                activeColor: Colors.green,
+                                value: 'pria',
+                                groupValue: _gendeRadioButton,
+                                onChanged: radioButtonChanges,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "Pria",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _gendeRadioButton = 'wanita';
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(right: 5),
+                        width: (sizeu.width - 50) / 3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Radio(
+                                activeColor: Colors.green,
+                                value: 'wanita',
+                                groupValue: _gendeRadioButton,
+                                onChanged: radioButtonChanges,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "Wanita",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _gendeRadioButton = 'lainnya';
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(8),
+                        // margin: EdgeInsets.only(right:5),
+                        width: (sizeu.width - 50) / 3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Radio(
+                                activeColor: Colors.green,
+                                value: 'lainnya',
+                                groupValue: _gendeRadioButton,
+                                onChanged: radioButtonChanges,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "Lainnya",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Tanggal Lahir',
-              ),
+                //message jenis kelamin
+                hintMsg(msgJenisKelamin),
+              ],
             ),
           ),
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Jenis Kelamin',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          Container(
-              // width: sizeu.width - sizeu.width / 5,
 
-              child: Row(
-            children: <Widget>[
-              ListTile(
-                title: const Text('Lafayette'),
-                leading: Radio(
-                  value: SingingCharacter.lafayette,
-                  groupValue: _character,
-                  onChanged: (SingingCharacter value) {
-                    setState(() {
-                      _character = value;
-                    });
-                  },
+          // tanggal lahir
+          Container(
+            width: sizeu.width,
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top:10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Tanggal Lahir',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: InkWell(
+                    onTap: () {
+                      selectDate(
+                          context); // Call Function that has showDatePicker()
+                    },
+                    child: IgnorePointer(
+                      child: SizedBox(
+                        width: sizeu.width - 30,
+                        height: 40,
+                        child: TextFormField(
+                          controller: tglLahirInput,
+                          decoration:
+                              defaultInput('Pilih Tanggal Lahir', false),
+                          onSaved: (String val) {},
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              
-            ],
-          )),
+                //message ttl
+                hintMsg(msgTL),
+              ],
+            ),
+          ),
+
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 20, 15, 5),
+            padding: EdgeInsets.only(top: 10),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('No. Telp',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: TextField(
+                      // enabled: false,
+                      textAlign: TextAlign.left,
+                      controller: no_telp,
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                      onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                      decoration: defaultInput('Masukkan No. Telp', false)),
+                ),
+                hintMsg(msgNoTelp),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -115,7 +329,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             ),
             Container(
               //My container or any other widget
-              color: Colors.white,
+              color: Colors.grey.withOpacity(0.2),
 
               child: ListView(children: <Widget>[
                 AtasGambar(),
@@ -193,10 +407,11 @@ class AtasGambar extends StatelessWidget {
           Stack(
             children: [
               Container(
-                width: 120,
-                height: 120,
-                margin: EdgeInsets.only(
-                    top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                width: 100,
+                height: 100,
+                // margin: EdgeInsets.only(
+                //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.green[200],
@@ -211,10 +426,11 @@ class AtasGambar extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 120,
-                height: 120,
-                margin: EdgeInsets.only(
-                    top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                width: 100,
+                height: 100,
+                // margin: EdgeInsets.only(
+                //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.transparent,
@@ -234,13 +450,14 @@ class AtasGambar extends StatelessWidget {
                         ])),
                 child: Container(
                   height: 30,
-                  margin: EdgeInsets.only(top: 80, bottom: 10),
+                  // margin: EdgeInsets.only(top: 80, bottom: 10),
+                  margin: EdgeInsets.only(top: 60),
                   alignment: Alignment.center,
                   // color: Colors.red,
-                  child: Text('Ubah Photo',
+                  child: Text('SUNTING',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       )),
                   // decoration: BoxDecoration(color: Colors.red),
@@ -252,6 +469,37 @@ class AtasGambar extends StatelessWidget {
       ),
     );
   }
+}
+
+InputDecoration defaultInput(String hint, bool dis) {
+  return new InputDecoration(
+    contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black54, width: 1),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black38, width: 1),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black38, width: 1),
+    ),
+    hintText: hint,
+    fillColor: dis ? Colors.grey.withOpacity(.2) : Colors.white,
+    filled: true,
+  );
+}
+
+Container hintMsg(String msg) {
+  return Container(
+    padding: EdgeInsets.only(top: 4),
+    child: Text(
+      (msg != null ? msg : ''),
+      style: TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.w500,
+          fontSize: (msg != null ? 13 : 0)),
+    ),
+  );
 }
 
 BoxDecoration borderTop() {

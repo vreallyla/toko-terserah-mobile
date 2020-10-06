@@ -41,6 +41,7 @@ class RegisterModel {
     String name,
     String email,
     String password,
+    String usernames,
     String gender,
     String dob,
   ) async {
@@ -51,7 +52,7 @@ class RegisterModel {
       String passwordConf = password;
       String username;
 
-      if (name.length > 0) {
+      if (name.length > 0 && usernames.length < 1) {
         var inSpace = name.split(' ');
         username = inSpace[0];
 
@@ -64,49 +65,49 @@ class RegisterModel {
         username = username +
             '_' +
             DateFormat('ddMM').format(DateTime.parse(dob)).toString();
+      }else{
+        username=usernames;
       }
-      var apiResult = await http.post(apiURL, body: jsonEncode({
-        "name": name,
-        "email": email,
-        "username": username,
-        "dob": dob,
-        "gender": gender,
-        "password": password,
-        'password_confirmation': passwordConf,
-      }), headers: {
-        "Accept": "application/json",
-        'Content-type': 'application/json'
-        // "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
-      });
-      
+      var apiResult = await http.post(apiURL,
+          body: jsonEncode({
+            "name": name,
+            "email": email,
+            "username": username,
+            "dob": dob,
+            "gender": gender,
+            "password": password,
+            'password_confirmation': passwordConf,
+          }),
+          headers: {
+            "Accept": "application/json",
+            'Content-type': 'application/json'
+            // "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+          });
 
       print('register status code : ' + apiResult.statusCode.toString());
       final ress = json.decode(apiResult.body);
       // print(ress);
 
-     
-
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
-      
-        
         await setToken(ress['verifyToken']);
 
         return RegisterModel(
           error: false,
           data: msgSuccess['MSG_REGISTER'].toString(),
         );
-
       } else if (apiResult.statusCode == 400) {
         // print(ress['data']);
         return RegisterModel(
           error: true,
-          // data: json.encode(ress['data']),
-          data: jsonEncode({"message":json.encode({"password":msgFail['MSG_WRONG']})}),
+          data: json.encode(ress['data']),
+          // data: jsonEncode({"message":json.encode({"password":msgFail['MSG_WRONG']})}),
         );
       } else {
         return RegisterModel(
           error: true,
-          data: jsonEncode({"message":{"password":msgFail['MSG_WRONG']}}),
+          data: jsonEncode({
+            "message": json.encode({"password": msgFail['MSG_WRONG']})
+          }),
         );
       }
     } catch (e) {
