@@ -45,6 +45,8 @@ class _ProfilCardViewState extends State<ProfilCardView>
       var dataUserDefault = dataUser['user'];
       nama = dataUserDefault['name'];
       ava = dataUserDefault['get_bio']['ava'];
+      // print(dataUserDefault['get_bio']);
+      // print('asd');
       bgPhoto = dataUserDefault['get_bio']['background'];
       tglDaftar = DateTime.parse(dataUserDefault['created_at']);
       tglUpdate = DateTime.parse(dataUserDefault['updated_at']);

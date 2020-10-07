@@ -341,64 +341,58 @@ class _FormRegisterState extends State<FormRegister> {
                 ),
                 onPressed: () {
                   isLoading = false;
-                  emailInput.text = 'vreallyla@gmail.com';
+                  // emailInput.text = 'vreallyla@gmail.com';
                   seePass = FaIcon(FontAwesomeIcons.eye);
                   occuText = true;
                   setState(() {});
-                  Navigator.of(context).pushReplacementNamed('/login', arguments: {'after_regist': true});
 
-                  
-                  // RegisterModel.register(
-                  //           namaInput.text,
-                  //           emailInput.text,
-                  //           passwordInput.text,
-                  //           usernameInput.text,
-                  //           '',
-                  //           ''
-                  //           // _gendeRadioButton,
-                  //           // tglLahirInput.text
-                  //           )
-                  //       .then((value) {
-                  //     isLoading = false;
+                  RegisterModel.register(namaInput.text, emailInput.text,
+                          passwordInput.text, usernameInput.text, '', ''
+                          // _gendeRadioButton,
+                          // tglLahirInput.text
+                          )
+                      .then((value) {
+                    isLoading = false;
 
-                  //     if (value.error) {
-                  //       // var colError=jsonDecode(value.data)['message'];
+                    if (value.error) {
+                      // var colError=jsonDecode(value.data)['message'];
 
-                  //       // print(jsonDecode(jsonDecode(value.data)['message']).toString());
-                  //       msgNama = jsonDecode(
-                  //               jsonDecode(value.data)['message'])['name']
-                  //           .toString();
-                  //            msgusername = jsonDecode(
-                  //               jsonDecode(value.data)['message'])['username']
-                  //           .toString();
-                  //       // msgJenisKelamin = jsonDecode(
-                  //       //         jsonDecode(value.data)['message'])['gender']
-                  //       //     .toString();
-                  //       // msgTL =
-                  //       //     jsonDecode(jsonDecode(value.data)['message'])['dob']
-                  //       //         .toString();
-                  //       messageEmail = jsonDecode(
-                  //               jsonDecode(value.data)['message'])['email']
-                  //           .toString();
-                  //       msgPass = jsonDecode(
-                  //               jsonDecode(value.data)['message'])['password']
-                  //           .toString();
+                      // print(jsonDecode(jsonDecode(value.data)['message']).toString());
+                      msgNama =
+                          jsonDecode(jsonDecode(value.data)['message'])['name']
+                              .toString();
+                      msgusername = jsonDecode(
+                              jsonDecode(value.data)['message'])['username']
+                          .toString();
+                      // msgJenisKelamin = jsonDecode(
+                      //         jsonDecode(value.data)['message'])['gender']
+                      //     .toString();
+                      // msgTL =
+                      //     jsonDecode(jsonDecode(value.data)['message'])['dob']
+                      //         .toString();
+                      messageEmail =
+                          jsonDecode(jsonDecode(value.data)['message'])['email']
+                              .toString();
+                      msgPass = jsonDecode(
+                              jsonDecode(value.data)['message'])['password']
+                          .toString();
 
-                  //       msgNama = msgNama == 'null' ? null : msgNama;
-                  //       msgusername = msgNama == 'null' ? null : msgusername;
-                  //       messageEmail =
-                  //           messageEmail == 'null' ? null : messageEmail;
-                  //       // msgJenisKelamin =
-                  //       //     msgJenisKelamin == 'null' ? null : msgJenisKelamin;
-                  //       // msgTL = msgTL == 'null' ? null : msgTL;
-                  //       msgPass = msgPass == 'null' ? null : msgPass;
+                      msgNama = msgNama == 'null' ? null : msgNama;
+                      msgusername = msgNama == 'null' ? null : msgusername;
+                      messageEmail =
+                          messageEmail == 'null' ? null : messageEmail;
+                      // msgJenisKelamin =
+                      //     msgJenisKelamin == 'null' ? null : msgJenisKelamin;
+                      // msgTL = msgTL == 'null' ? null : msgTL;
+                      msgPass = msgPass == 'null' ? null : msgPass;
 
-                  //       setState(() {});
-                  //     } else {
-                  //       Navigator.pop(context, jsonEncode({"load": true,"daftar":true}));
-                  //     }
-                  //   });
-                  //   setState(() {});
+                      setState(() {});
+                    } else {
+                      Navigator.of(context).pushReplacementNamed('/login',
+                          arguments: {'after_regist': true});
+                    }
+                  });
+                  setState(() {});
                 },
                 color: Colors.green,
                 child: (isLoading
