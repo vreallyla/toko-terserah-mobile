@@ -56,6 +56,12 @@ class _BottomBarViewState extends State<BottomBarView>
 
   @override
   Widget build(BuildContext context) {
+  final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    // var arguments=ModalRoute.of(context).settings.arguments;
+
+    if (arguments != null) print(arguments['after_login']);
+
+
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: <Widget>[

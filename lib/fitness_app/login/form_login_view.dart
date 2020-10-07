@@ -114,7 +114,9 @@ class _FormLoginViewState extends State<FormLoginView> {
                       .then((value) {
                     // emailInput.text = value.error.toString();
                     if(!value.error){
-                      Navigator.pop(context,jsonEncode({"load":true}));
+                      // Navigator.pop(context,jsonEncode({"load":true}));
+                      Navigator.of(context)
+    .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false,arguments: {"after_login":true});
                       
                     }else{
                       loginModel = value;

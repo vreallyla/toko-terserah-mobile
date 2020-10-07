@@ -79,7 +79,7 @@ class LoginModel {
       } else {
         return LoginModel(
           error: true,
-          data: msgFail['MSG_WRONG'],
+          data: 'Email atau password salah...',
         );
       }
     } catch (e) {

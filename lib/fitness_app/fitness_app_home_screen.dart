@@ -16,6 +16,8 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
+  
+
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
 
   Widget tabBody = Container(
@@ -43,6 +45,10 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+
+   
+  
+
     return Container(
       color: FintnessAppTheme.background,
       child: Scaffold(
