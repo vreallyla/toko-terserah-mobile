@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart';
 import 'package:best_flutter_ui_templates/design_course/popular_course_list_view.dart';
 import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'design_course_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
@@ -16,8 +18,6 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 
-import 'package:searchable_dropdown/searchable_dropdown.dart';
-
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
   _DesignCourseHomeScreenState createState() => _DesignCourseHomeScreenState();
@@ -29,18 +29,6 @@ class NewItem {
   Widget body;
   Icon iconpic;
   NewItem(this.isExpanded, this.header, this.body, this.iconpic);
-}
-
-class VagasDisponivei {
-  String v_n;
-  String v_id;
-
-  VagasDisponivei({this.v_n, this.v_id});
-
-  @override
-  String toString() {
-    return '${v_n} ${v_id}';
-  }
 }
 
 class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
@@ -57,17 +45,6 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   int _limit = 10;
-
-  //select picker
-  int _counter = 0;
-  List<VagasDisponivei> _vagasDisponiveis;
-  String vaga_name;
-  List<int> selectedItems = [];
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   final formatter = new NumberFormat("#,###");
 
@@ -143,15 +120,67 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   ListView listcriteria;
 
-  //kategori produk
-  String _gendeRadioButton = "semua"; //Initial definition of radio button value
+  //cari kategori produk
+  TextEditingController cariKatagoriInput = new TextEditingController();
+  var focusCariKategori = new FocusNode();
+  //checkbox components
+  bool checkBoxValue = false;
+
+  //jenis produk
+  String _jenisProdukRadioButton =
+      "semua"; //Initial definition of radio button value
+
+  //variable kategori
+  List dataKategori = [];
+  List widgetContainerKategori = <Widget>[];
+  List collectKategori = [];
+  Map<int, bool> valueKategori = {};
+  bool isKategori = false;
+
+  //variable range harga
+  TextEditingController minHargaInput = new TextEditingController();
+  TextEditingController maxHargaInput = new TextEditingController();
+  RangeValues _currentRangeValues = RangeValues(500, 600);
+
+  void setKatagoriListAll(context) {
+    collectKategori = [];
+    widgetContainerKategori = <Widget>[];
+    dataKategori.asMap().forEach((iKategori, value) {
+      // widgetContainerKategori=[];
+      collectKategori.add(<Widget>[]);
+      collectKategori[iKategori]
+          .add(textKategoriProduk(value['nama_kategori']));
+
+      value['data'].asMap().forEach((iData, value2) {
+        valueKategori[value2['id']] = true;
+        print(value2['id']);
+        collectKategori[iKategori].add(kategoriProdukCheckBox(
+            value2['nama'], context.size, iKategori, iData, value2['id']));
+      });
+      print(collectKategori);
+
+      widgetContainerKategori.add(
+        Container(
+          padding: EdgeInsets.only(bottom: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: collectKategori[iKategori],
+          ),
+        ),
+      );
+    });
+  }
+
+  checkBorderChanges(value) {
+    return _jenisProdukRadioButton == value ? Colors.green : Colors.black26;
+  }
 
   void radioButtonChanges(String value) {
     setState(() {
       setState(() {
-        _gendeRadioButton = value;
+        _jenisProdukRadioButton = value;
       });
-      debugPrint(_gendeRadioButton); //Debug the choice in console
+      debugPrint(_jenisProdukRadioButton); //Debug the choice in console
     });
   }
 
@@ -159,13 +188,243 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _vagasDisponiveis = [
-      VagasDisponivei(v_id: "1", v_n: "abc"),
-      VagasDisponivei(v_id: "2", v_n: "def"),
-      VagasDisponivei(v_id: "3", v_n: "dgg"),
-    ];
+
+    //set value kategori
+    dataKategori.add({
+      'nama_kategori': 'Aksesoris Hewan Peliharaan',
+      "data": [
+        {"id": 3, "nama": "Kandang dan Aksesoris", "checked": false},
+        {"id": 4, "nama": "Kebutuhan Akuarium", "checked": false},
+        {"id": 5, "nama": "Perlaratan Grooming", "checked": false}
+      ]
+    });
+
+    dataKategori.add({
+      'nama_kategori': 'Bahan & Bumbu Masak',
+      "data": [
+        {"id": 6, "nama": "Air Mineral", "checked": false},
+        {"id": 7, "nama": "Chocolate, Malt", "checked": true},
+        {"id": 8, "nama": "Jus", "checked": false}
+      ]
+    });
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      //set kategori on widget
+      setKatagoriListAll(context);
+    });
+
+    // print(dataKategori[0]['data'][0]);
+
     getData();
-    log('data: hello');
+  }
+
+  Text textKategoriProduk(value) {
+    return Text(value,
+        style: TextStyle(
+            color: Colors.green, fontSize: 12, fontWeight: FontWeight.w100));
+  }
+
+  Container kategoriProdukCheckBox(nama, sizeu, iKategori, iData, id) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(width: 1, color: Colors.blueGrey.withOpacity(.2)),
+        ),
+      ),
+      padding: EdgeInsets.only(right: 10, bottom: 10, top: 20),
+      child: Row(
+        children: [
+          SizedBox(
+              height: 20,
+              width: 20,
+              child: Checkbox(
+                activeColor: Colors.green,
+                value: valueKategori[id],
+                onChanged: (bool newValue) {
+                  print(newValue);
+                  print(valueKategori[id]);
+                  print(id);
+                  setState(() {
+                    valueKategori[id] = newValue;
+                  });
+                },
+              )),
+          InkWell(
+            onTap: () {
+              valueKategori[id] = !valueKategori[id];
+              setState(() {});
+            },
+            child: Container(
+              width: sizeu.width - sizeu.width / 5 - 16 - 20,
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
+                nama,
+                style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(.7),
+                    fontSize: 14),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //desain kategori produk
+  Widget KategoriDetail(sizeu) {
+    return Stack(
+      children: <Widget>[
+        //body
+        Container(
+          margin: EdgeInsets.only(top: 70, bottom: 150),
+          padding: EdgeInsets.only(left: 10, top: 5),
+          color: Colors.white,
+          child: ListView(
+            // daftar kategori
+            children: widgetContainerKategori,
+          ),
+        ),
+        //header
+        Container(
+          alignment: Alignment.bottomLeft,
+          padding: EdgeInsets.only(left: 10, bottom: 10),
+          height: 80,
+          decoration: BoxDecoration(
+            // border: Border(
+            //   bottom: BorderSide(
+            //       width: .4, color: Colors.blueGrey.withOpacity(.2)),
+            // ),
+            color: Colors.white,
+          ),
+          width: sizeu.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                width: sizeu.width - sizeu.width / 5 - 20,
+                padding: EdgeInsets.only(left: 5),
+                height: 30,
+                alignment: Alignment.centerLeft,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.only(
+                    bottomRight: Radius.circular(4),
+                    bottomLeft: Radius.circular(4),
+                    topLeft: Radius.circular(4.0),
+                    topRight: Radius.circular(4.0),
+                  ),
+                  color: Colors.blueGrey.withOpacity(.2),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: 20,
+                      child: Icon(
+                        Icons.search,
+                        color: Colors.blueGrey,
+                      ),
+                    ),
+                    Container(
+                      width: sizeu.width - sizeu.width / 5 - 20 - 50,
+                      padding: EdgeInsets.only(left: 7, top: 15),
+                      child: TextField(
+                        maxLength: 27,
+                        controller: cariKatagoriInput,
+                        focusNode: focusCariKategori,
+                        decoration: InputDecoration(
+                          counterText: "",
+                          hintText: "Cari Kategori...",
+                          border: InputBorder.none,
+                          hintStyle: TextStyle(color: Colors.black45),
+                        ),
+                        style:
+                            TextStyle(color: Colors.blueGrey, fontSize: 13.0),
+                        onChanged: (query) {
+                          setState(() {
+                            cariKatagoriInput.text = query;
+                          });
+                        },
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        cariKatagoriInput.text = '';
+                        setState(() {
+                          focusCariKategori.requestFocus();
+                        });
+                      },
+                      child: SizedBox(
+                        height: 15,
+                        width: 20,
+                        child: FaIcon(FontAwesomeIcons.timesCircle,
+                            color: Colors.blueGrey, size: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        //footer
+        Container(
+          margin: EdgeInsets.only(top: sizeu.height - 150),
+          padding: EdgeInsets.only(top: 15, right: 20),
+          // alignment: Alignment.topRight,
+          height: 140,
+          width: sizeu.width,
+          decoration: BoxDecoration(
+            border: Border(
+              top:
+                  BorderSide(width: .4, color: Colors.blueGrey.withOpacity(.2)),
+            ),
+            color: Colors.blueGrey.withOpacity(.2),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                  height: 30,
+                  child: RaisedButton(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        side: BorderSide(color: Colors.green)),
+                    child: Text(
+                      'RESET',
+                      style: TextStyle(fontSize: 12, color: Colors.green),
+                    ),
+                    onPressed: () {
+                      isKategori = false;
+                      setState(() {});
+                    },
+                  )),
+              Container(
+                  margin: EdgeInsets.only(left: 10),
+                  height: 30,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                      // side: BorderSide(color: Colors.green)
+                    ),
+                    color: Colors.green,
+                    child: Text(
+                      'SET',
+                      style: TextStyle(fontSize: 12, color: Colors.white),
+                    ),
+                    onPressed: () {
+                      isKategori = false;
+                      setState(() {});
+                    },
+                  ))
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   void _onRefresh() async {
@@ -193,10 +452,14 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
   void _openEndDrawer() {
+    cariKatagoriInput.text = '';
+    setState(() {});
     _scaffoldKey.currentState.openEndDrawer();
   }
 
   void _closeEndDrawer() {
+    isKategori = false;
+    setState(() {});
     Navigator.of(context).pop();
   }
 
@@ -260,334 +523,508 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         child: Scaffold(
           key: _scaffoldKey,
           endDrawer: Drawer(
-            child: Stack(
-              children: <Widget>[
-                //header
-                Container(
-                  alignment: Alignment.bottomLeft,
-                  padding: EdgeInsets.only(left: 10, bottom: 10),
-                  height: 70,
-                  color: Colors.blueGrey.withOpacity(.2),
-                  width: sizeu.width,
-                  child: Text(
-                    'Filter',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  ),
-                ),
-                //body
-                Container(
-                  margin: EdgeInsets.only(top: 70, bottom: 130),
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  color: Colors.white,
-                  child: ListView(children: <Widget>[
-                    // kategori produk
-                    Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            child: Text(
-                              'Kategori Produk',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
+              child: (isKategori
+                  ? KategoriDetail(sizeu)
+                  : Stack(
+                      children: <Widget>[
+                        //header
+                        Container(
+                          alignment: Alignment.bottomLeft,
+                          padding: EdgeInsets.only(left: 10, bottom: 10),
+                          height: 70,
+                          color: Colors.blueGrey.withOpacity(.2),
+                          width: sizeu.width,
+                          child: Text(
+                            'Filter',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w500),
                           ),
-                          Container(
-                            width: 40,
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey.withOpacity(0.2),
-                              border: Border(
-                                top: BorderSide(width: 2, color: Colors.green),
+                        ),
+                        //body
+                        Container(
+                          margin: EdgeInsets.only(top: 70, bottom: 130),
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          color: Colors.white,
+                          child: ListView(children: <Widget>[
+                            // kategori produk
+                            Container(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    child: Text(
+                                      'Kategori Produk',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 40,
+                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey.withOpacity(0.2),
+                                      border: Border(
+                                        top: BorderSide(
+                                            width: 2, color: Colors.green),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.only(top: 0),
+                                      // height: 40,
+                                      decoration: BoxDecoration(
+                                          // border: Border.all(
+                                          //   color: Colors.black26,
+                                          // ),
+                                          // borderRadius: BorderRadius.circular(4),
+                                          color:
+                                              Colors.blueGrey.withOpacity(.2)),
+                                      child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            InkWell(
+                                              onTap: () {
+                                                isKategori = true;
+                                                setKatagoriListAll(context);
+                                                setState(() {});
+                                              },
+                                              child: Container(
+                                                constraints: BoxConstraints(
+                                                    minHeight: 40,
+                                                    maxHeight: 80),
+                                                width: sizeu.width -
+                                                    sizeu.width / 5 -
+                                                    18 -
+                                                    30,
+                                                // color: Colors.black,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          10, 12, 10, 12),
+                                                  child: Text(
+                                                    'Pilih Kategori',
+                                                    style: TextStyle(
+                                                      color: Colors.blueGrey,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              alignment: Alignment.topCenter,
+                                              width: 30,
+                                              // color: Colors.black,
+                                              child: SizedBox(
+                                                height: 40,
+                                                width: 30,
+                                                child: IconButton(
+                                                  color: Colors.blueGrey,
+                                                  icon: FaIcon(
+                                                      FontAwesomeIcons.times),
+                                                  iconSize: 13,
+                                                  tooltip: 'Filter',
+                                                  onPressed: () {
+                                                    //event hapus data multiple kategori produk
+                                                  },
+                                                ),
+                                              ),
+                                            )
+                                          ]))
+                                ],
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(top: 0),
-                            child: SearchableDropdown.multiple(
-                              items: _vagasDisponiveis.map((item) {
-                                return new DropdownMenuItem<VagasDisponivei>(
-                                    child: Text(item.v_n), value: item);
-                              }).toList(),
-                              isExpanded: true,
-                              isCaseSensitiveSearch: true,
-                              searchHint: new Text(
-                                'Select ',
-                                style: new TextStyle(fontSize: 16),
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedItems = value;
-                                });
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
 
-                    //jenis produk
-                    Container(
-                      padding: EdgeInsets.only(bottom: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Container(
-                            child: Text(
-                              'Jenis Produk',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                            //jenis produk
+                            Container(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    child: Text(
+                                      'Jenis Produk',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 40,
+                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey.withOpacity(0.2),
+                                      border: Border(
+                                        top: BorderSide(
+                                            width: 2, color: Colors.green),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 5),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 1,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _jenisProdukRadioButton =
+                                                    'semua';
+                                              });
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(8),
+                                              margin: EdgeInsets.only(right: 5),
+                                              // width: sizeu.width-(sizeu.width/5)-21,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: checkBorderChanges(
+                                                      'semua'),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child: Radio(
+                                                      activeColor: Colors.green,
+                                                      value: 'semua',
+                                                      groupValue:
+                                                          _jenisProdukRadioButton,
+                                                      onChanged:
+                                                          radioButtonChanges,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 6),
+                                                    child: Text(
+                                                      "Semua",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _jenisProdukRadioButton =
+                                                    'grosir';
+                                              });
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(8),
+                                              margin: EdgeInsets.only(right: 5),
+                                              // width: sizeu.width-(sizeu.width/5)-21,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: checkBorderChanges(
+                                                      'grosir'),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child: Radio(
+                                                      activeColor: Colors.green,
+                                                      value: 'grosir',
+                                                      groupValue:
+                                                          _jenisProdukRadioButton,
+                                                      onChanged:
+                                                          radioButtonChanges,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 6),
+                                                    child: Text(
+                                                      "Grosir",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _jenisProdukRadioButton =
+                                                    'retail';
+                                              });
+                                            },
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              padding: EdgeInsets.all(8),
+                                              margin: EdgeInsets.only(right: 5),
+                                              // width: sizeu.width-(sizeu.width/5)-21,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: checkBorderChanges(
+                                                      'retail'),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child: Radio(
+                                                      activeColor: Colors.green,
+                                                      value: 'retail',
+                                                      groupValue:
+                                                          _jenisProdukRadioButton,
+                                                      onChanged:
+                                                          radioButtonChanges,
+                                                    ),
+                                                  ),
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 6),
+                                                    child: Text(
+                                                      "Retail",
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
-                          ),
-                          Container(
-                            width: 40,
-                            margin: EdgeInsets.only(top: 5, bottom: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey.withOpacity(0.2),
-                              border: Border(
-                                top: BorderSide(width: 2, color: Colors.green),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(top: 5),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _gendeRadioButton = 'semua';
-                                      });
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.all(8),
-                                      margin: EdgeInsets.only(right: 5),
-                                      // width: sizeu.width-(sizeu.width/5)-21,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.black54,
-                                        ),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: 18,
-                                            height: 18,
-                                            child: Radio(
-                                              activeColor: Colors.green,
-                                              value: 'semua',
-                                              groupValue: _gendeRadioButton,
-                                              onChanged: radioButtonChanges,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left: 6),
-                                            child: Text(
-                                              "Semua",
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _gendeRadioButton = 'grosir';
-                                      });
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.all(8),
-                                      margin: EdgeInsets.only(right: 5),
-                                      // width: sizeu.width-(sizeu.width/5)-21,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.black54,
-                                        ),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: 18,
-                                            height: 18,
-                                            child: Radio(
-                                              activeColor: Colors.green,
-                                              value: 'grosir',
-                                              groupValue: _gendeRadioButton,
-                                              onChanged: radioButtonChanges,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left: 6),
-                                            child: Text(
-                                              "Grosir",
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        _gendeRadioButton = 'retail';
-                                      });
-                                    },
-                                    child: Container(
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.all(8),
-                                      margin: EdgeInsets.only(right: 5),
-                                      // width: sizeu.width-(sizeu.width/5)-21,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: Colors.black54,
-                                        ),
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          SizedBox(
-                                            width: 18,
-                                            height: 18,
-                                            child: Radio(
-                                              activeColor: Colors.green,
-                                              value: 'retail',
-                                              groupValue: _gendeRadioButton,
-                                              onChanged: radioButtonChanges,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(left: 6),
-                                            child: Text(
-                                              "Retail",
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ]),
-                ),
-                //footer
-                Container(
-                  margin: EdgeInsets.only(top: sizeu.height - 150),
-                  padding: EdgeInsets.only(top: 15, right: 20),
-                  // alignment: Alignment.topRight,
-                  height: 140,
-                  width: sizeu.width,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Container(
-                          height: 30,
-                          child: RaisedButton(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.0),
-                                side: BorderSide(color: Colors.green)),
-                            child: Text(
-                              'RESET',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.green),
-                            ),
-                            onPressed: () {
-                              _closeEndDrawer();
-                            },
-                          )),
-                      Container(
-                          margin: EdgeInsets.only(left: 10),
-                          height: 30,
-                          child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4.0),
-                              // side: BorderSide(color: Colors.green)
-                            ),
-                            color: Colors.green,
-                            child: Text(
-                              'SET',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                            onPressed: () {
-                              _closeEndDrawer();
 
-                            },
-                          ))
-                    ],
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.blueGrey.withOpacity(.2),
-                    border: Border(
-                      top: BorderSide(
-                          width: .5, color: Colors.blueGrey.withOpacity(.2)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                            //jenis produk
+                            Container(
+                              padding: EdgeInsets.only(bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    child: Text(
+                                      'Harga Produk',
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 40,
+                                    margin: EdgeInsets.only(top: 5, bottom: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blueGrey.withOpacity(0.2),
+                                      border: Border(
+                                        top: BorderSide(
+                                            width: 2, color: Colors.green),
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                      margin: EdgeInsets.only(top: 3),
+                                      padding: EdgeInsets.only(top: 5),
+                                      height: 90,
+                                      width: sizeu.width - sizeu.width / 5 - 10,
+                                      color: Colors.blueGrey.withOpacity(.2),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(5),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: 35,
+                                                  width: 110,
+                                                  child: TextField(
+                                                      // enabled: false,
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          fontSize: 13.0),
+                                                      controller: minHargaInput,
+                                                      onChanged: (text) {
+                                                        setState(() {});
+                                                      },
+                                                      onSubmitted: (_) =>
+                                                          FocusScope.of(context)
+                                                              .nextFocus(),
+                                                      decoration: defaultInput(
+                                                          'Terendah', false)),
+                                                ),
+                                                Container(
+                                                  width: sizeu.width -
+                                                      sizeu.width / 5 -
+                                                      230 -
+                                                      26,
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                    '-',
+                                                    style: TextStyle(
+                                                        fontSize: 25,
+                                                        color: Colors.blueGrey),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 35,
+                                                  width: 120,
+                                                  child: TextField(
+                                                      // enabled: false,
+                                                      textAlign: TextAlign.left,
+                                                      style: TextStyle(
+                                                          color:
+                                                              Colors.blueGrey,
+                                                          fontSize: 13.0),
+                                                      controller: minHargaInput,
+                                                      onChanged: (text) {
+                                                        setState(() {});
+                                                      },
+                                                      onSubmitted: (_) =>
+                                                          FocusScope.of(context)
+                                                              .nextFocus(),
+                                                      decoration: defaultInput(
+                                                          'Terendah', false)),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 30,
+                                                                                      child: RangeSlider(
+                                              values: _currentRangeValues,
+                                              min: 0,
+                                              max: 300000,
+                                              divisions: 5,
+                                              labels: RangeLabels(
+                                                _currentRangeValues.start
+                                                    .round()
+                                                    .toString(),
+                                                _currentRangeValues.end
+                                                    .round()
+                                                    .toString(),
+                                              ),
+                                              onChanged: (RangeValues values) {
+                                                setState(() {
+                                                  _currentRangeValues = values;
+                                                });
+                                              },
+                                            ),
+                                          )
+                                        ],
+                                      ))
+                                ],
+                              ),
+                            ),
+                          ]),
+                        ),
+                        //footer
+                        Container(
+                          margin: EdgeInsets.only(top: sizeu.height - 150),
+                          padding: EdgeInsets.only(top: 15, right: 20),
+                          // alignment: Alignment.topRight,
+                          height: 140,
+                          width: sizeu.width,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Container(
+                                  height: 30,
+                                  child: RaisedButton(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(4.0),
+                                        side: BorderSide(color: Colors.green)),
+                                    child: Text(
+                                      'RESET',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.green),
+                                    ),
+                                    onPressed: () {
+                                      _closeEndDrawer();
+                                    },
+                                  )),
+                              Container(
+                                  margin: EdgeInsets.only(left: 10),
+                                  height: 30,
+                                  child: RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4.0),
+                                      // side: BorderSide(color: Colors.green)
+                                    ),
+                                    color: Colors.green,
+                                    child: Text(
+                                      'SET',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.white),
+                                    ),
+                                    onPressed: () {
+                                      _closeEndDrawer();
+                                    },
+                                  ))
+                            ],
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey.withOpacity(.2),
+                            border: Border(
+                              top: BorderSide(
+                                  width: .5,
+                                  color: Colors.blueGrey.withOpacity(.2)),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ))),
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(60), child: headerSection()),
           body: Column(
             children: <Widget>[
-              // getAppBarUI(),
-              // Expanded(
-              //   child: SingleChildScrollView(
-              //     child: Container(
-              //       height: MediaQuery.of(context).size.height,
-              //       child: Column(
-              //         children: <Widget>[
-              //           //  getSearchBarUI(),
-              //           getCategoryUI(),
-
-              //           // listcriteria,
-
-              //           //  priceBarFilter(),
-              //           Flexible(
-              //             child: getPopularCourseUI(),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ),
               Flexible(
                 child: getPopularCourseUI(),
               ),
@@ -595,6 +1032,27 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  InputDecoration defaultInput(String hint, bool dis) {
+    return new InputDecoration(
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black54, width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide:
+            BorderSide(color: Colors.blueGrey.withOpacity(.2), width: 1),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderSide:
+            BorderSide(color: Colors.blueGrey.withOpacity(.2), width: 1),
+      ),
+      hintText: hint,
+      fillColor: dis ? Colors.grey.withOpacity(.2) : Colors.white,
+      filled: true,
     );
   }
 
@@ -737,63 +1195,6 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           height: 8,
         )
       ],
-    );
-  }
-
-  Widget getCategoryUI() {
-    return Container(
-      // color: Colors.black,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 1.0, left: 18, right: 16),
-            // child: Text(
-            //   'Kategori dan Jenis Produk',
-            //   textAlign: TextAlign.left,
-            //   style: TextStyle(
-            //     fontWeight: FontWeight.w600,
-            //     fontSize: 22,
-            //     letterSpacing: 0.27,
-            //     color: DesignCourseAppTheme.darkerText,
-            //   ),
-            // ),
-          ),
-          const SizedBox(
-            height: 16,
-          ),
-
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 16, right: 16),
-          //   child: Row(
-          //     children: <Widget>[
-          //       getButtonUI(CategoryType.ui, categoryType == CategoryType.ui),
-          //       const SizedBox(
-          //         width: 16,
-          //       ),
-          //       getButtonUI(
-          //           CategoryType.coding, categoryType == CategoryType.coding),
-          //       const SizedBox(
-          //         width: 16,
-          //       ),
-          //       getButtonUI(
-          //           CategoryType.basic, categoryType == CategoryType.basic),
-          //     ],
-          //   ),
-          // ),
-
-          // const SizedBox(
-          //   height: 16,
-          // ),
-
-          // CategoryListView(
-          //   callBack: () {
-          //     moveTo();
-          //   },
-          // ),
-        ],
-      ),
     );
   }
 
@@ -1175,49 +1576,6 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           ),
           const Expanded(
             child: SizedBox(),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget getAppBarUI() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 18),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Choose your',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
-                    letterSpacing: 0.2,
-                    color: DesignCourseAppTheme.grey,
-                  ),
-                ),
-                Text(
-                  'Design Course',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22,
-                    letterSpacing: 0.27,
-                    color: DesignCourseAppTheme.darkerText,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: 60,
-            height: 60,
-            child: Image.asset('assets/design_course/userImage.png'),
           )
         ],
       ),
