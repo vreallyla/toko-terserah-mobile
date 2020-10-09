@@ -350,6 +350,7 @@ class _TrainingScreenState extends State<TrainingScreen>
               });
             });
           });
+        
         }
       } on SocketException catch (_) {
         isConnect = false;

@@ -50,6 +50,8 @@ class UserModel {
 
       print('data akun status code : ' + apiResult.statusCode.toString());
 
+      print(json.decode(apiResult.body));
+
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);
 
@@ -96,14 +98,14 @@ class UserModel {
     String apiURL = globalBaseUrl + globalPathAuth + "check_email";
 
     // print(apiURL);
- 
 
     try {
-      var apiResult = await http.get(Uri.encodeFull(apiURL +'?email='+email),
-         headers: {"Accept": "application/json"});
+      var apiResult = await http.get(Uri.encodeFull(apiURL + '?email=' + email),
+          headers: {"Accept": "application/json"});
 
       print('check email status code : ' + apiResult.statusCode.toString());
       var jsonObject = json.decode(apiResult.body);
+
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         print('check email sukses success');
 
@@ -114,7 +116,6 @@ class UserModel {
           data: jsonEncode({"message": jsonObject['data']['message']}),
         );
       } else if (apiResult.statusCode == 404) {
-        
         //email sudah digunakan / tidak valid
         return UserModel(
           error: true,

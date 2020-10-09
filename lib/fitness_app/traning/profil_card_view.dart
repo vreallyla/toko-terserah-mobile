@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:core';
 
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
@@ -114,7 +115,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: (bgPhoto != null
-                          ? NetworkImage(bgPhoto)
+                          ? NetworkImage(globalBaseUrl+locationBgPhoto+bgPhoto)
                           : AssetImage('assets/fitness_app/bg_users.jpg')),
                       fit: BoxFit.cover,
                     ),
@@ -150,7 +151,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: (ava != null
-                                ? NetworkImage(ava)
+                                ? NetworkImage(globalBaseUrl+locationAva+ava)
                                 : AssetImage(
                                     'assets/fitness_app/user-default.png')),
                             fit: BoxFit.cover,

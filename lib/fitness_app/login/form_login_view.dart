@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
@@ -101,8 +101,8 @@ class _FormLoginViewState extends State<FormLoginView> {
               child: RaisedButton(
                 onPressed: () {
                   // changeButton(); 
-                  // passwordInput.text = 'secret';
-                  // emailInput.text = 'fiqy_a@icloud.com';
+                  passwordInput.text = 'secret';
+                  emailInput.text = 'fiqy_a@icloud.com';
                   isLoading=true;
                   loginModel=null;
                   setState(() {});
