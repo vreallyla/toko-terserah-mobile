@@ -35,7 +35,7 @@ class _TrainingScreenState extends State<TrainingScreen>
   bool isConnect = true;
   String tokenFixed;
   var res;
-  var kodeBarcode='123s4';
+  var kodeBarcode = '123s4';
 
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
@@ -219,7 +219,12 @@ class _TrainingScreenState extends State<TrainingScreen>
                                             addAllListData();
                                           });
                                         }
-                                        Navigator.pop(context);
+                                        Navigator.of(context)
+                                            .pushNamedAndRemoveUntil('/',
+                                                (Route<dynamic> route) => false,
+                                                arguments: {
+                                              "after_logout": true
+                                            });
                                       });
                                     },
                                   ),
@@ -261,9 +266,9 @@ class _TrainingScreenState extends State<TrainingScreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     tokenFixed = prefs.getString('token');
-    kodeBarcode =  prefs.getString('dataUser');
-   print(tokenFixed);
-    isLoading=true;
+    kodeBarcode = prefs.getString('dataUser');
+    print(tokenFixed);
+    isLoading = true;
 
     _getBarcode();
     setState(() {});
@@ -271,20 +276,20 @@ class _TrainingScreenState extends State<TrainingScreen>
     if (tokenFixed != null) {
       checkConnection();
     } else {
-      sudahLogin=false;
+      sudahLogin = false;
       isLoading = false;
       setState(() {});
     }
     //  prefs.getString('token');
   }
 
-  _getBarcode() async{
+  _getBarcode() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    kodeBarcode =  prefs.getString('dataUser');
-    kodeBarcode =
-        kodeBarcode != null ? await zerofill(jsonDecode(kodeBarcode)['user']['id'].toInt(), lenBarcode) : '000s021';
-
-    
+    kodeBarcode = prefs.getString('dataUser');
+    kodeBarcode = kodeBarcode != null
+        ? await zerofill(
+            jsonDecode(kodeBarcode)['user']['id'].toInt(), lenBarcode)
+        : '000s021';
   }
 
   @override
@@ -294,7 +299,7 @@ class _TrainingScreenState extends State<TrainingScreen>
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
 
-  _getToken();
+    _getToken();
     addAllListData();
 
     scrollController.addListener(() {
@@ -336,8 +341,8 @@ class _TrainingScreenState extends State<TrainingScreen>
               if (value.error) {
               } else {
                 sudahLogin = true;
-                
-                if(kodeBarcode!='123s4'){
+
+                if (kodeBarcode != '123s4') {
                   _getBarcode();
                 }
 
@@ -350,7 +355,6 @@ class _TrainingScreenState extends State<TrainingScreen>
               });
             });
           });
-        
         }
       } on SocketException catch (_) {
         isConnect = false;
@@ -376,21 +380,14 @@ class _TrainingScreenState extends State<TrainingScreen>
 
     if (data["load"]) {
       print('back');
-      sudahLogin=false;
-      
-        _getToken();
-   addAllListData();
+      sudahLogin = false;
 
-      
-     
+      _getToken();
+      addAllListData();
 
-      setState(() {
-       
-      });
+      setState(() {});
     }
   }
-
-
 
   void addAllListData() {
     setState(() {

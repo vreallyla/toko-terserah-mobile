@@ -42,7 +42,7 @@ class _BottomBarViewState extends State<BottomBarView>
       countCart = dataUser['count_cart'];
 
     }
-    print('test2:'+countCart.toString());
+    // print('test2:'+countCart.toString());
 
     setState(() {});
   }
@@ -66,22 +66,26 @@ class _BottomBarViewState extends State<BottomBarView>
   final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     // var arguments=ModalRoute.of(context).settings.arguments;
 
-    if (arguments != null) print('test: '+arguments['after_login'].toString());
+    // if (arguments != null) print('test: '+arguments['after_login'].toString());
     // print('login');
     // print('after'+arguments['after_login'].toString());
 
-    if(arguments != null ? arguments['after_login'] : false){
+    if(arguments != null ? arguments['after_login']!=null : false){
       // arguments['after_login']=false;
         // arguments['after_login']=false;
 
         _getCountCart();
     }
-    // else{
-    //   countCart = 0;
-    //   setState(() {
+
+    if(arguments != null ? arguments['after_logout']!=null : false){
+       countCart = 0;
+      setState(() {
         
-    //   });
-    // }
+      });
+
+  
+    }
+
 
 
     return Stack(
