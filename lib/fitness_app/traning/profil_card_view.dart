@@ -39,7 +39,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     dataUser = prefs.getString('dataUser');
-
+    print(prefs.getKeys());
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
       var dataUserDefault = dataUser['user'];

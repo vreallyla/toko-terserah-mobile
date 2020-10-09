@@ -3,8 +3,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
 import '../produk_detail/CustomShowDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:best_flutter_ui_templates/model/alamat_model.dart';
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'dart:convert';
 import 'dart:core';
+import 'package:http/http.dart' as http;
 
 class AlamatList extends StatefulWidget {
   @override
@@ -193,12 +196,14 @@ class _AlamatListState extends State<AlamatList> {
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    String apiURL = globalBaseUrl + globalPathAuth + "address";
+    var apiResult = await http.get(apiURL);
+    print(apiResult);
     dataUser = prefs.getString('dataUser');
 
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
-      print(dataUserDefault['get_alamat']);
+      //  print(dataUserDefault['get_alamat']);
       dataUserDefault = dataUser['user'];
     }
 
@@ -376,11 +381,16 @@ class AlamatTransaksi extends StatelessWidget {
                   ),
                   PopupMenuItem(
                     value: dataUserDefault['get_alamat'][index],
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.delete, color: Colors.green),
-                        Text("Hapus"),
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        print(dataUserDefault['get_alamat'][index]);
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.delete, color: Colors.green),
+                          Text("Hapus"),
+                        ],
+                      ),
                     ),
                   ),
                   PopupMenuItem(
