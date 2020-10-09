@@ -21,7 +21,7 @@ class ItemWishlistView extends StatefulWidget {
 class _ItemWishlistViewState extends State<ItemWishlistView>
     with TickerProviderStateMixin {
   AnimationController animationController;
-  List<MealsListData> mealsListData = MealsListData.tabIconsList;
+  List<dynamic> loadWishlist = [];
 
   @override
   void initState() {
@@ -44,6 +44,8 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
   @override
   Widget build(BuildContext context) {
 
+    loadWishlist=widget.dataWishlist;
+
     // print(widget.dataWishlist[0]['nama']);
     final sizeu = MediaQuery.of(context).size;
     return AnimatedBuilder(
@@ -64,7 +66,7 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
                 scrollDirection: Axis.vertical,
                 itemBuilder: (BuildContext context, int index) {
                   final int count =
-                      mealsListData.length > 10 ? 10 : mealsListData.length;
+                      loadWishlist.length > 10 ? 10 : loadWishlist.length;
                   final Animation<double> animation =
                       Tween<double>(begin: 0.0, end: 1.0).animate(
                           CurvedAnimation(
@@ -74,7 +76,7 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
                   animationController.forward();
 
                   return MealsView(
-                    mealsListData: mealsListData[0],
+                    loadWishlist: loadWishlist[index],
                     animation: animation,
                     animationController: animationController,
                   );
@@ -90,16 +92,18 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
 
 class MealsView extends StatelessWidget {
   const MealsView(
-      {Key key, this.mealsListData, this.animationController, this.animation})
+      {Key key, this.loadWishlist, this.animationController, this.animation})
       : super(key: key);
 
-  final MealsListData mealsListData;
+  final  loadWishlist;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+ 
 
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
+     print(loadWishlist);
     
     return AnimatedBuilder(
       animation: animationController,
@@ -183,7 +187,7 @@ class MealsView extends StatelessWidget {
                                               sizeu.width / 4 -
                                               10,
                                           child: Text(
-                                            'Ini Nama Barangnya tinggal diisi disini gak apa-apa kok :)',
+                                            loadWishlist['nama'],
                                             maxLines: 2,
                                             style: TextStyle(
                                               fontSize: 15,
@@ -314,7 +318,7 @@ class MealsView extends StatelessWidget {
                   //   child: SizedBox(
                   //     width: 80,
                   //     height: 80,
-                  //     // child: Image.asset(mealsListData.imagePath),
+                  //     // child: Image.asset(loadWishlist.imagePath),
                   //   ),
                   // )
                 ],
