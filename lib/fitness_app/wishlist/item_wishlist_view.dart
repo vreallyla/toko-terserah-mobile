@@ -1,4 +1,4 @@
-import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+//import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +6,11 @@ import 'package:flutter/material.dart';
 
 class ItemWishlistView extends StatefulWidget {
   const ItemWishlistView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation,this.countWishlist, this.dataWishlist})
+      {Key key,
+      this.mainScreenAnimationController,
+      this.mainScreenAnimation,
+      this.countWishlist,
+      this.dataWishlist})
       : super(key: key);
 
   final AnimationController mainScreenAnimationController;
@@ -43,8 +47,7 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
 
   @override
   Widget build(BuildContext context) {
-
-    loadWishlist=widget.dataWishlist;
+    loadWishlist = widget.dataWishlist;
 
     // print(widget.dataWishlist[0]['nama']);
     final sizeu = MediaQuery.of(context).size;
@@ -95,16 +98,15 @@ class MealsView extends StatelessWidget {
       {Key key, this.loadWishlist, this.animationController, this.animation})
       : super(key: key);
 
-  final  loadWishlist;
+  final loadWishlist;
   final AnimationController animationController;
   final Animation<dynamic> animation;
- 
 
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
-     print(loadWishlist);
-    
+    print(loadWishlist);
+
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -268,30 +270,36 @@ class MealsView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Container(
-                                    color: Colors.white,
+                                      color: Colors.white,
                                       width: sizeu.width - 50 - 80,
                                       child: RaisedButton(
-                                        onPressed: (){},
+                                        onPressed: () {},
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(4)),
-                                        child: Text('Masukkan Keranjang',style: TextStyle(color: Colors.white),),
+                                        child: Text(
+                                          'Masukkan Keranjang',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
                                         color: Colors.green,
                                       )),
-                                      Container(
+                                  Container(
                                       width: 80,
                                       padding: EdgeInsets.only(left: 5),
                                       color: Colors.white,
                                       child: RaisedButton(
-                                        onPressed: (){},
+                                        onPressed: () {},
                                         shape: RoundedRectangleBorder(
-                                          side: BorderSide(color: Colors.black12),
+                                            side: BorderSide(
+                                                color: Colors.black12),
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                         color: Colors.red[400],
-                                        child: Icon(Icons.delete, color: Colors.white,),
+                                        child: Icon(
+                                          Icons.delete,
+                                          color: Colors.white,
+                                        ),
                                       )),
-                                  
                                 ],
                               ),
                             )

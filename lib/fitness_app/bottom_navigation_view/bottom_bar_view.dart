@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
+//import 'dart:developer';
 import 'dart:math' as math;
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
@@ -26,7 +26,7 @@ class _BottomBarViewState extends State<BottomBarView>
     with TickerProviderStateMixin {
   AnimationController animationController;
 
-  int countCart=0;
+  int countCart = 0;
   var dataUser;
 
   _getCountCart() async {
@@ -34,13 +34,10 @@ class _BottomBarViewState extends State<BottomBarView>
 
     dataUser = prefs.getString('dataUser');
 
-    
-
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
 
       countCart = dataUser['count_cart'];
-
     }
     // print('test2:'+countCart.toString());
 
@@ -49,7 +46,6 @@ class _BottomBarViewState extends State<BottomBarView>
 
   @override
   void initState() {
-    
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -58,35 +54,28 @@ class _BottomBarViewState extends State<BottomBarView>
     super.initState();
     _getCountCart();
     // log('hello');
-
   }
 
   @override
   Widget build(BuildContext context) {
-  final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    final Map arguments = ModalRoute.of(context).settings.arguments as Map;
     // var arguments=ModalRoute.of(context).settings.arguments;
 
     // if (arguments != null) print('test: '+arguments['after_login'].toString());
     // print('login');
     // print('after'+arguments['after_login'].toString());
 
-    if(arguments != null ? arguments['after_login']!=null : false){
+    if (arguments != null ? arguments['after_login'] != null : false) {
       // arguments['after_login']=false;
-        // arguments['after_login']=false;
+      // arguments['after_login']=false;
 
-        _getCountCart();
+      _getCountCart();
     }
 
-    if(arguments != null ? arguments['after_logout']!=null : false){
-       countCart = 0;
-      setState(() {
-        
-      });
-
-  
+    if (arguments != null ? arguments['after_logout'] != null : false) {
+      countCart = 0;
+      setState(() {});
     }
-
-
 
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
@@ -223,7 +212,6 @@ class _BottomBarViewState extends State<BottomBarView>
                           },
                           child: Stack(
                             children: <Widget>[
-                              
                               Container(
                                 alignment: Alignment.center,
                                 child: Icon(
@@ -232,18 +220,27 @@ class _BottomBarViewState extends State<BottomBarView>
                                   size: 32,
                                 ),
                               ),
-                            Container(
+                              Container(
                                 alignment: Alignment.topRight,
-                                padding: EdgeInsets.only(top:0),
+                                padding: EdgeInsets.only(top: 0),
                                 child: Container(
-                                   alignment: Alignment.center,
+                                  alignment: Alignment.center,
                                   height: 24,
                                   width: 24,
-                                  child: Text((countCart>99?'99+':countCart.toString()),style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 11),),
-                                  decoration:
-                                      BoxDecoration(color: Colors.orange,
-                                      borderRadius: BorderRadius.all(Radius.circular(20)),),
-                                      
+                                  child: Text(
+                                    (countCart > 99
+                                        ? '99+'
+                                        : countCart.toString()),
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 11),
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
                                 ),
                               ),
                             ],

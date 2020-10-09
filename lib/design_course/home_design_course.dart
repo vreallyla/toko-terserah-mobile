@@ -1,8 +1,5 @@
 import 'dart:convert';
-import 'dart:ffi';
-
 import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart';
-import 'package:best_flutter_ui_templates/design_course/popular_course_list_view.dart';
 import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -78,10 +75,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     }
   }
 
-  /**
-   * Fetching data from API to Model Products
-   * 
-   */
+  // Fetching data from API to Model Products
+
   Future<List<Products>> testData() async {
     try {
       http.Response item = await http.post(globalBaseUrl + 'api/search',
@@ -105,10 +100,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     }
   }
 
-  /**
-   * Parsing value from API to model Products
-   * 
-   */
+  // /**
+  //  * Parsing value from API to model Products
+  //  *
+  //  */
   Products _fromJson(Map<String, dynamic> item) {
     log('id ke-${item['id']}');
     return new Products(
@@ -161,7 +156,6 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
       widgetContainerKategori.add(
         Container(
-          
           padding: EdgeInsets.only(bottom: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
