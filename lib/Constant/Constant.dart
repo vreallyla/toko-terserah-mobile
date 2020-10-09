@@ -5,8 +5,14 @@ import 'package:flutter/material.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: non_constant_identifier_names
+// String globalBaseUrl = "http://101.50.0.89/";
 String globalBaseUrl = "http://101.50.0.89/";
+String locationAva='storage/users/ava/';
+String locationBgPhoto='storage/users/background/';
 String globalPathAuth = "api/auth/";
+
+//asset
+String locationOccupation='assets/occupancy/';
 
 int lenBarcode=6;
 
@@ -24,6 +30,7 @@ final msgFail = {
 
 final msgSuccess={
   "MSG_EMAIL":'Berhasil Masuk',
+  "MSG_REGISTER":'Register berhasil',
   'MSG_LOGOUT':'Berhasil Keluar',
   "MSG_RECEIVED":'Data Diterima',
 };

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:math' as math;
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
@@ -33,29 +34,60 @@ class _BottomBarViewState extends State<BottomBarView>
 
     dataUser = prefs.getString('dataUser');
 
+    
+
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
 
       countCart = dataUser['count_cart'];
-     
+
     }
+    // print('test2:'+countCart.toString());
 
     setState(() {});
   }
 
   @override
   void initState() {
-    _getCountCart();
+    
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
     animationController.forward();
     super.initState();
+    _getCountCart();
+    // log('hello');
+
   }
 
   @override
   Widget build(BuildContext context) {
+  final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+    // var arguments=ModalRoute.of(context).settings.arguments;
+
+    // if (arguments != null) print('test: '+arguments['after_login'].toString());
+    // print('login');
+    // print('after'+arguments['after_login'].toString());
+
+    if(arguments != null ? arguments['after_login']!=null : false){
+      // arguments['after_login']=false;
+        // arguments['after_login']=false;
+
+        _getCountCart();
+    }
+
+    if(arguments != null ? arguments['after_logout']!=null : false){
+       countCart = 0;
+      setState(() {
+        
+      });
+
+  
+    }
+
+
+
     return Stack(
       alignment: AlignmentDirectional.bottomCenter,
       children: <Widget>[

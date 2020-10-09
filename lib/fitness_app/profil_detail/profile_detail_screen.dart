@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:expandable/expandable.dart';
 import 'package:icon_shadow/icon_shadow.dart';
+import 'package:intl/intl.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   @override
@@ -12,12 +14,73 @@ enum SingingCharacter { lafayette, jefferson }
 
 class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   SingingCharacter _character = SingingCharacter.lafayette;
+
+  String _gendeRadioButton; //Initial definition of radio button value
+  String msgJenisKelamin;
+  final myformat = DateFormat("yyyy-MM-dd");
+  DateTime selectedDate = DateTime.now();
+  TextEditingController tglLahirInput = new TextEditingController();
+  String msgTL;
+
+  TextEditingController passwordInput = new TextEditingController();
+  FaIcon seePass = FaIcon(FontAwesomeIcons.eye);
+  bool occuText = true;
+  String msgPass;
+
+  TextEditingController emailInput = new TextEditingController();
+  String messageEmail;
+
+  TextEditingController usernameInput = new TextEditingController();
+  String messageUsername;
+
+  TextEditingController telpInput = new TextEditingController();
+  String messageTelp;
+
   Container inputForm(context) {
-    // final sizeu = MediaQuery.of(context).size;
-    
+    final sizeu = MediaQuery.of(context).size;
+
+    Future<Null> selectDate(BuildContext context) async {
+      final DateTime picked = await showDatePicker(
+          context: context,
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.green,
+                  onPrimary: Colors.white,
+                  surface: Colors.green[100],
+                  onSurface: Colors.black,
+                ),
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: child,
+            );
+          },
+          initialDate: selectedDate,
+          firstDate: DateTime(2015, 8),
+          lastDate: DateTime(2101));
+      if (picked != null && picked != selectedDate)
+        setState(() {
+          selectedDate = picked;
+          tglLahirInput.text = myformat.format(selectedDate);
+        });
+    }
+
+    TextEditingController no_telp = new TextEditingController();
+    String msgNoTelp;
+
+    void radioButtonChanges(String value) {
+      setState(() {
+        setState(() {
+          _gendeRadioButton = value;
+        });
+        debugPrint(_gendeRadioButton); //Debug the choice in console
+      });
+    }
 
     return Container(
-      padding: EdgeInsets.only(left: 15, right: 15),
+      padding: EdgeInsets.all(20),
+      color: Colors.white,
       child: Column(
         children: [
           Container(
@@ -45,57 +108,426 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               ),
             ),
           ),
+          //gender
           Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Tanggal Lahir',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          SizedBox(
-            // width: sizeu.width - sizeu.width / 5,
-            height: 40,
-            child: TextField(
-              textAlign: TextAlign.left,
-              onChanged: (text) => {},
-              decoration: new InputDecoration(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black54, width: 1),
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top: 10),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Jenis Kelamin',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _gendeRadioButton = 'pria';
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(right: 5),
+                        width: (sizeu.width - 50) / 3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Radio(
+                                activeColor: Colors.green,
+                                value: 'pria',
+                                groupValue: _gendeRadioButton,
+                                onChanged: radioButtonChanges,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "Pria",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _gendeRadioButton = 'wanita';
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.only(right: 5),
+                        width: (sizeu.width - 50) / 3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Radio(
+                                activeColor: Colors.green,
+                                value: 'wanita',
+                                groupValue: _gendeRadioButton,
+                                onChanged: radioButtonChanges,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "Wanita",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _gendeRadioButton = 'lainnya';
+                        });
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.all(8),
+                        // margin: EdgeInsets.only(right:5),
+                        width: (sizeu.width - 50) / 3,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black54,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: Radio(
+                                activeColor: Colors.green,
+                                value: 'lainnya',
+                                groupValue: _gendeRadioButton,
+                                onChanged: radioButtonChanges,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Text(
+                                "Lainnya",
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black38, width: 1),
-                ),
-                hintText: 'Masukkan Tanggal Lahir',
-              ),
+                //message jenis kelamin
+                hintMsg(msgJenisKelamin),
+              ],
             ),
           ),
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10, top: 10),
-              child: Text('Jenis Kelamin',
-                  style: TextStyle(
-                      color: Colors.black54, fontWeight: FontWeight.bold))),
-          Container(
-              // width: sizeu.width - sizeu.width / 5,
 
-              child: Row(
-            children: <Widget>[
-              ListTile(
-                title: const Text('Lafayette'),
-                leading: Radio(
-                  value: SingingCharacter.lafayette,
-                  groupValue: _character,
-                  onChanged: (SingingCharacter value) {
-                    setState(() {
-                      _character = value;
-                    });
-                  },
+          // tanggal lahir
+          Container(
+            width: sizeu.width,
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Tanggal Lahir',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: InkWell(
+                    onTap: () {
+                      selectDate(
+                          context); // Call Function that has showDatePicker()
+                    },
+                    child: IgnorePointer(
+                      child: SizedBox(
+                        width: sizeu.width - 30,
+                        height: 40,
+                        child: TextFormField(
+                          controller: tglLahirInput,
+                          decoration:
+                              defaultInput('Pilih Tanggal Lahir', false),
+                          onSaved: (String val) {},
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
+                //message ttl
+                hintMsg(msgTL),
+              ],
+            ),
+          ),
+          //no telp
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10, top: 10),
+                    child: Text('No. Telp',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: TextField(
+                      // enabled: false,
+                      textAlign: TextAlign.left,
+                      controller: telpInput,
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                      onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                      decoration: defaultInput('Masukkan No. Telp', false)),
+                ),
+                hintMsg(messageTelp),
+              ],
+            ),
+          ),
+          // button profil
+          Container(
+              width: sizeu.width - 30,
+              padding: EdgeInsets.only(top: 15),
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(4.0),
+                ),
+                child: Text(
+                  'SIMPAN PERUBAHAN',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {},
+                color: Colors.green,
+              ))
+        ],
+      ),
+    );
+  }
+
+  Container akunFrom(context) {
+    final sizeu = MediaQuery.of(context).size;
+
+    Future<Null> selectDate(BuildContext context) async {
+      final DateTime picked = await showDatePicker(
+          context: context,
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.green,
+                  onPrimary: Colors.white,
+                  surface: Colors.green[100],
+                  onSurface: Colors.black,
+                ),
+                dialogBackgroundColor: Colors.white,
               ),
-              
-            ],
-          )),
+              child: child,
+            );
+          },
+          initialDate: selectedDate,
+          firstDate: DateTime(2015, 8),
+          lastDate: DateTime(2101));
+      if (picked != null && picked != selectedDate)
+        setState(() {
+          selectedDate = picked;
+          tglLahirInput.text = myformat.format(selectedDate);
+        });
+    }
+
+    void radioButtonChanges(String value) {
+      setState(() {
+        setState(() {
+          _gendeRadioButton = value;
+        });
+        debugPrint(_gendeRadioButton); //Debug the choice in console
+      });
+    }
+
+    return Container(
+      padding: EdgeInsets.all(20),
+      color: Colors.white,
+      child: Column(
+        children: [
+          //email
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Email',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: TextField(
+                      enabled: false,
+                      textAlign: TextAlign.left,
+                      controller: emailInput,
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                      onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                      decoration: defaultInput('Masukkan Email', true)),
+                ),
+                hintMsg(messageEmail),
+              ],
+            ),
+          ),
+          //username
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10, top: 10),
+                    child: Text('Username',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: TextField(
+                      // enabled: false,
+                      textAlign: TextAlign.left,
+                      controller: usernameInput,
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                      onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                      decoration: defaultInput('Masukkan Username', false)),
+                ),
+                hintMsg(messageUsername),
+              ],
+            ),
+          ),
+
+          //password
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top: 5),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Password',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: Stack(
+                    children: [
+                      TextField(
+                          obscureText: occuText,
+                          textAlign: TextAlign.left,
+                          controller: passwordInput,
+                          onChanged: (text) {
+                            setState(() {});
+                          },
+                          onSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                          decoration: defaultInput('Masukkan Password', false)),
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: 36,
+                          child: IconButton(
+                            icon: seePass,
+                            tooltip: 'Lihat Password',
+                            color: Colors.black38,
+                            iconSize: 15,
+                            onPressed: () {
+                              if (occuText) {
+                                seePass = FaIcon(FontAwesomeIcons.eyeSlash);
+                                occuText = false;
+                              } else {
+                                seePass = FaIcon(FontAwesomeIcons.eye);
+                                occuText = true;
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //msg password
+                hintMsg(msgPass),
+              ],
+            ),
+          ),
+         // button profil
+          Container(
+              width: sizeu.width - 30,
+              padding: EdgeInsets.only(top: 15),
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(4.0),
+                ),
+                child: Text(
+                  'SIMPAN PERUBAHAN',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {},
+                color: Colors.green,
+              ))
         ],
       ),
     );
@@ -104,50 +536,59 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
-    return new Scaffold(
-        body: Stack(
-      children: <Widget>[
-        Stack(
-          children: <Widget>[
-            Container(
-              height: 180,
-              color: Colors.green,
-            ),
-            Container(
-              //My container or any other widget
-              color: Colors.white,
-
-              child: ListView(children: <Widget>[
-                AtasGambar(),
-                inputForm(context),
-              ]),
-            ),
-          ],
-        ),
-        new Positioned(
-          //Place it at the top, and not use the entire screen
-          top: 0.0,
-          left: 0.0,
-          right: 0.0,
-          child: AppBar(
-            leading: IconButton(
-              icon: IconShadowWidget(
-                Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 36,
-                ),
-                shadowColor: Colors.black54,
+    return new GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: new Scaffold(
+          body: Stack(
+        children: <Widget>[
+          Stack(
+            children: <Widget>[
+              Container(
+                height: 180,
+                color: Colors.green,
               ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
+              Container(
+                //My container or any other widget
+                color: Colors.grey.withOpacity(0.2),
 
-            backgroundColor: Colors.transparent, //No more green
-            elevation: 0.0, //Shadow gone
+                child: ListView(children: <Widget>[
+                  AtasGambar(),
+                  inputForm(context),
+                  Padding(
+                    padding: EdgeInsets.only(top: 15),
+                  ),
+                  akunFrom(context),
+                ]),
+              ),
+            ],
           ),
-        ),
-      ],
-    ));
+          new Positioned(
+            //Place it at the top, and not use the entire screen
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: AppBar(
+              leading: IconButton(
+                icon: IconShadowWidget(
+                  Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 36,
+                  ),
+                  shadowColor: Colors.black54,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+
+              backgroundColor: Colors.transparent, //No more green
+              elevation: 0.0, //Shadow gone
+            ),
+          ),
+        ],
+      )),
+    );
   }
 }
 // end stack end
@@ -193,10 +634,11 @@ class AtasGambar extends StatelessWidget {
           Stack(
             children: [
               Container(
-                width: 120,
-                height: 120,
-                margin: EdgeInsets.only(
-                    top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                width: 100,
+                height: 100,
+                // margin: EdgeInsets.only(
+                //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.green[200],
@@ -211,10 +653,11 @@ class AtasGambar extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 120,
-                height: 120,
-                margin: EdgeInsets.only(
-                    top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                width: 100,
+                height: 100,
+                // margin: EdgeInsets.only(
+                //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
+                margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
                     border: Border.all(
                       color: Colors.transparent,
@@ -234,13 +677,14 @@ class AtasGambar extends StatelessWidget {
                         ])),
                 child: Container(
                   height: 30,
-                  margin: EdgeInsets.only(top: 80, bottom: 10),
+                  // margin: EdgeInsets.only(top: 80, bottom: 10),
+                  margin: EdgeInsets.only(top: 60),
                   alignment: Alignment.center,
                   // color: Colors.red,
-                  child: Text('Ubah Photo',
+                  child: Text('SUNTING',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                       )),
                   // decoration: BoxDecoration(color: Colors.red),
@@ -252,6 +696,37 @@ class AtasGambar extends StatelessWidget {
       ),
     );
   }
+}
+
+InputDecoration defaultInput(String hint, bool dis) {
+  return new InputDecoration(
+    contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+    focusedBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black54, width: 1),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black38, width: 1),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.black38, width: 1),
+    ),
+    hintText: hint,
+    fillColor: dis ? Colors.grey.withOpacity(.2) : Colors.white,
+    filled: true,
+  );
+}
+
+Container hintMsg(String msg) {
+  return Container(
+    padding: EdgeInsets.only(top: 4),
+    child: Text(
+      (msg != null ? msg : ''),
+      style: TextStyle(
+          color: Colors.red,
+          fontWeight: FontWeight.w500,
+          fontSize: (msg != null ? 13 : 0)),
+    ),
+  );
 }
 
 BoxDecoration borderTop() {

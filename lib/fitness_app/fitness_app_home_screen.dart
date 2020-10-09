@@ -2,6 +2,7 @@ import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
 import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'fintness_app_theme.dart';
 import 'my_diary/my_diary_screen.dart';
@@ -27,11 +28,25 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
     tabIconsList.forEach((TabIconData tab) {
       tab.isSelected = false;
     });
-    tabIconsList[0].isSelected = true;
+    // tabIconsList[0].isSelected = true;
 
-    animationController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyDiaryScreen(animationController: animationController);
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+
+      // if (arguments != null) print('3test: '+arguments['after_login'].toString());
+
+      animationController = AnimationController(
+          duration: const Duration(milliseconds: 200), vsync: this);
+
+      if (arguments != null ? (arguments['after_login']!=null || arguments['after_logout']!=null) : false) {
+        tabIconsList[3].isSelected = true;
+        tabBody = TrainingScreen(animationController: animationController);
+      } else {
+        tabIconsList[0].isSelected = true;
+        tabBody = MyDiaryScreen(animationController: animationController);
+      }
+    });
+
     super.initState();
   }
 
@@ -43,6 +58,8 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    // final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+
     return Container(
       color: FintnessAppTheme.background,
       child: Scaffold(

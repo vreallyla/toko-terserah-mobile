@@ -10,6 +10,7 @@ import 'fitness_app/produk_detail/ulasan_detail.dart';
 import 'fitness_app/produk_detail/gambarulasan.dart';
 import 'fitness_app/cart_list/cart_list.dart';
 import 'fitness_app/check_out/checkout.dart';
+import 'fitness_app/register/register_screen_ii.dart';
 import 'fitness_app/voucher_kupon/voucher_kupon_screen.dart';
 import 'fitness_app/login/login_screen.dart';
 import 'fitness_app/register/register_screen_i.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/checkout': (context) => CheckOut(),
         '/register': (context) => RegisterScreenI(),
+        '/register_ii': (context) => RegisterScreenII(),
         '/gambarulasan': (context) => GambarUlasan(),
         GalleryItem.routeName: (context) => GalleryItem(),
         '/pertanyaandetail': (context) => PertanyaanDetail(),

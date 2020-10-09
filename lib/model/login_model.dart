@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,6 +61,11 @@ class LoginModel {
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);
 
+        await UserModel.akunRes();
+
+        
+
+
         print('post login success');
 
         _setToken(jsonObject['token']);
@@ -79,7 +86,7 @@ class LoginModel {
       } else {
         return LoginModel(
           error: true,
-          data: msgFail['MSG_WRONG'],
+          data: 'Email atau password salah...',
         );
       }
     } catch (e) {

@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 
 import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
@@ -114,7 +114,9 @@ class _FormLoginViewState extends State<FormLoginView> {
                       .then((value) {
                     // emailInput.text = value.error.toString();
                     if(!value.error){
-                      Navigator.pop(context,jsonEncode({"load":true}));
+                      // Navigator.pop(context,jsonEncode({"load":true}));
+                      Navigator.of(context)
+    .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false,arguments: {"after_login":true});
                       
                     }else{
                       loginModel = value;
