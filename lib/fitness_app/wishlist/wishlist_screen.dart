@@ -16,6 +16,7 @@ class _WishlistScreenState extends State<WishlistScreen>
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
+  List dataWish=[];
   final ScrollController scrollController = ScrollController();
 
   double topBarOpacity = 0.0;
@@ -56,6 +57,10 @@ class _WishlistScreenState extends State<WishlistScreen>
   void addAllListData() {
     const int count = 9;
 
+    dataWish.add({"nama": "agus"});
+    dataWish.add({"nama": "adib"});
+
+    // cari textfield
     listViews.add(Container(
       padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
       decoration: BoxDecoration(
@@ -68,19 +73,23 @@ class _WishlistScreenState extends State<WishlistScreen>
         color: Colors.white,
       ),
       margin: EdgeInsets.only(bottom: 10),
-      child: new TextFormField(
-        decoration: new InputDecoration(
-          prefixIcon: Icon(Icons.search),
-          labelText: "Cari Wishlist",
-          fillColor: Colors.black,
-          border: new OutlineInputBorder(
-            borderRadius: new BorderRadius.circular(20.0),
-            borderSide: new BorderSide(),
+      child: SizedBox(
+        height: 40,
+              child: new TextFormField(
+          
+          decoration: new InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            labelText: "Cari Wishlist",
+            fillColor: Colors.black,
+            border: new OutlineInputBorder(
+              borderRadius: new BorderRadius.circular(8.0),
+              borderSide: new BorderSide(),
+            ),
+            //fillColor: Colors.green
           ),
-          //fillColor: Colors.green
-        ),
-        style: new TextStyle(
-          fontFamily: "Poppins",
+          style: new TextStyle(
+            fontFamily: "Poppins",
+          ),
         ),
       ),
     ));
@@ -93,19 +102,11 @@ class _WishlistScreenState extends State<WishlistScreen>
                 curve: Interval((1 / count) * 3, 1.0,
                     curve: Curves.fastOutSlowIn))),
         mainScreenAnimationController: widget.animationController,
+        countWishlist:2,
+        dataWishlist:dataWish,
       ),
     );
-    // listViews.add(
-    //   TitleView(
-    //     titleTxt: 'Your program',
-    //     subTxt: 'Details',
-    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController,
-    //         curve:
-    //             Interval((1 / count) * 0, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController,
-    //   ),
-    // );
+  
   }
 
   Container cardWishlist() {
@@ -153,14 +154,19 @@ class _WishlistScreenState extends State<WishlistScreen>
         //     // or Brightness.dark for light status bar
         //     brightness: Brightness.light),
         backgroundColor: Colors.transparent,
-        body: Stack(
-          children: <Widget>[
-            getMainListViewUI(),
-            getAppBarUI(),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            )
-          ],
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: Stack(
+            children: <Widget>[
+              getMainListViewUI(),
+              getAppBarUI(),
+              SizedBox(
+                height: MediaQuery.of(context).padding.bottom,
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 String globalBaseUrl = "http://101.50.0.89/";
 String locationAva='storage/users/ava/';
 String locationBgPhoto='storage/users/background/';
-
 String globalPathAuth = "api/auth/";
+
+//asset
+String locationOccupation='assets/occupancy/';
 
 int lenBarcode=6;
 

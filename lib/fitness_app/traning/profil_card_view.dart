@@ -12,6 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
+// image load
+import 'package:progressive_image/progressive_image.dart';
+
 //import '../../main.dart';
 
 class ProfilCardView extends StatefulWidget {
@@ -115,7 +118,8 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: (bgPhoto != null
-                          ? NetworkImage(globalBaseUrl+locationBgPhoto+bgPhoto)
+                          ? 
+                          NetworkImage(globalBaseUrl+locationBgPhoto+bgPhoto)
                           : AssetImage('assets/fitness_app/bg_users.jpg')),
                       fit: BoxFit.cover,
                     ),

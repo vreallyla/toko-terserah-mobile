@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
@@ -198,8 +201,8 @@ class _AlamatListState extends State<AlamatList> {
 
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
-      print(dataUserDefault['get_alamat']);
-      dataUserDefault = dataUser['user'];
+      print(dataUser);
+      // dataUserDefault = dataUser['user'];
     }
 
     //the birthday's date
@@ -230,7 +233,7 @@ class _AlamatListState extends State<AlamatList> {
         brightness: Brightness.light,
         backgroundColor: Colors.grey[200],
         title: const Text(
-          'List Alamat',
+          'Daftar Alamat',
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -239,6 +242,7 @@ class _AlamatListState extends State<AlamatList> {
         child: BottomAppBar(
             child: Container(
                 padding: EdgeInsets.only(
+                  top: 10,
                   left: 15,
                   right: 15,
                 ),
@@ -247,7 +251,7 @@ class _AlamatListState extends State<AlamatList> {
                     showAlertDialog(context);
                   },
                   child: Text(
-                    'Tambah alamat',
+                    'TAMBAH ALAMAT',
                     style: TextStyle(color: Colors.white),
                   ),
                   color: Colors.green,
@@ -255,7 +259,7 @@ class _AlamatListState extends State<AlamatList> {
       ),
       body: Container(
         color: Colors.grey[200],
-        padding: EdgeInsets.fromLTRB(0, 21, 0, 0),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: AlamatTransaksi(),
       ),
     );
@@ -350,9 +354,7 @@ class AlamatTransaksi extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: dataUserDefault['get_alamat'] == null
-          ? 0
-          : dataUserDefault['get_alamat'].length,
+      itemCount: 4,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
             onTapDown: _storePosition,
@@ -366,7 +368,7 @@ class AlamatTransaksi extends StatelessWidget {
                 //onSelected: () => setState(() => imageList.remove(index)),
                 items: <PopupMenuEntry>[
                   PopupMenuItem(
-                    value: dataUserDefault['get_alamat'][index],
+                    value: 0,
                     child: Row(
                       children: <Widget>[
                         Icon(Icons.edit, color: Colors.green),
@@ -375,7 +377,7 @@ class AlamatTransaksi extends StatelessWidget {
                     ),
                   ),
                   PopupMenuItem(
-                    value: dataUserDefault['get_alamat'][index],
+                    value: 0,
                     child: Row(
                       children: <Widget>[
                         Icon(Icons.delete, color: Colors.green),
@@ -384,7 +386,7 @@ class AlamatTransaksi extends StatelessWidget {
                     ),
                   ),
                   PopupMenuItem(
-                    value: dataUserDefault['get_alamat'][index],
+                    value: 0,
                     child: Row(
                       children: <Widget>[
                         Icon(Icons.home, color: Colors.green),
@@ -396,89 +398,202 @@ class AlamatTransaksi extends StatelessWidget {
                 context: context,
               );
             },
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.only(
+                        topLeft: const Radius.circular(4.0),
+                        topRight: const Radius.circular(4.0),
+                      )),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.only(top: 4,),
+                              margin: EdgeInsets.only(right: 10),
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      locationOccupation+'kontrakan.png'),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Container(
+                                width: size.width - 30 - 120 - 30 - 20,
+                                child: Text('Alamat Rumah',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18,
+                                    ))),
+                            Container(
+                              width: 120,
+                              alignment: Alignment.centerRight,
+                              child: InkWell(
+                                onTap: () {},
+                                child: Text('Alamat utama',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    )),
+                              ),
+                            )
+                          ],
+                        )),
+                        //nama
+                        Container(
+                          padding: EdgeInsets.only(left: 30, top: 5),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  width: 15,
+                                  padding: EdgeInsets.only(top: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.idCard,
+                                    size: 13,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5),
+                                ),
+                                Container(
+                                    width: size.width - 30 - 30 - 10 - 20,
+                                    child: Text(
+                                      'nama',
+                                      maxLines: 1,
+                                    )),
+                              ]),
+                        ),
+                        // no telp
+                        Container(
+                          padding: EdgeInsets.only(left: 30, top: 5),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  width: 15,
+                                  padding: EdgeInsets.only(top: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.phone,
+                                    size: 13,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5),
+                                ),
+                                Container(
+                                    width: size.width - 30 - 30 - 10 - 20,
+                                    child: Text(
+                                      "telp",
+                                      maxLines: 1,
+                                    )),
+                              ]),
+                        ),
+                        // alamat
+                        Container(
+                          padding: EdgeInsets.only(left: 30, top: 5),
+                          child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  width: 15,
+                                  padding: EdgeInsets.only(top: 2),
+                                  child: FaIcon(
+                                    FontAwesomeIcons.mapMarkedAlt,
+                                    size: 13,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 5),
+                                ),
+                                Container(
+                                    width: size.width - 30 - 30 - 10 - 20,
+                                    child: Text(
+                                      'alamat jl kutunggu',
+                                      maxLines: 4,
+                                    )),
+                              ]),
+                        ),
+                      ]),
+                ),
+                //footer button
+                Container(
+                  margin: EdgeInsets.only(left: 10, right: 10),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  height: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: new BorderRadius.only(
+                        bottomLeft: const Radius.circular(4.0),
+                        bottomRight: const Radius.circular(4.0),
+                      )),
                   child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 30,
-                    child: FaIcon(
-                      FontAwesomeIcons.locationArrow,
-                      color: Colors.green,
-                      size: 18,
-                    ),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            right: BorderSide(width: .5, color: Colors.black26),
+                          ),
+                        ),
+                        width: (size.width - 40) / 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.edit,
+                              size: 16,
+                              color: Colors.orange,
+                            ),
+                            Text(' SUNTING',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.orange[600])),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: (size.width - 40) / 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.eraser,
+                              size: 16,
+                              color: Colors.red[600],
+                            ),
+                            Text(' HAPUS',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.red)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Container(
-                      width: size.width - 30 - 100 - 30,
-                      child: Text('Alamat Rumah',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                          ))),
-                  Container(
-                    width: 100,
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () {},
-                      child: Text(
-                          dataUserDefault['get_alamat'][index]['isUtama'] == 1
-                              ? 'Utama'
-                              : '',
-                          style: TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          )),
-                    ),
-                  )
-                ],
-              )),
-              //nama
-              Container(
-                padding: EdgeInsets.only(left: 30, top: 5),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          width: size.width - 30 - 30,
-                          child: Text(
-                            dataUserDefault['get_alamat'][index]['nama'],
-                            maxLines: 1,
-                          )),
-                    ]),
-              ),
-              // no telp
-              Container(
-                padding: EdgeInsets.only(left: 30, top: 5),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          width: size.width - 30 - 30,
-                          child: Text(
-                            dataUserDefault['get_alamat'][index]['telp'],
-                            maxLines: 1,
-                          )),
-                    ]),
-              ),
-              // alamat
-              Container(
-                padding: EdgeInsets.only(left: 30, top: 5),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                          width: size.width - 30 - 30,
-                          child: Text(
-                            dataUserDefault['get_alamat'][index]['alamat'],
-                            maxLines: 4,
-                          )),
-                    ]),
-              ),
-            ]));
+                )
+              ],
+            ));
       },
     );
   }

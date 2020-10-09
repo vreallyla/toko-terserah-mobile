@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 
 class ItemWishlistView extends StatefulWidget {
   const ItemWishlistView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
+      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation,this.countWishlist, this.dataWishlist})
       : super(key: key);
 
   final AnimationController mainScreenAnimationController;
   final Animation<dynamic> mainScreenAnimation;
+  final int countWishlist;
+  final List dataWishlist;
 
   @override
   _ItemWishlistViewState createState() => _ItemWishlistViewState();
@@ -41,6 +43,8 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
 
   @override
   Widget build(BuildContext context) {
+
+    // print(widget.dataWishlist[0]['nama']);
     final sizeu = MediaQuery.of(context).size;
     return AnimatedBuilder(
       animation: widget.mainScreenAnimationController,
@@ -56,7 +60,7 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
               child: ListView.builder(
                 padding:
                     const EdgeInsets.only(top: 0, bottom: 0, right: 0, left: 0),
-                itemCount: 5,
+                itemCount: widget.countWishlist,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (BuildContext context, int index) {
                   final int count =
@@ -96,7 +100,7 @@ class MealsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
-
+    
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
