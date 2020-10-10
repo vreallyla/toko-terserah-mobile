@@ -38,26 +38,21 @@ class _WishlistScreenState extends State<WishlistScreen>
 
     var resWishlist = prefs.getString('dataWishlist');
     // print(resWishlist);
-   
 
     if (resWishlist != null) {
-       isLoading=false;
+      isLoading = false;
       dataTest = json.decode(resWishlist)['data'];
       // print('dasd');
       // print(dataTest);
       addAllListData();
-      setState(() {
-        
-      });
+      setState(() {});
     } else {}
   }
 
   _getDataApi() async {
-   await WishlistModel.getWish(searchInput.text).then((value) {
-     
+    await WishlistModel.getWish(searchInput.text).then((value) {
       if (value.error) {
         isLogin = false;
-        
       }
       _setData();
       print(value.data);
@@ -74,8 +69,8 @@ class _WishlistScreenState extends State<WishlistScreen>
     _getDataApi();
 
     // Future.delayed(Duration(seconds: 0), () {
-      // getDataApi();
-      addAllListData();
+    // getDataApi();
+    addAllListData();
     // });
 
     scrollController.addListener(() {
@@ -104,7 +99,7 @@ class _WishlistScreenState extends State<WishlistScreen>
   }
 
   void addAllListData() {
-    listViews=[];
+    listViews = [];
     const int count = 9;
 
     // dataWish.add({"nama": "agus"});
@@ -128,7 +123,6 @@ class _WishlistScreenState extends State<WishlistScreen>
         child: TextFormField(
           controller: searchInput,
           onChanged: (text) {
-            
             setState(() {});
             _getDataApi();
           },
@@ -139,9 +133,11 @@ class _WishlistScreenState extends State<WishlistScreen>
                 const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.black54, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.black38, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             disabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.black38, width: 1),
@@ -156,9 +152,15 @@ class _WishlistScreenState extends State<WishlistScreen>
         ),
       ),
     ));
+
+    //loading
     if (isLoading) {
       listViews.add(reqLoad());
-    } else {
+    } else if (dataTest.length == 0) {
+      listViews.add(dataKosong());
+    }
+    //fill data
+    else {
       listViews.add(
         ItemWishlistView(
           mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(

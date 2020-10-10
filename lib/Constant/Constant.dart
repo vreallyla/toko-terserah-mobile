@@ -63,4 +63,41 @@ Widget reqLoad(){
   );
 }
 
+Widget dataKosong(){
+  return Container(
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 150, bottom: 15),
+              alignment: Alignment.center,
+              height: 80,
+              width: 80,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/fitness_app/data_empty.png'),
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+            ),
+            Text(
+              'Data Tidak Ditemukan',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87),
+            ),
+            Text(
+              'Silakan cari data yang tersedia...',
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54),
+            )
+          ],
+        ),
+      );
+}
+
 
