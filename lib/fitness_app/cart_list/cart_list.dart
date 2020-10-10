@@ -112,7 +112,7 @@ class FooterApp extends StatelessWidget {
                 alignment: Alignment.center,
                 width: 90,
                 child: Text(
-                  'Check Out',
+                  'CHECKOUT',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

@@ -27,7 +27,7 @@ class TitleView extends StatelessWidget {
                 0.0, 30 * (1.0 - animation.value), 0.0),
             child: Container(
               child: Padding(
-                padding: const EdgeInsets.only(left: 24, right: 24),
+                padding: const EdgeInsets.only(left: 0, right: 0),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -59,17 +59,16 @@ class TitleView extends StatelessWidget {
                                 fontWeight: FontWeight.normal,
                                 fontSize: 16,
                                 letterSpacing: 0.5,
-                                color: FintnessAppTheme.nearlyDarkBlue,
+                                color: Colors.green,
                               ),
                             ),
                             SizedBox(
                               height: 38,
                               width: 26,
+                              
                               child: Icon(
                                 Icons.arrow_forward,
-                                color: subTxt == null
-                                    ? FintnessAppTheme.white
-                                    : FintnessAppTheme.darkText,
+                                color: Colors.green,
                                 size: 18,
                               ),
                             ),

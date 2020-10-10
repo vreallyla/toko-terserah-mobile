@@ -1,6 +1,7 @@
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/body_measurement.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/glass_view.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/mediterranesn_diet_view.dart';
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
@@ -24,6 +25,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
   TextEditingController editingController = TextEditingController();
+
+  var size;
+  double sizeHeight = 0;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -91,137 +95,185 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         return Builder(
           builder: (BuildContext context) {
             return Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(color: Colors.blueGrey),
-                child: Text(
-                  'text $i',
-                  style: TextStyle(fontSize: 16.0),
-                ));
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              // decoration: BoxDecoration(color: Colors.blueGrey),
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/fitness_app/bg_users.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              // child: Text(
+              //   'text $i',
+              //   style: TextStyle(fontSize: 16.0),
+              // )
+            );
           },
         );
       }).toList(),
     ));
 
-    listViews.add(
-      RunningView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Kategori',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      MealsListView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Flash Sale',
-        subTxt: 'Selengkapnya',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      ItemSquareView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      TitleView(
-        titleTxt: 'Produk Terbaru',
-        subTxt: 'Selengkapnya',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 4, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-    listViews.add(
-      ItemSquareView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Produk Terlaris',
-        subTxt: 'Selengkapnya',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 6, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      ItemSquareView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
-    listViews.add(
-      TitleView(
-        titleTxt: 'Produk Unggulan',
-        subTxt: 'Selengkapnya',
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController,
-            curve:
-                Interval((1 / count) * 6, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController,
-      ),
-    );
-
-    listViews.add(
-      ItemSquareView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-      ),
-    );
+    // kupon voucher banner card
     // listViews.add(
+    //   RunningView(
+    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    //         parent: widget.animationController,
+    //         curve:
+    //             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+    //     animationController: widget.animationController,
+    //   ),
+    // );
+
+    // kategori option
+    // listViews.add(
+    //   TitleView(
+    //     titleTxt: 'Kategori',
+    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    //         parent: widget.animationController,
+    //         curve:
+    //             Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
+    //     animationController: widget.animationController,
+    //   ),
+    // );
+
+    // listViews.add(
+    //   MealsListView(
+    //     mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+    //         CurvedAnimation(
+    //             parent: widget.animationController,
+    //             curve: Interval((1 / count) * 3, 1.0,
+    //                 curve: Curves.fastOutSlowIn))),
+    //     mainScreenAnimationController: widget.animationController,
+    //   ),
+    // );
+    // flash Sale
+    listViews.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+        // margin: EdgeInsets.only(top:15),
+        color: Colors.white,
+        child: Column(
+          children: [
+            TitleView(
+              titleTxt: 'Flash Sale',
+              subTxt: 'Lainnya',
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 2, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+            ),
+            ItemSquareView(
+              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              mainScreenAnimationController: widget.animationController,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    //produk Terbaru
+        listViews.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+        margin: EdgeInsets.only(top:15),
+        color: Colors.white,
+        child: Column(
+          children: [
+            TitleView(
+              titleTxt: 'Produk Terbaru',
+              subTxt: 'Lainnya',
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 2, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+            ),
+            ItemSquareView(
+              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              mainScreenAnimationController: widget.animationController,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    //produk Terlaris
+        listViews.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+        margin: EdgeInsets.only(top:15),
+        color: Colors.white,
+        child: Column(
+          children: [
+            TitleView(
+              titleTxt: 'Produk Terlaris',
+              subTxt: 'Lainnya',
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 2, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+            ),
+            ItemSquareView(
+              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              mainScreenAnimationController: widget.animationController,
+            ),
+          ],
+        ),
+      ),
+    );
+
+
+    //produk Unggulan
+        listViews.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+        margin: EdgeInsets.only(top:15),
+        color: Colors.white,
+        child: Column(
+          children: [
+            TitleView(
+              titleTxt: 'Produk Unggulan',
+              subTxt: 'Lainnya',
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 2, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+            ),
+            ItemSquareView(
+              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 3, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              mainScreenAnimationController: widget.animationController,
+            ),
+          ],
+        ),
+      ),
+    );
+
+
+// listViews.add(
     //   GlassView(
     //       animation: Tween<double>(begin: 0.0, end: 1.0).animate(
     //           CurvedAnimation(
@@ -239,6 +291,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      size = context.size;
+    });
+
     return Container(
       color: FintnessAppTheme.background,
       child: Scaffold(
@@ -298,10 +354,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 child: Container(
                   decoration: BoxDecoration(
                     color: FintnessAppTheme.white.withOpacity(topBarOpacity),
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(20.0),
-                      bottomRight: Radius.circular(20.0),
-                    ),
+                    // borderRadius: const BorderRadius.only(
+                    //   // bottomLeft: Radius.circular(20.0),
+                    //   // bottomRight: Radius.circular(20.0),
+                    // ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
                           color: FintnessAppTheme.grey
@@ -313,16 +369,17 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                        height: MediaQuery.of(context).padding.top,
+                        height: MediaQuery.of(context).padding.top + 10,
                       ),
                       Padding(
                         padding: EdgeInsets.only(
                             left: 16,
                             right: 16,
-                            top: 16 - 8.0 * topBarOpacity,
-                            bottom: 12 - 8.0 * topBarOpacity),
+                            // top: 11 - 8.0 * topBarOpacity,
+                            bottom: 16 - 8.0 * topBarOpacity),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             //                  Padding(
                             //   padding: const EdgeInsets.all(16.0),
@@ -378,7 +435,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                             // // ),
                             SizedBox(
                               height: 40,
-                              width: 298,
+                              width: 350,
                               child: TextField(
                                 onChanged: (value) {},
                                 controller: editingController,
@@ -398,12 +455,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                         borderSide: BorderSide(
                                             color: Colors.grey, width: 1.0),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(25.0))),
+                                            Radius.circular(8.0))),
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey, width: 5.0),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(25.0)))),
+                                            Radius.circular(8.0)))),
                               ),
                             ),
                             //),
