@@ -51,9 +51,6 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
   @override
   Widget build(BuildContext context) {
     loadWishlist = widget.dataWishlist;
-  print('e');
-  print(widget.countWishlist);
-
 
     // print(widget.dataWishlist[0]['nama']);
     final sizeu = MediaQuery.of(context).size;

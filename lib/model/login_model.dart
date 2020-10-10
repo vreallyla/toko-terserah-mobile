@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
+//import 'dart:developer';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
@@ -62,9 +62,6 @@ class LoginModel {
         var jsonObject = json.decode(apiResult.body);
 
         await UserModel.akunRes();
-
-        
-
 
         print('post login success');
 

@@ -1,26 +1,141 @@
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
+import 'package:http/http.dart';
 import '../produk_detail/CustomShowDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:best_flutter_ui_templates/model/alamat_model.dart';
+//import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'dart:convert';
 import 'dart:core';
+import 'package:http/http.dart' as http;
 
 class AlamatList extends StatefulWidget {
   @override
   _AlamatListState createState() => _AlamatListState();
 }
 
+class Post {
+  String id;
+  Post({this.id});
+
+  factory Post.fromJson(Map json) {
+    return Post(
+      id: json['id'],
+    );
+  }
+  Map toMap() {
+    var map = new Map();
+    map["id"] = id;
+    return map;
+  }
+}
+
+class PostCrate {
+  String nama;
+  String telp;
+  String alamat;
+  int kode_pos;
+  int occupancy_id;
+  int kecamatan_id;
+
+  PostCrate({this.nama});
+
+  factory PostCrate.fromJson(Map json) {
+    return PostCrate(
+      nama: json['id'],
+    );
+  }
+  Map toMap() {
+    var map = new Map();
+    map["id"] = nama;
+    return map;
+  }
+}
+
+Future delPost(String url, {Map body}) async {
+  return http.post(url, body: body).then((http.Response response) {
+    final int statusCode = response.statusCode;
+
+    if (statusCode < 200 || statusCode > 400 || json == null) {
+      throw new Exception("Error while fetching data");
+    }
+    return Post.fromJson(json.decode(response.body));
+  });
+}
+
 var dataUserDefault;
-void showAlertDialog(BuildContext context) {
+
+confirmHapus(BuildContext context, idx) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Konfirmasi'),
+        content: Text("Apakah anda yakin ingin menghapus data ini ?"),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Ya"),
+            onPressed: () async {
+              Response response = await http.delete(globalBaseUrl +
+                  globalPathAuth +
+                  "address/hapus/" +
+                  idx.toString());
+              print(response.statusCode);
+              // Post newPost = new Post(id: idx.toString());
+              // Post p = await delPost(
+              //     globalBaseUrl +
+              //         globalPathAuth +
+              //         "address/hapus/" +
+              //         idx.toString(),
+              //     body: newPost.toMap());
+              //        print(p.title);
+              // _getUser();
+              //Put your code here which you want to execute on Yes button click.
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: Text("Tidak"),
+            onPressed: () {
+              //Put your code here which you want to execute on No button click.
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showAlertDialog(BuildContext context, idx) {
   TextEditingController _namaController = new TextEditingController();
   TextEditingController _namapenerimaController = new TextEditingController();
   TextEditingController _alamatController = new TextEditingController();
   TextEditingController _telpController = new TextEditingController();
   TextEditingController _postalcodeController = new TextEditingController();
+  if (idx == null) {
+    _namaController.text = "";
+    _namapenerimaController.text = "";
+    _alamatController.text = "";
+    _telpController.text = "";
+    _postalcodeController.text = "";
+  } else if (dataUserDefault[idx].length == null) {
+    _namaController.text = "";
+    _namapenerimaController.text = "";
+    _alamatController.text = "";
+    _telpController.text = "";
+    _postalcodeController.text = "";
+  } else {
+    _namaController.text = dataUserDefault[idx]["get_occupancy"]["name"];
+    _namapenerimaController.text = dataUserDefault[idx]["nama"];
+    _alamatController.text = dataUserDefault[idx]["alamat"];
+    _telpController.text = dataUserDefault[idx]["telp"];
+    _postalcodeController.text = dataUserDefault[idx]["kode_pos"];
+  }
 
   showDialog(
     context: context,
@@ -196,13 +311,15 @@ class _AlamatListState extends State<AlamatList> {
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    String apiURL = globalBaseUrl + globalPathAuth + "address";
+    var apiResult = await http.post(apiURL);
+    print(apiResult);
     dataUser = prefs.getString('dataUser');
 
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
-      print(dataUser);
-      // dataUserDefault = dataUser['user'];
+      print(dataUser['user']['get_alamat']);
+      dataUserDefault = dataUser['user']['get_alamat'];
     }
 
     //the birthday's date
@@ -247,9 +364,7 @@ class _AlamatListState extends State<AlamatList> {
                   right: 15,
                 ),
                 child: RaisedButton(
-                  onPressed: () {
-                    showAlertDialog(context);
-                  },
+                  onPressed: () => showAlertDialog(context, null),
                   child: Text(
                     'TAMBAH ALAMAT',
                     style: TextStyle(color: Colors.white),
@@ -354,7 +469,7 @@ class AlamatTransaksi extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: 4,
+      itemCount: dataUserDefault == null ? 0 : dataUserDefault.length,
       itemBuilder: (BuildContext context, int index) {
         return new GestureDetector(
             onTapDown: _storePosition,
@@ -367,24 +482,24 @@ class AlamatTransaksi extends StatelessWidget {
                     ),
                 //onSelected: () => setState(() => imageList.remove(index)),
                 items: <PopupMenuEntry>[
-                  PopupMenuItem(
-                    value: 0,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.edit, color: Colors.green),
-                        Text("Edit"),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 0,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.delete, color: Colors.green),
-                        Text("Hapus"),
-                      ],
-                    ),
-                  ),
+                  // PopupMenuItem(
+                  //   value: 0,
+                  //   child: Row(
+                  //     children: <Widget>[
+                  //       Icon(Icons.edit, color: Colors.green),
+                  //       Text("Edit"),
+                  //     ],
+                  //   ),
+                  // ),
+                  // PopupMenuItem(
+                  //   value: 0,
+                  //   child: Row(
+                  //     children: <Widget>[
+                  //       Icon(Icons.delete, color: Colors.green),
+                  //       Text("Hapus"),
+                  //     ],
+                  //   ),
+                  // ),
                   PopupMenuItem(
                     value: 0,
                     child: Row(
@@ -417,21 +532,25 @@ class AlamatTransaksi extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Container(
-                              padding: EdgeInsets.only(top: 4,),
+                              padding: EdgeInsets.only(
+                                top: 4,
+                              ),
                               margin: EdgeInsets.only(right: 10),
                               width: 20,
                               height: 20,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage(
-                                      locationOccupation+'kontrakan.png'),
+                                      locationOccupation + 'kontrakan.png'),
                                   fit: BoxFit.cover,
                                 ),
                               ),
                             ),
                             Container(
                                 width: size.width - 30 - 120 - 30 - 20,
-                                child: Text('Alamat Rumah',
+                                child: Text(
+                                    dataUserDefault[index]["get_occupancy"]
+                                        ["name"],
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w500,
@@ -442,7 +561,10 @@ class AlamatTransaksi extends StatelessWidget {
                               alignment: Alignment.centerRight,
                               child: InkWell(
                                 onTap: () {},
-                                child: Text('Alamat utama',
+                                child: Text(
+                                    dataUserDefault[index]["isUtama"] == 1
+                                        ? "Alamat Utama"
+                                        : '',
                                     style: TextStyle(
                                       color: Colors.green,
                                       fontWeight: FontWeight.bold,
@@ -473,7 +595,7 @@ class AlamatTransaksi extends StatelessWidget {
                                 Container(
                                     width: size.width - 30 - 30 - 10 - 20,
                                     child: Text(
-                                      'nama',
+                                      dataUserDefault[index]["nama"],
                                       maxLines: 1,
                                     )),
                               ]),
@@ -499,7 +621,7 @@ class AlamatTransaksi extends StatelessWidget {
                                 Container(
                                     width: size.width - 30 - 30 - 10 - 20,
                                     child: Text(
-                                      "telp",
+                                      dataUserDefault[index]["telp"],
                                       maxLines: 1,
                                     )),
                               ]),
@@ -525,7 +647,7 @@ class AlamatTransaksi extends StatelessWidget {
                                 Container(
                                     width: size.width - 30 - 30 - 10 - 20,
                                     child: Text(
-                                      'alamat jl kutunggu',
+                                      dataUserDefault[index]["alamat"],
                                       maxLines: 4,
                                     )),
                               ]),
@@ -554,41 +676,47 @@ class AlamatTransaksi extends StatelessWidget {
                           ),
                         ),
                         width: (size.width - 40) / 2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.edit,
-                              size: 16,
-                              color: Colors.orange,
-                            ),
-                            Text(' SUNTING',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.orange[600])),
-                          ],
+                        child: InkWell(
+                          onTap: () => showAlertDialog(context, index),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.edit,
+                                size: 16,
+                                color: Colors.orange,
+                              ),
+                              Text(' SUNTING',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.orange[600])),
+                            ],
+                          ),
                         ),
                       ),
                       Container(
-                        alignment: Alignment.center,
-                        width: (size.width - 40) / 2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.eraser,
-                              size: 16,
-                              color: Colors.red[600],
+                          alignment: Alignment.center,
+                          width: (size.width - 40) / 2,
+                          child: InkWell(
+                            onTap: () => confirmHapus(
+                                context, dataUserDefault[index]["id"]),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.eraser,
+                                  size: 16,
+                                  color: Colors.red[600],
+                                ),
+                                Text(' HAPUS',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.red)),
+                              ],
                             ),
-                            Text(' HAPUS',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.red)),
-                          ],
-                        ),
-                      ),
+                          )),
                     ],
                   ),
                 )

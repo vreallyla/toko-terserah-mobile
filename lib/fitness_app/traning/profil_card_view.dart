@@ -13,7 +13,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 // image load
-import 'package:progressive_image/progressive_image.dart';
+//import 'package:progressive_image/progressive_image.dart';
 
 //import '../../main.dart';
 
@@ -43,7 +43,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     dataUser = prefs.getString('dataUser');
-
+    print(prefs.getKeys());
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
       var dataUserDefault = dataUser['user'];
@@ -118,8 +118,8 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: (bgPhoto != null
-                          ? 
-                          NetworkImage(globalBaseUrl+locationBgPhoto+bgPhoto)
+                          ? NetworkImage(
+                              globalBaseUrl + locationBgPhoto + bgPhoto)
                           : AssetImage('assets/fitness_app/bg_users.jpg')),
                       fit: BoxFit.cover,
                     ),
@@ -155,7 +155,8 @@ class _ProfilCardViewState extends State<ProfilCardView>
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: (ava != null
-                                ? NetworkImage(globalBaseUrl+locationAva+ava)
+                                ? NetworkImage(
+                                    globalBaseUrl + locationAva + ava)
                                 : AssetImage(
                                     'assets/fitness_app/user-default.png')),
                             fit: BoxFit.cover,
