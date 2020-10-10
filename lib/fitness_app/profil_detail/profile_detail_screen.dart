@@ -197,7 +197,11 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
       if (response.statusCode == 200) {
         showSnackBar("Berhasil Memperbarui Profil", Colors.green,
               Icon(Icons.check_circle_outline));
-        setState(() {});
+        setState(() {
+          isLoading = true;
+        });
+
+        _getCountCart();
       }
       print(response.statusCode);
     } catch (e) {
