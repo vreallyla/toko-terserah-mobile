@@ -4,6 +4,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:expandable/expandable.dart';
 import 'package:icon_shadow/icon_shadow.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as path;
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:async/async.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   @override
@@ -19,12 +29,19 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   String msgJenisKelamin;
   final myformat = DateFormat("yyyy-MM-dd");
   DateTime selectedDate = DateTime.now();
+
+  TextEditingController namaLengkapInput = new TextEditingController();
   TextEditingController tglLahirInput = new TextEditingController();
-  String msgTL;
+  String msgTL, _token, _ava;
+  var dataUser;
+  File _image;
+  final picker = ImagePicker();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   TextEditingController passwordInput = new TextEditingController();
   FaIcon seePass = FaIcon(FontAwesomeIcons.eye);
   bool occuText = true;
+  bool isLoading = true;
   String msgPass;
 
   TextEditingController emailInput = new TextEditingController();
@@ -35,6 +52,158 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
   TextEditingController telpInput = new TextEditingController();
   String messageTelp;
+
+  _getCountCart() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('token');
+      dataUser = prefs.getString('dataUser');
+
+      // if (dataUser != null) {
+      //   dataUser = await jsonDecode(dataUser);
+      // }
+
+      // get data user from API fetch
+      var response = await http.get(globalBaseUrl + 'api/auth/user',
+          headers: {'Authorization': 'bearer ' + _token});
+
+      dataUser = await json.decode(response.body);
+
+      setState(() {
+        namaLengkapInput.text = dataUser['data']['user']['name'];
+        tglLahirInput.text = dataUser['data']['user']['get_bio']['dob'];
+        telpInput.text = dataUser['data']['user']['get_bio']['phone'];
+        emailInput.text = dataUser['data']['user']['email'];
+        usernameInput.text = dataUser['data']['user']['username'];
+        _ava = dataUser['data']['user']['get_bio']['ava'];
+        isLoading = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /**
+   * Ambil Gambar via kamera 
+   * 
+   */
+  Future getImageCamera(context) async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        _showPicker(context);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  /**
+   * Ambil Gambar via Gallery
+   * 
+   */
+  Future getImageGalerry(context) async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        _showPicker(context);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  /**
+   * Cutom Alert response
+   * 
+   */
+  showSnackBar(String value, Color color, Icon icons) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: Row(
+        children: <Widget>[
+          icons,
+          SizedBox(
+            width: 20,
+          ),
+          Text(value)
+        ],
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+/**
+ * Todo Update bio 
+ * return alert 
+ * 
+ */
+  Future updateBio() async {
+    try {
+      final response =
+          await http.post(globalBaseUrl + 'api/profile/update/bio', body: {
+        'user_id': dataUser['data']['user']['id'].toString(),
+        'gender': 'pria',
+        'dob': tglLahirInput.text.toString(),
+        'phone': telpInput.text.toString(),
+        'name': namaLengkapInput.text
+      }, headers: {
+        'Authorization': 'bearer ' + _token
+      });
+
+      if (response.statusCode == 200) {
+        showSnackBar("Berhasil Memperbarui Profil", Colors.green,
+            Icon(Icons.check_circle_outline));
+        setState(() {});
+      } else {
+        print(json.decode(response.body));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  /**
+   * Upload Avatar with multipart http 
+   */
+  uploadAva() async {
+    print("Hallo");
+    try {
+      print("object");
+      var stream =
+          new http.ByteStream(DelegatingStream.typed(_image.openRead()));
+      var length = await _image.length();
+      var uri = Uri.parse(
+        globalBaseUrl + "api/profile/upload/ava",
+      );
+
+      var request = new http.MultipartRequest("POST", uri);
+
+      var multipart = new http.MultipartFile("ava", stream, length,
+          filename: path.basename(_image.path));
+      request.headers.addAll({'Authorization':  'bearer '+_token});
+      request.fields.addAll({"user_id":  dataUser['data']['user']['id'].toString()});
+      request.files.add(multipart);
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        showSnackBar("Berhasil Memperbarui Profil", Colors.green,
+              Icon(Icons.check_circle_outline));
+        setState(() {});
+      }
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+    }
+  }
 
   Container inputForm(context) {
     final sizeu = MediaQuery.of(context).size;
@@ -93,6 +262,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             // width: sizeu.width - sizeu.width / 5,
             height: 40,
             child: TextField(
+              controller: namaLengkapInput,
               textAlign: TextAlign.left,
               onChanged: (text) => {},
               decoration: new InputDecoration(
@@ -316,6 +486,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                       // enabled: false,
                       textAlign: TextAlign.left,
                       controller: telpInput,
+                      keyboardType: TextInputType.number,
                       onChanged: (text) {
                         setState(() {});
                       },
@@ -338,7 +509,9 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   'SIMPAN PERUBAHAN',
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  updateBio();
+                },
                 color: Colors.green,
               ))
         ],
@@ -439,14 +612,14 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   width: sizeu.width - 30,
                   height: 40,
                   child: TextField(
-                      // enabled: false,
+                      enabled: false,
                       textAlign: TextAlign.left,
                       controller: usernameInput,
                       onChanged: (text) {
                         setState(() {});
                       },
                       onSubmitted: (_) => FocusScope.of(context).nextFocus(),
-                      decoration: defaultInput('Masukkan Username', false)),
+                      decoration: defaultInput('Masukkan Username', true)),
                 ),
                 hintMsg(messageUsername),
               ],
@@ -513,7 +686,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               ],
             ),
           ),
-         // button profil
+          // button profil
           Container(
               width: sizeu.width - 30,
               padding: EdgeInsets.only(top: 15),
@@ -534,6 +707,91 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    _getCountCart();
+    super.initState();
+  }
+
+  /**
+   * Bottom Sheet Section
+   * 
+   */
+  void _showPicker(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  _image != null
+                      ? Wrap(
+                          children: [
+                            Center(
+                                child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Image.file(
+                                  _image,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                            )),
+                            new ListTile(
+                                leading: new Icon(Icons.upload_rounded),
+                                title: new Text('Upload gambar'),
+                                onTap: () {
+                                  uploadAva();
+                                  Navigator.of(context).pop();
+                                }),
+                            new ListTile(
+                                leading: new Icon(Icons.photo_library),
+                                title: new Text('Ambil dari galleri'),
+                                onTap: () {
+                                  getImageGalerry(context);
+                                  Navigator.of(context).pop();
+                                }),
+                            new ListTile(
+                              leading: new Icon(Icons.photo_camera),
+                              title: new Text('Ambil dari kamera'),
+                              onTap: () {
+                                getImageCamera(context);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        )
+                      : Wrap(
+                          children: [
+                            new ListTile(
+                                leading: new Icon(Icons.photo_library),
+                                title: new Text('Ambil dari galleri'),
+                                onTap: () {
+                                  getImageGalerry(context);
+                                  Navigator.of(context).pop();
+                                }),
+                            new ListTile(
+                              leading: new Icon(Icons.photo_camera),
+                              title: new Text('Ambil dari kamera'),
+                              onTap: () {
+                                getImageCamera(context);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
     return new GestureDetector(
@@ -541,66 +799,65 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: new Scaffold(
-          body: Stack(
-        children: <Widget>[
-          Stack(
-            children: <Widget>[
-              Container(
-                height: 180,
-                color: Colors.green,
-              ),
-              Container(
-                //My container or any other widget
-                color: Colors.grey.withOpacity(0.2),
+          key: _scaffoldKey,
+          body: isLoading
+              ? reqLoad()
+              : Stack(
+                  children: <Widget>[
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          height: 180,
+                          color: Colors.green,
+                        ),
+                        Container(
+                          //My container or any other widget
+                          color: Colors.grey.withOpacity(0.2),
 
-                child: ListView(children: <Widget>[
-                  AtasGambar(),
-                  inputForm(context),
-                  Padding(
-                    padding: EdgeInsets.only(top: 15),
-                  ),
-                  akunFrom(context),
-                ]),
-              ),
-            ],
-          ),
-          new Positioned(
-            //Place it at the top, and not use the entire screen
-            top: 0.0,
-            left: 0.0,
-            right: 0.0,
-            child: AppBar(
-              leading: IconButton(
-                icon: IconShadowWidget(
-                  Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 36,
-                  ),
-                  shadowColor: Colors.black54,
-                ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+                          child: ListView(children: <Widget>[
+                            headerAva(context),
+                            inputForm(context),
+                            Padding(
+                              padding: EdgeInsets.only(top: 15),
+                            ),
+                            akunFrom(context),
+                          ]),
+                        ),
+                      ],
+                    ),
+                    new Positioned(
+                      //Place it at the top, and not use the entire screen
+                      top: 0.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: AppBar(
+                        leading: IconButton(
+                          icon: IconShadowWidget(
+                            Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                              size: 36,
+                            ),
+                            shadowColor: Colors.black54,
+                          ),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
 
-              backgroundColor: Colors.transparent, //No more green
-              elevation: 0.0, //Shadow gone
-            ),
-          ),
-        ],
-      )),
+                        backgroundColor: Colors.transparent, //No more green
+                        elevation: 0.0, //Shadow gone
+                      ),
+                    ),
+                  ],
+                )),
     );
   }
-}
-// end stack end
 
-class AtasGambar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget headerAva(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
 
     return InkWell(
       onTap: () {
-        // Navigator.pushNamed(context, '/profile_detail');
+        _showPicker(context);
       },
       child: Stack(
         children: <Widget>[
@@ -659,6 +916,13 @@ class AtasGambar extends StatelessWidget {
                 //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
                 margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
+                    image: new DecorationImage(
+                      //Todo render image from API
+                      image: NetworkImage(
+                          'http://101.50.0.89/storage/users/ava/' + _ava ??
+                              'https://via.placeholder.com/300'),
+                      fit: BoxFit.cover,
+                    ),
                     border: Border.all(
                       color: Colors.transparent,
                       width: 3.0,
@@ -696,6 +960,12 @@ class AtasGambar extends StatelessWidget {
       ),
     );
   }
+}
+// end stack end
+
+class AtasGambar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {}
 }
 
 InputDecoration defaultInput(String hint, bool dis) {
