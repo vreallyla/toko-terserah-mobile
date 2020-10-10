@@ -53,6 +53,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   TextEditingController telpInput = new TextEditingController();
   String messageTelp;
 
+  TextEditingController rePassInput = new TextEditingController();
+
+  TextEditingController confirmPassInput = new TextEditingController();
+
   _getCountCart() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -171,6 +175,38 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     }
   }
 
+/**
+ * Todo update Password
+ * 
+ */
+  Future updatePassword() async {
+
+    print("hallo");
+    try {
+      final response =
+          await http.post(globalBaseUrl + 'api/profile/update/password', body: {
+        'user_id': dataUser['data']['user']['id'].toString(),
+        'password': passwordInput.text,
+        'new_password': rePassInput.text,
+        'password_confirmation': confirmPassInput.text
+      }, headers: {
+        'Authorization': 'bearer ' + _token
+      });
+
+      if (response.statusCode == 200) {
+        showSnackBar("Berhasil Memperbarui Password", Colors.green,
+            Icon(Icons.check_circle_outline));
+        setState(() {});
+      } else if (response.statusCode == 500) {
+        var msg = json.decode(response.body);
+        showSnackBar(
+            msg['data']['message'], Colors.redAccent, Icon(Icons.close));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   /**
    * Upload Avatar with multipart http 
    */
@@ -189,14 +225,15 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
       var multipart = new http.MultipartFile("ava", stream, length,
           filename: path.basename(_image.path));
-      request.headers.addAll({'Authorization':  'bearer '+_token});
-      request.fields.addAll({"user_id":  dataUser['data']['user']['id'].toString()});
+      request.headers.addAll({'Authorization': 'bearer ' + _token});
+      request.fields
+          .addAll({"user_id": dataUser['data']['user']['id'].toString()});
       request.files.add(multipart);
 
       var response = await request.send();
       if (response.statusCode == 200) {
         showSnackBar("Berhasil Memperbarui Profil", Colors.green,
-              Icon(Icons.check_circle_outline));
+            Icon(Icons.check_circle_outline));
         setState(() {
           isLoading = true;
         });
@@ -690,6 +727,124 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               ],
             ),
           ),
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top: 5),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Password Baru',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: Stack(
+                    children: [
+                      TextField(
+                          obscureText: occuText,
+                          textAlign: TextAlign.left,
+                          controller: rePassInput,
+                          onChanged: (text) {
+                            setState(() {});
+                          },
+                          onSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                          decoration: defaultInput('Masukkan Password', false)),
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: 36,
+                          child: IconButton(
+                            icon: seePass,
+                            tooltip: 'Lihat Password',
+                            color: Colors.black38,
+                            iconSize: 15,
+                            onPressed: () {
+                              if (occuText) {
+                                seePass = FaIcon(FontAwesomeIcons.eyeSlash);
+                                occuText = false;
+                              } else {
+                                seePass = FaIcon(FontAwesomeIcons.eye);
+                                occuText = true;
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //msg password
+                hintMsg(msgPass),
+              ],
+            ),
+          ),
+          Container(
+            // padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            padding: EdgeInsets.only(top: 5),
+            width: sizeu.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.topLeft,
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text('Ketik Ulang Password Baru',
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold))),
+                SizedBox(
+                  width: sizeu.width - 30,
+                  height: 40,
+                  child: Stack(
+                    children: [
+                      TextField(
+                          obscureText: occuText,
+                          textAlign: TextAlign.left,
+                          controller: confirmPassInput,
+                          onChanged: (text) {
+                            setState(() {});
+                          },
+                          onSubmitted: (_) =>
+                              FocusScope.of(context).nextFocus(),
+                          decoration: defaultInput('Masukkan Password', false)),
+                      Container(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: 36,
+                          child: IconButton(
+                            icon: seePass,
+                            tooltip: 'Lihat Password',
+                            color: Colors.black38,
+                            iconSize: 15,
+                            onPressed: () {
+                              if (occuText) {
+                                seePass = FaIcon(FontAwesomeIcons.eyeSlash);
+                                occuText = false;
+                              } else {
+                                seePass = FaIcon(FontAwesomeIcons.eye);
+                                occuText = true;
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                //msg password
+                hintMsg(msgPass),
+              ],
+            ),
+          ),
           // button profil
           Container(
               width: sizeu.width - 30,
@@ -699,10 +854,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   borderRadius: new BorderRadius.circular(4.0),
                 ),
                 child: Text(
-                  'SIMPAN PERUBAHAN',
+                  'UBAH PASSWORD',
                   style: TextStyle(color: Colors.white),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  updatePassword();
+                },
                 color: Colors.green,
               ))
         ],
