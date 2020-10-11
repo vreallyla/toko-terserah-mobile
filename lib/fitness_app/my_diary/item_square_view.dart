@@ -51,7 +51,7 @@ class _ItemSquareViewState extends State<ItemSquareView>
             transform: Matrix4.translationValues(
                 0.0, 20 * (1.0 - widget.mainScreenAnimation.value), 0.0),
             child: Container(
-              height: sizeu.width / 3 + (sizeu.width / 3 / 3) + 150,
+              height: sizeu.width / 3 + (sizeu.width / 3 / 3) + 150 -75,
               width: double.infinity,
               child: ListView.builder(
                 padding:
@@ -111,7 +111,7 @@ class MealsView extends StatelessWidget {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 32, left: 1, right: 5, bottom: 16),
+                        top: 0, left: 1, right: 5, bottom: 0),
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
@@ -123,6 +123,15 @@ class MealsView extends StatelessWidget {
                           Container(
                             height: sizeu.width / 3,
                             decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: .5,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ],
                               color: Colors.grey,
                               borderRadius: const BorderRadius.only(
                                 bottomRight: Radius.circular(0),
@@ -136,8 +145,17 @@ class MealsView extends StatelessWidget {
                           //konten
                           Container(
                             padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
-                            height: 120,
+                            height: 110,
                             decoration: BoxDecoration(
+                               boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: .4,
+                                  blurRadius: .5,
+                                  offset: Offset(
+                                      0, 0), // changes position of shadow
+                                ),
+                              ],
                               color: Colors.white,
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(0),
@@ -180,7 +198,7 @@ class MealsView extends StatelessWidget {
                   ),
                   Container(
                     padding: const EdgeInsets.only(
-                        top: 35, left: 5, right: 5, bottom: 16),
+                        top: 5, left: 5, right: 5, bottom: 0),
                     alignment: Alignment.topLeft,
                     child: Card(
                       color: Colors.green[100],
@@ -196,27 +214,7 @@ class MealsView extends StatelessWidget {
                           )),
                     ),
                   ),
-                  // Positioned(
-                  //   top: 0,
-                  //   left: 0,
-                  //   child: Container(
-                  //     width: 84,
-                  //     height: 84,
-                  //     decoration: BoxDecoration(
-                  //       color: FintnessAppTheme.nearlyWhite.withOpacity(0.2),
-                  //       shape: BoxShape.circle,
-                  //     ),
-                  //   ),
-                  // ),
-                  // Positioned(
-                  //   top: 0,
-                  //   left: 8,
-                  //   child: SizedBox(
-                  //     width: 80,
-                  //     height: 80,
-                  //     // child: Image.asset(mealsListData.imagePath),
-                  //   ),
-                  // )
+                 
                 ],
               ),
             ),

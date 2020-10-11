@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 // ignore: non_constant_identifier_names
 // String globalBaseUrl = "http://101.50.0.89/";
 String globalBaseUrl = "http://101.50.0.89/";
+String globalPathAuth = "api/auth/";
+
+
+
 String locationAva='storage/users/ava/';
 String locationBgPhoto='storage/users/background/';
-String globalPathAuth = "api/auth/";
+String locationProductImage='storage/produk/thumb/';
 
 //asset
 String locationOccupation='assets/occupancy/';
@@ -40,40 +44,6 @@ void dateParseJson(){
 }
 
 
-Widget noConnection(){
-  return Container(
-    alignment: Alignment.center,
-    padding: EdgeInsets.only(top:120),
-      child: Column(
-        children: [
-          Container(
-          alignment: Alignment.center,
-                        height: 160,
-                        width: 160,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/fitness_app/not_found.gif'),
-                            fit: BoxFit.fitHeight,
-                          ),
-                        ),
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-                      ),
-          Text('Koneksi Terputus',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
-          Text('Periksa sambungan internet kamu',style:TextStyle(color: Colors.black54)),
-          Container(
-            margin:EdgeInsets.only(top:15),
-            child: RaisedButton(
-              onPressed: (){
-                
-              },
-              color: Colors.orange[800],
-              child: Text('Coba Lagi',style:TextStyle(color: Colors.white)),
-            ),
-          )
-        ],
-      ),
-  );
-}
 
 Widget reqLoad(){
   return Container(
@@ -91,6 +61,43 @@ Widget reqLoad(){
                     padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
                   ),
   );
+}
+
+Widget dataKosong(){
+  return Container(
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(top: 150, bottom: 15),
+              alignment: Alignment.center,
+              height: 80,
+              width: 80,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/fitness_app/data_empty.png'),
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+            ),
+            Text(
+              'Data Tidak Ditemukan',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87),
+            ),
+            Text(
+              'Silakan cari data yang tersedia...',
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54),
+            )
+          ],
+        ),
+      );
 }
 
 

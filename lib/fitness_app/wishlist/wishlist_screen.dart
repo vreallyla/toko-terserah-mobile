@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+// import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../fintness_app_theme.dart';
 import './item_wishlist_view.dart';
@@ -16,10 +22,42 @@ class _WishlistScreenState extends State<WishlistScreen>
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
-  List dataWish=[];
+  List dataWish = [];
+  List dataTest = [];
   final ScrollController scrollController = ScrollController();
+  bool isLogin = true;
+  bool isConnect = true;
+  bool isLoading = true;
+  TextEditingController searchInput = new TextEditingController();
 
   double topBarOpacity = 0.0;
+
+  _setData() async {
+    // await _getDataApi('');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var resWishlist = prefs.getString('dataWishlist');
+    // print(resWishlist);
+
+    if (resWishlist != null) {
+      isLoading = false;
+      dataTest = json.decode(resWishlist)['data'];
+      // print('dasd');
+      // print(dataTest);
+      addAllListData();
+      setState(() {});
+    } else {}
+  }
+
+  _getDataApi() async {
+    await WishlistModel.getWish(searchInput.text).then((value) {
+      if (value.error) {
+        isLogin = false;
+      }
+      _setData();
+      print(value.data);
+    });
+  }
 
   @override
   void initState() {
@@ -27,7 +65,13 @@ class _WishlistScreenState extends State<WishlistScreen>
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+
+    _getDataApi();
+
+    // Future.delayed(Duration(seconds: 0), () {
+    // getDataApi();
     addAllListData();
+    // });
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -55,10 +99,11 @@ class _WishlistScreenState extends State<WishlistScreen>
   }
 
   void addAllListData() {
+    listViews = [];
     const int count = 9;
 
-    dataWish.add({"nama": "agus"});
-    dataWish.add({"nama": "adib"});
+    // dataWish.add({"nama": "agus"});
+    // dataWish.add({"nama": "adib"});
 
     // cari textfield
     listViews.add(Container(
@@ -75,17 +120,31 @@ class _WishlistScreenState extends State<WishlistScreen>
       margin: EdgeInsets.only(bottom: 10),
       child: SizedBox(
         height: 40,
-              child: new TextFormField(
-          
-          decoration: new InputDecoration(
+        child: TextFormField(
+          controller: searchInput,
+          onChanged: (text) {
+            setState(() {});
+            _getDataApi();
+          },
+          // onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+          decoration: InputDecoration(
             prefixIcon: Icon(Icons.search),
-            labelText: "Cari Wishlist",
-            fillColor: Colors.black,
-            border: new OutlineInputBorder(
-              borderRadius: new BorderRadius.circular(8.0),
-              borderSide: new BorderSide(),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black54, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
-            //fillColor: Colors.green
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black38, width: 1),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black38, width: 1),
+            ),
+            hintText: 'Cari Wishlist',
+            fillColor: Colors.white,
+            filled: true,
           ),
           style: new TextStyle(
             fontFamily: "Poppins",
@@ -94,19 +153,27 @@ class _WishlistScreenState extends State<WishlistScreen>
       ),
     ));
 
-    listViews.add(
-      ItemWishlistView(
-        mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-            CurvedAnimation(
-                parent: widget.animationController,
-                curve: Interval((1 / count) * 3, 1.0,
-                    curve: Curves.fastOutSlowIn))),
-        mainScreenAnimationController: widget.animationController,
-        countWishlist:2,
-        dataWishlist:dataWish,
-      ),
-    );
-  
+    //loading
+    if (isLoading) {
+      listViews.add(reqLoad());
+    } else if (dataTest.length == 0) {
+      listViews.add(dataKosong());
+    }
+    //fill data
+    else {
+      listViews.add(
+        ItemWishlistView(
+          mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController,
+                  curve: Interval((1 / count) * 3, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          mainScreenAnimationController: widget.animationController,
+          countWishlist: dataTest.length,
+          dataWishlist: dataTest,
+        ),
+      );
+    }
   }
 
   Container cardWishlist() {
@@ -214,8 +281,8 @@ class _WishlistScreenState extends State<WishlistScreen>
                   decoration: BoxDecoration(
                     color: FintnessAppTheme.white.withOpacity(topBarOpacity),
                     borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(32.0),
-                    ),
+                        // bottomLeft: Radius.circular(32.0),
+                        ),
                     boxShadow: <BoxShadow>[
                       BoxShadow(
                           color: FintnessAppTheme.grey

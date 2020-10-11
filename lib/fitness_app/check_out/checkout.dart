@@ -73,7 +73,7 @@ class _CheckOutState extends State<CheckOut> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Check Out',
+          'Checkout',
           style: TextStyle(color: Colors.black),
         ),
         actions: <Widget>[
@@ -138,7 +138,7 @@ class FooterApp extends StatelessWidget {
                 alignment: Alignment.center,
                 width: 90,
                 child: Text(
-                  'Bayar',
+                  'BAYAR',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -226,7 +226,7 @@ class ApplyVoucher extends StatelessWidget {
                     onPressed: () {},
                     color: Colors.green,
                     child: Text(
-                      'Pakai',
+                      'PAKAI',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),

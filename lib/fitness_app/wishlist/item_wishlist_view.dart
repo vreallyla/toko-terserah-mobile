@@ -1,6 +1,8 @@
-//import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 //import '../../main.dart';
 
@@ -17,6 +19,7 @@ class ItemWishlistView extends StatefulWidget {
   final Animation<dynamic> mainScreenAnimation;
   final int countWishlist;
   final List dataWishlist;
+
 
   @override
   _ItemWishlistViewState createState() => _ItemWishlistViewState();
@@ -105,7 +108,7 @@ class MealsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
-    print(loadWishlist);
+    var product = loadWishlist['get_produk'];
 
     return AnimatedBuilder(
       animation: animationController,
@@ -132,7 +135,7 @@ class MealsView extends StatelessWidget {
                           Container(
                         height: sizeu.width / 2 -
                             sizeu.width / 15 +
-                            sizeu.width / 3 / 3,
+                            sizeu.width / 3 / 3 -20,
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -165,6 +168,15 @@ class MealsView extends StatelessWidget {
                                     height: sizeu.width / 4,
                                     width: sizeu.width / 4,
                                     decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: (product['gambar'] != null
+                                            ? NetworkImage(globalBaseUrl +
+                                                locationProductImage +
+                                                product['gambar'])
+                                            : AssetImage(
+                                                'assets/fitness_app/bg_users.jpg')),
+                                        fit: BoxFit.cover,
+                                      ),
                                       color: Colors.black26,
                                       borderRadius: const BorderRadius.only(
                                         bottomRight: Radius.circular(8.0),
@@ -176,7 +188,7 @@ class MealsView extends StatelessWidget {
                                   ),
                                   Container(
                                     height:
-                                        sizeu.width / 4 + sizeu.width / 3 / 3,
+                                        sizeu.width / 4 + sizeu.width / 3 / 3-20,
                                     padding: EdgeInsets.only(left: 10),
                                     child: Column(
                                       crossAxisAlignment:
@@ -189,7 +201,7 @@ class MealsView extends StatelessWidget {
                                               sizeu.width / 4 -
                                               10,
                                           child: Text(
-                                            loadWishlist['nama'],
+                                            product['nama'].toString(),
                                             maxLines: 2,
                                             style: TextStyle(
                                               fontSize: 15,
@@ -201,7 +213,9 @@ class MealsView extends StatelessWidget {
                                           child: Container(
                                               margin: EdgeInsets.all(2),
                                               child: Text(
-                                                'Grosir',
+                                                (product['isGrosir'] == 1
+                                                    ? 'Grosir'
+                                                    : 'Retail'),
                                                 style: TextStyle(
                                                   color: Colors.green[800],
                                                   fontWeight: FontWeight.bold,
@@ -216,7 +230,14 @@ class MealsView extends StatelessWidget {
                                               sizeu.width / 4 -
                                               10,
                                           child: Text(
-                                            'Rp 40.000,-',
+                                            NumberFormat.currency(
+                                                    locale: "id_ID",
+                                                    symbol: "Rp")
+                                                .format(int.parse(
+                                                    product['is_diskon'] != 0
+                                                        ? product[
+                                                            'harga_diskon']
+                                                        : product['harga'])),
                                             maxLines: 2,
                                             style: TextStyle(
                                                 fontSize: 15,
@@ -228,21 +249,38 @@ class MealsView extends StatelessWidget {
                                             Card(
                                               color: Colors.red[100],
                                               child: Container(
-                                                  margin: EdgeInsets.all(2),
+                                                  margin: EdgeInsets.all(
+                                                      product['is_diskon'] != 0
+                                                          ? 2
+                                                          : 0),
                                                   child: Text(
-                                                    '-10%',
+                                                    '-' +
+                                                        (product['diskon'] ??
+                                                            '0') +
+                                                        '%',
                                                     style: TextStyle(
                                                       color: Colors.red[800],
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 12,
+                                                      fontSize:
+                                                          product['is_diskon'] !=
+                                                                  0
+                                                              ? 12
+                                                              : 0,
                                                     ),
                                                   )),
                                             ),
                                             Text(
-                                              'Rp50.000,00',
+                                              NumberFormat.currency(
+                                                      locale: "id_ID",
+                                                      symbol: "Rp")
+                                                  .format(int.parse(
+                                                      product['harga'])),
                                               style: TextStyle(
-                                                  fontSize: 15,
+                                                  fontSize:
+                                                      product['is_diskon'] != 0
+                                                          ? 15
+                                                          : 0,
                                                   decoration: TextDecoration
                                                       .lineThrough),
                                               textAlign: TextAlign.left,
@@ -250,8 +288,8 @@ class MealsView extends StatelessWidget {
                                           ],
                                         ),
                                         starJadi(
-                                            4,
-                                            '1.000',
+                                            double.parse(loadWishlist['avg_ulasan'].toString()),
+                                            NumberFormat("#,###", "id_ID").format(loadWishlist['count_ulasan']),
                                             sizeu.width -
                                                 50 -
                                                 sizeu.width / 4 -
@@ -278,10 +316,17 @@ class MealsView extends StatelessWidget {
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                         child: Text(
-                                          'Masukkan Keranjang',
+                                          'MASUKKAN KERANJANG',
                                           style: TextStyle(color: Colors.white),
                                         ),
-                                        color: Colors.green,
+                                        color: (product['isGrosir'] == 1
+                                                ? int.parse(
+                                                        product['min_qty']) >=
+                                                    int.parse(product['stock'])
+                                                : int.parse(product['stock']) !=
+                                                    0)
+                                            ? Colors.green
+                                            : Colors.black12,
                                       )),
                                   Container(
                                       width: 80,

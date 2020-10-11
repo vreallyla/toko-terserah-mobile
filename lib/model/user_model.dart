@@ -57,7 +57,7 @@ class UserModel {
 
         print('data akun success');
 
-        print(jsonObject['status']);
+        // print(jsonObject['status']);
 
         if (json.decode(apiResult.body)['status'] != null) {
           // token untuk kirim request habis
@@ -93,6 +93,7 @@ class UserModel {
       );
     }
   }
+
 
   static Future<UserModel> checkEmail(String email) async {
     String apiURL = globalBaseUrl + globalPathAuth + "check_email";
