@@ -13,6 +13,8 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;
 
+String tokenFixed = '';
+
 class AlamatList extends StatefulWidget {
   @override
   _AlamatListState createState() => _AlamatListState();
@@ -68,7 +70,8 @@ Future delPost(String url, {Map body}) async {
 }
 
 var dataUserDefault;
-
+var dataKecamatan;
+var dataJenisAlamat;
 confirmHapus(BuildContext context, idx) {
   showDialog(
     context: context,
@@ -80,21 +83,16 @@ confirmHapus(BuildContext context, idx) {
           FlatButton(
             child: Text("Ya"),
             onPressed: () async {
-              Response response = await http.delete(globalBaseUrl +
-                  globalPathAuth +
-                  "address/hapus/" +
-                  idx.toString());
+              print(globalBaseUrl + "api/address/delete/" + idx.toString());
+              print(tokenFixed);
+              Response response = await http.post(
+                  globalBaseUrl + "api/address/delete/" + idx.toString(),
+                  headers: {
+                    "Accept": "application/json",
+                    "Authorization":
+                        "Bearer " + (tokenFixed != null ? tokenFixed : '')
+                  });
               print(response.statusCode);
-              // Post newPost = new Post(id: idx.toString());
-              // Post p = await delPost(
-              //     globalBaseUrl +
-              //         globalPathAuth +
-              //         "address/hapus/" +
-              //         idx.toString(),
-              //     body: newPost.toMap());
-              //        print(p.title);
-              // _getUser();
-              //Put your code here which you want to execute on Yes button click.
               Navigator.of(context).pop();
             },
           ),
@@ -136,6 +134,7 @@ void showAlertDialog(BuildContext context, idx) {
     _telpController.text = dataUserDefault[idx]["telp"];
     _postalcodeController.text = dataUserDefault[idx]["kode_pos"];
   }
+  bool _validate = false;
 
   showDialog(
     context: context,
@@ -167,15 +166,15 @@ void showAlertDialog(BuildContext context, idx) {
           color: Colors.black,
         ),
         decoration: InputDecoration(
-          hintText: 'Nama Penerima',
-          labelText: 'Nama Penerima :',
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
-          hintStyle: TextStyle(
-            color: Colors.black,
-          ),
-        ),
+            hintText: 'Nama Penerima',
+            labelText: 'Nama Penerima :',
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+            hintStyle: TextStyle(
+              color: Colors.black,
+            ),
+            errorText: _validate ? 'Tidak Boleh Kosong' : null),
       );
 
       final telpField = TextFormField(
@@ -186,17 +185,26 @@ void showAlertDialog(BuildContext context, idx) {
           color: Colors.black,
         ),
         decoration: InputDecoration(
-          hintText: 'Nomor Telepon',
-          labelText: 'Nomor Telepon :',
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
-          hintStyle: TextStyle(
-            color: Colors.black,
-          ),
-        ),
+            hintText: 'Nomor Telepon',
+            labelText: 'Nomor Telepon :',
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+            hintStyle: TextStyle(
+              color: Colors.black,
+            ),
+            errorText: _validate ? 'Tidak Boleh Kosong' : null),
       );
-
+      Map<String, String> body = {
+        'nama': _namaController.text,
+        'telp': _telpController.text,
+        'alamat': _alamatController.text,
+        'kode_pos': _postalcodeController.text,
+        'occupancy_id': "0",
+        'kecamatan_id': "0",
+        'lat': "",
+        'long': ""
+      };
       final postalcodeField = TextFormField(
         maxLines: 1,
         controller: _postalcodeController,
@@ -205,15 +213,15 @@ void showAlertDialog(BuildContext context, idx) {
           color: Colors.black,
         ),
         decoration: InputDecoration(
-          hintText: 'Kode Pos',
-          labelText: 'Kode Pos :',
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
-          hintStyle: TextStyle(
-            color: Colors.black,
-          ),
-        ),
+            hintText: 'Kode Pos',
+            labelText: 'Kode Pos :',
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+            hintStyle: TextStyle(
+              color: Colors.black,
+            ),
+            errorText: _validate ? 'Tidak Boleh Kosong' : null),
       );
       final alamatField = TextFormField(
         maxLines: 2,
@@ -223,15 +231,15 @@ void showAlertDialog(BuildContext context, idx) {
           color: Colors.black,
         ),
         decoration: InputDecoration(
-          hintText: 'Alamat',
-          labelText: 'Alamat :',
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
-          hintStyle: TextStyle(
-            color: Colors.black,
-          ),
-        ),
+            hintText: 'Alamat',
+            labelText: 'Alamat :',
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+            hintStyle: TextStyle(
+              color: Colors.black,
+            ),
+            errorText: _validate ? 'Tidak Boleh Kosong' : null),
       );
 
       return CustomAlertDialog(
@@ -266,7 +274,47 @@ void showAlertDialog(BuildContext context, idx) {
               alamatField,
               postalcodeField,
               MaterialButton(
-                onPressed: () {},
+                onPressed: () async {
+                  if (_alamatController.text.isEmpty ||
+                      _namaController.text.isEmpty ||
+                      _namapenerimaController.text.isEmpty ||
+                      _postalcodeController.text.isEmpty ||
+                      _telpController.text.isEmpty) {
+                    _validate = false;
+                  } else {
+                    if (idx != null) {
+                      print(globalBaseUrl +
+                          "api/address/update/" +
+                          idx.toString());
+                      print(tokenFixed);
+                      Response response = await http.post(
+                          globalBaseUrl +
+                              "api/address/update/" +
+                              idx.toString(),
+                          headers: {
+                            "Accept": "application/json",
+                            "Authorization": "Bearer " +
+                                (tokenFixed != null ? tokenFixed : ''),
+                          },
+                          body: body);
+                      print(response.statusCode);
+                    } else {
+                      print(globalBaseUrl + "api/address/create");
+                      print(tokenFixed);
+                      Response response =
+                          await http.post(globalBaseUrl + "api/address/create",
+                              headers: {
+                                "Accept": "application/json",
+                                "Authorization": "Bearer " +
+                                    (tokenFixed != null ? tokenFixed : '')
+                              },
+                              body: body);
+                      print(response.body);
+                    }
+                  }
+
+                  Navigator.of(context).pop();
+                },
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height / 12,
@@ -307,15 +355,29 @@ class _AlamatListState extends State<AlamatList> {
   String nama, ava, bgPhoto, telp, alamat, utama;
   DateTime tglDaftar, tglUpdate;
   var dataUser;
+  var dataKota;
   String diff;
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String apiURL = globalBaseUrl + globalPathAuth + "address";
-    var apiResult = await http.post(apiURL);
-    print(apiResult);
+    tokenFixed = prefs.getString('token');
     dataUser = prefs.getString('dataUser');
-
+    print(prefs.toString());
+    print(globalBaseUrl + "api/address/kota");
+    print(tokenFixed);
+    Response response =
+        await http.get(globalBaseUrl + "api/address/kota", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    });
+    dataKota = await jsonDecode(response.body.toString());
+    Response responseKcm =
+        await http.get(globalBaseUrl + "api/address/kecamatan", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    });
+    dataKecamatan = await jsonDecode(responseKcm.body.toString());
+    print(dataKecamatan);
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
       print(dataUser['user']['get_alamat']);
