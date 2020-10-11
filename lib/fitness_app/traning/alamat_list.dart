@@ -71,7 +71,9 @@ Future delPost(String url, {Map body}) async {
 
 var dataUserDefault;
 var dataKecamatan;
-var dataJenisAlamat;
+List dataJenisAlamat;
+List dataKota;
+
 confirmHapus(BuildContext context, idx) {
   showDialog(
     context: context,
@@ -135,7 +137,7 @@ void showAlertDialog(BuildContext context, idx) {
     _postalcodeController.text = dataUserDefault[idx]["kode_pos"];
   }
   bool _validate = false;
-
+  String _mySelection;
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -244,15 +246,15 @@ void showAlertDialog(BuildContext context, idx) {
 
       return CustomAlertDialog(
         content: Container(
-          width: MediaQuery.of(context).size.width + 200,
-          height: MediaQuery.of(context).size.height / 1.6,
+          // width: MediaQuery.of(context).size.width + 200,
+          height: MediaQuery.of(context).size.height + 100,
           decoration: new BoxDecoration(
             shape: BoxShape.rectangle,
             color: const Color(0xFFFFFF),
             borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
           ),
           child: new Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               InkWell(
                 onTap: () {
@@ -272,6 +274,23 @@ void showAlertDialog(BuildContext context, idx) {
               namapenerimaField,
               telpField,
               alamatField,
+              Text(
+                "Kota :                                                                          ",
+                textAlign: TextAlign.start,
+              ),
+              DropdownButton(
+                isDense: true,
+                items: dataKota.map((item) {
+                  return new DropdownMenuItem(
+                    child: new Text(item['nama']),
+                    value: item['kota_id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (newVal) {
+                  _mySelection = newVal;
+                },
+                value: _mySelection,
+              ),
               postalcodeField,
               MaterialButton(
                 onPressed: () async {
@@ -317,8 +336,9 @@ void showAlertDialog(BuildContext context, idx) {
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 12,
-                  padding: EdgeInsets.all(12.0),
+                  height: MediaQuery.of(context).size.height / 20,
+                  //padding: EdgeInsets.all(14.0),
+                  margin: EdgeInsets.fromLTRB(16, 10, 16, 0),
                   child: Material(
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(25.0),
@@ -355,7 +375,6 @@ class _AlamatListState extends State<AlamatList> {
   String nama, ava, bgPhoto, telp, alamat, utama;
   DateTime tglDaftar, tglUpdate;
   var dataUser;
-  var dataKota;
   String diff;
 
   _getUser() async {
@@ -365,17 +384,20 @@ class _AlamatListState extends State<AlamatList> {
     print(prefs.toString());
     print(globalBaseUrl + "api/address/kota");
     print(tokenFixed);
+    var tempList;
     Response response =
         await http.get(globalBaseUrl + "api/address/kota", headers: {
       "Accept": "application/json",
       "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
     });
-    dataKota = await jsonDecode(response.body.toString());
+    tempList = await jsonDecode(response.body.toString());
+    dataKota = tempList["data"]["city"];
     Response responseKcm =
         await http.get(globalBaseUrl + "api/address/kecamatan", headers: {
       "Accept": "application/json",
       "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
     });
+//    print(dataKota["data"]["city"]);
     dataKecamatan = await jsonDecode(responseKcm.body.toString());
     print(dataKecamatan);
     if (dataUser != null) {

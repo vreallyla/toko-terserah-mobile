@@ -62,7 +62,7 @@ class Dialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return new AnimatedPadding(
       padding: MediaQuery.of(context).viewInsets +
-          const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
+          const EdgeInsets.symmetric(horizontal: 13.0, vertical: 24.0),
       duration: insetAnimationDuration,
       curve: insetAnimationCurve,
       child: new MediaQuery.removeViewInsets(
@@ -73,7 +73,7 @@ class Dialog extends StatelessWidget {
         context: context,
         child: new Center(
           child: new ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 280.0),
+            constraints: const BoxConstraints(minWidth: 480.0),
             child: new Material(
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
               elevation: 30.0,
@@ -160,7 +160,7 @@ class CustomAlertDialog extends StatelessWidget {
     this.title,
     this.titlePadding,
     this.content,
-    this.contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+    this.contentPadding: const EdgeInsets.fromLTRB(3.0, 20.0, 3.0, 24.0),
     this.actions,
     this.semanticLabel,
   })  : assert(contentPadding != null),
@@ -235,7 +235,7 @@ class CustomAlertDialog extends StatelessWidget {
       children.add(new Padding(
         padding: titlePadding ??
             new EdgeInsets.fromLTRB(
-                24.0, 24.0, 24.0, content == null ? 20.0 : 0.0),
+                0.0, 24.0, 0.0, content == null ? 20.0 : 0.0),
         child: new DefaultTextStyle(
           style: Theme.of(context).textTheme.headline6,
           child: new Semantics(child: title, namesRoute: true),
@@ -347,7 +347,7 @@ class SimpleDialogOption extends StatelessWidget {
     return new InkWell(
       onTap: onPressed,
       child: new Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 13.0),
           child: child),
     );
   }
@@ -428,9 +428,9 @@ class SimpleDialog extends StatelessWidget {
   const SimpleDialog({
     Key key,
     this.title,
-    this.titlePadding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0.0),
+    this.titlePadding: const EdgeInsets.fromLTRB(3.0, 24.0, 3.0, 0.0),
     this.children,
-    this.contentPadding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 16.0),
+    this.contentPadding: const EdgeInsets.fromLTRB(3.0, 12.0, 3.0, 16.0),
     this.semanticLabel,
   })  : assert(titlePadding != null),
         assert(contentPadding != null),
@@ -524,7 +524,7 @@ class SimpleDialog extends StatelessWidget {
     Widget dialogChild = new IntrinsicWidth(
       stepWidth: 56.0,
       child: new ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 280.0),
+        constraints: const BoxConstraints(minWidth: 480.0),
         child: new Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
