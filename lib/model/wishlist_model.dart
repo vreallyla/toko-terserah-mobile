@@ -94,4 +94,63 @@ class WishlistModel {
     }
   }
 
+  static Future<WishlistModel> deleteWish(String id) async {
+    await _getToken();
+
+    String apiURL = globalBaseUrl + globalPathWish + "delete/" + id;
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.post(apiURL, headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('data wishlist status code : ' + apiResult.statusCode.toString());
+
+      // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+        print('data wishlist success');
+
+        // print(jsonObject['status']);
+
+        if (json.decode(apiResult.body)['status'] != null) {
+          // token untuk kirim request habis
+          return WishlistModel(
+            error: true,
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
+          );
+        } else {
+          //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['data']);
+          print(resData);
+          //set data user to shared prefrence
+          _setWishlist(resData);
+
+          return WishlistModel(
+            error: jsonObject['error'],
+            data: jsonEncode({"message": msgSuccess['MSG_RECEIVED']}),
+          );
+        }
+      } else {
+        // other failed
+        return WishlistModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return WishlistModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
 }

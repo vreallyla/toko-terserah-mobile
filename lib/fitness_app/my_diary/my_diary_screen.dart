@@ -1,16 +1,21 @@
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/body_measurement.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/glass_view.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/mediterranesn_diet_view.dart';
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/item_square_view.dart';
+import 'package:best_flutter_ui_templates/model/product_model.dart';
 
 // import 'package:best_flutter_ui_templates/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/running_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:floating_search_bar/floating_search_bar.dart';
 
 class MyDiaryScreen extends StatefulWidget {
@@ -28,12 +33,29 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
   var size;
   double sizeHeight = 0;
+  var dataHome=[];
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
   TextStyle txtstyle = TextStyle(color: Colors.white);
   Color coloricon = Colors.white;
+
+  _getHome() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // dataHome = json.decode(prefs.getString('dataHome'));
+
+    log(prefs.getString('dataHome').toString());
+    dataHome= json.decode(prefs.getString('dataHome'))['banner'];
+    addAllListData();
+    print(dataHome);
+    setState(() {
+      
+    });
+    //  prefs.getString('token');
+  }
+
   @override
   void initState() {
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -41,6 +63,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
     addAllListData();
+
+    ProductModel.getHome().then((v) {
+      _getHome();
+      log('dasd');
+    });
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -74,6 +101,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   }
 
   void addAllListData() {
+    listViews=[];
     const int count = 9;
 
     listViews.add(CarouselSlider(
@@ -91,24 +119,25 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         enlargeCenterPage: false,
         scrollDirection: Axis.horizontal,
       ),
-      items: [1, 2, 3, 4, 5].map((i) {
+      items: dataHome.map((i) {
         return Builder(
           builder: (BuildContext context) {
             return Container(
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.symmetric(horizontal: 1.0),
-              // decoration: BoxDecoration(color: Colors.blueGrey),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/fitness_app/bg_users.jpg'),
-                  fit: BoxFit.cover,
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.symmetric(horizontal: 1.0),
+                // decoration: BoxDecoration(color: Colors.blueGrey),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(globalBaseUrl+locationBannerImage+i['banner']
+                              ),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              // child: Text(
-              //   'text $i',
-              //   style: TextStyle(fontSize: 16.0),
-              // )
-            );
+                // child: Text(
+                //   'text '+i['banner'].toString(),
+                //   style: TextStyle(fontSize: 16.0),
+                // )
+                );
           },
         );
       }).toList(),
@@ -179,10 +208,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     );
 
     //produk Terbaru
-        listViews.add(
+    listViews.add(
       Container(
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(top:15),
+        margin: EdgeInsets.only(top: 15),
         color: Colors.white,
         child: Column(
           children: [
@@ -210,10 +239,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     );
 
     //produk Terlaris
-        listViews.add(
+    listViews.add(
       Container(
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(top:15),
+        margin: EdgeInsets.only(top: 15),
         color: Colors.white,
         child: Column(
           children: [
@@ -240,12 +269,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       ),
     );
 
-
     //produk Unggulan
-        listViews.add(
+    listViews.add(
       Container(
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(top:15),
+        margin: EdgeInsets.only(top: 15),
         color: Colors.white,
         child: Column(
           children: [
@@ -271,7 +299,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         ),
       ),
     );
-
 
 // listViews.add(
     //   GlassView(
@@ -435,7 +462,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                             // // ),
                             SizedBox(
                               height: 40,
-                              width: 350,
+                              width: 320,
                               child: TextField(
                                 onChanged: (value) {},
                                 controller: editingController,
