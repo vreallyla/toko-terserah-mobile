@@ -85,10 +85,14 @@ confirmHapus(BuildContext context, idx) {
           FlatButton(
             child: Text("Ya"),
             onPressed: () async {
-              print(globalBaseUrl + "api/address/delete/" + idx.toString());
+              print("https://tokoterserah.com/" +
+                  "api/address/delete/" +
+                  idx.toString());
               print(tokenFixed);
               Response response = await http.post(
-                  globalBaseUrl + "api/address/delete/" + idx.toString(),
+                  "https://tokoterserah.com/" +
+                      "api/address/delete/" +
+                      idx.toString(),
                   headers: {
                     "Accept": "application/json",
                     "Authorization":
@@ -291,6 +295,23 @@ void showAlertDialog(BuildContext context, idx) {
                 },
                 value: _mySelection,
               ),
+              Text(
+                "Kecamatan :                                                                          ",
+                textAlign: TextAlign.start,
+              ),
+              DropdownButton(
+                isDense: true,
+                items: dataKecamatan.map((item) {
+                  return new DropdownMenuItem(
+                    child: new Text(item['nama']),
+                    value: item['kota_id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (newVal) {
+                  _mySelection = newVal;
+                },
+                value: _mySelection,
+              ),
               postalcodeField,
               MaterialButton(
                 onPressed: () async {
@@ -448,7 +469,8 @@ class _AlamatListState extends State<AlamatList> {
                   right: 15,
                 ),
                 child: RaisedButton(
-                  onPressed: () => showAlertDialog(context, null),
+                  onPressed: () => Navigator.pushNamed(context, '/inputalamat',
+                      arguments: null),
                   child: Text(
                     'TAMBAH ALAMAT',
                     style: TextStyle(color: Colors.white),

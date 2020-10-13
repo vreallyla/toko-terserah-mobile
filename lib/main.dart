@@ -19,7 +19,7 @@ import 'fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'fitness_app/transaksi_detail/transaksi_detail_screen.dart';
 import 'fitness_app/profil_detail/profile_detail_screen.dart';
 import 'fitness_app/traning/alamat_list.dart';
-
+import 'fitness_app/traning/input_alamat.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
         '/ulasandetail': (context) => UlasanDetail(),
         '/profile_detail': (context) => ProfileDetailScreen(),
         '/listalamat': (context) => AlamatList(),
+        '/inputalamat': (context) => InputAlamat(),
       },
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,
