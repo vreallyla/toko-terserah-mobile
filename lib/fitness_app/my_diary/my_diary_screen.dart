@@ -2,19 +2,22 @@
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/glass_view.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/mediterranesn_diet_view.dart';
 import 'dart:convert';
-import 'dart:developer';
+// import 'dart:developer';
+import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
-import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
+// import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/item_square_view.dart';
 import 'package:best_flutter_ui_templates/model/product_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 // import 'package:best_flutter_ui_templates/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:best_flutter_ui_templates/fitness_app/ui_view/running_view.dart';
+// import 'package:best_flutter_ui_templates/fitness_app/ui_view/running_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:floating_search_bar/floating_search_bar.dart';
 
@@ -33,7 +36,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
   var size;
   double sizeHeight = 0;
-  var dataHome=[];
+  var dataHome = [];
+  List dataFlashSale = [];
+  List dataProductBaru = [];
+  List dataUnggulan = [];
+  List dataTerlaris = [];
+  bool isConnect = true;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -43,18 +51,79 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
   _getHome() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    var dataRes = json.decode(prefs.getString('dataHome'));
     // dataHome = json.decode(prefs.getString('dataHome'));
 
-    log(prefs.getString('dataHome').toString());
-    dataHome= json.decode(prefs.getString('dataHome'))['banner'];
+    // log(prefs.getString('dataHome').toString());
+    dataHome = dataRes['banner'];
+    dataFlashSale = dataRes['flash_sale'];
+    dataProductBaru = dataRes['newest'];
+    dataUnggulan = dataRes['popular'];
+    dataTerlaris = dataRes['top_rated'];
+
     addAllListData();
-    print(dataHome);
-    setState(() {
-      
-    });
+    // print(dataHome);
+    setState(() {});
     //  prefs.getString('token');
   }
+
+  _getDataApi() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      await ProductModel.getHome().then((v) {
+        _getHome();
+        // log('dasd');
+      });
+       }
+    } on SocketException catch (_) {
+      isConnect = false;
+      addAllListData();
+
+      setState(() {});
+    }
+  }
+
+  Widget noConnection(){
+  return Container(
+    alignment: Alignment.center,
+    padding: EdgeInsets.only(top:120),
+      child: Column(
+        children: [
+          Container(
+          alignment: Alignment.center,
+                        height: 160,
+                        width: 160,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/fitness_app/not_found.gif'),
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                        margin: EdgeInsets.only(top:90),
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+                      ),
+          Text('Koneksi Terputus',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
+          Text('Periksa sambungan internet kamu',style:TextStyle(color: Colors.black54)),
+          Container(
+            margin:EdgeInsets.only(top:15),
+            child: RaisedButton(
+              onPressed: (){
+                setState(() {
+                  // isLoading=true;
+                  isConnect=true;
+                _getDataApi();
+                });
+              },
+              color: Colors.green,
+              child: Text('COBA LAGI',style:TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+  );
+}
+
 
   @override
   void initState() {
@@ -62,12 +131,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
+    _getDataApi();
     addAllListData();
 
-    ProductModel.getHome().then((v) {
-      _getHome();
-      log('dasd');
-    });
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -101,9 +167,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   }
 
   void addAllListData() {
-    listViews=[];
+    listViews = [];
     const int count = 9;
-
+    if(!isConnect){
+      listViews.add(noConnection());
+    }else{
     listViews.add(CarouselSlider(
       options: CarouselOptions(
         height: 300.0,
@@ -124,20 +192,28 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
           builder: (BuildContext context) {
             return Container(
                 width: MediaQuery.of(context).size.width,
+                alignment: Alignment.center,
                 margin: EdgeInsets.symmetric(horizontal: 1.0),
                 // decoration: BoxDecoration(color: Colors.blueGrey),
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(globalBaseUrl+locationBannerImage+i['banner']
-                              ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                // child: Text(
-                //   'text '+i['banner'].toString(),
-                //   style: TextStyle(fontSize: 16.0),
-                // )
-                );
+                child: (dataHome.length > 0
+                    ? CachedNetworkImage(
+                        imageUrl:
+                            globalBaseUrl + locationBannerImage + i['banner'],
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                              // colorFilter: ColorFilter.mode(
+                              //     Colors.red, BlendMode.colorBurn)
+                            ),
+                          ),
+                        ),
+                        placeholder: (context, url) =>
+                            Spinner(icon: Icons.refresh, color: Colors.black54),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      )
+                    : Spinner(icon: Icons.refresh, color: Colors.black54)));
           },
         );
       }).toList(),
@@ -195,13 +271,13 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               animationController: widget.animationController,
             ),
             ItemSquareView(
-              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 3, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              mainScreenAnimationController: widget.animationController,
-            ),
+                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                    .animate(CurvedAnimation(
+                        parent: widget.animationController,
+                        curve: Interval((1 / count) * 3, 1.0,
+                            curve: Curves.fastOutSlowIn))),
+                mainScreenAnimationController: widget.animationController,
+                dataCard: dataFlashSale),
           ],
         ),
       ),
@@ -226,13 +302,13 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               animationController: widget.animationController,
             ),
             ItemSquareView(
-              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 3, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              mainScreenAnimationController: widget.animationController,
-            ),
+                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                    .animate(CurvedAnimation(
+                        parent: widget.animationController,
+                        curve: Interval((1 / count) * 3, 1.0,
+                            curve: Curves.fastOutSlowIn))),
+                mainScreenAnimationController: widget.animationController,
+                dataCard: dataProductBaru),
           ],
         ),
       ),
@@ -257,13 +333,13 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               animationController: widget.animationController,
             ),
             ItemSquareView(
-              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 3, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              mainScreenAnimationController: widget.animationController,
-            ),
+                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                    .animate(CurvedAnimation(
+                        parent: widget.animationController,
+                        curve: Interval((1 / count) * 3, 1.0,
+                            curve: Curves.fastOutSlowIn))),
+                mainScreenAnimationController: widget.animationController,
+                dataCard: dataTerlaris),
           ],
         ),
       ),
@@ -288,27 +364,19 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               animationController: widget.animationController,
             ),
             ItemSquareView(
-              mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 3, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              mainScreenAnimationController: widget.animationController,
-            ),
+                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                    .animate(CurvedAnimation(
+                        parent: widget.animationController,
+                        curve: Interval((1 / count) * 3, 1.0,
+                            curve: Curves.fastOutSlowIn))),
+                mainScreenAnimationController: widget.animationController,
+                dataCard: dataUnggulan),
           ],
         ),
       ),
     );
 
-// listViews.add(
-    //   GlassView(
-    //       animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-    //           CurvedAnimation(
-    //               parent: widget.animationController,
-    //               curve: Interval((1 / count) * 8, 1.0,
-    //                   curve: Curves.fastOutSlowIn))),
-    //       animationController: widget.animationController),
-    // );
+  }
   }
 
   Future<bool> getData() async {
@@ -322,18 +390,23 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       size = context.size;
     });
 
-    return Container(
-      color: FintnessAppTheme.background,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: <Widget>[
-            getMainListViewUI(),
-            getAppBarUI(),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            )
-          ],
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Container(
+        color: FintnessAppTheme.background,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: <Widget>[
+              getMainListViewUI(),
+              getAppBarUI(),
+              SizedBox(
+                height: MediaQuery.of(context).padding.bottom,
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -465,11 +538,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                               width: 320,
                               child: TextField(
                                 onChanged: (value) {},
-                                controller: editingController,
+                                // controller: editingController,
                                 decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.white,
-                                    labelText: "Cari Produk",
+                                    // labelText: "Cari Produk",
                                     labelStyle: TextStyle(color: Colors.grey),
                                     hintText: "Cari Produk",
                                     hintStyle: TextStyle(color: Colors.grey),
@@ -482,12 +555,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                         borderSide: BorderSide(
                                             color: Colors.grey, width: 1.0),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0))),
+                                            Radius.circular(10.0))),
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey, width: 5.0),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(8.0)))),
+                                            Radius.circular(10.0)))),
                               ),
                             ),
                             //),

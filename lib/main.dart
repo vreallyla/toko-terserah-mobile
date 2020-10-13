@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.green,
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.android,
       ),

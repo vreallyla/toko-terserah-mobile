@@ -9,7 +9,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';

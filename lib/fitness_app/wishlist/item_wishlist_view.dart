@@ -1,5 +1,5 @@
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+// import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
