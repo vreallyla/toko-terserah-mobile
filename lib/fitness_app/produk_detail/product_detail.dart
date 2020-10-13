@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'CustomShowDialog.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
@@ -17,6 +20,14 @@ Future<http.Response> fetchAlbum() {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  Map<String, dynamic> dataProduct;
+
+  _getProduct() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    dataProduct = json.decode(prefs.getString('dataUser'));
+  }
+
   @override
   Widget build(BuildContext context) {
     void showAddDialog(BuildContext context) {
@@ -67,6 +78,14 @@ class _ProductDetailState extends State<ProductDetail> {
           );
         },
       );
+    }
+
+    @override
+    void initState() {
+      //  var getProduct = _getProduct();
+      print('hello');
+
+      super.initState();
     }
 
     //final wh_ = MediaQuery.of(context).size;
@@ -452,23 +471,19 @@ class HeaderPage extends StatelessWidget {
     TextEditingController editingController = TextEditingController();
 
     return AppBar(
-     
       backgroundColor: Colors.grey[200],
       brightness: Brightness.light,
       leading: Transform.translate(
-    offset: Offset(-5, 0),
-    child: 
-    IconButton(
+        offset: Offset(-5, 0),
+        child: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black54),
           onPressed: () => Navigator.of(context).pop(),
-        
-    ),
-  ),
-  titleSpacing: -30,
-  centerTitle: false,
-      
+        ),
+      ),
+      titleSpacing: -30,
+      centerTitle: false,
       title: Container(
-        padding: EdgeInsets.only(left:20, right:40),
+        padding: EdgeInsets.only(left: 20, right: 40),
         child: TextField(
           onChanged: (value) {},
           controller: editingController,
@@ -505,18 +520,23 @@ class HeaderPage extends StatelessWidget {
                     color: Colors.black54,
                   )),
               Container(
-                margin: EdgeInsets.only(top:8,left:10),
+                margin: EdgeInsets.only(top: 8, left: 10),
                 alignment: Alignment.center,
                 height: 20,
                 width: 20,
-                child: Text('0',style: TextStyle(color: Colors.white, fontSize: 8,fontWeight: FontWeight.w500),),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.transparent,
-                  ),
-                  color: Colors.green,
-                  borderRadius: BorderRadius.all(Radius.circular(20))
+                child: Text(
+                  '0',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500),
                 ),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
               )
             ],
           ),

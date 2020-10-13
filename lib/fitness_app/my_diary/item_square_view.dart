@@ -129,7 +129,7 @@ class MealsView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
-                        Navigator.pushNamed(context, '/produk');
+                        Navigator.pushNamed(context, '/produk2');
                       },
                       child: Column(
                         children: [
