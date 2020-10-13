@@ -1,4 +1,6 @@
 import 'dart:convert';
+// import 'dart:developer';
+import 'dart:io';
 
 // import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
@@ -50,13 +52,67 @@ class _WishlistScreenState extends State<WishlistScreen>
   }
 
   _getDataApi() async {
-    await WishlistModel.getWish(searchInput.text).then((value) {
-      if (value.error) {
-        isLogin = false;
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await WishlistModel.getWish(searchInput.text).then((value) {
+          if (value.error) {
+            isLogin = false;
+          }
+          _setData();
+          print(value.data);
+        });
       }
-      _setData();
-      print(value.data);
-    });
+    } on SocketException catch (_) {
+      // print('dasd');
+      isConnect = false;
+      isLoading = false;
+      addAllListData();
+      setState(() {});
+    }
+  }
+
+  Widget noConnection() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 70),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Koneksi Terputus',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Periksa sambungan internet kamu',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                setState(() {
+                  isLoading = true;
+                  isConnect = true;
+                  _getDataApi();
+                });
+              },
+              color: Colors.green,
+              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -152,9 +208,11 @@ class _WishlistScreenState extends State<WishlistScreen>
         ),
       ),
     ));
-
+    if(!isConnect){
+      listViews.add(noConnection());
+    }
     //loading
-    if (isLoading) {
+    else if (isLoading) {
       listViews.add(reqLoad());
     } else if (dataTest.length == 0) {
       listViews.add(dataKosong());

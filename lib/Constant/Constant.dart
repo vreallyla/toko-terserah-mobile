@@ -6,14 +6,18 @@ import 'package:flutter/material.dart';
 
 // ignore: non_constant_identifier_names
 // String globalBaseUrl = "http://101.50.0.89/";
-String globalBaseUrl = "http://101.50.0.89/";
+String globalBaseUrl = "https://tokoterserah.com/";
 String globalPathAuth = "api/auth/";
+String globalPathWish='api/wish/';
+String globalPathProduct='api/product/';
 
 
 
 String locationAva='storage/users/ava/';
 String locationBgPhoto='storage/users/background/';
 String locationProductImage='storage/produk/thumb/';
+String locationBannerImage="storage/banner/";
+// String locationProductImage="storage/produk/thumb/";
 
 //asset
 String locationOccupation='assets/occupancy/';
@@ -82,14 +86,14 @@ Widget dataKosong(){
               padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
             ),
             Text(
-              'Data Tidak Ditemukan',
+              'Data Kosong',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87),
             ),
             Text(
-              'Silakan cari data yang tersedia...',
+              'Data tidak ditemukan...',
               style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,

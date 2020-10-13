@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'CustomShowDialog.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+// import 'package:flutter';
 import 'package:http/http.dart' as http;
 
 class ProductDetail extends StatefulWidget {
@@ -16,6 +20,14 @@ Future<http.Response> fetchAlbum() {
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  Map<String, dynamic> dataProduct;
+
+  _getProduct() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    dataProduct = json.decode(prefs.getString('dataUser'));
+  }
+
   @override
   Widget build(BuildContext context) {
     void showAddDialog(BuildContext context) {
@@ -66,6 +78,14 @@ class _ProductDetailState extends State<ProductDetail> {
           );
         },
       );
+    }
+
+    @override
+    void initState() {
+      //  var getProduct = _getProduct();
+      print('hello');
+
+      super.initState();
     }
 
     //final wh_ = MediaQuery.of(context).size;
@@ -447,150 +467,81 @@ class JudulNHarga extends StatelessWidget {
 class HeaderPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double topBarOpacity = 0.0;
+    // double topBarOpacity = 0.0;
     TextEditingController editingController = TextEditingController();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: FintnessAppTheme.white.withOpacity(topBarOpacity),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(0.0),
-          bottomRight: Radius.circular(0.0),
+    return AppBar(
+      backgroundColor: Colors.grey[200],
+      brightness: Brightness.light,
+      leading: Transform.translate(
+        offset: Offset(-5, 0),
+        child: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black54),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-              color: FintnessAppTheme.grey.withOpacity(0.4 * topBarOpacity),
-              offset: const Offset(1.1, 1.1),
-              blurRadius: 10.0),
-        ],
       ),
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: MediaQuery.of(context).padding.top,
+      titleSpacing: -30,
+      centerTitle: false,
+      title: Container(
+        padding: EdgeInsets.only(left: 20, right: 40),
+        child: TextField(
+          onChanged: (value) {},
+          controller: editingController,
+          decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              // labelText: "Cari Produk",
+              labelStyle: TextStyle(color: Colors.grey),
+              hintText: "Cari Produk",
+              hintStyle: TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.all(1.0),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Colors.grey,
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 5.0),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)))),
+        ),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                  margin: EdgeInsets.only(top: 15),
+                  child: Icon(
+                    Icons.shopping_cart,
+                    size: 24,
+                    color: Colors.black54,
+                  )),
+              Container(
+                margin: EdgeInsets.only(top: 8, left: 10),
+                alignment: Alignment.center,
+                height: 20,
+                width: 20,
+                child: Text(
+                  '0',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500),
+                ),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.transparent,
+                    ),
+                    color: Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+              )
+            ],
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                left: 0,
-                right: 0,
-                top: 12 - 2.0 * topBarOpacity,
-                bottom: 10 - 2.0 * topBarOpacity),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                SizedBox(
-                  height: 40,
-                  width: 252,
-                  child: TextField(
-                    onChanged: (value) {},
-                    controller: editingController,
-                    decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        labelText: "Cari Produk",
-                        labelStyle: TextStyle(color: Colors.grey),
-                        hintText: "Cari Produk",
-                        hintStyle: TextStyle(color: Colors.grey),
-                        contentPadding: const EdgeInsets.all(1.0),
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 1.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25.0))),
-                        border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 5.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25.0)))),
-                  ),
-                ),
-                //),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 1,
-                    right: 1,
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      // Padding(
-                      //   padding: const EdgeInsets.only(left: 3),
-                      //   child: Icon(
-                      //     Icons.notifications,
-                      //     color: Colors.black,
-                      //     size: 25,
-                      //   ),
-                      // ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3),
-                        child: InkWell(
-                          onTap: () {
-                            // Navigate to the second screen using a named route.
-                            Navigator.pushNamed(context, '/cart_list');
-                          },
-                          child: Icon(
-                            Icons.shopping_cart,
-                            color: Colors.black,
-                            size: 25,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 3),
-                        child: InkWell(
-                          onTap: () {
-                            // Navigate to the second screen using a named route.
-                            Navigator.pushNamed(context, '/');
-                          },
-                          child: Icon(
-                            Icons.home,
-                            color: Colors.black,
-                            size: 25,
-                          ),
-                        ),
-                      ),
-                      // Text(
-                      //   '15 May',
-                      //   textAlign: TextAlign.left,
-                      //   style: TextStyle(
-                      //     fontFamily: FintnessAppTheme.fontName,
-                      //     fontWeight: FontWeight.normal,
-                      //     fontSize: 18,
-                      //     letterSpacing: -0.2,
-                      //     color: FintnessAppTheme.darkerText,
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-                // SizedBox(
-                //   height: 38,
-                //   width: 38,
-                //   child: InkWell(
-                //     highlightColor: Colors.transparent,
-                //     borderRadius: const BorderRadius.all(
-                //         Radius.circular(32.0)),
-                //     onTap: () {},
-                //     child: Center(
-                //       child: Icon(
-                //         Icons.keyboard_arrow_right,
-                //         color: FintnessAppTheme.grey,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-              ],
-            ),
-          )
-        ],
-      ),
+        )
+      ],
     );
   }
 }

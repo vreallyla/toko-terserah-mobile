@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'fitness_app/fitness_app_home_screen.dart';
 import 'fitness_app/produk_detail/product_detail.dart';
 import 'fitness_app/produk_detail/pertanyaan_detail.dart';
+import 'fitness_app/produk_detail/product_detail2.dart';
 import 'fitness_app/produk_detail/ulasan_detail.dart';
 import 'fitness_app/produk_detail/gambarulasan.dart';
 import 'fitness_app/cart_list/cart_list.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => FitnessAppHomeScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/produk': (context) => ProductDetail(),
+        '/produk2': (context) => ProductDetail2(),
         '/cart_list': (context) => CartList(),
         '/voucher_kupon': (context) => VoucherKuponScreen(),
         '/login': (context) => LoginScreen(),
@@ -68,7 +70,7 @@ class MyApp extends StatelessWidget {
       title: 'Test Apps',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.green,
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.android,
       ),

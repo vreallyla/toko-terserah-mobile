@@ -1,7 +1,9 @@
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+// import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 //import '../../main.dart';
@@ -20,7 +22,6 @@ class ItemWishlistView extends StatefulWidget {
   final int countWishlist;
   final List dataWishlist;
 
-
   @override
   _ItemWishlistViewState createState() => _ItemWishlistViewState();
 }
@@ -29,12 +30,40 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
     with TickerProviderStateMixin {
   AnimationController animationController;
   List<dynamic> loadWishlist = [];
+  bool isLoading = false;
+
+  _deleteWish(int iDB) async {
+    await WishlistModel.deleteWish(iDB.toString()).then((value) {
+      isLoading = false;
+      setState(() {
+        // print(loadWishlist[0]);
+      });
+      print(value);
+    });
+  }
+
+  void removeWishlishCard(int iCard, int iDB) {
+    isLoading = true;
+    print(iDB);
+
+    setState(() {
+      // print(loadWishlist[0]);
+    });
+
+    _deleteWish(iDB);
+
+    // print(index);
+    loadWishlist.removeAt(iCard);
+    // isLoading=false;
+  }
 
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
     super.initState();
+    // loadWishlist = List.generate(
+    //     5, (index) => MealsView(removeWishlishCard, index: index));
   }
 
   Future<bool> getData() async {
@@ -60,36 +89,43 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
         return FadeTransition(
           opacity: widget.mainScreenAnimation,
           child: Transform(
-            transform: Matrix4.translationValues(
-                0.0, 20 * (1.0 - widget.mainScreenAnimation.value), 0.0),
-            child: Container(
-              height: sizeu.height - 270,
-              width: double.infinity,
-              child: ListView.builder(
-                padding:
-                    const EdgeInsets.only(top: 0, bottom: 0, right: 0, left: 0),
-                itemCount: widget.countWishlist,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  final int count =
-                      loadWishlist.length > 10 ? 10 : loadWishlist.length;
-                  final Animation<double> animation =
-                      Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                              parent: animationController,
-                              curve: Interval((1 / count) * index, 1.0,
-                                  curve: Curves.fastOutSlowIn)));
-                  animationController.forward();
+              transform: Matrix4.translationValues(
+                  0.0, 20 * (1.0 - widget.mainScreenAnimation.value), 0.0),
+              child: Container(
+                height: sizeu.height - 270,
+                width: double.infinity,
+                child: (isLoading
+                    ? reqLoad()
+                    : (loadWishlist.length == 0
+                        ? dataKosong()
+                        : ListView.builder(
+                            padding: const EdgeInsets.only(
+                                top: 0, bottom: 0, right: 0, left: 0),
+                            itemCount: loadWishlist.length,
+                            scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              final int count = loadWishlist.length > 10
+                                  ? 10
+                                  : loadWishlist.length;
+                              final Animation<double> animation =
+                                  Tween<double>(begin: 0.0, end: 1.0).animate(
+                                      CurvedAnimation(
+                                          parent: animationController,
+                                          curve: Interval(
+                                              (1 / count) * index, 1.0,
+                                              curve: Curves.fastOutSlowIn)));
+                              animationController.forward();
 
-                  return MealsView(
-                    loadWishlist: loadWishlist[index],
-                    animation: animation,
-                    animationController: animationController,
-                  );
-                },
-              ),
-            ),
-          ),
+                              return MealsView(removeWishlishCard,
+                                  loadWishlist: loadWishlist[index],
+                                  animation: animation,
+                                  animationController: animationController,
+                                  index: index
+                                  // removeWishlishCards:removeWishlishCard,
+                                  );
+                            },
+                          ))),
+              )),
         );
       },
     );
@@ -97,13 +133,20 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
 }
 
 class MealsView extends StatelessWidget {
-  const MealsView(
-      {Key key, this.loadWishlist, this.animationController, this.animation})
+  const MealsView(this.removeWishlishCard,
+      {Key key,
+      this.loadWishlist,
+      this.animationController,
+      this.animation,
+      this.index})
       : super(key: key);
 
   final loadWishlist;
+  final int index;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final Function(int iCard, int iDB) removeWishlishCard;
+  // print(this
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +178,8 @@ class MealsView extends StatelessWidget {
                           Container(
                         height: sizeu.width / 2 -
                             sizeu.width / 15 +
-                            sizeu.width / 3 / 3 -20,
+                            sizeu.width / 3 / 3 -
+                            20,
                         padding: EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: Colors.white,
@@ -187,8 +231,9 @@ class MealsView extends StatelessWidget {
                                     ),
                                   ),
                                   Container(
-                                    height:
-                                        sizeu.width / 4 + sizeu.width / 3 / 3-20,
+                                    height: sizeu.width / 4 +
+                                        sizeu.width / 3 / 3 -
+                                        20,
                                     padding: EdgeInsets.only(left: 10),
                                     child: Column(
                                       crossAxisAlignment:
@@ -208,20 +253,41 @@ class MealsView extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                        Card(
-                                          color: Colors.green[100],
-                                          child: Container(
-                                              margin: EdgeInsets.all(2),
-                                              child: Text(
-                                                (product['isGrosir'] == 1
-                                                    ? 'Grosir'
-                                                    : 'Retail'),
-                                                style: TextStyle(
-                                                  color: Colors.green[800],
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 13,
-                                                ),
-                                              )),
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Card(
+                                              color: Colors.green[100],
+                                              child: Container(
+                                                  margin: EdgeInsets.all(2),
+                                                  child: Text(
+                                                    (product['isGrosir'] == 1
+                                                        ? 'Grosir'
+                                                        : 'Retail'),
+                                                    style: TextStyle(
+                                                      color: Colors.green[800],
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  )),
+                                            ),
+                                            Card(
+                                              color: Colors.blue[100],
+                                              child: Container(
+                                                  margin: EdgeInsets.all(2),
+                                                  child: Text(
+                                                    (product['stock'] + ' pcs'),
+                                                    style: TextStyle(
+                                                      color: Colors.blue[800],
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13,
+                                                    ),
+                                                  )),
+                                            ),
+                                          ],
                                         ),
                                         Container(
                                           alignment: Alignment.topLeft,
@@ -233,11 +299,19 @@ class MealsView extends StatelessWidget {
                                             NumberFormat.currency(
                                                     locale: "id_ID",
                                                     symbol: "Rp")
-                                                .format(int.parse(
-                                                    product['is_diskon'] != 0
+                                                .format(int.parse(product[
+                                                            'isGrosir'] !=
+                                                        0
+                                                    ? (product['isDiskonGrosir'] !=
+                                                            0
+                                                        ? product[
+                                                            'harga_diskon_grosir']
+                                                        : product[
+                                                            'harga_grosir'])
+                                                    : (product['is_diskon'] != 0
                                                         ? product[
                                                             'harga_diskon']
-                                                        : product['harga'])),
+                                                        : product['harga']))),
                                             maxLines: 2,
                                             style: TextStyle(
                                                 fontSize: 15,
@@ -250,13 +324,24 @@ class MealsView extends StatelessWidget {
                                               color: Colors.red[100],
                                               child: Container(
                                                   margin: EdgeInsets.all(
-                                                      product['is_diskon'] != 0
+                                                      product['is_diskon'] !=
+                                                                  0 ||
+                                                              product['isDiskonGrosir'] !=
+                                                                  0
                                                           ? 2
-                                                          : 0),
+                                                          : 0
+                                                      // 2
+                                                      ),
                                                   child: Text(
                                                     '-' +
-                                                        (product['diskon'] ??
-                                                            '0') +
+                                                        (product['isGrosir'] !=
+                                                                0
+                                                            ? (product[
+                                                                    'diskonGrosir'] ??
+                                                                '0')
+                                                            : (product[
+                                                                    'diskon'] ??
+                                                                '0')) +
                                                         '%',
                                                     style: TextStyle(
                                                       color: Colors.red[800],
@@ -264,7 +349,9 @@ class MealsView extends StatelessWidget {
                                                           FontWeight.bold,
                                                       fontSize:
                                                           product['is_diskon'] !=
-                                                                  0
+                                                                      0 ||
+                                                                  product['isDiskonGrosir'] !=
+                                                                      0
                                                               ? 12
                                                               : 0,
                                                     ),
@@ -275,12 +362,19 @@ class MealsView extends StatelessWidget {
                                                       locale: "id_ID",
                                                       symbol: "Rp")
                                                   .format(int.parse(
-                                                      product['harga'])),
+                                                      (product['isGrosir'] != 0
+                                                          ? product[
+                                                              'harga_grosir']
+                                                          : product['harga']))),
                                               style: TextStyle(
-                                                  fontSize:
-                                                      product['is_diskon'] != 0
-                                                          ? 15
-                                                          : 0,
+                                                  fontSize: product[
+                                                                  'is_diskon'] !=
+                                                              0 
+                                                              ||
+                                                          product['isDiskonGrosir'] !=
+                                                              0
+                                                      ? 15
+                                                      : 0,
                                                   decoration: TextDecoration
                                                       .lineThrough),
                                               textAlign: TextAlign.left,
@@ -288,8 +382,12 @@ class MealsView extends StatelessWidget {
                                           ],
                                         ),
                                         starJadi(
-                                            double.parse(loadWishlist['avg_ulasan'].toString()),
-                                            NumberFormat("#,###", "id_ID").format(loadWishlist['count_ulasan']),
+                                            double.parse(
+                                                loadWishlist['avg_ulasan']
+                                                    .toString()),
+                                            NumberFormat("#,###", "id_ID")
+                                                .format(loadWishlist[
+                                                    'count_ulasan']),
                                             sizeu.width -
                                                 50 -
                                                 sizeu.width / 4 -
@@ -321,7 +419,7 @@ class MealsView extends StatelessWidget {
                                         ),
                                         color: (product['isGrosir'] == 1
                                                 ? int.parse(
-                                                        product['min_qty']) >=
+                                                        product['min_qty']) <=
                                                     int.parse(product['stock'])
                                                 : int.parse(product['stock']) !=
                                                     0)
@@ -333,7 +431,135 @@ class MealsView extends StatelessWidget {
                                       padding: EdgeInsets.only(left: 5),
                                       color: Colors.white,
                                       child: RaisedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          // removeWishlishCard(this);
+
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0)), //this right here
+                                                  child: Container(
+                                                    alignment: Alignment.center,
+                                                    height: 180,
+                                                    color: Colors.white,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              0.0),
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          InkWell(
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            child: Container(
+                                                              alignment: Alignment
+                                                                  .bottomRight,
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      right: 8,
+                                                                      bottom:
+                                                                          15),
+                                                              child: FaIcon(
+                                                                FontAwesomeIcons
+                                                                    .times,
+                                                                color: Colors
+                                                                    .black54,
+                                                                size: 14,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 10,
+                                                                    right: 10),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                                'Apakah Anda yakin? Data akan hilang',
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        18)),
+                                                          ),
+                                                          Container(
+                                                              color:
+                                                                  Colors.white,
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(5),
+                                                              height: 100,
+                                                              child: Row(
+                                                                children: [
+                                                                  Spacer(
+                                                                    flex: 1,
+                                                                  ),
+                                                                  RaisedButton(
+                                                                    child: Text(
+                                                                      'Ya',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
+                                                                    color: Colors
+                                                                        .green,
+                                                                    onPressed:
+                                                                        () {
+                                                                      // removeWishlishCard(
+                                                                      //     index, loadWishlist['id']);
+                                                                      // print('hapus wishlist '+ loadWishlist['id'].toString());
+                                                                    },
+                                                                  ),
+                                                                  Spacer(
+                                                                    flex: 1,
+                                                                  ),
+                                                                  RaisedButton(
+                                                                    child: Text(
+                                                                      'Tidak',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.white),
+                                                                    ),
+                                                                    color: Colors
+                                                                            .red[
+                                                                        500],
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                  ),
+                                                                  Spacer(
+                                                                    flex: 1,
+                                                                  ),
+                                                                ],
+                                                              ))
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              });
+                                        },
                                         shape: RoundedRectangleBorder(
                                             side: BorderSide(
                                                 color: Colors.black12),
@@ -353,27 +579,6 @@ class MealsView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Positioned(
-                  //   top: 0,
-                  //   left: 0,
-                  //   child: Container(
-                  //     width: 84,
-                  //     height: 84,
-                  //     decoration: BoxDecoration(
-                  //       color: FintnessAppTheme.nearlyWhite.withOpacity(0.2),
-                  //       shape: BoxShape.circle,
-                  //     ),
-                  //   ),
-                  // ),
-                  // Positioned(
-                  //   top: 0,
-                  //   left: 8,
-                  //   child: SizedBox(
-                  //     width: 80,
-                  //     height: 80,
-                  //     // child: Image.asset(loadWishlist.imagePath),
-                  //   ),
-                  // )
                 ],
               ),
             ),

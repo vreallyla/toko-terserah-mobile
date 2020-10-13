@@ -49,6 +49,7 @@ dependencies:
   progressive_image: ^1.0.1
   image_picker: ^0.6.7+11
   cached_network_image: ^2.3.2+1
+  flutter_html: ^1.0.0
   
 
 dev_dependencies:

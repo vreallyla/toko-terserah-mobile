@@ -1,16 +1,24 @@
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 //import '../../main.dart';
 
 class ItemSquareView extends StatefulWidget {
   const ItemSquareView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
+      {Key key,
+      this.mainScreenAnimationController,
+      this.mainScreenAnimation,
+      this.dataCard})
       : super(key: key);
 
   final AnimationController mainScreenAnimationController;
   final Animation<dynamic> mainScreenAnimation;
+  final List<dynamic> dataCard;
 
   @override
   _ItemSquareViewState createState() => _ItemSquareViewState();
@@ -51,12 +59,12 @@ class _ItemSquareViewState extends State<ItemSquareView>
             transform: Matrix4.translationValues(
                 0.0, 20 * (1.0 - widget.mainScreenAnimation.value), 0.0),
             child: Container(
-              height: sizeu.width / 3 + (sizeu.width / 3 / 3) + 150 -75,
+              height: sizeu.width / 3 + (sizeu.width / 3 / 3) + 150 - 75,
               width: double.infinity,
               child: ListView.builder(
                 padding:
                     const EdgeInsets.only(top: 0, bottom: 0, right: 0, left: 0),
-                itemCount: 6,
+                itemCount: widget.dataCard.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
                   final int count =
@@ -70,10 +78,11 @@ class _ItemSquareViewState extends State<ItemSquareView>
                   animationController.forward();
 
                   return MealsView(
-                    mealsListData: mealsListData[0],
-                    animation: animation,
-                    animationController: animationController,
-                  );
+                      mealsListData: widget.dataCard[index],
+                      animation: animation,
+                      animationController: animationController,
+                      countData:
+                          widget.dataCard != null ? widget.dataCard.length : 0);
                 },
               ),
             ),
@@ -86,12 +95,17 @@ class _ItemSquareViewState extends State<ItemSquareView>
 
 class MealsView extends StatelessWidget {
   const MealsView(
-      {Key key, this.mealsListData, this.animationController, this.animation})
+      {Key key,
+      this.mealsListData,
+      this.animationController,
+      this.animation,
+      this.countData})
       : super(key: key);
 
-  final MealsListData mealsListData;
+  final Map<String, dynamic> mealsListData;
   final AnimationController animationController;
   final Animation<dynamic> animation;
+  final int countData;
 
   @override
   Widget build(BuildContext context) {
@@ -115,21 +129,24 @@ class MealsView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
-                        Navigator.pushNamed(context, '/produk');
+                        Navigator.pushNamed(context, '/produk2');
                       },
                       child: Column(
                         children: [
                           //rubah gambar
                           Container(
                             height: sizeu.width / 3,
+                            width: double.infinity,
+                            // width: sizeu.width / 3,
+
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: .5,
+                                  spreadRadius: .5,
+                                  blurRadius: 1,
                                   offset: Offset(
-                                      0, 3), // changes position of shadow
+                                      0, -.5), // changes position of shadow
                                 ),
                               ],
                               color: Colors.grey,
@@ -140,14 +157,39 @@ class MealsView extends StatelessWidget {
                                 topRight: Radius.circular(8.0),
                               ),
                             ),
+                            child: (countData > 0
+                                ? CachedNetworkImage(
+                                    imageUrl: globalBaseUrl +
+                                        locationProductImage +
+                                        mealsListData['gambar'],
+                                    imageBuilder: (context, imageProvider) =>
+                                        Container(
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: imageProvider,
+                                          fit: BoxFit.fitHeight,
+                                          // colorFilter: ColorFilter.mode(
+                                          //     Colors.red, BlendMode.colorBurn)
+                                        ),
+                                      ),
+                                    ),
+                                    placeholder: (context, url) => Spinner(
+                                        icon: Icons.refresh,
+                                        color: Colors.black54),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  )
+                                : Spinner(
+                                    icon: Icons.refresh,
+                                    color: Colors.black54)),
                           ),
 
                           //konten
                           Container(
                             padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
-                            height: 110,
+                            height: 115,
                             decoration: BoxDecoration(
-                               boxShadow: [
+                              boxShadow: [
                                 BoxShadow(
                                   color: Colors.grey.withOpacity(0.5),
                                   spreadRadius: .4,
@@ -169,10 +211,10 @@ class MealsView extends StatelessWidget {
                                 Container(
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    'Judulnya apa Judulnya apa Judulnya apa',
+                                    mealsListData['nama'],
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                     ),
                                     maxLines: 2,
                                   ),
@@ -181,14 +223,93 @@ class MealsView extends StatelessWidget {
                                   padding: EdgeInsets.only(top: 5),
                                   alignment: Alignment.topLeft,
                                   child: Text(
-                                    'Rp 15.000.000,-',
+                                    NumberFormat.currency(
+                                            locale: "id_ID", symbol: "Rp")
+                                        .format(int.parse(mealsListData[
+                                                    'harga_grosir'] !=
+                                                null
+                                            ? (mealsListData['diskonGrosir'] !=
+                                                    null
+                                                ? mealsListData[
+                                                    'harga_diskon_grosir']
+                                                : mealsListData['harga_grosir'])
+                                            : (mealsListData['diskon'] != null
+                                                ? mealsListData['harga_diskon']
+                                                : mealsListData['harga']))),
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold),
                                     maxLines: 2,
                                   ),
                                 ),
-                                starJadi(3.5, '1.000'),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Card(
+                                      color: Colors.red[100],
+                                      child: Container(
+                                          padding: EdgeInsets.all(
+                                              mealsListData['diskon'] != null ||
+                                                      mealsListData[
+                                                              'diskonGrosir'] !=
+                                                          null
+                                                  ? 2
+                                                  : 0),
+                                          child: Text(
+                                            '-' +
+                                                (mealsListData['diskon'] != null
+                                                    ? mealsListData['diskon']
+                                                    : (mealsListData[
+                                                                'diskonGrosir'] !=
+                                                            null
+                                                        ? mealsListData[
+                                                            'diskonGrosir']
+                                                        : '0')) +
+                                                '%',
+                                            style: TextStyle(
+                                              color: Colors.red[800],
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: mealsListData[
+                                                              'diskon'] !=
+                                                          null ||
+                                                      mealsListData[
+                                                              'diskonGrosir'] !=
+                                                          null
+                                                  ? 8
+                                                  : 0,
+                                            ),
+                                          )),
+                                    ),
+                                    Text(
+                                      NumberFormat.currency(
+                                              locale: "id_ID", symbol: "Rp")
+                                          .format(int.parse((mealsListData[
+                                                      'harga'] !=
+                                                  null
+                                              ? mealsListData['harga']
+                                              : (mealsListData[
+                                                          'harga_grosir'] !=
+                                                      null
+                                                  ? mealsListData[
+                                                      'harga_grosir']
+                                                  : '0')))),
+                                      style: TextStyle(
+                                          fontSize: mealsListData[
+                                                              'diskon'] !=
+                                                          null ||
+                                                      mealsListData[
+                                                              'diskonGrosir'] !=
+                                                          null
+                                                  ?11:0,
+                                          decoration:
+                                              TextDecoration.lineThrough),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ],
+                                ),
+                                starJadi(double.parse(mealsListData['avg_ulasan'].toString()), NumberFormat("#,###", "id_ID")
+                                                .format(mealsListData[
+                                                    'count_ulasan'])),
                               ],
                             ),
                           ),
@@ -214,7 +335,6 @@ class MealsView extends StatelessWidget {
                           )),
                     ),
                   ),
-                 
                 ],
               ),
             ),
