@@ -39,6 +39,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   AnimationController animationController;
   Animation<dynamic> animation;
   List dataJson;
+  bool isLoading = true;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   int _limit = 10;
@@ -53,7 +54,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   Future getData() async {
     try {
-      var param = jsonEncode({"limit": _limit.toString()});
+      var param = jsonEncode(
+          {"limit": _limit.toString(), "name": editingController.text});
 
       http.Response item = await http.post(globalBaseUrl + 'api/search',
           body: param,
@@ -64,10 +66,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
       if (item.statusCode == 200) {
         Map<String, dynamic> products = jsonDecode(item.body);
-        print(products['data']['produk']);
+        // print(products['data']['produk']);
 
         setState(() {
           dataJson = products['data']['produk'];
+          isLoading = false;
         });
       }
     } catch (e) {
@@ -147,7 +150,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           .add(textKategoriProduk(value['nama_kategori']));
 
       value['data'].asMap().forEach((iData, value2) {
-        valueKategori[value2['id']] = true;
+        valueKategori[value2['id']] = false;
         print(value2['id']);
         collectKategori[iKategori].add(kategoriProdukCheckBox(
             value2['nama'], context.size, iKategori, iData, value2['id']));
@@ -236,6 +239,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                 activeColor: Colors.green,
                 value: valueKategori[id],
                 onChanged: (bool newValue) {
+                  print("object");
                   print(newValue);
                   print(valueKategori[id]);
                   print(id);
@@ -1046,13 +1050,15 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(60), child: headerSection()),
-          body: Column(
-            children: <Widget>[
-              Flexible(
-                child: getPopularCourseUI(),
-              ),
-            ],
-          ),
+          body: isLoading
+              ? reqLoad()
+              : Column(
+                  children: <Widget>[
+                    Flexible(
+                      child: getPopularCourseUI(),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -1108,7 +1114,15 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
               height: 40,
               width: sizeu.width - 48 - 10,
               child: TextField(
-                onChanged: (value) {},
+                onSubmitted: (value) {
+                  print(value);
+                  setState(() {
+                    isLoading = true;
+                  });
+                  Future.delayed(Duration(seconds: 1), () {
+                    getData();
+                  });
+                },
                 controller: editingController,
                 decoration: InputDecoration(
                     filled: true,
