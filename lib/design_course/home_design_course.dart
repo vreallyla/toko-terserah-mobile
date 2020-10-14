@@ -58,7 +58,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         "limit": _limit.toString(),
         "name": editingController.text,
         "awal": _currentRangeValues.start.toString(),
-        "akhir": _currentRangeValues.end.toString()
+        "akhir": _currentRangeValues.end.toString(),
+        "jenis": _jenisProdukRadioButton
       });
 
       http.Response item = await http.post(globalBaseUrl + 'api/search',
