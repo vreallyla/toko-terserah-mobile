@@ -14,6 +14,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
@@ -38,11 +39,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   double distValue = 50.0;
   AnimationController animationController;
   Animation<dynamic> animation;
-  List dataJson;
+  List dataJson, dataSubKategori;
+  bool isLoading = true;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   int _limit = 10;
-
+  List _selecteCategorys = List();
+  List _selectKategoriDetail = List();
   final formatter = new NumberFormat("#,###");
 
   List<NewItem> items = <NewItem>[
@@ -53,7 +56,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   Future getData() async {
     try {
-      var param = jsonEncode({"limit": _limit.toString()});
+      var param = jsonEncode({
+        "limit": _limit.toString(),
+        "name": editingController.text,
+        "awal": _currentRangeValues.start.toString(),
+        "akhir": _currentRangeValues.end.toString(),
+        "jenis": _jenisProdukRadioButton
+      });
 
       http.Response item = await http.post(globalBaseUrl + 'api/search',
           body: param,
@@ -64,14 +73,32 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
       if (item.statusCode == 200) {
         Map<String, dynamic> products = jsonDecode(item.body);
-        print(products['data']['produk']);
+        // print(products['data']['produk']);
 
         setState(() {
           dataJson = products['data']['produk'];
+          isLoading = false;
         });
       }
     } catch (e) {
       log("error getData : $e");
+    }
+  }
+
+  Future getSubKategori() async {
+    try {
+      http.Response item = await http.get(globalBaseUrl + 'api/master/sub');
+
+      if (item.statusCode == 200) {
+        Map<String, dynamic> products = jsonDecode(item.body);
+        print(products['data']);
+
+        setState(() {
+          dataSubKategori = products['data'];
+        });
+      }
+    } catch (e) {
+      log("error getSub : $e");
     }
   }
 
@@ -135,35 +162,35 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   //variable range harga
   TextEditingController minHargaInput = new TextEditingController();
   TextEditingController maxHargaInput = new TextEditingController();
-  RangeValues _currentRangeValues = RangeValues(500, 600);
+  RangeValues _currentRangeValues = RangeValues(0, 300000);
 
   void setKatagoriListAll(context) {
-    collectKategori = [];
-    widgetContainerKategori = <Widget>[];
-    dataKategori.asMap().forEach((iKategori, value) {
-      // widgetContainerKategori=[];
-      collectKategori.add(<Widget>[]);
-      collectKategori[iKategori]
-          .add(textKategoriProduk(value['nama_kategori']));
+    // collectKategori = [];
+    // widgetContainerKategori = <Widget>[];
+    // dataKategori.asMap().forEach((iKategori, value) {
+    //   // widgetContainerKategori=[];
+    //   collectKategori.add(<Widget>[]);
+    //   collectKategori[iKategori]
+    //       .add(textKategoriProduk(value['nama_kategori']));
 
-      value['data'].asMap().forEach((iData, value2) {
-        valueKategori[value2['id']] = true;
-        print(value2['id']);
-        collectKategori[iKategori].add(kategoriProdukCheckBox(
-            value2['nama'], context.size, iKategori, iData, value2['id']));
-      });
-      print(collectKategori);
+    //   value['data'].asMap().forEach((iData, value2) {
+    //     valueKategori[value2['id']] = false;
+    //     print(value2['id']);
+    //     collectKategori[iKategori].add(kategoriProdukCheckBox(
+    //         value2['nama'], context.size, iKategori, iData, value2['id']));
+    //   });
+    //   print(collectKategori);
 
-      widgetContainerKategori.add(
-        Container(
-          padding: EdgeInsets.only(bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: collectKategori[iKategori],
-          ),
-        ),
-      );
-    });
+    //   widgetContainerKategori.add(
+    //     Container(
+    //       padding: EdgeInsets.only(bottom: 20),
+    //       child: Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: collectKategori[iKategori],
+    //       ),
+    //     ),
+    //   );
+    // });
   }
 
   checkBorderChanges(value) {
@@ -184,32 +211,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     // TODO: implement initState
     super.initState();
 
-    //set value kategori
-    dataKategori.add({
-      'nama_kategori': 'Aksesoris Hewan Peliharaan',
-      "data": [
-        {"id": 3, "nama": "Kandang dan Aksesoris", "checked": false},
-        {"id": 4, "nama": "Kebutuhan Akuarium", "checked": false},
-        {"id": 5, "nama": "Perlaratan Grooming", "checked": false}
-      ]
-    });
-
-    dataKategori.add({
-      'nama_kategori': 'Bahan & Bumbu Masak',
-      "data": [
-        {"id": 6, "nama": "Air Mineral", "checked": false},
-        {"id": 7, "nama": "Chocolate, Malt", "checked": true},
-        {"id": 8, "nama": "Jus", "checked": false}
-      ]
-    });
-
     SchedulerBinding.instance.addPostFrameCallback((_) {
       //set kategori on widget
       setKatagoriListAll(context);
     });
 
     // print(dataKategori[0]['data'][0]);
-
+    getSubKategori();
     getData();
   }
 
@@ -236,6 +244,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                 activeColor: Colors.green,
                 value: valueKategori[id],
                 onChanged: (bool newValue) {
+                  print("object");
                   print(newValue);
                   print(valueKategori[id]);
                   print(id);
@@ -266,25 +275,115 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     );
   }
 
+//Render Data Kategori dari API dan ditampilkan pada widget
+  Widget listKategoriCheckBox(context) {
+    return ListView.builder(
+        itemCount: dataSubKategori == null ? 0 : dataSubKategori.length,
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, i) {
+          return CheckboxListTile(
+            value: _selecteCategorys.contains(dataSubKategori[i]['id']),
+            onChanged: (bool selected) {
+              _onCategorySelected(selected, dataSubKategori[i]['id'],
+                  dataSubKategori[i]['nama']);
+            },
+            title: Text(dataSubKategori[i]['nama']),
+          );
+        });
+  }
+
+  List PickKategoriSearch(int i) {
+    int indexx = i * 2;
+
+    int unIndex = indexx + (_selecteCategorys.length < indexx + 2 ? 1 : 2);
+
+    List<Widget> pickKategori = <Widget>[];
+
+    for (int ina = indexx; ina < unIndex; ina++) {
+      pickKategori.add(Expanded(
+          flex: 1,
+          child: Container(
+            height: 30,
+            margin: EdgeInsets.only(left: 2, right: 2),
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.green,
+                ),
+                borderRadius: BorderRadius.circular(4)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child: Container(
+                    // width: 30,
+                    padding: EdgeInsets.only(right: 5, left: 5),
+                    child: Text(
+                      _selectKategoriDetail[ina]['nama'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                ),
+                Container(
+                  child: SizedBox(
+                    width: 20,
+                    child: InkWell(
+                      onTap: () {
+                        _onCategorySelected(false, dataSubKategori[i]['id'],
+                            dataSubKategori[i]['nama']);
+                      },
+                      child: FaIcon(
+                        FontAwesomeIcons.timesCircle,
+                        size: 14,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )));
+    }
+
+    if (_selecteCategorys.length < indexx + 2 ? true : false) {
+      pickKategori.add(Expanded(
+        flex: 1,
+        child: Container(),
+      ));
+    }
+    return pickKategori;
+  }
+
   //desain kategori produk
   Widget KategoriDetail(sizeu) {
     return Stack(
       children: <Widget>[
         //body
         Container(
-          margin: EdgeInsets.only(top: 70, bottom: 150),
+          margin: EdgeInsets.only(
+              top: _selecteCategorys.length > 0
+                  ? ((_selecteCategorys.length / 2).ceil() > 1 ? 140 : 100)
+                  : 60,
+              bottom: 150),
           padding: EdgeInsets.only(left: 10, top: 5),
           color: Colors.white,
-          child: ListView(
-            // daftar kategori
-            children: widgetContainerKategori,
-          ),
+          // child: ListView(
+          //   // daftar kategori
+          //   children: widgetContainerKategori,
+          // ),
+          child: listKategoriCheckBox(context),
         ),
         //header
         Container(
           alignment: Alignment.bottomLeft,
           padding: EdgeInsets.only(left: 10, bottom: 10),
-          height: 80,
+          height: _selecteCategorys.length > 0
+              ? ((_selecteCategorys.length / 2).ceil() > 1 ? 160 : 120)
+              : 80,
           decoration: BoxDecoration(
             // border: Border(
             //   bottom: BorderSide(
@@ -296,9 +395,27 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
+              ListView.builder(
+                  // physics: const BouncingScrollPhysics(),
+
+                  shrinkWrap: true,
+                  itemCount: _selecteCategorys.length > 0
+                      ? (_selecteCategorys.length / 2).ceil()
+                      : 0,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (context, i) {
+                    return Container(
+                      padding: EdgeInsets.only(left: 0, right: 7, top: 10),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: PickKategoriSearch(i),
+                      ),
+                    );
+                  }),
               Container(
                 width: sizeu.width - sizeu.width / 5 - 20,
-                padding: EdgeInsets.only(left: 5),
+                padding: EdgeInsets.only(left: 5, right: 5),
+                margin: EdgeInsets.only(right: 7, top: 10),
                 height: 30,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
@@ -324,9 +441,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       width: sizeu.width - sizeu.width / 5 - 20 - 50,
                       padding: EdgeInsets.only(left: 7, top: 15),
                       child: TextField(
+                        focusNode: focusCariKategori,
                         maxLength: 27,
                         controller: cariKatagoriInput,
-                        focusNode: focusCariKategori,
                         decoration: InputDecoration(
                           counterText: "",
                           hintText: "Cari Kategori...",
@@ -336,9 +453,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                         style:
                             TextStyle(color: Colors.blueGrey, fontSize: 13.0),
                         onChanged: (query) {
-                          setState(() {
-                            cariKatagoriInput.text = query;
-                          });
+                          // setState(() {
+                          //   cariKatagoriInput.text = query;
+                          // });
                         },
                       ),
                     ),
@@ -393,7 +510,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       style: TextStyle(fontSize: 12, color: Colors.green),
                     ),
                     onPressed: () {
-                      isKategori = false;
+                      // isKategori = false;
+                      _selectKategoriDetail = [];
+                      _selecteCategorys = [];
+
                       setState(() {});
                     },
                   )),
@@ -456,6 +576,112 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     isKategori = false;
     setState(() {});
     Navigator.of(context).pop();
+  }
+
+  _inputToSlider(String awal, String akhir) {
+    try {
+      log("Awal : " + awal + " Akhir : " + akhir);
+      double _valueAwal = double.parse(awal);
+      double _valueAkhir = double.parse(akhir);
+      if (_valueAwal >= _valueAkhir) {
+        minHargaInput.text = akhir;
+      }
+      if (_valueAkhir <= _valueAwal) {
+        maxHargaInput.text = awal;
+      }
+      _currentRangeValues = RangeValues(_valueAwal, 100000);
+    } catch (e) {
+      log("eror : " + e.toString());
+    }
+  }
+
+  //Set value from check box
+  void _onCategorySelected(bool selected, category_id, category_name) {
+    if (selected == true) {
+      if (_selecteCategorys.length < 4) {
+        setState(() {
+          _selecteCategorys.add(category_id);
+          _selectKategoriDetail.add({"id": category_id, "nama": category_name});
+        });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10.0)), //this right here
+                child: Container(
+                  height: 160,
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            alignment: Alignment.bottomRight,
+                            padding: EdgeInsets.only(right: 8, bottom: 15),
+                            child: FaIcon(
+                              FontAwesomeIcons.times,
+                              color: Colors.black54,
+                              size: 16,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: Text('Maksimal cek 4 kategori',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 18)),
+                        ),
+                        Container(
+                            color: Colors.white,
+                            padding: EdgeInsets.all(5),
+                            height: 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RaisedButton(
+                                  child: Text(
+                                    'OK',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  color: Colors.green,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ))
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            });
+      }
+    } else {
+      setState(() {
+        print(category_name);
+
+        _selecteCategorys.remove(category_id);
+        _selectKategoriDetail.removeWhere((item) =>
+            item['id'] == category_id && item['nama'] == category_name);
+
+        // Stream.fromIterable(_selectKategoriDetail).asyncMap((item) async => {"id": category_id, "nama": await category_name }).where((m) => m['id'] != category_id).toList();
+      // Stream.fromIterable(replytile).asyncMap((item) async => {"item": item, "id": await item.id }).where((m) => m.id != '001').map((m) => m.item)).toList()
+      // _listofTaskUI.removeAt(_quantity);
+      });
+    }
+
+    print(_selectKategoriDetail);
   }
 
   @override
@@ -838,7 +1064,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                 ),
                               ),
 
-                              //jenis produk
+                              //harga produk
                               Container(
                                 padding: EdgeInsets.only(bottom: 20),
                                 child: Column(
@@ -888,6 +1114,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                     width: 110,
                                                     child: TextField(
                                                         // enabled: false,
+                                                        readOnly: true,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
                                                         textAlign:
                                                             TextAlign.left,
                                                         style: TextStyle(
@@ -897,12 +1127,21 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                         controller:
                                                             minHargaInput,
                                                         onChanged: (text) {
-                                                          setState(() {});
+                                                          //Set value to slider
+                                                          print(text);
                                                         },
-                                                        onSubmitted: (_) =>
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .nextFocus(),
+                                                        onSubmitted: (text) {
+                                                          setState(() {
+                                                            _inputToSlider(
+                                                                text,
+                                                                maxHargaInput
+                                                                    .text);
+                                                          });
+                                                        },
+                                                        // onSubmitted: (_) =>
+                                                        //     FocusScope.of(
+                                                        //             context)
+                                                        //         .nextFocus(),
                                                         decoration:
                                                             defaultInput(
                                                                 'Terendah',
@@ -927,6 +1166,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                     width: 120,
                                                     child: TextField(
                                                         // enabled: false,
+                                                        readOnly: true,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
                                                         textAlign:
                                                             TextAlign.left,
                                                         style: TextStyle(
@@ -934,17 +1177,27 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                                 Colors.blueGrey,
                                                             fontSize: 13.0),
                                                         controller:
-                                                            minHargaInput,
+                                                            maxHargaInput,
                                                         onChanged: (text) {
-                                                          setState(() {});
+                                                          //Set value to slider
+                                                          // _inputToSlider(
+                                                          //     minHargaInput
+                                                          //         .text,
+                                                          //     text);
                                                         },
-                                                        onSubmitted: (_) =>
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .nextFocus(),
+                                                        onSubmitted: (text) {
+                                                          _inputToSlider(
+                                                              minHargaInput
+                                                                  .text,
+                                                              text);
+                                                        },
+                                                        // onSubmitted: (_) =>
+                                                        //     FocusScope.of(
+                                                        //             context)
+                                                        //         .nextFocus(),
                                                         decoration:
                                                             defaultInput(
-                                                                'Terendah',
+                                                                'Tertinggi',
                                                                 false)),
                                                   ),
                                                 ],
@@ -956,7 +1209,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                 values: _currentRangeValues,
                                                 min: 0,
                                                 max: 300000,
-                                                divisions: 5,
+                                                divisions: 300000,
                                                 labels: RangeLabels(
                                                   _currentRangeValues.start
                                                       .round()
@@ -968,6 +1221,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                 onChanged:
                                                     (RangeValues values) {
                                                   setState(() {
+                                                    //set max and min input from values range
+                                                    minHargaInput.text =
+                                                        values.start.toString();
+                                                    maxHargaInput.text =
+                                                        values.end.toString();
                                                     _currentRangeValues =
                                                         values;
                                                   });
@@ -1026,6 +1284,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                             fontSize: 12, color: Colors.white),
                                       ),
                                       onPressed: () {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        Future.delayed(Duration(seconds: 1),
+                                            () {
+                                          getData();
+                                        });
                                         _closeEndDrawer();
                                       },
                                     ))
@@ -1046,13 +1311,15 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(60), child: headerSection()),
-          body: Column(
-            children: <Widget>[
-              Flexible(
-                child: getPopularCourseUI(),
-              ),
-            ],
-          ),
+          body: isLoading
+              ? reqLoad()
+              : Column(
+                  children: <Widget>[
+                    Flexible(
+                      child: getPopularCourseUI(),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -1108,7 +1375,15 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
               height: 40,
               width: sizeu.width - 48 - 10,
               child: TextField(
-                onChanged: (value) {},
+                onSubmitted: (value) {
+                  print(value);
+                  setState(() {
+                    isLoading = true;
+                  });
+                  Future.delayed(Duration(seconds: 1), () {
+                    getData();
+                  });
+                },
                 controller: editingController,
                 decoration: InputDecoration(
                     filled: true,

@@ -38,7 +38,7 @@ class ProductModel {
   static Future<ProductModel> getHome() async {
     await _getToken();
 
-    String apiURL = globalBaseUrl +  globalPathProduct + 'home' ;
+    String apiURL = globalBaseUrl + globalPathProduct + 'home';
 
     print(apiURL);
 
@@ -55,7 +55,7 @@ class ProductModel {
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);
 
-        print('data wishlist success');
+        print('data home success');
 
         // print(jsonObject['status']);
 
@@ -94,4 +94,65 @@ class ProductModel {
     }
   }
 
+  static Future<ProductModel> getProduct(String id) async {
+    await _getToken();
+
+    String apiURL = globalBaseUrl + globalPathProduct + 'detail/' + id;
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.get(apiURL, headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('data product detail ' +
+          id +
+          ' status code : ' +
+          apiResult.statusCode.toString());
+
+      // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+        print('product detail success');
+
+        // print(jsonObject['status']);
+
+        if (json.decode(apiResult.body)['status'] != null 
+           ) {
+          // token untuk kirim request habis
+          return ProductModel(
+            error: true,
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
+          );
+        } else {
+          //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['data']);
+
+         
+
+          return ProductModel(
+            error: jsonObject['error'],
+            data: resData,
+          );
+        }
+      } else {
+        // other failed
+        return ProductModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return ProductModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
 }
