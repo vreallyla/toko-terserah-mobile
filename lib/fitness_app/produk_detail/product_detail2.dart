@@ -1,6 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/detail_card_view.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/qna_product_view.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/review_product_view.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/titlenprice_product_view.dart';
+import 'package:best_flutter_ui_templates/model/product_model.dart';
 import 'package:flutter/material.dart';
 
 import 'CustomShowDialog.dart';
+import 'carousel_product_view.dart';
 
 class ProductDetail2 extends StatefulWidget {
   @override
@@ -89,65 +99,192 @@ class HeaderPage extends StatelessWidget {
   }
 }
 
+class _ProductDetail2State extends State<ProductDetail2>
+    with TickerProviderStateMixin {
+  // data widget
+  List<Widget> listViews = <Widget>[];
 
-class _ProductDetail2State extends State<ProductDetail2> {
-void showAddDialog(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            content: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 3,
-              decoration: new BoxDecoration(
-                shape: BoxShape.rectangle,
-                color: const Color(0xFFFFFF),
-                borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
-              ),
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  // CardCart(),
-                  MaterialButton(
-                    onPressed: () {},
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 18,
-                      padding: EdgeInsets.all(1.0),
-                      child: Material(
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(25.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'Tambah Ke Keranjang',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  fontFamily: 'helvetica_neue_light',
-                                ),
-                                textAlign: TextAlign.center,
+  //gambar carousel
+  List<dynamic> imageLists = [];
+
+  // data detail produk
+  Map<String, dynamic> detailProduct;
+
+  // data untuk ulasan
+  Map<String, dynamic>reviewData;
+
+  //data untuk pertanyaan
+  List<dynamic> qnAData;
+
+  //check inet
+  bool isConnect = true;
+
+  // status login checker
+  bool isLogin = false;
+
+  // load ajax process
+  bool isLoading = false;
+
+  void showAddDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          content: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 3,
+            decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: const Color(0xFFFFFF),
+              borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+            ),
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                // CardCart(),
+                MaterialButton(
+                  onPressed: () {},
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 18,
+                    padding: EdgeInsets.all(1.0),
+                    child: Material(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(25.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Tambah Ke Keranjang',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontFamily: 'helvetica_neue_light',
                               ),
-                            ],
-                          )),
-                    ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )),
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  _getDataApi() async {
+   
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await ProductModel.getProduct('35').then((value) {
+          if (value.error) {
+            isLogin = false;
+          } else {
+            Map<String, dynamic> dataLoad = json.decode(value.data);
+
+            // set data
+            detailProduct = dataLoad['detail'];
+            imageLists = detailProduct['galeri'] ?? [detailProduct['gambar']];
+            reviewData = dataLoad['review'];
+            qnAData = dataLoad['qna'];
+            addAllListData();
+            setState(() {});
+            // print(detailProduct['count_ulasan']);
+
+          }
+          // _setData();
+          // print(value.data);
+        });
+      }
+    } on SocketException catch (_) {
+      // print('dasd');
+      isConnect = false;
+      isLoading = false;
+      addAllListData();
+      setState(() {});
+    }
+  }
+
+  Widget noConnection() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 70),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
               ),
             ),
-          );
-        },
-      );
-    }
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Koneksi Terputus',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Periksa sambungan internet kamu',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                setState(() {
+                  // isLoading = true;
+                  isConnect = true;
+                  _getDataApi();
+                });
+              },
+              color: Colors.green,
+              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
+  @override
+  // ignore: must_call_super
+  void initState() {
+    _getDataApi();
+
+    addAllListData();
+  }
+
+  void addAllListData() {
+    listViews = [];
+
+    listViews.add(CarouselProductView(imageList: imageLists));
+
+    listViews.add(TitleNPriceProductView(detailList: detailProduct));
+    Map<String,dynamic> mapDetailCard=detailProduct;
+
+    listViews.add(DetailCardView(
+       detailList:mapDetailCard,title: 'Deskripsi',moreText:false,));
+
+    listViews.add(DetailCardView(
+        detailList: mapDetailCard, title: "Detail Produk", moreText: false));
+
+    listViews.add(ReviewProductView(dataReview: reviewData));
+
+    listViews.add(QnAProductView(dataQnA: qnAData));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  PreferredSize(
+      appBar: PreferredSize(
           preferredSize: Size.fromHeight(70.0), child: HeaderPage()),
-     bottomNavigationBar: PreferredSize(
+      bottomNavigationBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
         child: BottomAppBar(
           child: new Row(
@@ -160,7 +297,7 @@ void showAddDialog(BuildContext context) {
                   height: 40,
                   child: RaisedButton(
                     child: Text(
-                      'Masukkan Keranjang',
+                      'MASUKKAN KERANJANG',
                       style: TextStyle(color: Colors.green),
                     ),
                     color: Colors.white,
@@ -180,7 +317,7 @@ void showAddDialog(BuildContext context) {
                   height: 40,
                   child: RaisedButton(
                     child: Text(
-                      'Beli Sekarang',
+                      'BELI SEKARANG',
                       style: TextStyle(color: Colors.white),
                     ),
                     color: Colors.green,
@@ -196,8 +333,20 @@ void showAddDialog(BuildContext context) {
           ),
         ),
       ),
-      
-     body:Text('dasd')
+      body: Container(
+        child: ListView(
+          children: listViews,
+        ),
+      ),
     );
   }
+}
+
+BoxDecoration borderTop() {
+  return BoxDecoration(
+    border: Border(
+      top: BorderSide(width: 0.5, color: Colors.black26),
+    ),
+    color: Colors.white,
+  );
 }
