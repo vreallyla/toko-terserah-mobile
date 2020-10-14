@@ -14,6 +14,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
   @override
@@ -38,12 +39,12 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   double distValue = 50.0;
   AnimationController animationController;
   Animation<dynamic> animation;
-  List dataJson;
+  List dataJson, dataSubKategori;
   bool isLoading = true;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   int _limit = 10;
-
+ List _selecteCategorys = List();
   final formatter = new NumberFormat("#,###");
 
   List<NewItem> items = <NewItem>[
@@ -80,6 +81,23 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
       }
     } catch (e) {
       log("error getData : $e");
+    }
+  }
+
+  Future getSubKategori() async {
+    try {
+      http.Response item = await http.get(globalBaseUrl + 'api/master/sub');
+
+      if (item.statusCode == 200) {
+        Map<String, dynamic> products = jsonDecode(item.body);
+        // print(products['data']['produk']);
+
+        setState(() {
+          dataSubKategori = products['data'];
+        });
+      }
+    } catch (e) {
+      log("error getSub : $e");
     }
   }
 
@@ -146,32 +164,32 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   RangeValues _currentRangeValues = RangeValues(0, 300000);
 
   void setKatagoriListAll(context) {
-    collectKategori = [];
-    widgetContainerKategori = <Widget>[];
-    dataKategori.asMap().forEach((iKategori, value) {
-      // widgetContainerKategori=[];
-      collectKategori.add(<Widget>[]);
-      collectKategori[iKategori]
-          .add(textKategoriProduk(value['nama_kategori']));
+    // collectKategori = [];
+    // widgetContainerKategori = <Widget>[];
+    // dataKategori.asMap().forEach((iKategori, value) {
+    //   // widgetContainerKategori=[];
+    //   collectKategori.add(<Widget>[]);
+    //   collectKategori[iKategori]
+    //       .add(textKategoriProduk(value['nama_kategori']));
 
-      value['data'].asMap().forEach((iData, value2) {
-        valueKategori[value2['id']] = false;
-        print(value2['id']);
-        collectKategori[iKategori].add(kategoriProdukCheckBox(
-            value2['nama'], context.size, iKategori, iData, value2['id']));
-      });
-      print(collectKategori);
+    //   value['data'].asMap().forEach((iData, value2) {
+    //     valueKategori[value2['id']] = false;
+    //     print(value2['id']);
+    //     collectKategori[iKategori].add(kategoriProdukCheckBox(
+    //         value2['nama'], context.size, iKategori, iData, value2['id']));
+    //   });
+    //   print(collectKategori);
 
-      widgetContainerKategori.add(
-        Container(
-          padding: EdgeInsets.only(bottom: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: collectKategori[iKategori],
-          ),
-        ),
-      );
-    });
+    //   widgetContainerKategori.add(
+    //     Container(
+    //       padding: EdgeInsets.only(bottom: 20),
+    //       child: Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: collectKategori[iKategori],
+    //       ),
+    //     ),
+    //   );
+    // });
   }
 
   checkBorderChanges(value) {
@@ -217,7 +235,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     });
 
     // print(dataKategori[0]['data'][0]);
-
+    getSubKategori();
     getData();
   }
 
@@ -275,6 +293,25 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     );
   }
 
+//Render Data Kategori dari API dan ditampilkan pada widget
+  Widget listKategoriCheckBox(context) {
+    return ListView.builder(
+        itemCount: dataSubKategori == null ? 0 : dataSubKategori.length,
+        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
+        itemBuilder: (context, i) {
+             return CheckboxListTile(
+              value: _selecteCategorys
+                  .contains(dataSubKategori[i]['id']),
+              onChanged: (bool selected) {
+                _onCategorySelected(selected,
+                   dataSubKategori[i]['id']);
+              },
+              title: Text(dataSubKategori[i]['nama']),
+            );
+        });
+  }
+
   //desain kategori produk
   Widget KategoriDetail(sizeu) {
     return Stack(
@@ -284,10 +321,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           margin: EdgeInsets.only(top: 70, bottom: 150),
           padding: EdgeInsets.only(left: 10, top: 5),
           color: Colors.white,
-          child: ListView(
-            // daftar kategori
-            children: widgetContainerKategori,
-          ),
+          // child: ListView(
+          //   // daftar kategori
+          //   children: widgetContainerKategori,
+          // ),
+          child: listKategoriCheckBox(context),
         ),
         //header
         Container(
@@ -335,7 +373,6 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       child: TextField(
                         maxLength: 27,
                         controller: cariKatagoriInput,
-                        focusNode: focusCariKategori,
                         decoration: InputDecoration(
                           counterText: "",
                           hintText: "Cari Kategori...",
@@ -345,9 +382,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                         style:
                             TextStyle(color: Colors.blueGrey, fontSize: 13.0),
                         onChanged: (query) {
-                          setState(() {
-                            cariKatagoriInput.text = query;
-                          });
+                          // setState(() {
+                          //   cariKatagoriInput.text = query;
+                          // });
                         },
                       ),
                     ),
@@ -484,6 +521,18 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     }
   }
 
+  //Set value from check box
+ void _onCategorySelected(bool selected, category_id) {
+    if (selected == true) {
+      setState(() {
+        _selecteCategorys.add(category_id);
+      });
+    } else {
+      setState(() {
+        _selecteCategorys.remove(category_id);
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     var sizeu = MediaQuery.of(context).size;
