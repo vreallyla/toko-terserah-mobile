@@ -39,6 +39,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   AnimationController animationController;
   Animation<dynamic> animation;
   List dataJson;
+  bool isLoading = true;
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   int _limit = 10;
@@ -53,7 +54,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   Future getData() async {
     try {
-      var param = jsonEncode({"limit": _limit.toString()});
+      var param = jsonEncode({
+        "limit": _limit.toString(),
+        "name": editingController.text,
+        "awal": _currentRangeValues.start.toString(),
+        "akhir": _currentRangeValues.end.toString(),
+        "jenis": _jenisProdukRadioButton
+      });
 
       http.Response item = await http.post(globalBaseUrl + 'api/search',
           body: param,
@@ -64,10 +71,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
       if (item.statusCode == 200) {
         Map<String, dynamic> products = jsonDecode(item.body);
-        print(products['data']['produk']);
+        // print(products['data']['produk']);
 
         setState(() {
           dataJson = products['data']['produk'];
+          isLoading = false;
         });
       }
     } catch (e) {
@@ -135,7 +143,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   //variable range harga
   TextEditingController minHargaInput = new TextEditingController();
   TextEditingController maxHargaInput = new TextEditingController();
-  RangeValues _currentRangeValues = RangeValues(500, 600);
+  RangeValues _currentRangeValues = RangeValues(0, 300000);
 
   void setKatagoriListAll(context) {
     collectKategori = [];
@@ -147,7 +155,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           .add(textKategoriProduk(value['nama_kategori']));
 
       value['data'].asMap().forEach((iData, value2) {
-        valueKategori[value2['id']] = true;
+        valueKategori[value2['id']] = false;
         print(value2['id']);
         collectKategori[iKategori].add(kategoriProdukCheckBox(
             value2['nama'], context.size, iKategori, iData, value2['id']));
@@ -236,6 +244,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                 activeColor: Colors.green,
                 value: valueKategori[id],
                 onChanged: (bool newValue) {
+                  print("object");
                   print(newValue);
                   print(valueKategori[id]);
                   print(id);
@@ -456,6 +465,23 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     isKategori = false;
     setState(() {});
     Navigator.of(context).pop();
+  }
+
+  _inputToSlider(String awal, String akhir) {
+    try {
+      log("Awal : " + awal + " Akhir : " + akhir);
+      double _valueAwal = double.parse(awal);
+      double _valueAkhir = double.parse(akhir);
+      if (_valueAwal >= _valueAkhir) {
+        minHargaInput.text = akhir;
+      }
+      if (_valueAkhir <= _valueAwal) {
+        maxHargaInput.text = awal;
+      }
+      _currentRangeValues = RangeValues(_valueAwal, 100000);
+    } catch (e) {
+      log("eror : " + e.toString());
+    }
   }
 
   @override
@@ -838,7 +864,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                 ),
                               ),
 
-                              //jenis produk
+                              //harga produk
                               Container(
                                 padding: EdgeInsets.only(bottom: 20),
                                 child: Column(
@@ -888,6 +914,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                     width: 110,
                                                     child: TextField(
                                                         // enabled: false,
+                                                        readOnly: true,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
                                                         textAlign:
                                                             TextAlign.left,
                                                         style: TextStyle(
@@ -897,12 +927,21 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                         controller:
                                                             minHargaInput,
                                                         onChanged: (text) {
-                                                          setState(() {});
+                                                          //Set value to slider
+                                                          print(text);
                                                         },
-                                                        onSubmitted: (_) =>
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .nextFocus(),
+                                                        onSubmitted: (text) {
+                                                          setState(() {
+                                                            _inputToSlider(
+                                                                text,
+                                                                maxHargaInput
+                                                                    .text);
+                                                          });
+                                                        },
+                                                        // onSubmitted: (_) =>
+                                                        //     FocusScope.of(
+                                                        //             context)
+                                                        //         .nextFocus(),
                                                         decoration:
                                                             defaultInput(
                                                                 'Terendah',
@@ -927,6 +966,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                     width: 120,
                                                     child: TextField(
                                                         // enabled: false,
+                                                        readOnly: true,
+                                                        keyboardType:
+                                                            TextInputType
+                                                                .number,
                                                         textAlign:
                                                             TextAlign.left,
                                                         style: TextStyle(
@@ -934,17 +977,27 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                                 Colors.blueGrey,
                                                             fontSize: 13.0),
                                                         controller:
-                                                            minHargaInput,
+                                                            maxHargaInput,
                                                         onChanged: (text) {
-                                                          setState(() {});
+                                                          //Set value to slider
+                                                          // _inputToSlider(
+                                                          //     minHargaInput
+                                                          //         .text,
+                                                          //     text);
                                                         },
-                                                        onSubmitted: (_) =>
-                                                            FocusScope.of(
-                                                                    context)
-                                                                .nextFocus(),
+                                                        onSubmitted: (text) {
+                                                          _inputToSlider(
+                                                              minHargaInput
+                                                                  .text,
+                                                              text);
+                                                        },
+                                                        // onSubmitted: (_) =>
+                                                        //     FocusScope.of(
+                                                        //             context)
+                                                        //         .nextFocus(),
                                                         decoration:
                                                             defaultInput(
-                                                                'Terendah',
+                                                                'Tertinggi',
                                                                 false)),
                                                   ),
                                                 ],
@@ -956,7 +1009,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                 values: _currentRangeValues,
                                                 min: 0,
                                                 max: 300000,
-                                                divisions: 5,
+                                                divisions: 300000,
                                                 labels: RangeLabels(
                                                   _currentRangeValues.start
                                                       .round()
@@ -968,6 +1021,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                 onChanged:
                                                     (RangeValues values) {
                                                   setState(() {
+                                                    //set max and min input from values range
+                                                    minHargaInput.text =
+                                                        values.start.toString();
+                                                    maxHargaInput.text =
+                                                        values.end.toString();
                                                     _currentRangeValues =
                                                         values;
                                                   });
@@ -1026,6 +1084,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                             fontSize: 12, color: Colors.white),
                                       ),
                                       onPressed: () {
+                                        setState(() {
+                                          isLoading = true;
+                                        });
+                                        Future.delayed(Duration(seconds: 1),
+                                            () {
+                                          getData();
+                                        });
                                         _closeEndDrawer();
                                       },
                                     ))
@@ -1046,13 +1111,15 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           backgroundColor: Colors.transparent,
           appBar: PreferredSize(
               preferredSize: Size.fromHeight(60), child: headerSection()),
-          body: Column(
-            children: <Widget>[
-              Flexible(
-                child: getPopularCourseUI(),
-              ),
-            ],
-          ),
+          body: isLoading
+              ? reqLoad()
+              : Column(
+                  children: <Widget>[
+                    Flexible(
+                      child: getPopularCourseUI(),
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -1108,7 +1175,15 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
               height: 40,
               width: sizeu.width - 48 - 10,
               child: TextField(
-                onChanged: (value) {},
+                onSubmitted: (value) {
+                  print(value);
+                  setState(() {
+                    isLoading = true;
+                  });
+                  Future.delayed(Duration(seconds: 1), () {
+                    getData();
+                  });
+                },
                 controller: editingController,
                 decoration: InputDecoration(
                     filled: true,
