@@ -24,6 +24,7 @@ var dataUserDefault;
 List dataKecamatan;
 List dataJenisAlamat;
 List dataKota;
+List dataOcc;
 TextEditingController _namaController = new TextEditingController();
 TextEditingController _namapenerimaController = new TextEditingController();
 TextEditingController _alamatController = new TextEditingController();
@@ -59,6 +60,14 @@ class _InputAlamatState extends State<InputAlamat> {
     print(globalBaseUrl + "api/address/kota");
     print(tokenFixed);
     var tempList;
+    var tempocc;
+    Response responseocc =
+        await http.get(globalBaseUrl + "api/address/occupancy", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    });
+    tempocc = await jsonDecode(responseocc.body.toString());
+    dataOcc = tempocc["data"]["city"];
     Response response =
         await http.get(globalBaseUrl + "api/address/kota", headers: {
       "Accept": "application/json",
@@ -106,6 +115,7 @@ class _InputAlamatState extends State<InputAlamat> {
   @override
   Widget build(BuildContext context) {
     final dynamic args = ModalRoute.of(context).settings.arguments;
+    print(args);
     if (args == null) {
       _namaController.text = "";
       _namapenerimaController.text = "";
@@ -119,6 +129,7 @@ class _InputAlamatState extends State<InputAlamat> {
       _telpController.text = "";
       _postalcodeController.text = "";
     } else {
+      _mySelection3 = args["get_occupancy"]["id"].toString();
       _namaController.text = args["get_occupancy"]["name"];
       _namapenerimaController.text = args["nama"];
       _alamatController.text = args["alamat"];
@@ -151,50 +162,54 @@ class _InputAlamatState extends State<InputAlamat> {
                     onPressed: () async {
                       String globalBaseUrl2 = "https://tokoterserah.com/";
                       body = {
-                        'nama': _namaController.text,
+                        'nama': _namapenerimaController.text,
                         'telp': _telpController.text,
                         'alamat': _alamatController.text,
                         'kode_pos': _postalcodeController.text,
-                        'occupancy_id': "9",
+                        'occupancy_id': _mySelection3.toString(),
+                        'kota_id': _mySelection,
                         'kecamatan_id': _mySelection2,
                         'lat': "",
                         'long': ""
                       };
                       if (_alamatController.text.isEmpty ||
-                          _namaController.text.isEmpty ||
                           _namapenerimaController.text.isEmpty ||
                           _postalcodeController.text.isEmpty ||
                           _telpController.text.isEmpty) {
                         _validate = false;
-                      }
-                      // else {
-                      //   if (idx != null) {
-                      //     print(globalBaseUrl + "api/address/update/" + idx.toString());
-                      //     print(tokenFixed);
-                      //     Response response = await http.post(
-                      //         globalBaseUrl + "api/address/update/" + idx.toString(),
-                      //         headers: {
-                      //           "Accept": "application/json",
-                      //           "Authorization":
-                      //               "Bearer " + (tokenFixed != null ? tokenFixed : ''),
-                      //         },
-                      //         body: body);
-                      //     print(response.statusCode);
-                      //   }
-                      else {
-                        print(globalBaseUrl2 + "api/address/create");
-                        print(tokenFixed);
-                        print(body);
+                        print("false");
+                      } else {
+                        if (args != null) {
+                          print(globalBaseUrl2 +
+                              "api/address/update/" +
+                              args["id"].toString());
+                          print(tokenFixed);
+                          Response response = await http.post(
+                              globalBaseUrl2 +
+                                  "api/address/update/" +
+                                  args["id"].toString(),
+                              headers: {
+                                "Accept": "application/json",
+                                "Authorization": "Bearer " +
+                                    (tokenFixed != null ? tokenFixed : ''),
+                              },
+                              body: body);
+                          print(response.statusCode);
+                        } else {
+                          print(globalBaseUrl2 + "api/address/create");
+                          print(tokenFixed);
+                          print(body);
 
-                        Response response = await http.post(
-                            globalBaseUrl2 + "api/address/create",
-                            headers: {
-                              "Accept": "application/json",
-                              "Authorization": "Bearer " +
-                                  (tokenFixed != null ? tokenFixed : '')
-                            },
-                            body: body);
-                        print(response.body);
+                          Response response = await http.post(
+                              globalBaseUrl2 + "api/address/create",
+                              headers: {
+                                "Accept": "application/json",
+                                "Authorization": "Bearer " +
+                                    (tokenFixed != null ? tokenFixed : '')
+                              },
+                              body: body);
+                          print(response.body);
+                        }
                       }
 
                       Navigator.of(context).pop();
@@ -218,6 +233,7 @@ class AlamatTransaksi extends StatefulWidget {
 
 String _mySelection;
 String _mySelection2;
+String _mySelection3;
 
 class _AlamatTransaksiState extends State<AlamatTransaksi> {
   @override
@@ -225,6 +241,7 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
     setState(() {
       _mySelection = null;
       _mySelection2 = null;
+      _mySelection3 = null;
     });
     super.initState();
   }
@@ -352,7 +369,44 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
       child: new Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          namaField,
+          Row(
+            children: <Widget>[
+              Text(
+                "Jenis Alamat :",
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
+              ),
+              Spacer()
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              DropdownButton(
+                isDense: true,
+                iconSize: 16,
+                icon: Icon(Icons.arrow_drop_down),
+                items: dataOcc.map((item) {
+                  return new DropdownMenuItem(
+                    child: new Text(
+                      item['name'],
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    value: item['id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (newVal) async {
+                  setState(() {
+                    _mySelection3 = newVal;
+                  });
+                },
+                value: _mySelection3,
+              ),
+              Spacer(),
+            ],
+          ),
           namapenerimaField,
           telpField,
           alamatField,
@@ -361,13 +415,18 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
               Text(
                 "Kota :",
                 textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
               ),
               Spacer()
             ],
           ),
           DropdownButton(
             isDense: true,
-            iconSize: 0,
+            iconSize: 16,
+            icon: Icon(Icons.arrow_drop_down),
             items: dataKota.map((item) {
               return new DropdownMenuItem(
                 child: new Text(
@@ -404,6 +463,10 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
               Text(
                 "Kecamatan :",
                 textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w400),
               ),
               Spacer()
             ],
@@ -412,7 +475,8 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
             children: <Widget>[
               DropdownButton(
                 isDense: true,
-                iconSize: 0,
+                iconSize: 16,
+                icon: Icon(Icons.arrow_drop_down),
                 items: dataKecamatan.map((item) {
                   return new DropdownMenuItem(
                     child: new Text(

@@ -36,39 +36,6 @@ class Post {
   }
 }
 
-class PostCrate {
-  String nama;
-  String telp;
-  String alamat;
-  int kode_pos;
-  int occupancy_id;
-  int kecamatan_id;
-
-  PostCrate({this.nama});
-
-  factory PostCrate.fromJson(Map json) {
-    return PostCrate(
-      nama: json['id'],
-    );
-  }
-  Map toMap() {
-    var map = new Map();
-    map["id"] = nama;
-    return map;
-  }
-}
-
-Future delPost(String url, {Map body}) async {
-  return http.post(url, body: body).then((http.Response response) {
-    final int statusCode = response.statusCode;
-
-    if (statusCode < 200 || statusCode > 400 || json == null) {
-      throw new Exception("Error while fetching data");
-    }
-    return Post.fromJson(json.decode(response.body));
-  });
-}
-
 var dataUserDefault;
 var dataKecamatan;
 List dataJenisAlamat;
@@ -402,38 +369,11 @@ class _AlamatListState extends State<AlamatList> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     tokenFixed = prefs.getString('token');
     dataUser = prefs.getString('dataUser');
-    print(prefs.toString());
-    print(globalBaseUrl + "api/address/kota");
-    print(tokenFixed);
-    var tempList;
-    Response response =
-        await http.get(globalBaseUrl + "api/address/kota", headers: {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
-    });
-    tempList = await jsonDecode(response.body.toString());
-    dataKota = tempList["data"]["city"];
-    Response responseKcm =
-        await http.get(globalBaseUrl + "api/address/kecamatan", headers: {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
-    });
-//    print(dataKota["data"]["city"]);
-    dataKecamatan = await jsonDecode(responseKcm.body.toString());
-    print(dataKecamatan);
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
       print(dataUser['user']['get_alamat']);
       dataUserDefault = dataUser['user']['get_alamat'];
     }
-
-    //the birthday's date
-
-    // await initializeDateFormatting('id', null).then((value) {
-
-    // }
-    // );
-
     setState(() {});
   }
 
@@ -470,7 +410,10 @@ class _AlamatListState extends State<AlamatList> {
                 ),
                 child: RaisedButton(
                   onPressed: () => Navigator.pushNamed(context, '/inputalamat',
-                      arguments: null),
+                          arguments: null)
+                      .then((value) async {
+                    _getUser();
+                  }),
                   child: Text(
                     'TAMBAH ALAMAT',
                     style: TextStyle(color: Colors.white),
@@ -487,82 +430,6 @@ class _AlamatListState extends State<AlamatList> {
   }
 }
 // end stack end
-
-class StatusTransaksi extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-      color: Colors.green[100],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              margin: EdgeInsets.only(bottom: 7),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 30,
-                    child: FaIcon(
-                      FontAwesomeIcons.paperclip,
-                      color: Colors.black54,
-                      size: 18,
-                    ),
-                  ),
-                  Container(
-                      width: size.width - 30 - 100 - 30,
-                      child: Text('Status',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                          ))),
-                  Container(
-                    width: 100,
-                    alignment: Alignment.centerRight,
-                    child: Text('20 Sept 2020',
-                        style: TextStyle(
-                          color: Colors.black54,
-                        )),
-                  )
-                ],
-              )),
-          Container(
-            padding: EdgeInsets.only(left: 30),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(width: 110, child: Text('No Invoice')),
-                  Container(
-                      width: size.width - 30 - 110 - 30,
-                      child: Text(
-                        ': 3012/sadki/21393',
-                        maxLines: 2,
-                      )),
-                ]),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 30, top: 5),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: 110,
-                    child: Text('Telah Diterima'),
-                  ),
-                  Container(
-                      width: size.width - 30 - 110 - 30,
-                      child: Text(': 05 Agust 2020', maxLines: 2)),
-                ]),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class AlamatTransaksi extends StatelessWidget {
   @override
@@ -783,7 +650,9 @@ class AlamatTransaksi extends StatelessWidget {
                         ),
                         width: (size.width - 40) / 2,
                         child: InkWell(
-                          onTap: () => showAlertDialog(context, index),
+                          onTap: () => Navigator.pushNamed(
+                              context, '/inputalamat',
+                              arguments: dataUserDefault[index]),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
