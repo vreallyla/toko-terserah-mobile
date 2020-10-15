@@ -13,6 +13,7 @@ import 'CustomShowDialog.dart';
 import 'carousel_product_view.dart';
 
 class ProductDetail2 extends StatefulWidget {
+  
   @override
   _ProductDetail2State createState() => _ProductDetail2State();
 }
@@ -111,7 +112,7 @@ class _ProductDetail2State extends State<ProductDetail2>
   Map<String, dynamic> detailProduct;
 
   // data untuk ulasan
-  Map<String, dynamic>reviewData;
+  Map<String, dynamic> reviewData;
 
   //data untuk pertanyaan
   List<dynamic> qnAData;
@@ -176,11 +177,10 @@ class _ProductDetail2State extends State<ProductDetail2>
   }
 
   _getDataApi() async {
-   
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        await ProductModel.getProduct('35').then((value) {
+        await ProductModel.getProduct('36').then((value) {
           if (value.error) {
             isLogin = false;
           } else {
@@ -191,6 +191,7 @@ class _ProductDetail2State extends State<ProductDetail2>
             imageLists = detailProduct['galeri'] ?? [detailProduct['gambar']];
             reviewData = dataLoad['review'];
             qnAData = dataLoad['qna'];
+            print(reviewData['data']);
             addAllListData();
             setState(() {});
             // print(detailProduct['count_ulasan']);
@@ -256,8 +257,9 @@ class _ProductDetail2State extends State<ProductDetail2>
   // ignore: must_call_super
   void initState() {
     _getDataApi();
-
-    addAllListData();
+    Future.delayed(Duration(seconds: 1), () {
+      addAllListData();
+    });
   }
 
   void addAllListData() {
@@ -266,15 +268,23 @@ class _ProductDetail2State extends State<ProductDetail2>
     listViews.add(CarouselProductView(imageList: imageLists));
 
     listViews.add(TitleNPriceProductView(detailList: detailProduct));
-    Map<String,dynamic> mapDetailCard=detailProduct;
+    Map<String, dynamic> mapDetailCard = detailProduct;
 
     listViews.add(DetailCardView(
-       detailList:mapDetailCard,title: 'Deskripsi',moreText:false,));
+      detailList: mapDetailCard,
+      title: 'Deskripsi',
+      moreText: false,
+    ));
 
     listViews.add(DetailCardView(
         detailList: mapDetailCard, title: "Detail Produk", moreText: false));
 
-    listViews.add(ReviewProductView(dataReview: reviewData));
+    if (reviewData['data'] != null) {
+      listViews.add(ReviewProductView(
+        dataReview: reviewData,
+        listReview: detailProduct['get_ulasan'],
+      ));
+    }
 
     listViews.add(QnAProductView(dataQnA: qnAData));
   }

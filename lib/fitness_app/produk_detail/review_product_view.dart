@@ -1,14 +1,17 @@
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'ulasan_detail.dart' as ulasan;
 
 class ReviewProductView extends StatefulWidget {
   final Map<String, dynamic> dataReview;
-
-  ReviewProductView({
-    Key key,
-    /*@required*/
-    this.dataReview,
-  }) : super(key: key);
+  final List<dynamic> listReview;
+  ReviewProductView(
+      {Key key,
+      /*@required*/
+      this.dataReview,
+      this.listReview})
+      : super(key: key);
 
   @override
   _ReviewProductViewState createState() => _ReviewProductViewState();
@@ -36,22 +39,7 @@ class _ReviewProductViewState extends State<ReviewProductView> {
                     fontWeight: FontWeight.bold,
                   )),
             ),
-            InkWell(
-              onTap: () {
-                // Navigate to the second screen using a named route.
-                Navigator.pushNamed(context, '/ulasandetail');
-              },
-              child: Container(
-                width: size.width / 2 - 15,
-                alignment: Alignment.centerRight,
-                child: Text('Lihat Semua',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    )),
-              ),
-            )
+            inkwellUlasan(context, size)
           ],
         ),
       ),
@@ -77,7 +65,7 @@ class _ReviewProductViewState extends State<ReviewProductView> {
               size: 18,
               color: Colors.green,
             ),
-            Text('  (11 Ulasan)',
+            Text('  (${widget.dataReview['count']} Ulasan)',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black54,
@@ -93,14 +81,26 @@ class _ReviewProductViewState extends State<ReviewProductView> {
         padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
         child: Row(
           children: <Widget>[
-            gambarReview(context),
-            gambarReview(context),
-            gambarReview(context),
-            gambarReviewlengkap(context),
+            SizedBox(
+              height: 84.0,
+              child: ListView.builder(
+                  itemCount: widget.dataReview['image'] == null
+                      ? 0
+                      : widget.dataReview['image'].length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, i) {
+                    return gambarReview(context);
+                  }),
+            ),
+            // gambarReview(context),
+            // gambarReviewlengkap(context),
           ],
         ),
       ),
     );
+
 //ulasan top
     listViews.add(Container(
       width: size.width,
@@ -119,40 +119,13 @@ class _ReviewProductViewState extends State<ReviewProductView> {
             textAlign: TextAlign.left,
           ),
         ),
-        Row(
-          children: <Widget>[
-            Icon(
-              Icons.star,
-              size: 25,
-              color: Colors.green,
-            ),
-            Icon(
-              Icons.star,
-              size: 25,
-              color: Colors.green,
-            ),
-            Icon(
-              Icons.star,
-              size: 25,
-              color: Colors.green,
-            ),
-            Icon(
-              Icons.star,
-              size: 25,
-              color: Colors.green,
-            ),
-            Icon(
-              Icons.star,
-              size: 25,
-              color: Colors.green,
-            ),
-          ],
-        ),
+        starJadi(double.parse(widget.dataReview['data']['bintang']),
+            widget.dataReview['data']['bintang']),
         Container(
           padding: EdgeInsets.only(top: 10),
           alignment: Alignment.bottomLeft,
           child: Text(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tristique, erat sed mollis tincidunt, sapien leo lobortis quam, sed finibus tortor metus a dolor. Maecenas et ligula nibh. Suspendisse elit turpis, bibendum vitae consectetur condimentum, sollicitudin sed eros. Curabitur viverra bibendum massa, ac tincidunt arcu gravida ut.',
+            '${widget.dataReview['data']['deskripsi']}',
             style: TextStyle(
               fontSize: 18,
             ),
@@ -166,13 +139,14 @@ class _ReviewProductViewState extends State<ReviewProductView> {
           child: Row(
             children: [
               Text(
-                '1 bulan lalu dibuat oleh ',
+                diffForhumans(
+                    DateTime.parse(widget.dataReview['data']['updated_at'])),
                 style: TextStyle(
                   fontSize: 15,
                 ),
               ),
               Text(
-                'Fahmi',
+                ' Fahmi',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -183,7 +157,75 @@ class _ReviewProductViewState extends State<ReviewProductView> {
         ),
       ]),
     ));
+  }
 
+  Icon iconStar() {
+    return Icon(
+      Icons.star,
+      color: Colors.green,
+      size: 18,
+    );
+  }
+
+  Icon iconStarSetengah() {
+    return Icon(
+      Icons.star_half,
+      color: Colors.green,
+      size: 18,
+    );
+  }
+
+  Icon iconStarKosong() {
+    return Icon(
+      Icons.star_border,
+      color: Colors.lightGreen,
+      size: 18,
+    );
+  }
+
+  Container starJadi(double jmlStar, String jlmVote) {
+    List dataRown = <Widget>[];
+
+    List.generate(5, (index) {
+      dataRown.add(
+        Container(
+            child: (index + 1) <= jmlStar
+                ? iconStar()
+                : (index < jmlStar ? iconStarSetengah() : iconStarKosong())),
+      );
+    });
+
+    dataRown.add(Text(' ($jlmVote)',
+        style: TextStyle(fontSize: 12, color: Colors.grey)));
+
+    return Container(
+        padding: EdgeInsets.only(top: 3), child: Row(children: dataRown));
+  }
+
+  Widget inkwellUlasan(context, size) {
+    return InkWell(
+      onTap: () {
+        // Navigate to the second screen using a named route.
+        // Navigator.pushNamed(context, '/ulasandetail');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ulasan.UlasanDetail(
+                dataReview: widget.listReview,
+              ),
+            ));
+      },
+      child: Container(
+        width: size.width / 2 - 15,
+        alignment: Alignment.centerRight,
+        child: Text('Lihat Semua',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            )),
+      ),
+    );
   }
 
   @override
