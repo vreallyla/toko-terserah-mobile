@@ -1,3 +1,4 @@
+import 'package:best_flutter_ui_templates/fitness_app/cart_list/footer_app_view.dart';
 import 'package:flutter/material.dart';
 
 class CartList extends StatefulWidget {
@@ -9,9 +10,12 @@ class CartList extends StatefulWidget {
 }
 
 class _CartListState extends State<CartList> {
+
+  
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
+    
 
     return new Scaffold(
       appBar: AppBar(
@@ -33,7 +37,7 @@ class _CartListState extends State<CartList> {
           // )
         ],
       ),
-      bottomNavigationBar: FooterApp(),
+      bottomNavigationBar: FooterAppView(),
       body: Container(
         padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: ListView(
@@ -46,87 +50,7 @@ class _CartListState extends State<CartList> {
   }
 }
 
-class FooterApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
 
-    bool checkAll = false;
-
-    void toggleCheckbox(bool value) {}
-
-    return PreferredSize(
-      preferredSize: Size.fromHeight(80.0),
-      child: BottomAppBar(
-        child: Row(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: size.width / 2 - 40,
-              child: new Row(
-                children: <Widget>[
-                  Checkbox(
-                    value: checkAll,
-                    onChanged: (value) {
-                      toggleCheckbox(value);
-                    },
-                    activeColor: Colors.green,
-                    checkColor: Colors.white,
-                    tristate: false,
-                  ),
-                  Text(
-                    'Pilih Semua',
-                    style: TextStyle(color: Colors.grey),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              width: size.width / 2 - 60,
-              height: 70,
-              padding: EdgeInsets.only(top: 15, bottom: 5),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Subtotal',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    Text(
-                      'Rp15.000.000',
-                      style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ]),
-            ),
-            InkWell(
-              onTap: () {
-                // Navigate to the second screen using a named route.
-                Navigator.pushNamed(context, '/checkout');
-              },
-              child: Container(
-                height: 50,
-                color: Colors.green[300],
-                alignment: Alignment.center,
-                width: 90,
-                child: Text(
-                  'CHECKOUT',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class CardCart extends StatelessWidget {
   @override
