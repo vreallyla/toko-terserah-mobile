@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
 
 class PertanyaanDetail extends StatefulWidget {
-  const PertanyaanDetail({Key key, this.animationController}) : super(key: key);
+  final List<dynamic> dataQna;
+
+  const PertanyaanDetail({Key key, this.animationController, this.dataQna})
+      : super(key: key);
 
   final AnimationController animationController;
   @override
@@ -21,8 +25,8 @@ class _PertanyaanDetailState extends State<PertanyaanDetail> {
             icon: Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: const Text(
-            'Pertanyaan',
+          title: Text(
+            'Pertanyaan ',
             style: TextStyle(color: Colors.black),
           ),
           actions: <Widget>[
@@ -33,7 +37,10 @@ class _PertanyaanDetailState extends State<PertanyaanDetail> {
             // )
           ],
         ),
-        body: Container(child: PertanyaanProduk()));
+        body: Container(
+            child: PertanyaanProduk(
+          dataQnA: widget.dataQna,
+        )));
   }
 }
 
@@ -80,144 +87,71 @@ Container cardPertanyaan(String nama, String tanggal, String konten) {
 }
 
 class PertanyaanProduk extends StatelessWidget {
+  final List<dynamic> dataQnA;
+
+  PertanyaanProduk({
+    Key key,
+    /*@required*/
+    this.dataQnA,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return ListView(padding: EdgeInsets.only(left: 15, right: 15), children: [
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //konten
-          cardPertanyaan('Fahmi', '1 bulan lalu', 'hello ?'),
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: borderLeftPertanyaan(),
-                  padding: EdgeInsets.only(
-                    left: 15,
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: dataQnA.length == null ? 0 : dataQnA.length,
+          itemBuilder: (context, i) {
+            return kontenQna(i);
+          }),
+    );
+  }
+
+  Widget kontenQna(i) {
+    return Column(
+      children: [
+        cardPertanyaan(
+            'Fahmi',
+            '${diffForhumans(DateTime.parse(dataQnA[i]['created_at']))}',
+            '${dataQnA[i]['tanya']}'),
+        jawabanQna(i)
+      ],
+    );
+  }
+
+  Widget jawabanQna(i) {
+    if (dataQnA[i]['jawab'] != null) {
+      return Container(
+        padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+        child: Column(
+          children: <Widget>[
+            Container(
+              decoration: borderLeftPertanyaan(),
+              padding: EdgeInsets.only(
+                left: 15,
+              ),
+              margin: EdgeInsets.only(
+                top: 10,
+                left: 15,
+              ),
+              child: Column(
+                children: <Widget>[
+                  cardPertanyaan(
+                    'Toko Tersrah',
+                    '${diffForhumans(DateTime.parse(dataQnA[i]['updated_at']))}',
+                    '${dataQnA[i]['jawab']}',
                   ),
-                  margin: EdgeInsets.only(
-                    top: 10,
-                    left: 15,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      cardPertanyaan(
-                        'Dani',
-                        '1 minggu lalu',
-                        'iyaaaa',
-                      ),
-                      cardPertanyaan(
-                        'Deni',
-                        '1 hari lalu',
-                        'tes',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          cardPertanyaan('Fahmi', '1 bulan lalu', 'hello ?'),
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: borderLeftPertanyaan(),
-                  padding: EdgeInsets.only(
-                    left: 15,
-                  ),
-                  margin: EdgeInsets.only(
-                    top: 10,
-                    left: 15,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      cardPertanyaan(
-                        'Dani',
-                        '1 minggu lalu',
-                        'iyaaaa',
-                      ),
-                      cardPertanyaan(
-                        'Deni',
-                        '1 hari lalu',
-                        'tes',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          cardPertanyaan('Fahmi', '1 bulan lalu', 'hello ?'),
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: borderLeftPertanyaan(),
-                  padding: EdgeInsets.only(
-                    left: 15,
-                  ),
-                  margin: EdgeInsets.only(
-                    top: 10,
-                    left: 15,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      cardPertanyaan(
-                        'Dani',
-                        '1 minggu lalu',
-                        'iyaaaa',
-                      ),
-                      cardPertanyaan(
-                        'Deni',
-                        '1 hari lalu',
-                        'tes',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          cardPertanyaan('Fahmi', '1 bulan lalu', 'hello ?'),
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: borderLeftPertanyaan(),
-                  padding: EdgeInsets.only(
-                    left: 15,
-                  ),
-                  margin: EdgeInsets.only(
-                    top: 10,
-                    left: 15,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      cardPertanyaan(
-                        'Dani',
-                        '1 minggu lalu',
-                        'iyaaaa',
-                      ),
-                      cardPertanyaan(
-                        'Deni',
-                        '1 hari lalu',
-                        'tes',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      )
-    ]);
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
 
