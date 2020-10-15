@@ -1,7 +1,9 @@
+
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail2.dart';
 import 'package:flutter/material.dart';
-
+import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
 import 'CustomShowDialog.dart';
+import 'pertanyaan_detail.dart' as detail;
 
 class QnAProductView extends StatelessWidget {
   final List<dynamic> dataQnA;
@@ -12,7 +14,7 @@ class QnAProductView extends StatelessWidget {
     this.dataQnA,
   }) : super(key: key);
 
-    void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context) {
     TextEditingController _emailController = new TextEditingController();
     showDialog(
       context: context,
@@ -112,7 +114,7 @@ class QnAProductView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '  (1100)',
+                        '  (${dataQnA.length == null ? 0 : dataQnA.length})',
                         style: TextStyle(
                           fontSize: 20,
                           color: Colors.black45,
@@ -121,63 +123,13 @@ class QnAProductView extends StatelessWidget {
                     ],
                   ),
                 ),
-                InkWell(
-                  onTap: () {
-                    // Navigate to the second screen using a named route.
-                    Navigator.pushNamed(context, '/pertanyaandetail');
-                  },
-                  child: Container(
-                    width: size.width / 3 - 15,
-                    alignment: Alignment.centerRight,
-                    child: Text('Lihat Semua',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                        )),
-                  ),
-                ),
+                inkwellQna(context, size)
               ],
             ),
           ),
           //konten
-          cardPertanyaan('Fahmi', '1 bulan lalu', 'hello ?'),
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: borderLeftPertanyaan(),
-                  padding: EdgeInsets.only(
-                    left: 15,
-                  ),
-                  margin: EdgeInsets.only(
-                    top: 10,
-                    left: 15,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      cardPertanyaan(
-                        'Dani',
-                        '1 minggu lalu',
-                        'iyaaaa',
-                      ),
-                      Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(top: 15),
-                          child: Text(
-                            '2 jawaban lain',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54),
-                          ))
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+
+          kontenQna(),
 
           //ajukan pertanyaan
           InkWell(
@@ -203,57 +155,149 @@ class QnAProductView extends StatelessWidget {
     );
   }
 
-  Container cardPertanyaan(String nama, String tanggal, String konten) {
-  return Container(
-    padding: EdgeInsets.only(bottom: 10),
-    child: Column(children: <Widget>[
-      Row(
-        children: <Widget>[
-          Container(
-            width: 40,
-            height: 40,
-            decoration: new BoxDecoration(
-                color: Colors.grey,
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(40.0),
-                  topRight: const Radius.circular(40.0),
-                  bottomRight: const Radius.circular(40.0),
-                  bottomLeft: const Radius.circular(40.0),
-                )),
-          ),
-          Text(
-            '  ' + nama + ' · ',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-          ),
-          Text(
-            tanggal,
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
+  Widget inkwellQna(context, size) {
+    if (dataQnA.length > 2) {
+      return InkWell(
+        onTap: () {
+          // Navigate to the second screen using a named route.
+          // Navigator.pushNamed(context, '/pertanyaandetail');
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => detail.PertanyaanDetail(
+                  dataQna: dataQnA,
+                ),
+              ));
+        },
+        child: Container(
+          width: size.width / 3 - 15,
+          alignment: Alignment.centerRight,
+          child: Text('Lihat Semua',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              )),
+        ),
+      );
+    } else {}
+  }
+
+  Widget kontenQna() {
+    if (dataQnA.length > 0) {
+      return Column(
+        children: [
+          cardPertanyaan(
+              '${dataQnA[0]['user_id']}',
+              '${diffForhumans(DateTime.parse(dataQnA[0]['created_at']))}',
+              '${dataQnA[0]['tanya']}'),
+          // Jawaban QNA
+          jawabanQna()
         ],
-      ),
-      Container(
-        alignment: Alignment.topLeft,
-        padding: EdgeInsets.only(top: 10, left: 50),
-        child: Text(
-          konten,
-          style: TextStyle(
-            fontSize: 18,
+      );
+    } else {
+      return Text("belum ada Pertanyaan untuk produk ini");
+    }
+  }
+
+  Widget jawabanQna() {
+    if (dataQnA[0]['jawab'] != null) {
+      return Container(
+        padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
+        child: Column(
+          children: <Widget>[
+            Container(
+              decoration: borderLeftPertanyaan(),
+              padding: EdgeInsets.only(
+                left: 15,
+              ),
+              margin: EdgeInsets.only(
+                top: 10,
+                left: 15,
+              ),
+              child: Column(
+                children: <Widget>[
+                  Wrap(
+                    spacing: 8.0, // gap between adjacent chips
+                    runSpacing: 4.0, // gap between lines
+                    direction: Axis.horizontal, // main axis (rows or columns)
+                    children: [
+                      cardPertanyaan(
+                        'Toko Terserah',
+                        '${diffForhumans(DateTime.parse(dataQnA[0]['updated_at']))}',
+                        '${dataQnA[0]['jawab']}',
+                      ),
+                    ],
+                  ),
+                  // Container(
+                  //     alignment: Alignment.topLeft,
+                  //     padding: EdgeInsets.only(top: 15),
+                  //     child: Text(
+                  //       '2 jawaban lain',
+                  //       style: TextStyle(
+                  //           fontSize: 18,
+                  //           fontWeight: FontWeight.bold,
+                  //           color: Colors.black54),
+                  //     ))
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Container();
+    }
+  }
+
+  Container cardPertanyaan(String nama, String tanggal, String konten) {
+    return Container(
+      padding: EdgeInsets.only(bottom: 10),
+      child: Column(children: <Widget>[
+        Row(
+          children: <Widget>[
+            Container(
+              width: 40,
+              height: 40,
+              decoration: new BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(40.0),
+                    topRight: const Radius.circular(40.0),
+                    bottomRight: const Radius.circular(40.0),
+                    bottomLeft: const Radius.circular(40.0),
+                  )),
+            ),
+            Text(
+              '  ' + nama + ' · ',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            Text(
+              tanggal,
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          ],
+        ),
+        Container(
+          alignment: Alignment.topLeft,
+          padding: EdgeInsets.only(top: 10, left: 50),
+          child: Text(
+            konten,
+            style: TextStyle(
+              fontSize: 18,
+            ),
           ),
         ),
+      ]),
+    );
+  }
+
+  BoxDecoration borderLeftPertanyaan() {
+    return BoxDecoration(
+      border: Border(
+        left: BorderSide(width: 2, color: Colors.black26),
       ),
-    ]),
-  );
-}
-
-
-BoxDecoration borderLeftPertanyaan() {
-  return BoxDecoration(
-    border: Border(
-      left: BorderSide(width: 2, color: Colors.black26),
-    ),
-    color: Colors.white,
-  );
-}
-
-
+      color: Colors.white,
+    );
+  }
 }
