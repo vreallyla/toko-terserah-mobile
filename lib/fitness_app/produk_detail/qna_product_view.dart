@@ -274,7 +274,7 @@ class QnAProductView extends StatelessWidget {
             ),
             Text(
               tanggal,
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),

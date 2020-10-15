@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart';
 import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
@@ -54,16 +55,22 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     //give all your items here
   ];
 
+  
+
   Future getData() async {
     try {
+
+     print( _selecteCategorys.join(','));
       var param = jsonEncode({
         "limit": _limit.toString(),
         "name": editingController.text,
         "awal": _currentRangeValues.start.toString(),
         "akhir": _currentRangeValues.end.toString(),
-        "jenis": _jenisProdukRadioButton
+        "jenis": _jenisProdukRadioButton,
+        "kategori":_selecteCategorys.length>0? _selecteCategorys.join(',') :null
       });
 
+    print(param);
       http.Response item = await http.post(globalBaseUrl + 'api/search',
           body: param,
           headers: {
@@ -77,6 +84,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
         setState(() {
           dataJson = products['data']['produk'];
+          print(dataJson);
           isLoading = false;
         });
       }
@@ -91,7 +99,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
       if (item.statusCode == 200) {
         Map<String, dynamic> products = jsonDecode(item.body);
-        print(products['data']);
+        // print(products['data']);
 
         setState(() {
           dataSubKategori = products['data'];
@@ -244,10 +252,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                 activeColor: Colors.green,
                 value: valueKategori[id],
                 onChanged: (bool newValue) {
-                  print("object");
-                  print(newValue);
-                  print(valueKategori[id]);
-                  print(id);
+                  // print("object");
+                  // print(newValue);
+                  // print(valueKategori[id]);
+                  // print(id);
                   setState(() {
                     valueKategori[id] = newValue;
                   });
@@ -282,14 +290,19 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         shrinkWrap: true,
         physics: const BouncingScrollPhysics(),
         itemBuilder: (context, i) {
-          return CheckboxListTile(
-            value: _selecteCategorys.contains(dataSubKategori[i]['id']),
-            onChanged: (bool selected) {
-              _onCategorySelected(selected, dataSubKategori[i]['id'],
-                  dataSubKategori[i]['nama']);
-            },
-            title: Text(dataSubKategori[i]['nama']),
-          );
+          if (dataSubKategori[i]['nama']
+                  .toLowerCase()
+                  .indexOf(cariKatagoriInput.text.toLowerCase()) >=
+              0) {
+            return CheckboxListTile(
+              value: _selecteCategorys.contains(dataSubKategori[i]['id']),
+              onChanged: (bool selected) {
+                _onCategorySelected(selected, dataSubKategori[i]['id'],
+                    dataSubKategori[i]['nama']);
+              },
+              title: Text(dataSubKategori[i]['nama']),
+            );
+          }
         });
   }
 
@@ -307,6 +320,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
             height: 30,
             margin: EdgeInsets.only(left: 2, right: 2),
             decoration: BoxDecoration(
+                color: Colors.white,
                 border: Border.all(
                   color: Colors.green,
                 ),
@@ -333,8 +347,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                     width: 20,
                     child: InkWell(
                       onTap: () {
-                        _onCategorySelected(false, dataSubKategori[i]['id'],
-                            dataSubKategori[i]['nama']);
+                        print(_selectKategoriDetail[ina]['id']);
+                        _onCategorySelected(
+                            false,
+                            _selectKategoriDetail[ina]['id'],
+                            _selectKategoriDetail[ina]['nama']);
                       },
                       child: FaIcon(
                         FontAwesomeIcons.timesCircle,
@@ -453,9 +470,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                         style:
                             TextStyle(color: Colors.blueGrey, fontSize: 13.0),
                         onChanged: (query) {
-                          // setState(() {
-                          //   cariKatagoriInput.text = query;
-                          // });
+                          print(query);
+                          // cariKatagoriInput.text = query;
+
+                          setState(() {});
                         },
                       ),
                     ),
@@ -596,7 +614,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
   //Set value from check box
-  void _onCategorySelected(bool selected, category_id, category_name) {
+  void _onCategorySelected(
+      bool selected, int category_id, String category_name) {
     if (selected == true) {
       if (_selecteCategorys.length < 4) {
         setState(() {
@@ -672,12 +691,13 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         print(category_name);
 
         _selecteCategorys.remove(category_id);
-        _selectKategoriDetail.removeWhere((item) =>
-            item['id'] == category_id && item['nama'] == category_name);
+
+        _selectKategoriDetail.removeWhere((item) => item['id'] == category_id);
+        // _selectKategoriDetail.removeAt(0);
 
         // Stream.fromIterable(_selectKategoriDetail).asyncMap((item) async => {"id": category_id, "nama": await category_name }).where((m) => m['id'] != category_id).toList();
-      // Stream.fromIterable(replytile).asyncMap((item) async => {"item": item, "id": await item.id }).where((m) => m.id != '001').map((m) => m.item)).toList()
-      // _listofTaskUI.removeAt(_quantity);
+        // Stream.fromIterable(replytile).asyncMap((item) async => {"item": item, "id": await item.id }).where((m) => m.id != '001').map((m) => m.item)).toList()
+        // _listofTaskUI.removeAt(_quantity);
       });
     }
 
@@ -820,7 +840,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                 child: Container(
                                                   constraints: BoxConstraints(
                                                       minHeight: 40,
-                                                      maxHeight: 80),
+                                                      maxHeight: 100),
                                                   width: sizeu.width -
                                                       sizeu.width / 5 -
                                                       20 -
@@ -829,13 +849,53 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                   child: Padding(
                                                     padding: const EdgeInsets
                                                             .fromLTRB(
-                                                        10, 12, 10, 12),
-                                                    child: Text(
-                                                      'Pilih Kategori',
-                                                      style: TextStyle(
-                                                        color: Colors.blueGrey,
-                                                      ),
-                                                    ),
+                                                        10, 12, 0, 12),
+                                                    child: _selecteCategorys
+                                                                .length ==
+                                                            0
+                                                        ? Text(
+                                                            'Pilih Kategori',
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .blueGrey,
+                                                            ),
+                                                          )
+                                                        : ListView.builder(
+                                                            // physics: const BouncingScrollPhysics(),
+
+                                                            shrinkWrap: true,
+                                                            itemCount: _selecteCategorys
+                                                                        .length >
+                                                                    0
+                                                                ? (_selecteCategorys
+                                                                            .length /
+                                                                        2)
+                                                                    .ceil()
+                                                                : 0,
+                                                            scrollDirection:
+                                                                Axis.vertical,
+                                                            itemBuilder:
+                                                                (context, i) {
+                                                              return Container(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        left: 0,
+                                                                        right:
+                                                                            7,
+                                                                        top: i >
+                                                                                0
+                                                                            ? 10
+                                                                            : 0),
+                                                                child: Row(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children:
+                                                                      PickKategoriSearch(
+                                                                          i),
+                                                                ),
+                                                              );
+                                                            }),
                                                   ),
                                                 ),
                                               ),
@@ -851,13 +911,18 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                     icon: FaIcon(
                                                         FontAwesomeIcons.times),
                                                     iconSize: 13,
-                                                    tooltip: 'Filter',
+                                                    tooltip: 'Close',
                                                     onPressed: () {
                                                       //event hapus data multiple kategori produk
+                                                      _selectKategoriDetail =
+                                                          [];
+                                                      _selecteCategorys = [];
+
+                                                      setState(() {});
                                                     },
                                                   ),
                                                 ),
-                                              )
+                                              ),
                                             ]))
                                   ],
                                 ),
@@ -1265,7 +1330,17 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                             fontSize: 12, color: Colors.green),
                                       ),
                                       onPressed: () {
-                                        _closeEndDrawer();
+                                        _selectKategoriDetail = [];
+                                        _selecteCategorys = [];
+                                        _jenisProdukRadioButton = "semua";
+
+                                        _currentRangeValues =
+                                            RangeValues(0.0, 300000.0);
+                                        minHargaInput.text = '';
+                                        maxHargaInput.text = '';
+
+                                        setState(() {});
+                                        // _closeEndDrawer();
                                       },
                                     )),
                                 Container(
@@ -1557,7 +1632,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         );
       });
 
-      dataRown.add(Text(' ($jlmVote)',
+      dataRown.add(Text(' ($jlmVote ulasan)',
           style: TextStyle(fontSize: 12, color: Colors.grey)));
 
       return Container(
@@ -1566,7 +1641,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 2),
-      child: SmartRefresher(
+      child:  dataJson.length==0?dataKosong():SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
         header: WaterDropHeader(),
@@ -1574,11 +1649,11 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
           builder: (BuildContext context, LoadStatus mode) {
             Widget body;
             if (mode == LoadStatus.idle) {
-              body = Text("pull up load");
+              body = Text("geser ke atas untuk memuat");
             } else if (mode == LoadStatus.loading) {
-              body = Text('TUnggu');
+              body = Text('Tunggu');
             } else if (mode == LoadStatus.failed) {
-              body = Text("Load Failed!Click retry!");
+              body = Text("Gagal dimuat!");
             } else if (mode == LoadStatus.canLoading) {
               body = Text("release to load more");
             } else {
@@ -1593,7 +1668,9 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         controller: _refreshController,
         onRefresh: _onRefresh,
         onLoading: _onLoading,
-        child: ListView.builder(
+        child: 
+       
+        ListView.builder(
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.all(5),
           shrinkWrap: true,
@@ -1677,9 +1754,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                       padding: EdgeInsets.only(top: 5),
                                       alignment: Alignment.topLeft,
                                       child: Text(
-                                        'Rp' +
-                                            formatter.format(int.parse(
-                                                dataJson[i]["harga"] ?? '0')),
+                                       setHarga(dataJson[i]),
                                         style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold),
@@ -1693,7 +1768,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                           child: Container(
                                               margin: EdgeInsets.all(3),
                                               child: Text(
-                                                '-10%',
+                                                '-'+disconCondition(dataJson[i]).toString()+'%',
                                                 style: TextStyle(
                                                   color: Colors.red[800],
                                                   fontWeight: FontWeight.bold,
@@ -1702,7 +1777,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                               )),
                                         ),
                                         Text(
-                                          'Rp50.000,00',
+                                          beforeDisc(dataJson[i]),
                                           style: TextStyle(
                                               fontSize: 12,
                                               decoration:
@@ -1711,7 +1786,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                         ),
                                       ],
                                     ),
-                                    starJadi(3.5, '1.000'),
+                                    starJadi(double.parse(dataJson[i]['avg_ulasan'].toString()), dataJson[i]['count_ulasan'].toString()),
                                   ],
                                 ),
                               ),
