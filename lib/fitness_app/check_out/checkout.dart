@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CheckOut extends StatefulWidget {
   const CheckOut({Key key, this.animationController}) : super(key: key);
@@ -24,10 +26,13 @@ class _CheckOutState extends State<CheckOut> {
         false, 'Opsi Pengiriman', SizedBox(), new Icon(Icons.expand_more)),
     //give all your items here
   ];
+  PanelController _pc = new PanelController();
 
   ExpansionPanelList listcheckout;
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     items = <NewItem>[
       new NewItem(items[0].isExpanded, 'Alamat Pengiriman', DetailAlamat(),
           new Icon(Icons.expand_more)),
@@ -85,19 +90,78 @@ class _CheckOutState extends State<CheckOut> {
         ],
       ),
       bottomNavigationBar: FooterApp(),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child: ListView(
-          children: <Widget>[
-            Container(
-                child: Column(
-              children: [CardCart(), listcheckout, ApplyVoucher()],
-            )),
+      body: SlidingUpPanel(
+        boxShadow: [
+          BoxShadow(color: Colors.grey.withOpacity(.4), blurRadius: 3.0)
+        ],
+       
+        minHeight: 60,
+        maxHeight: 220,
+        controller: _pc,
+      onPanelOpened: () {
+          // print(coba);
+      
+        },
+        onPanelClosed: () {
+          // print(coba);
+        },
+        panel: Center(
+          child: ApplyVoucher(),
+        ),
+        body: _body(),
+        collapsed: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 25),
+            ),
+            SizedBox(
+              width: 18,
+              child: FaIcon(
+                FontAwesomeIcons.ticketAlt,
+                color: Colors.green,
+                size: 18,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+            ),
+            SizedBox(width: size.width - 223, child: Text('Voucher Diskon')),
+            SizedBox(
+              width: 150,
+              child: RaisedButton(
+                color: Colors.green,
+                child: Text(
+                  "GUNAKAN VOUCHER",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: Colors.white),
+                ),
+                onPressed: () => _pc.open(),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+
+  Widget _body() {
+    return 
+      Container(
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child:
+
+      ListView(
+        children: <Widget>[
+          Container(
+              child: Column(
+            children: [CardCart(), listcheckout],
+          )),
+        ],
+      ),
+
+      );
+       }
 }
 
 class FooterApp extends StatelessWidget {
@@ -112,7 +176,7 @@ class FooterApp extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: size.width - 120,
+              width: size.width - 110,
               height: 70,
               padding: EdgeInsets.only(top: 15, bottom: 5, left: 20),
               child: Column(
@@ -161,22 +225,11 @@ class ApplyVoucher extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.only(top: 25),
-      height: 160,
-      padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+      height: 130,
+      padding: EdgeInsets.fromLTRB(10,0, 10, 15),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          //background color of box
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 0.5, // soften the shadow
-            spreadRadius: .5, //extend the shadow
-            offset: Offset(
-              .5, // Move to right 10  horizontally
-              .5, // Move to bottom 10 Vertically
-            ),
-          ),
-        ],
+       
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,14 +237,14 @@ class ApplyVoucher extends StatelessWidget {
           Container(
               alignment: Alignment.topLeft,
               padding: EdgeInsets.only(bottom: 10),
-              child: Text('Punya kode voucher? masukan di sini',
+              child: Text('Punya kode voucher? masukkan di sini',
                   style: TextStyle(color: Colors.black54))),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               SizedBox(
-                width: sizeu.width - 80 - 40 - 5,
+                width: sizeu.width - 80 - 30,
                 height: 40,
                 child: TextField(
                   textAlign: TextAlign.left,
@@ -226,7 +279,7 @@ class ApplyVoucher extends StatelessWidget {
                     onPressed: () {},
                     color: Colors.green,
                     child: Text(
-                      'PAKAI',
+                      'SET',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -235,7 +288,7 @@ class ApplyVoucher extends StatelessWidget {
             ],
           ),
           Padding(
-              padding: EdgeInsets.fromLTRB(1, 20, 1, 1),
+              padding: EdgeInsets.fromLTRB(1, 10, 1, 1),
               child: RichText(
                 text: TextSpan(
                   style: TextStyle(color: Colors.green, fontSize: 15),
