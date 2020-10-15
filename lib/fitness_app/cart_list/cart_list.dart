@@ -1,5 +1,12 @@
-import 'package:best_flutter_ui_templates/fitness_app/cart_list/footer_app_view.dart';
+import 'package:best_flutter_ui_templates/model/register_model.dart';
 import 'package:flutter/material.dart';
+import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -10,12 +17,112 @@ class CartList extends StatefulWidget {
 }
 
 class _CartListState extends State<CartList> {
+  List<dynamic> _listCart;
 
-  
+  List _selecteCarts = List();
+
+  bool isLoading = true, isConnect = true, isCheckAll = false;
+
+  int _total = 0;
+
+  String _token;
+
+  Future _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print(_token);
+    setState(() {
+      _token = prefs.getString('token');
+    });
+    log(_token);
+  }
+
+  _getData() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        var response = await http.get(globalBaseUrl + 'api/cart',
+            headers: {"Authorization": "Bearer " + _token});
+        var _response = json.decode(response.body);
+
+        _listCart = _response['data']['produk'];
+        setState(() {
+          isLoading = false;
+        });
+
+        //Foreach total to get subtotal
+        // _listCart.forEach((element) {
+        //   // log(element['id'].toString());
+        //   _total = _total + int.parse(element['total']);
+        // });
+      }
+    } on SocketException catch (_) {
+      isConnect = false;
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
+  /**
+   * Set Check box active or not by cart_id
+   * 
+   */
+  void _onCartSelected(bool selected, cart_id,total) {
+    if (selected == true) {
+      setState(() {
+        _selecteCarts.add(cart_id);
+         _total = _total + int.parse(total);
+      });
+    } else {
+      setState(() {
+        _selecteCarts.remove(cart_id);
+         _total = _total - int.parse(total);
+      });
+    }
+    log(_selecteCarts.toString());
+  }
+
+/**
+ * Select All Cart
+ * 
+ */
+  void _checkAllCart() {
+    isCheckAll = !isCheckAll;
+    if (isCheckAll == true) {
+      _listCart.forEach((element) {
+        if (_selecteCarts.contains(element['id'])) {
+          //Check if id contais in list
+        } else {
+          //if doesnt exist
+          _onCartSelected(isCheckAll, element['id'],element['total']);
+          // _total = _total + int.parse(element['total']);
+        }
+      });
+    } else {
+      _listCart.forEach((element) {
+        if (_selecteCarts.contains(element['id'])) {
+          //Check if id contais in list
+          _onCartSelected(isCheckAll, element['id'],element['total']);
+          // _total = _total - int.parse(element['total']);
+        } else {
+            //if doesnt exist
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _getToken();
+    Future.delayed(Duration(seconds: 1), () {
+      _getData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
-    
 
     return new Scaffold(
       appBar: AppBar(
@@ -37,24 +144,29 @@ class _CartListState extends State<CartList> {
           // )
         ],
       ),
-      bottomNavigationBar: FooterAppView(),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child: ListView(
-          children: <Widget>[
-            CardCart(),
-          ],
-        ),
-      ),
+      bottomNavigationBar: footer(context),
+      body: isLoading
+          ? reqLoad()
+          : Container(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: _listCart.length == null ? 0 : _listCart.length,
+                  itemBuilder: (context, i) {
+                    return Column(
+                      children: [
+                        cardKerangjang(context, i),
+                        SizedBox(
+                          height: 20,
+                        )
+                      ],
+                    );
+                  })),
     );
   }
-}
 
-
-
-class CardCart extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+  Widget cardKerangjang(context, i) {
     final sizeu = MediaQuery.of(context).size;
 
     return Container(
@@ -93,8 +205,10 @@ class CardCart extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   // color: Colors.red,
                   child: Checkbox(
-                    value: false,
-                    onChanged: (value) {},
+                    value: _selecteCarts.contains(_listCart[i]['id']),
+                    onChanged: (bool selected) {
+                      _onCartSelected(selected, _listCart[i]['id'],_listCart[i]['total']);
+                    },
                     activeColor: Colors.green,
                     checkColor: Colors.white,
                     tristate: false,
@@ -125,7 +239,7 @@ class CardCart extends StatelessWidget {
                         alignment: Alignment.topLeft,
                         width: sizeu.width - 50 - sizeu.width / 4 - 10,
                         child: Text(
-                          'Ini Nama Barangnya tinggal diisi disini gak apa-apa kok :)',
+                          '${_listCart[i]['get_produk']['nama']}',
                           maxLines: 2,
                           style: TextStyle(
                             fontSize: 15,
@@ -149,36 +263,12 @@ class CardCart extends StatelessWidget {
                         alignment: Alignment.topLeft,
                         width: sizeu.width - 50 - sizeu.width / 4 - 10,
                         child: Text(
-                          'Rp 40.000',
+                          'Rp ${_listCart[i]['total']}',
                           maxLines: 2,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      // Row(
-                      //   children: [
-                      //     Card(
-                      //       color: Colors.red[100],
-                      //       child: Container(
-                      //           margin: EdgeInsets.all(2),
-                      //           child: Text(
-                      //             '-10%',
-                      //             style: TextStyle(
-                      //               color: Colors.red[800],
-                      //               fontWeight: FontWeight.bold,
-                      //               fontSize: 12,
-                      //             ),
-                      //           )),
-                      //     ),
-                      //     Text(
-                      //       'Rp50.000,00',
-                      //       style: TextStyle(
-                      //           fontSize: 15,
-                      //           decoration: TextDecoration.lineThrough),
-                      //       textAlign: TextAlign.left,
-                      //     ),
-                      //   ],
-                      // ),
                     ],
                   ),
                 ),
@@ -234,7 +324,8 @@ class CardCart extends StatelessWidget {
                           width: 30,
                           child: TextField(
                             textAlign: TextAlign.center,
-                            controller: TextEditingController()..text = '1',
+                            controller: TextEditingController()
+                              ..text = '${_listCart[i]['qty']}',
                             onChanged: (text) => {},
                           ),
                         ),
@@ -254,6 +345,175 @@ class CardCart extends StatelessWidget {
                 ],
               )),
         ],
+      ),
+    );
+  }
+
+  Widget footer(context) {
+    final size = MediaQuery.of(context).size;
+
+    bool checkAll = false;
+
+    void toggleCheckbox(bool value) {}
+
+    return PreferredSize(
+      preferredSize: Size.fromHeight(80.0),
+      child: BottomAppBar(
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: size.width / 2 - 40,
+              child: new Row(
+                children: <Widget>[
+                  Checkbox(
+                    value: isCheckAll,
+                    onChanged: (value) {
+                      _checkAllCart();
+                    },
+                    activeColor: Colors.green,
+                    checkColor: Colors.white,
+                    tristate: false,
+                  ),
+                  Text(
+                    'Pilih Semua',
+                    style: TextStyle(color: Colors.grey),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              width: size.width / 2 - 60,
+              height: 70,
+              padding: EdgeInsets.only(top: 15, bottom: 5),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Subtotal',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      'Rp ${_total}',
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+            ),
+            InkWell(
+              onTap: () {
+                // Navigate to the second screen using a named route.
+                Navigator.pushNamed(context, '/checkout');
+              },
+              child: Container(
+                height: 50,
+                color: Colors.green[300],
+                alignment: Alignment.center,
+                width: 90,
+                child: Text(
+                  'CHECKOUT',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FooterApp extends StatelessWidget {
+  final int total;
+
+  FooterApp({
+    Key key,
+    /*@required*/
+    this.total,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    bool checkAll = false;
+
+    void toggleCheckbox(bool value) {}
+
+    return PreferredSize(
+      preferredSize: Size.fromHeight(80.0),
+      child: BottomAppBar(
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: size.width / 2 - 40,
+              child: new Row(
+                children: <Widget>[
+                  Checkbox(
+                    value: checkAll,
+                    onChanged: (value) {
+                      toggleCheckbox(value);
+                    },
+                    activeColor: Colors.green,
+                    checkColor: Colors.white,
+                    tristate: false,
+                  ),
+                  Text(
+                    'Pilih Semua',
+                    style: TextStyle(color: Colors.grey),
+                  )
+                ],
+              ),
+            ),
+            Container(
+              width: size.width / 2 - 60,
+              height: 70,
+              padding: EdgeInsets.only(top: 15, bottom: 5),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Subtotal',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      'Rp ${total}',
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ]),
+            ),
+            InkWell(
+              onTap: () {
+                // Navigate to the second screen using a named route.
+                Navigator.pushNamed(context, '/checkout');
+              },
+              child: Container(
+                height: 50,
+                color: Colors.green[300],
+                alignment: Alignment.center,
+                width: 90,
+                child: Text(
+                  'CHECKOUT',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
