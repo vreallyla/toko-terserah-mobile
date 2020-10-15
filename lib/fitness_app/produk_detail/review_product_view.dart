@@ -1,15 +1,17 @@
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'ulasan_detail.dart' as ulasan;
 
 class ReviewProductView extends StatefulWidget {
   final Map<String, dynamic> dataReview;
-
-  ReviewProductView({
-    Key key,
-    /*@required*/
-    this.dataReview,
-  }) : super(key: key);
+  final List<dynamic> listReview;
+  ReviewProductView(
+      {Key key,
+      /*@required*/
+      this.dataReview,
+      this.listReview})
+      : super(key: key);
 
   @override
   _ReviewProductViewState createState() => _ReviewProductViewState();
@@ -37,22 +39,7 @@ class _ReviewProductViewState extends State<ReviewProductView> {
                     fontWeight: FontWeight.bold,
                   )),
             ),
-            InkWell(
-              onTap: () {
-                // Navigate to the second screen using a named route.
-                Navigator.pushNamed(context, '/ulasandetail');
-              },
-              child: Container(
-                width: size.width / 2 - 15,
-                alignment: Alignment.centerRight,
-                child: Text('Lihat Semua',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    )),
-              ),
-            )
+            inkwellUlasan(context, size)
           ],
         ),
       ),
@@ -213,6 +200,32 @@ class _ReviewProductViewState extends State<ReviewProductView> {
 
     return Container(
         padding: EdgeInsets.only(top: 3), child: Row(children: dataRown));
+  }
+
+  Widget inkwellUlasan(context, size) {
+    return InkWell(
+      onTap: () {
+        // Navigate to the second screen using a named route.
+        // Navigator.pushNamed(context, '/ulasandetail');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ulasan.UlasanDetail(
+                dataReview: widget.listReview,
+              ),
+            ));
+      },
+      child: Container(
+        width: size.width / 2 - 15,
+        alignment: Alignment.centerRight,
+        child: Text('Lihat Semua',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.green,
+              fontWeight: FontWeight.bold,
+            )),
+      ),
+    );
   }
 
   @override

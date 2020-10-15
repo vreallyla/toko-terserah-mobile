@@ -3,9 +3,12 @@ import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
+import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
 
 class UlasanDetail extends StatefulWidget {
-  const UlasanDetail({Key key, this.animationController}) : super(key: key);
+  final List<dynamic> dataReview;
+  const UlasanDetail({Key key, this.animationController, this.dataReview})
+      : super(key: key);
 
   final AnimationController animationController;
   @override
@@ -141,7 +144,7 @@ class _UlasanDetailState extends State<UlasanDetail> {
             icon: Icon(Icons.arrow_back, color: Colors.black),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: const Text(
+          title: Text(
             'Ulasan Dari Pembeli',
             style: TextStyle(color: Colors.black),
           ),
@@ -155,197 +158,96 @@ class _UlasanDetailState extends State<UlasanDetail> {
         ),
         body: Container(
           child: ListView(
+            physics:  const BouncingScrollPhysics(),
             children: [
               Column(children: <Widget>[
                 getCategoryUI(),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.bottomLeft,
-                  child: SmoothStarRating(
-                      allowHalfRating: false,
-                      onRated: (v) {},
-                      starCount: 5,
-                      rating: 5,
-                      size: 20.0,
-                      isReadOnly: true,
-                      //fullRatedIconData: Icons.blur_off,
-                      //halfRatedIconData: Icons.blur_on,
-                      color: Colors.green,
-                      borderColor: Colors.green,
-                      spacing: 0.0),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tristique, erat sed mollis tincidunt, sapien leo lobortis quam, sed finibus tortor metus a dolor. Maecenas et ligula nibh. Suspendisse elit turpis, bibendum vitae consectetur condimentum, sollicitudin sed eros. Curabitur viverra bibendum massa, ac tincidunt arcu gravida ut.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.justify,
-                    maxLines: 4,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10, bottom: 15),
-                  alignment: Alignment.bottomLeft,
-                  child: Row(
-                    children: [
-                      Text(
-                        '1 bulan lalu dibuat oleh ',
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                      Text(
-                        'Fahmi',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: size.width,
-                  padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
-                  child: Row(
-                    children: <Widget>[
-                      gambarReview(context),
-                      gambarReview(context),
-                    ],
-                  ),
-                ),
                 SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.bottomLeft,
-                  child: SmoothStarRating(
-                      allowHalfRating: false,
-                      onRated: (v) {},
-                      starCount: 5,
-                      rating: 5,
-                      size: 20.0,
-                      isReadOnly: true,
-                      //fullRatedIconData: Icons.blur_off,
-                      //halfRatedIconData: Icons.blur_on,
-                      color: Colors.green,
-                      borderColor: Colors.green,
-                      spacing: 0.0),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tristique, erat sed mollis tincidunt, sapien leo lobortis quam, sed finibus tortor metus a dolor. Maecenas et ligula nibh. Suspendisse elit turpis, bibendum vitae consectetur condimentum, sollicitudin sed eros. Curabitur viverra bibendum massa, ac tincidunt arcu gravida ut.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.justify,
-                    maxLines: 4,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10, bottom: 15),
-                  alignment: Alignment.bottomLeft,
-                  child: Row(
-                    children: [
-                      Text(
-                        '1 bulan lalu dibuat oleh ',
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                      Text(
-                        'Fahmi',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: size.width,
-                  padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
-                  child: Row(
-                    children: <Widget>[
-                      gambarReview(context),
-                      gambarReview(context),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.bottomLeft,
-                  child: SmoothStarRating(
-                      allowHalfRating: false,
-                      onRated: (v) {},
-                      starCount: 5,
-                      rating: 5,
-                      size: 20.0,
-                      isReadOnly: true,
-                      //fullRatedIconData: Icons.blur_off,
-                      //halfRatedIconData: Icons.blur_on,
-                      color: Colors.green,
-                      borderColor: Colors.green,
-                      spacing: 0.0),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10),
-                  alignment: Alignment.bottomLeft,
-                  child: Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse tristique, erat sed mollis tincidunt, sapien leo lobortis quam, sed finibus tortor metus a dolor. Maecenas et ligula nibh. Suspendisse elit turpis, bibendum vitae consectetur condimentum, sollicitudin sed eros. Curabitur viverra bibendum massa, ac tincidunt arcu gravida ut.',
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                    textAlign: TextAlign.justify,
-                    maxLines: 4,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 10, bottom: 15),
-                  alignment: Alignment.bottomLeft,
-                  child: Row(
-                    children: [
-                      Text(
-                        '1 bulan lalu dibuat oleh ',
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                      Text(
-                        'Fahmi',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: size.width,
-                  padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
-                  child: Row(
-                    children: <Widget>[
-                      gambarReview(context),
-                      gambarReview(context),
-                    ],
-                  ),
-                ),
+                ListView.builder(
+                    shrinkWrap: true,
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: widget.dataReview.length == null
+                        ? 0
+                        : widget.dataReview.length,
+                    itemBuilder: (context, i) {
+                      return kontenRiview(context, size, i, widget.dataReview);
+                    })
               ]),
             ],
           ),
         ));
   }
+}
+
+Widget kontenRiview(context, size ,i, data) {
+  return Column(
+    children: [
+      Container(
+        padding: EdgeInsets.only(top: 10),
+        alignment: Alignment.bottomLeft,
+        child: SmoothStarRating(
+            allowHalfRating: false,
+            onRated: (v) {},
+            starCount: 5,
+            rating: double.parse(data[i]['bintang']),
+            size: 20.0,
+            isReadOnly: true,
+            //fullRatedIconData: Icons.blur_off,
+            //halfRatedIconData: Icons.blur_on,
+            color: Colors.green,
+            borderColor: Colors.green,
+            spacing: 0.0),
+      ),
+      Container(
+        padding: EdgeInsets.only(top: 10),
+        alignment: Alignment.bottomLeft,
+        child: Text(
+          '${data[i]['deskripsi']}',
+          style: TextStyle(
+            fontSize: 18,
+          ),
+          textAlign: TextAlign.justify,
+          maxLines: 4,
+        ),
+      ),
+      Container(
+        padding: EdgeInsets.only(top: 10, bottom: 15),
+        alignment: Alignment.bottomLeft,
+        child: Row(
+          children: [
+            Text(
+              '${diffForhumans(DateTime.parse(data[i]['created_at']))} oleh ',
+              style: TextStyle(
+                fontSize: 15,
+              ),
+            ),
+            Text(
+              'Fahmi',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+      Container(
+        width: size.width,
+        padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
+        child: Row(
+          children: <Widget>[
+            gambarReview(context),
+            gambarReview(context),
+          ],
+        ),
+      ),
+      SizedBox(
+        height: 30,
+      ),
+    ],
+  );
 }
 
 Container gambarReview(BuildContext context) {

@@ -13,6 +13,7 @@ import 'CustomShowDialog.dart';
 import 'carousel_product_view.dart';
 
 class ProductDetail2 extends StatefulWidget {
+  
   @override
   _ProductDetail2State createState() => _ProductDetail2State();
 }
@@ -279,7 +280,10 @@ class _ProductDetail2State extends State<ProductDetail2>
         detailList: mapDetailCard, title: "Detail Produk", moreText: false));
 
     if (reviewData['data'] != null) {
-      listViews.add(ReviewProductView(dataReview: reviewData));
+      listViews.add(ReviewProductView(
+        dataReview: reviewData,
+        listReview: detailProduct['get_ulasan'],
+      ));
     }
 
     listViews.add(QnAProductView(dataQnA: qnAData));
