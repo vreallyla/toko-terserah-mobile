@@ -1,9 +1,7 @@
 //import 'dart:ffi';
-
+import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:expandable/expandable.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:best_flutter_ui_templates/model/alamat_model.dart';
@@ -25,6 +23,8 @@ List dataKecamatan;
 List dataJenisAlamat;
 List dataKota;
 List dataOcc;
+var dataEdit;
+List dataProv;
 TextEditingController _namaController = new TextEditingController();
 TextEditingController _namapenerimaController = new TextEditingController();
 TextEditingController _alamatController = new TextEditingController();
@@ -51,6 +51,7 @@ class _InputAlamatState extends State<InputAlamat> {
   DateTime tglDaftar, tglUpdate;
   var dataUser;
   String diff;
+  String idxalamat;
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -61,6 +62,16 @@ class _InputAlamatState extends State<InputAlamat> {
     print(tokenFixed);
     var tempList;
     var tempocc;
+    var tempProv;
+
+    Response responseprov =
+        await http.get(globalBaseUrl + "api/address/provinsi", headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    });
+    tempProv = await jsonDecode(responseprov.body.toString());
+    dataProv = tempProv["data"]["province"];
+
     Response responseocc =
         await http.get(globalBaseUrl + "api/address/occupancy", headers: {
       "Accept": "application/json",
@@ -68,24 +79,24 @@ class _InputAlamatState extends State<InputAlamat> {
     });
     tempocc = await jsonDecode(responseocc.body.toString());
     dataOcc = tempocc["data"]["city"];
-    Response response =
-        await http.get(globalBaseUrl + "api/address/kota", headers: {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
-    });
-    tempList = await jsonDecode(response.body.toString());
-    dataKota = tempList["data"]["city"];
-    print(dataKota);
-    Response responseKcm = await http
-        .get(globalBaseUrl + "api/address/kecamatan?kota_id=1", headers: {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
-    });
-    var tempList2;
-    tempList2 = await jsonDecode(responseKcm.body.toString());
+    // Response response =
+    //     await http.get(globalBaseUrl + "api/address/kota", headers: {
+    //   "Accept": "application/json",
+    //   "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    // });
+    // tempList = await jsonDecode(response.body.toString());
+    // dataKota = tempList["data"]["city"];
+    // print(dataKota);
+    // Response responseKcm = await http
+    //     .get(globalBaseUrl + "api/address/kecamatan?kota_id=1", headers: {
+    //   "Accept": "application/json",
+    //   "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    // });
+    // var tempList2;
+    // tempList2 = await jsonDecode(responseKcm.body.toString());
 
-    print(tempList2["data"]["district"]);
-    dataKecamatan = tempList2["data"]["district"];
+    // print(tempList2["data"]["district"]);
+    // dataKecamatan = tempList2["data"]["district"];
 
 //    print(dataKota["data"]["city"]);
     //dataKecamatan = await jsonDecode(responseKcm.body.toString());
@@ -102,8 +113,57 @@ class _InputAlamatState extends State<InputAlamat> {
 
     // }
     // );
+    if (this.mounted) {
+      setState(() {});
+    }
+  }
 
-    setState(() {});
+  _getDetailuser() async {
+    print(globalBaseUrl + "api/address/kota");
+    var tempProv;
+    var tempKota;
+    var tempCamat;
+    Response responseprov = await http
+        .get(globalBaseUrl + "api/address/detail/" + idxalamat, headers: {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+    });
+    tempProv = await jsonDecode(responseprov.body.toString());
+    dataEdit = tempProv["data"];
+
+    print(dataEdit);
+    if (dataEdit != null) {
+      _mySelection3 = dataEdit["occupancy_id"]["id"].toString();
+      _mySelection = dataEdit["kota_id"].toString();
+      _mySelection2 = dataEdit["kecamatan_id"].toString();
+      _mySelectionProv = dataEdit["provinsi_id"].toString();
+
+      _namaController.text = dataEdit["occupancy_id"]["name"];
+      _namapenerimaController.text = dataEdit["nama"];
+      _alamatController.text = dataEdit["alamat"];
+      _telpController.text = dataEdit["telp"];
+      _postalcodeController.text = dataEdit["kode_pos"];
+      Response responsekota = await http.get(
+          globalBaseUrl + "api/address/kota?provinsi_id=" + _mySelectionProv,
+          headers: {
+            "Accept": "application/json",
+            "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+          });
+      tempKota = await jsonDecode(responsekota.body.toString());
+      dataKota = tempKota["data"]["city"];
+      Response responsecamat = await http.get(
+          globalBaseUrl + "api/address/kecamatan?kota_id=" + _mySelection,
+          headers: {
+            "Accept": "application/json",
+            "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+          });
+      tempCamat = await jsonDecode(responsecamat.body.toString());
+      dataKecamatan = tempCamat["data"]["district"];
+    }
+
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -129,12 +189,8 @@ class _InputAlamatState extends State<InputAlamat> {
       _telpController.text = "";
       _postalcodeController.text = "";
     } else {
-      _mySelection3 = args["get_occupancy"]["id"].toString();
-      _namaController.text = args["get_occupancy"]["name"];
-      _namapenerimaController.text = args["nama"];
-      _alamatController.text = args["alamat"];
-      _telpController.text = args["telp"];
-      _postalcodeController.text = args["kode_pos"];
+      idxalamat = args["id"].toString();
+      _getDetailuser();
     }
     //final wh_ = MediaQuery.of(context).size;
     return new Scaffold(
@@ -167,6 +223,7 @@ class _InputAlamatState extends State<InputAlamat> {
                         'alamat': _alamatController.text,
                         'kode_pos': _postalcodeController.text,
                         'occupancy_id': _mySelection3.toString(),
+                        'provinsi_id': _mySelectionProv,
                         'kota_id': _mySelection,
                         'kecamatan_id': _mySelection2,
                         'lat': "",
@@ -175,9 +232,31 @@ class _InputAlamatState extends State<InputAlamat> {
                       if (_alamatController.text.isEmpty ||
                           _namapenerimaController.text.isEmpty ||
                           _postalcodeController.text.isEmpty ||
-                          _telpController.text.isEmpty) {
+                          _telpController.text.isEmpty ||
+                          _mySelection.isEmpty ||
+                          _mySelection2.isEmpty ||
+                          _mySelection3.isEmpty ||
+                          _mySelectionProv.isEmpty) {
                         _validate = false;
-                        print("false");
+                        return showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            // return object of type Dialog
+                            return AlertDialog(
+                              title: new Text("Terjadi Kesalahan"),
+                              content: new Text("Masih ada data yang kosong !"),
+                              actions: <Widget>[
+                                // usually buttons at the bottom of the dialog
+                                new FlatButton(
+                                  child: new Text("Tutup"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       } else {
                         if (args != null) {
                           print(globalBaseUrl2 +
@@ -234,15 +313,21 @@ class AlamatTransaksi extends StatefulWidget {
 String _mySelection;
 String _mySelection2;
 String _mySelection3;
+String _mySelectionProv;
 
 class _AlamatTransaksiState extends State<AlamatTransaksi> {
   @override
   void initState() {
-    setState(() {
-      _mySelection = null;
-      _mySelection2 = null;
-      _mySelection3 = null;
-    });
+    if (this.mounted) {
+      setState(() {
+        _mySelection = null;
+        _mySelection2 = null;
+        _mySelection3 = null;
+        _mySelectionProv = null;
+      });
+      ;
+    }
+
     super.initState();
   }
 
@@ -334,7 +419,7 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
           errorText: _validate ? 'Tidak Boleh Kosong' : null),
     );
     final alamatField = TextFormField(
-      maxLines: 3,
+      maxLines: 1,
       controller: _alamatController,
       keyboardType: TextInputType.streetAddress,
       style: TextStyle(
@@ -371,14 +456,8 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Text(
-                "Jenis Alamat :",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400),
-              ),
+              Text("Jenis Alamat :",
+                  textAlign: TextAlign.left, style: FintnessAppTheme.body1),
               Spacer()
             ],
           ),
@@ -388,15 +467,17 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                 isDense: true,
                 iconSize: 16,
                 icon: Icon(Icons.arrow_drop_down),
-                items: dataOcc.map((item) {
-                  return new DropdownMenuItem(
-                    child: new Text(
-                      item['name'],
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    value: item['id'].toString(),
-                  );
-                }).toList(),
+                items: dataOcc != null
+                    ? dataOcc.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text(
+                            item['name'],
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          value: item['id'].toString(),
+                        );
+                      }).toList()
+                    : null,
                 onChanged: (newVal) async {
                   setState(() {
                     _mySelection3 = newVal;
@@ -413,60 +494,9 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
           Row(
             children: <Widget>[
               Text(
-                "Kota :",
+                "Provinsi :",
                 textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400),
-              ),
-              Spacer()
-            ],
-          ),
-          DropdownButton(
-            isDense: true,
-            iconSize: 16,
-            icon: Icon(Icons.arrow_drop_down),
-            items: dataKota.map((item) {
-              return new DropdownMenuItem(
-                child: new Text(
-                  item['nama'],
-                  overflow: TextOverflow.ellipsis,
-                ),
-                value: item['kota_id'].toString(),
-              );
-            }).toList(),
-            onChanged: (newVal) async {
-              setState(() {
-                _mySelection = newVal;
-              });
-              Response responseKcm = await http.get(
-                  globalBaseUrl + "api/address/kecamatan?kota_id=" + newVal,
-                  headers: {
-                    "Accept": "application/json",
-                    "Authorization":
-                        "Bearer " + (tokenFixed != null ? tokenFixed : '')
-                  });
-              var tempList = await jsonDecode(responseKcm.body.toString());
-              print(tempList["data"]["district"]);
-              setState(() {
-                dataKecamatan = tempList["data"]["district"];
-              });
-              setState(() {
-                _mySelection2 = null;
-              });
-            },
-            value: _mySelection,
-          ),
-          Row(
-            children: <Widget>[
-              Text(
-                "Kecamatan :",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400),
+                style: FintnessAppTheme.body1,
               ),
               Spacer()
             ],
@@ -477,19 +507,126 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                 isDense: true,
                 iconSize: 16,
                 icon: Icon(Icons.arrow_drop_down),
-                items: dataKecamatan.map((item) {
-                  return new DropdownMenuItem(
-                    child: new Text(
-                      item['nama'].toString() != null
-                          ? item['nama'].toString()
-                          : null,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    value: item['id'].toString() != null
-                        ? item['id'].toString()
-                        : null,
-                  );
-                }).toList(),
+                items: dataProv != null
+                    ? dataProv.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text(
+                            item['nama'],
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          value: item['id'].toString(),
+                        );
+                      }).toList()
+                    : null,
+                onChanged: (newVal) async {
+                  setState(() {
+                    _mySelectionProv = newVal;
+                  });
+                  Response responseKt = await http.get(
+                      globalBaseUrl + "api/address/kota?provinsi_id=" + newVal,
+                      headers: {
+                        "Accept": "application/json",
+                        "Authorization":
+                            "Bearer " + (tokenFixed != null ? tokenFixed : '')
+                      });
+                  var tempList = await jsonDecode(responseKt.body.toString());
+                  print(tempList["data"]["city"]);
+                  setState(() {
+                    dataKota = tempList["data"]["city"];
+                  });
+                  setState(() {
+                    _mySelection = null;
+                    _mySelection2 = null;
+                  });
+                },
+                value: _mySelectionProv,
+              ),
+              Spacer(),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text(
+                "Kota :",
+                textAlign: TextAlign.left,
+                style: FintnessAppTheme.body1,
+              ),
+              Spacer()
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              DropdownButton(
+                isDense: true,
+                iconSize: 16,
+                icon: Icon(Icons.arrow_drop_down),
+                items: dataKota != null
+                    ? dataKota.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text(
+                            item['nama'],
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          value: item['kota_id'].toString(),
+                        );
+                      }).toList()
+                    : null,
+                onChanged: (newVal) async {
+                  setState(() {
+                    _mySelection = newVal;
+                  });
+                  Response responseKcm = await http.get(
+                      globalBaseUrl + "api/address/kecamatan?kota_id=" + newVal,
+                      headers: {
+                        "Accept": "application/json",
+                        "Authorization":
+                            "Bearer " + (tokenFixed != null ? tokenFixed : '')
+                      });
+                  var tempList = await jsonDecode(responseKcm.body.toString());
+                  print(tempList["data"]["district"]);
+                  setState(() {
+                    dataKecamatan = tempList["data"]["district"];
+                  });
+                  setState(() {
+                    _mySelection2 = null;
+                  });
+                },
+                value: _mySelection,
+              ),
+              Spacer(),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Text(
+                "Kecamatan :",
+                textAlign: TextAlign.left,
+                style: FintnessAppTheme.body1,
+              ),
+              Spacer()
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              DropdownButton(
+                isDense: true,
+                iconSize: 16,
+                icon: Icon(Icons.arrow_drop_down),
+                items: dataKecamatan != null
+                    ? dataKecamatan.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text(
+                            item['nama'].toString() != null
+                                ? item['nama'].toString()
+                                : null,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          value: item['id'].toString() != null
+                              ? item['id'].toString()
+                              : null,
+                        );
+                      }).toList()
+                    : null,
                 onChanged: (newVal) {
                   setState(() {
                     _mySelection2 = newVal;
