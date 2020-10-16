@@ -43,7 +43,19 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
         tabBody = TrainingScreen(animationController: animationController);
       } else {
         tabIconsList[0].isSelected = true;
-        tabBody = MyDiaryScreen(animationController: animationController);
+        tabBody=MyDiaryScreen(animationController: animationController,
+                      searchAlocation:(String jenis,String search){
+                        setState(() {
+                        tabBody =DesignCourseHomeScreen(jenis: jenis,search: search,);
+                         tabIconsList.forEach((TabIconData tab) {
+                            tab.isSelected = false;
+                          });
+
+                          tabIconsList[1].isSelected=true;
+                          
+                        });
+                      }
+                      );
       }
     });
 

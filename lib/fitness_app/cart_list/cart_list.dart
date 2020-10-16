@@ -1,6 +1,6 @@
-import 'package:best_flutter_ui_templates/model/register_model.dart';
+// import 'package:best_flutter_ui_templates/model/register_model.dart';
 import 'package:flutter/material.dart';
-import 'package:best_flutter_ui_templates/model/user_model.dart';
+// import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
