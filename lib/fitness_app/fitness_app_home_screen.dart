@@ -109,7 +109,19 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      MyDiaryScreen(animationController: animationController);
+                      MyDiaryScreen(animationController: animationController,
+                      searchAlocation:(String jenis,String search){
+                        setState(() {
+                        tabBody =DesignCourseHomeScreen(jenis: jenis,search: search,);
+                         tabIconsList.forEach((TabIconData tab) {
+                            tab.isSelected = false;
+                          });
+
+                          tabIconsList[1].isSelected=true;
+                          
+                        });
+                      }
+                      );
                 });
               });
             } else if (index == 1) {

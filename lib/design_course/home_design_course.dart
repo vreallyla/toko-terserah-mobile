@@ -18,6 +18,12 @@ import 'package:flutter/services.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
+  final String jenis;
+  final String search;
+const DesignCourseHomeScreen(
+      {Key key, this.jenis='semua',this.search=''})
+      : super(key: key);
+
   @override
   _DesignCourseHomeScreenState createState() => _DesignCourseHomeScreenState();
 }
@@ -216,7 +222,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    editingController.text=widget.search;
+    _jenisProdukRadioButton=widget.jenis;
+
+
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -1463,7 +1472,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                 decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    labelText: "Cari Produk",
+                    // labelText: "Cari Produk",
                     labelStyle: TextStyle(color: Colors.grey),
                     hintText: "Cari Produk",
                     hintStyle: TextStyle(color: Colors.grey),

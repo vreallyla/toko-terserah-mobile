@@ -18,14 +18,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/ui_view/running_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 //import 'package:floating_search_bar/floating_search_bar.dart';
 
 class MyDiaryScreen extends StatefulWidget {
-  const MyDiaryScreen({Key key, this.animationController}) : super(key: key);
+  const MyDiaryScreen({Key key, this.animationController, this.searchAlocation})
+      : super(key: key);
 
   final AnimationController animationController;
+  final Function(String jenis, String search) searchAlocation;
   @override
   _MyDiaryScreenState createState() => _MyDiaryScreenState();
 }
@@ -43,6 +47,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   List dataUnggulan = [];
   List dataTerlaris = [];
   bool isConnect = true;
+    int _current = 0;
+
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -72,59 +78,61 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      await ProductModel.getHome().then((v) {
-        _getHome(context);
-        // log('dasd');
-      });
-       }
+        await ProductModel.getHome().then((v) {
+          _getHome(context);
+          // log('dasd');
+        });
+      }
     } on SocketException catch (_) {
       isConnect = false;
-      addAllListData(context);
 
       setState(() {});
     }
   }
 
-  Widget noConnection(context){
-  return Container(
-    alignment: Alignment.center,
-    padding: EdgeInsets.only(top:120),
+  Widget noConnection(context) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 120),
       child: Column(
         children: [
           Container(
-          alignment: Alignment.center,
-                        height: 160,
-                        width: 160,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/fitness_app/not_found.gif'),
-                            fit: BoxFit.fitHeight,
-                          ),
-                        ),
-                        margin: EdgeInsets.only(top:90),
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-                      ),
-          Text('Koneksi Terputus',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
-          Text('Periksa sambungan internet kamu',style:TextStyle(color: Colors.black54)),
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            margin: EdgeInsets.only(top: 90),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Koneksi Terputus',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Periksa sambungan internet kamu',
+              style: TextStyle(color: Colors.black54)),
           Container(
-            margin:EdgeInsets.only(top:15),
+            margin: EdgeInsets.only(top: 15),
             child: RaisedButton(
-              onPressed: (){
+              onPressed: () {
                 setState(() {
                   // isLoading=true;
-                  isConnect=true;
-                _getDataApi(context);
+                  isConnect = true;
+                  _getDataApi(context);
                 });
               },
               color: Colors.green,
-              child: Text('COBA LAGI',style:TextStyle(color: Colors.white)),
+              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
             ),
           )
         ],
       ),
-  );
-}
-
+    );
+  }
 
   @override
   void initState() {
@@ -133,13 +141,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
 
-    Future.delayed(Duration.zero,() {
-    addAllListData(context);
-    _getDataApi(context);
-
-});
-  
-
+    Future.delayed(Duration.zero, () {
+      addAllListData(context);
+      _getDataApi(context);
+    });
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -177,260 +182,380 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     listViews = [];
     const int count = 9;
-    if(!isConnect){
+    if (!isConnect) {
       listViews.add(noConnection(context));
-    }else{
-
+    } else {
       //carousel
-    listViews.add(CarouselSlider(
-      options: CarouselOptions(
-        height: 300.0,
-        aspectRatio: 16 / 9,
-        viewportFraction: 1.0,
-        initialPage: 0,
-        enableInfiniteScroll: true,
-        reverse: false,
-        autoPlay: true,
-        autoPlayInterval: Duration(seconds: 3),
-        autoPlayAnimationDuration: Duration(milliseconds: 800),
-        autoPlayCurve: Curves.fastOutSlowIn,
-        enlargeCenterPage: false,
-        scrollDirection: Axis.horizontal,
-      ),
-      items: dataHome.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            return Container(
-                width: MediaQuery.of(context).size.width,
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                // decoration: BoxDecoration(color: Colors.blueGrey),
-                child: (dataHome.length > 0
-                    ? CachedNetworkImage(
-                        imageUrl:
-                            globalBaseUrl + locationBannerImage + i['banner'],
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                              // colorFilter: ColorFilter.mode(
-                              //     Colors.red, BlendMode.colorBurn)
-                            ),
-                          ),
-                        ),
-                        placeholder: (context, url) =>
-                            Spinner(icon: Icons.refresh, color: Colors.black54),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
-                      )
-                    : Spinner(icon: Icons.refresh, color: Colors.black54)));
-          },
-        );
-      }).toList(),
-    ));
-
-    // kupon voucher banner card
-    // listViews.add(
-    //   RunningView(
-    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController,
-    //         curve:
-    //             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController,
-    //   ),
-    // );
-
-
-   
-    // kategori
-    listViews.add(
-      Container(
-        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(bottom:15),
-        // margin: EdgeInsets.only(top:15),
-        color: Colors.white,
-        child: Column(
-          children: [
-            TitleView(
-              // otherData:true,
-              titleTxt: 'Kategori',
-              subTxt: '',
-              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 2, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              animationController: widget.animationController,
-            ),
-      //     MealsListView(
-      //   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-      //       CurvedAnimation(
-      //           parent: widget.animationController,
-      //           curve: Interval((1 / count) * 3, 1.0,
-      //               curve: Curves.fastOutSlowIn))),
-      //   mainScreenAnimationController: widget.animationController,
-      // ),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      listViews.add(Stack(
         children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              onPageChanged: (i, r) {
+                setState(() {
+                  
+                  _current = i;
+                });
+              },
+              height: 300.0,
+              aspectRatio: 16 / 9,
+              viewportFraction: 1.0,
+              initialPage: 0,
+              enableInfiniteScroll: true,
+              reverse: false,
+              autoPlay: true,
+              autoPlayInterval: Duration(seconds: 3),
+              autoPlayAnimationDuration: Duration(milliseconds: 800),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: false,
+              scrollDirection: Axis.horizontal,
+            ),
+            items: dataHome.map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.symmetric(horizontal: 1.0),
+                      // decoration: BoxDecoration(color: Colors.blueGrey),
+                      child: (dataHome.length > 0
+                          ? CachedNetworkImage(
+                              imageUrl: globalBaseUrl +
+                                  locationBannerImage +
+                                  i['banner'],
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: imageProvider,
+                                    fit: BoxFit.cover,
+                                    // colorFilter: ColorFilter.mode(
+                                    //     Colors.red, BlendMode.colorBurn)
+                                  ),
+                                ),
+                              ),
+                              placeholder: (context, url) => Spinner(
+                                  icon: Icons.refresh, color: Colors.black54),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )
+                          : Spinner(
+                              icon: Icons.refresh, color: Colors.black54)));
+                },
+              );
+            }).toList(),
+          ),
           Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(right:8),
-            height: 60,
-            width: (size.width-30-16)/3,
-            color: Colors.green,
-            child: Text(((size.width-30)/3).toString()),
+            margin: EdgeInsets.only(top:260),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: dataHome.map((url) {
+                int index = dataHome.indexOf(url);
+                return Container(
+                  width: 15.0,
+                  height: 4.0,
+                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                  decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+
+                    // shape: BoxShape.circle,
+                    color: _current == index
+                        ? Colors.white
+                        : Color.fromRGBO(0, 0, 0, 0.4),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
-           Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(right:8),
-            height: 60,
-            width: (size.width-30-16)/3,
-            color: Colors.green,
-            child: Text(((size.width-30)/3).toString()),
-          ),
-            Container(
-            alignment: Alignment.center,
-            // margin: EdgeInsets.only(right:8),
-            height: 60,
-            width: (size.width-30-16)/3,
-            color: Colors.green,
-            child: Text(((size.width-30)/3).toString()),
-          ),
-          
         ],
-      )
-      ],
-        ),
-      ),
-    );
+      ));
 
+      // kupon voucher banner card
+      // listViews.add(
+      //   RunningView(
+      //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      //         parent: widget.animationController,
+      //         curve:
+      //             Interval((1 / count) * 3, 1.0, curve: Curves.fastOutSlowIn))),
+      //     animationController: widget.animationController,
+      //   ),
+      // );
 
-    // flash Sale
-    listViews.add(
-      Container(
-        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        // margin: EdgeInsets.only(top:15),
-        color: Colors.white,
-        child: Column(
-          children: [
-            TitleView(
-              titleTxt: 'Flash Sale',
-              subTxt: 'Lainnya',
-              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 2, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              animationController: widget.animationController,
-            ),
-            ItemSquareView(
-                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
-                    .animate(CurvedAnimation(
+      // kategori
+      listViews.add(
+        Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 15),
+          margin: EdgeInsets.only(bottom: 15),
+          // margin: EdgeInsets.only(top:15),
+          color: Colors.white,
+          child: Column(
+            children: [
+              TitleView(
+                // otherData:true,
+                funcClick: () {
+                  widget.searchAlocation('semua', '');
+                },
+                titleTxt: 'Jenis Produk',
+                subTxt: 'Lainnya',
+                animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
                         parent: widget.animationController,
-                        curve: Interval((1 / count) * 3, 1.0,
+                        curve: Interval((1 / count) * 2, 1.0,
                             curve: Curves.fastOutSlowIn))),
-                mainScreenAnimationController: widget.animationController,
-                dataCard: dataFlashSale),
-          ],
-        ),
-      ),
-    );
+                animationController: widget.animationController,
+              ),
+              //     MealsListView(
+              //   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              //       CurvedAnimation(
+              //           parent: widget.animationController,
+              //           curve: Interval((1 / count) * 3, 1.0,
+              //               curve: Curves.fastOutSlowIn))),
+              //   mainScreenAnimationController: widget.animationController,
+              // ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      widget.searchAlocation('semua', '');
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(right: 8),
+                      height: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF42E695), Color(0xFF3BB2B8)])),
+                      width: (size.width - 30 - 16) / 3,
+                      // color: Colors.green,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.sortAlphaDownAlt,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            ' SEMUA',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      widget.searchAlocation('grosir', '');
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.only(right: 8),
+                      height: 40,
+                      width: (size.width - 30 - 16) / 3,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFFCE38A), Color(0xFFF38181)])),
+                      // color: Colors.green,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.boxes,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            ' GROSIR',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      widget.searchAlocation('retail', '');
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      // margin: EdgeInsets.only(right:8),
+                      height: 40,
+                      width: (size.width - 30 - 16) / 3,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFF54EA2), Color(0xFFFF7676)])),
+                      // color: Colors.green,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.storeAlt,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            ' RETAIL',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
-    //produk Terbaru
-    listViews.add(
-      Container(
-        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(top: 15),
-        color: Colors.white,
-        child: Column(
-          children: [
-            TitleView(
-              titleTxt: 'Produk Terbaru',
-              subTxt: 'Lainnya',
-              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 2, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              animationController: widget.animationController,
-            ),
-            ItemSquareView(
-                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
-                    .animate(CurvedAnimation(
+                  //  Container(
+                  //   alignment: Alignment.center,
+                  //   margin: EdgeInsets.only(right:8),
+                  //   height: 60,
+                  //   width: (size.width-30-16)/3,
+                  //   color: Colors.green,
+                  //   child: Text(((size.width-30)/3).toString()),
+                  // ),
+                ],
+              )
+            ],
+          ),
+        ),
+      );
+
+      // flash Sale
+      listViews.add(
+        Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+          // margin: EdgeInsets.only(top:15),
+          color: Colors.white,
+          child: Column(
+            children: [
+              TitleView(
+                titleTxt: 'Flash Sale',
+                subTxt: 'Lainnya',
+                animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
                         parent: widget.animationController,
-                        curve: Interval((1 / count) * 3, 1.0,
+                        curve: Interval((1 / count) * 2, 1.0,
                             curve: Curves.fastOutSlowIn))),
-                mainScreenAnimationController: widget.animationController,
-                dataCard: dataProductBaru),
-          ],
+                animationController: widget.animationController,
+              ),
+              ItemSquareView(
+                  mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                      .animate(CurvedAnimation(
+                          parent: widget.animationController,
+                          curve: Interval((1 / count) * 3, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  mainScreenAnimationController: widget.animationController,
+                  dataCard: dataFlashSale),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
-    //produk Terlaris
-    listViews.add(
-      Container(
-        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(top: 15),
-        color: Colors.white,
-        child: Column(
-          children: [
-            TitleView(
-              titleTxt: 'Produk Terlaris',
-              subTxt: 'Lainnya',
-              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 2, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              animationController: widget.animationController,
-            ),
-            ItemSquareView(
-                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
-                    .animate(CurvedAnimation(
+      //produk Terbaru
+      listViews.add(
+        Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+          margin: EdgeInsets.only(top: 15),
+          color: Colors.white,
+          child: Column(
+            children: [
+              TitleView(
+                titleTxt: 'Produk Terbaru',
+                subTxt: 'Lainnya',
+                animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
                         parent: widget.animationController,
-                        curve: Interval((1 / count) * 3, 1.0,
+                        curve: Interval((1 / count) * 2, 1.0,
                             curve: Curves.fastOutSlowIn))),
-                mainScreenAnimationController: widget.animationController,
-                dataCard: dataTerlaris),
-          ],
+                animationController: widget.animationController,
+              ),
+              ItemSquareView(
+                  mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                      .animate(CurvedAnimation(
+                          parent: widget.animationController,
+                          curve: Interval((1 / count) * 3, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  mainScreenAnimationController: widget.animationController,
+                  dataCard: dataProductBaru),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
-    //produk Unggulan
-    listViews.add(
-      Container(
-        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-        margin: EdgeInsets.only(top: 15),
-        color: Colors.white,
-        child: Column(
-          children: [
-            TitleView(
-              titleTxt: 'Produk Unggulan',
-              subTxt: 'Lainnya',
-              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                      parent: widget.animationController,
-                      curve: Interval((1 / count) * 2, 1.0,
-                          curve: Curves.fastOutSlowIn))),
-              animationController: widget.animationController,
-            ),
-            ItemSquareView(
-                mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
-                    .animate(CurvedAnimation(
+      //produk Terlaris
+      listViews.add(
+        Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+          margin: EdgeInsets.only(top: 15),
+          color: Colors.white,
+          child: Column(
+            children: [
+              TitleView(
+                titleTxt: 'Produk Terlaris',
+                subTxt: 'Lainnya',
+                animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
                         parent: widget.animationController,
-                        curve: Interval((1 / count) * 3, 1.0,
+                        curve: Interval((1 / count) * 2, 1.0,
                             curve: Curves.fastOutSlowIn))),
-                mainScreenAnimationController: widget.animationController,
-                dataCard: dataUnggulan),
-          ],
+                animationController: widget.animationController,
+              ),
+              ItemSquareView(
+                  mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                      .animate(CurvedAnimation(
+                          parent: widget.animationController,
+                          curve: Interval((1 / count) * 3, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  mainScreenAnimationController: widget.animationController,
+                  dataCard: dataTerlaris),
+            ],
+          ),
         ),
-      ),
-    );
+      );
 
-  }
+      //produk Unggulan
+      listViews.add(
+        Container(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+          margin: EdgeInsets.only(top: 15),
+          color: Colors.white,
+          child: Column(
+            children: [
+              TitleView(
+                titleTxt: 'Produk Unggulan',
+                subTxt: 'Lainnya',
+                animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                    CurvedAnimation(
+                        parent: widget.animationController,
+                        curve: Interval((1 / count) * 2, 1.0,
+                            curve: Curves.fastOutSlowIn))),
+                animationController: widget.animationController,
+              ),
+              ItemSquareView(
+                  mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
+                      .animate(CurvedAnimation(
+                          parent: widget.animationController,
+                          curve: Interval((1 / count) * 3, 1.0,
+                              curve: Curves.fastOutSlowIn))),
+                  mainScreenAnimationController: widget.animationController,
+                  dataCard: dataUnggulan),
+            ],
+          ),
+        ),
+      );
+    }
   }
 
   Future<bool> getData() async {
@@ -440,9 +565,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration.zero, () {
-      size = context.size;
-    });
+    // Future.delayed(Duration.zero, () {
+    size = MediaQuery.of(context).size;
+    // });
+    addAllListData(context);
 
     return GestureDetector(
       onTap: () {
@@ -464,6 +590,25 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         ),
       ),
     );
+  }
+
+  void launchWhatsApp({
+    @required String phone,
+    @required String message,
+  }) async {
+    String url() {
+      if (Platform.isIOS) {
+        return "whatsapp://wa.me/$phone/?text=${Uri.parse(message)}";
+      } else {
+        return "whatsapp://send?phone=$phone&text=${Uri.parse(message)}";
+      }
+    }
+
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      throw 'Could not launch ${url()}';
+    }
   }
 
   Widget getMainListViewUI() {
@@ -532,67 +677,17 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                             // top: 11 - 8.0 * topBarOpacity,
                             bottom: 16 - 8.0 * topBarOpacity),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            //                  Padding(
-                            //   padding: const EdgeInsets.all(16.0),
-                            //   child: TextField(
-                            //     onChanged: (value) {
-
-                            //     },
-                            //     controller: editingController,
-                            //     decoration: InputDecoration(
-                            //         labelText: "Search",
-                            //         hintText: "Search",
-                            //         prefixIcon: Icon(Icons.search),
-                            //         border: OutlineInputBorder(
-                            //             borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-                            //   ),
-                            // ),
-                            // Expanded(
-
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.all(8.0),
-
-                            //     // child: Text(
-                            //     //   'Beranda',
-                            //     //   textAlign: TextAlign.left,
-                            //     //   style: TextStyle(
-                            //     //     fontFamily: FintnessAppTheme.fontName,
-                            //     //     fontWeight: FontWeight.w700,
-                            //     //     fontSize: 22 + 6 - 6 * topBarOpacity,
-                            //     //     letterSpacing: 1.2,
-                            //     //     color: FintnessAppTheme.darkerText,
-                            //     //   ),
-                            //     // ),
-                            //   ),
-                            // ),
-                            //                       FloatingSearchBar.builder(
-                            //   itemCount: 10,
-                            //   itemBuilder: (BuildContext context, int index) {
-                            //     return ListTile(
-                            //       leading: Text(index.toString()),
-                            //     );
-                            //   },
-                            //   trailing: CircleAvatar(
-                            //     child: Text("D"),
-                            //   ),
-                            //   drawer: Drawer(
-                            //     child: Container(),
-                            //   ),
-                            //   onChanged: (String value) {},
-                            //   onTap: () {},
-                            //   decoration: InputDecoration.collapsed(
-                            //     hintText: "Search...",
-                            //   ),
-                            // // ),
                             SizedBox(
                               height: 40,
-                              width: 320,
+                              width: size.width - 34 - 30 - 8,
                               child: TextField(
-                                onChanged: (value) {},
-                                // controller: editingController,
+                                onSubmitted: (val) {
+                                  widget.searchAlocation('semua', val);
+                                },
+                                controller: editingController,
                                 decoration: InputDecoration(
                                     filled: true,
                                     fillColor: Colors.white,
@@ -617,7 +712,26 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                             Radius.circular(10.0)))),
                               ),
                             ),
-                            //),
+                            Padding(
+                              padding: EdgeInsets.only(left: 8),
+                            ),
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: InkWell(
+                                  onTap: () {
+                                    launchWhatsApp(
+                                        message: 'Hallo min....',
+                                        phone: '628113051081');
+                                  },
+                                  child: FaIcon(
+                                    FontAwesomeIcons.headset,
+                                    size: 35,
+                                    color: topBarOpacity != 1.0
+                                        ? Colors.white
+                                        : Colors.blueGrey,
+                                  ),
+                                )),
                             Padding(
                               padding: const EdgeInsets.only(
                                 left: 1,
@@ -647,22 +761,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                               //   ],
                               // ),
                             ),
-                            // SizedBox(
-                            //   height: 38,
-                            //   width: 38,
-                            //   child: InkWell(
-                            //     highlightColor: Colors.transparent,
-                            //     borderRadius: const BorderRadius.all(
-                            //         Radius.circular(32.0)),
-                            //     onTap: () {},
-                            //     child: Center(
-                            //       child: Icon(
-                            //         Icons.keyboard_arrow_right,
-                            //         color: FintnessAppTheme.grey,
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       )
