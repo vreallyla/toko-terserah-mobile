@@ -42,6 +42,9 @@ class _MealsListViewState extends State<MealsListView>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+
     return AnimatedBuilder(
       animation: widget.mainScreenAnimationController,
       builder: (BuildContext context, Widget child) {
@@ -51,7 +54,7 @@ class _MealsListViewState extends State<MealsListView>
             transform: Matrix4.translationValues(
                 0.0, 20 * (1.0 - widget.mainScreenAnimation.value), 0.0),
             child: Container(
-              height: 105,
+              height: 80,
               width: double.infinity,
               child: ListView.builder(
                 padding:
@@ -107,9 +110,10 @@ class MealsView extends StatelessWidget {
               width: 120,
               child: Stack(
                 children: <Widget>[
-                  Padding(
+                  Container(
+                    margin: EdgeInsets.only(left:5),
                     padding: const EdgeInsets.only(
-                        top: 32, left: 5, right: 5, bottom: 16),
+                        top: 0, left: 0, right: 0, bottom: 10),
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: <BoxShadow>[
@@ -135,6 +139,7 @@ class MealsView extends StatelessWidget {
                         ),
                       ),
                       child: Padding(
+                        //padding card
                         padding: const EdgeInsets.only(
                             top: 18, left: 16, right: 16, bottom: 8),
                         child: Column(

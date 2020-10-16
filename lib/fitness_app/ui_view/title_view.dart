@@ -6,9 +6,11 @@ class TitleView extends StatelessWidget {
   final String subTxt;
   final AnimationController animationController;
   final Animation animation;
+  // final bool otherData;
 
   const TitleView(
       {Key key,
+      // this.otherData:false,
       this.titleTxt: "",
       this.subTxt: "",
       this.animationController,
@@ -49,7 +51,8 @@ class TitleView extends StatelessWidget {
                       onTap: () {},
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8),
-                        child: Row(
+                        child: subTxt.length>0 ?
+                        Row(
                           children: <Widget>[
                             Text(
                               subTxt,
@@ -73,7 +76,9 @@ class TitleView extends StatelessWidget {
                               ),
                             ),
                           ],
-                        ),
+                        ) : SizedBox(
+                              height: 38,
+                              width: 26,),
                       ),
                     )
                   ],

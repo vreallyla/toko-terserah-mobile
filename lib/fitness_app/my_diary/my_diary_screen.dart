@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
+import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
@@ -49,7 +50,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   TextStyle txtstyle = TextStyle(color: Colors.white);
   Color coloricon = Colors.white;
 
-  _getHome() async {
+  _getHome(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dataRes = json.decode(prefs.getString('dataHome'));
     // dataHome = json.decode(prefs.getString('dataHome'));
@@ -61,30 +62,30 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     dataUnggulan = dataRes['popular'];
     dataTerlaris = dataRes['top_rated'];
 
-    addAllListData();
+    addAllListData(context);
     // print(dataHome);
     setState(() {});
     //  prefs.getString('token');
   }
 
-  _getDataApi() async {
+  _getDataApi(context) async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
       await ProductModel.getHome().then((v) {
-        _getHome();
+        _getHome(context);
         // log('dasd');
       });
        }
     } on SocketException catch (_) {
       isConnect = false;
-      addAllListData();
+      addAllListData(context);
 
       setState(() {});
     }
   }
 
-  Widget noConnection(){
+  Widget noConnection(context){
   return Container(
     alignment: Alignment.center,
     padding: EdgeInsets.only(top:120),
@@ -112,7 +113,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 setState(() {
                   // isLoading=true;
                   isConnect=true;
-                _getDataApi();
+                _getDataApi(context);
                 });
               },
               color: Colors.green,
@@ -131,8 +132,13 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    _getDataApi();
-    addAllListData();
+
+    Future.delayed(Duration.zero,() {
+    addAllListData(context);
+    _getDataApi(context);
+
+});
+  
 
 
     scrollController.addListener(() {
@@ -166,12 +172,16 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     super.initState();
   }
 
-  void addAllListData() {
+  void addAllListData(context) {
+    final size = MediaQuery.of(context).size;
+
     listViews = [];
     const int count = 9;
     if(!isConnect){
-      listViews.add(noConnection());
+      listViews.add(noConnection(context));
     }else{
+
+      //carousel
     listViews.add(CarouselSlider(
       options: CarouselOptions(
         height: 300.0,
@@ -230,28 +240,72 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     //   ),
     // );
 
-    // kategori option
-    // listViews.add(
-    //   TitleView(
-    //     titleTxt: 'Kategori',
-    //     animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-    //         parent: widget.animationController,
-    //         curve:
-    //             Interval((1 / count) * 2, 1.0, curve: Curves.fastOutSlowIn))),
-    //     animationController: widget.animationController,
-    //   ),
-    // );
 
-    // listViews.add(
-    //   MealsListView(
-    //     mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
-    //         CurvedAnimation(
-    //             parent: widget.animationController,
-    //             curve: Interval((1 / count) * 3, 1.0,
-    //                 curve: Curves.fastOutSlowIn))),
-    //     mainScreenAnimationController: widget.animationController,
-    //   ),
-    // );
+   
+    // kategori
+    listViews.add(
+      Container(
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+        margin: EdgeInsets.only(bottom:15),
+        // margin: EdgeInsets.only(top:15),
+        color: Colors.white,
+        child: Column(
+          children: [
+            TitleView(
+              // otherData:true,
+              titleTxt: 'Kategori',
+              subTxt: '',
+              animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                      parent: widget.animationController,
+                      curve: Interval((1 / count) * 2, 1.0,
+                          curve: Curves.fastOutSlowIn))),
+              animationController: widget.animationController,
+            ),
+      //     MealsListView(
+      //   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
+      //       CurvedAnimation(
+      //           parent: widget.animationController,
+      //           curve: Interval((1 / count) * 3, 1.0,
+      //               curve: Curves.fastOutSlowIn))),
+      //   mainScreenAnimationController: widget.animationController,
+      // ),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(right:8),
+            height: 60,
+            width: (size.width-30-16)/3,
+            color: Colors.green,
+            child: Text(((size.width-30)/3).toString()),
+          ),
+           Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(right:8),
+            height: 60,
+            width: (size.width-30-16)/3,
+            color: Colors.green,
+            child: Text(((size.width-30)/3).toString()),
+          ),
+            Container(
+            alignment: Alignment.center,
+            // margin: EdgeInsets.only(right:8),
+            height: 60,
+            width: (size.width-30-16)/3,
+            color: Colors.green,
+            child: Text(((size.width-30)/3).toString()),
+          ),
+          
+        ],
+      )
+      ],
+        ),
+      ),
+    );
+
+
     // flash Sale
     listViews.add(
       Container(
