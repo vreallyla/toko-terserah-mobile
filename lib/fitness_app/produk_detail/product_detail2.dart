@@ -15,92 +15,15 @@ import 'carousel_product_view.dart';
 import 'cart_card_view.dart';
 
 class ProductDetail2 extends StatefulWidget {
-  
+  const ProductDetail2({Key key, this.productId = ''}) : super(key: key);
+
+  final String productId;
+
   @override
   _ProductDetail2State createState() => _ProductDetail2State();
 }
 
-class HeaderPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // double topBarOpacity = 0.0;
-    TextEditingController editingController = TextEditingController();
-
-    return AppBar(
-      backgroundColor: Colors.grey[200],
-      brightness: Brightness.light,
-      leading: Transform.translate(
-        offset: Offset(-5, 0),
-        child: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      titleSpacing: -30,
-      centerTitle: false,
-      title: Container(
-        padding: EdgeInsets.only(left: 20, right: 40),
-        child: TextField(
-          onChanged: (value) {},
-          controller: editingController,
-          decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              // labelText: "Cari Produk",
-              labelStyle: TextStyle(color: Colors.grey),
-              hintText: "Cari Produk",
-              hintStyle: TextStyle(color: Colors.grey),
-              contentPadding: const EdgeInsets.all(1.0),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Colors.grey,
-              ),
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 5.0),
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)))),
-        ),
-      ),
-      actions: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(right: 15),
-          child: Stack(
-            children: <Widget>[
-              Container(
-                  margin: EdgeInsets.only(top: 15),
-                  child: Icon(
-                    Icons.shopping_cart,
-                    size: 24,
-                    color: Colors.black54,
-                  )),
-              Container(
-                margin: EdgeInsets.only(top: 8, left: 10),
-                alignment: Alignment.center,
-                height: 20,
-                width: 20,
-                child: Text(
-                  '0',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w500),
-                ),
-                decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.transparent,
-                    ),
-                    color: Colors.green,
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-              )
-            ],
-          ),
-        )
-      ],
-    );
-  }
-}
+void beliSekarang(int jmlBeli) {}
 
 class _ProductDetail2State extends State<ProductDetail2>
     with TickerProviderStateMixin {
@@ -129,76 +52,89 @@ class _ProductDetail2State extends State<ProductDetail2>
   bool isLoading = false;
 
   // jumlah qty pcs
-  int jmlh_pcs=0;
+  int jmlh_pcs = 0;
+
+  //id product
+  String idProduct;
+
+  //jml cart
+  int jmlCart = 0;
+
+  _addCart(int qty) async {}
 
   void showAddDialog(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CustomAlertDialog(
-            content: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 3,
-              decoration: new BoxDecoration(
-                shape: BoxShape.rectangle,
-                color: const Color(0xFFFFFF),
-                borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
-              ),
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  CardCardView(dataProduct:detailProduct,getPcs:(int value){
-                    setState(() {
-                    jmlh_pcs=value;
-                      
-                    });
-                  }),
-                  MaterialButton(
-                    onPressed: () {
-                      print(jmlh_pcs);
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height / 18,
-                      padding: EdgeInsets.all(1.0),
-                      child: Material(
-                          color: kondToCart(detailProduct) || jmlh_pcs==0?Colors.grey: Colors.green,
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                'TAMBAH KE KERANJANG',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18.0,
-                                  fontFamily: 'helvetica_neue_light',
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          )),
-                    ),
-                  ),
-                ],
-              ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          content: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 3,
+            decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: const Color(0xFFFFFF),
+              borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
             ),
-          );
-        },
-      );
-    }
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                CardCardView(
+                    dataProduct: detailProduct,
+                    getPcs: (int value) {
+                      setState(() {
+                        jmlh_pcs = value;
+                      });
+                    }),
+                MaterialButton(
+                  onPressed: () {
+                    print(jmlh_pcs);
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 18,
+                    padding: EdgeInsets.all(1.0),
+                    child: Material(
+                        color: kondToCart(detailProduct) || jmlh_pcs == 0
+                            ? Colors.grey
+                            : Colors.green,
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'TAMBAH KE KERANJANG',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontFamily: 'helvetica_neue_light',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   _getDataApi() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        await ProductModel.getProduct('36').then((value) {
+        await ProductModel.getProduct(idProduct).then((value) {
           if (value.error) {
             isLogin = false;
           } else {
             Map<String, dynamic> dataLoad = json.decode(value.data);
 
             // set data
+            jmlCart = dataLoad['count_cart'];
+
             detailProduct = dataLoad['detail'];
             imageLists = detailProduct['galeri'] ?? [detailProduct['gambar']];
             reviewData = dataLoad['review'];
@@ -268,6 +204,7 @@ class _ProductDetail2State extends State<ProductDetail2>
   @override
   // ignore: must_call_super
   void initState() {
+    idProduct = widget.productId;
     _getDataApi();
     Future.delayed(Duration(seconds: 1), () {
       addAllListData();
@@ -305,7 +242,8 @@ class _ProductDetail2State extends State<ProductDetail2>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-          preferredSize: Size.fromHeight(70.0), child: HeaderPage()),
+          preferredSize: Size.fromHeight(70.0),
+          child: HeaderPage(countCard: jmlCart)),
       bottomNavigationBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
         child: BottomAppBar(
@@ -326,10 +264,7 @@ class _ProductDetail2State extends State<ProductDetail2>
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.green)),
                     onPressed: () {
-                      if(detailProduct.containsKey('nama')){
-                      jmlh_pcs=setMinOrder(detailProduct).round();
-                      }
-                      showAddDialog(context);
+                      Navigator.pushNamed(context, '/cart_list');
                     },
                   ),
                 ),
@@ -348,7 +283,10 @@ class _ProductDetail2State extends State<ProductDetail2>
                     color: Colors.green,
                     onPressed: () {
                       // Navigate to the second screen using a named route.
-                      Navigator.pushNamed(context, '/cart_list');
+                      if (detailProduct.containsKey('nama')) {
+                        jmlh_pcs = setMinOrder(detailProduct).round();
+                      }
+                      showAddDialog(context);
                     },
                   ),
                 ),
@@ -363,6 +301,99 @@ class _ProductDetail2State extends State<ProductDetail2>
           children: listViews,
         ),
       ),
+    );
+  }
+}
+
+class HeaderPage extends StatelessWidget {
+  HeaderPage({Key key, this.countCard}) : super(key: key);
+
+  int countCard;
+
+  @override
+  Widget build(BuildContext context) {
+    // double topBarOpacity = 0.0;
+    TextEditingController editingController = TextEditingController();
+
+    return AppBar(
+      backgroundColor: Colors.grey[200],
+      brightness: Brightness.light,
+      leading: Transform.translate(
+        offset: Offset(-5, 0),
+        child: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.black54),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      titleSpacing: -30,
+      centerTitle: false,
+      title: Container(
+        padding: EdgeInsets.only(left: 20, right: 40),
+        child: TextField(
+          onChanged: (value) {},
+          onSubmitted: (v) {
+            Navigator.of(context).pushNamed('/',
+                arguments: {"search_product": true, 'keyword_product': v});
+          },
+          controller: editingController,
+          decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.white,
+              // labelText: "Cari Produk",
+              labelStyle: TextStyle(color: Colors.grey),
+              hintText: "Cari Produk",
+              hintStyle: TextStyle(color: Colors.grey),
+              contentPadding: const EdgeInsets.all(1.0),
+              prefixIcon: Icon(
+                Icons.search,
+                color: Colors.grey,
+              ),
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey, width: 5.0),
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)))),
+        ),
+      ),
+      actions: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(right: 15),
+          child: InkWell(
+            onTap: () => Navigator.of(context).pushNamed('/cart_list'),
+            child: Stack(
+              children: <Widget>[
+                Container(
+                    margin: EdgeInsets.only(top: 15),
+                    child: Icon(
+                      Icons.shopping_cart,
+                      size: 24,
+                      color: Colors.black54,
+                    )),
+                Container(
+                  margin: EdgeInsets.only(top: 8, left: 10),
+                  alignment: Alignment.center,
+                  height: 20,
+                  width: 20,
+                  child: Text(
+                    countCard > 99 ? '99+' : countCard.toString(),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.transparent,
+                      ),
+                      color: Colors.green,
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                )
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }

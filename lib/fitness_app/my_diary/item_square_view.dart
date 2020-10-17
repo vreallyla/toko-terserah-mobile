@@ -1,6 +1,7 @@
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail2.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
@@ -129,7 +130,13 @@ class MealsView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
-                        Navigator.pushNamed(context, '/produk2');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetail2(
+                                productId: mealsListData['id'].toString(),
+                              ),
+                            ));
                       },
                       child: Column(
                         children: [
@@ -283,33 +290,34 @@ class MealsView extends StatelessWidget {
                                     Text(
                                       NumberFormat.currency(
                                               locale: "id_ID", symbol: "Rp")
-                                          .format(int.parse((mealsListData[
-                                                      'harga'] !=
-                                                  null
-                                              ? mealsListData['harga']
-                                              : (mealsListData[
-                                                          'harga_grosir'] !=
-                                                      null
-                                                  ? mealsListData[
-                                                      'harga_grosir']
-                                                  : '0')))),
+                                          .format(int.parse(
+                                              (mealsListData['harga'] != null
+                                                  ? mealsListData['harga']
+                                                  : (mealsListData[
+                                                              'harga_grosir'] !=
+                                                          null
+                                                      ? mealsListData[
+                                                          'harga_grosir']
+                                                      : '0')))),
                                       style: TextStyle(
-                                          fontSize: mealsListData[
-                                                              'diskon'] !=
-                                                          null ||
+                                          fontSize:
+                                              mealsListData['diskon'] != null ||
                                                       mealsListData[
                                                               'diskonGrosir'] !=
                                                           null
-                                                  ?11:0,
+                                                  ? 11
+                                                  : 0,
                                           decoration:
                                               TextDecoration.lineThrough),
                                       textAlign: TextAlign.left,
                                     ),
                                   ],
                                 ),
-                                starJadi(double.parse(mealsListData['avg_ulasan'].toString()), NumberFormat("#,###", "id_ID")
-                                                .format(mealsListData[
-                                                    'count_ulasan'])),
+                                starJadi(
+                                    double.parse(
+                                        mealsListData['avg_ulasan'].toString()),
+                                    NumberFormat("#,###", "id_ID")
+                                        .format(mealsListData['count_ulasan'])),
                               ],
                             ),
                           ),

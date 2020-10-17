@@ -41,6 +41,13 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
       if (arguments != null ? (arguments['after_login']!=null || arguments['after_logout']!=null) : false) {
         tabIconsList[3].isSelected = true;
         tabBody = TrainingScreen(animationController: animationController);
+      } else if (arguments != null ? arguments['search_product']!=null : false) {
+        arguments['search_product'] = null;
+        
+        tabIconsList[1].isSelected = true;
+        tabBody = DesignCourseHomeScreen(
+          search: arguments['keyword_product'],
+        );
       } else {
         tabIconsList[0].isSelected = true;
         tabBody=MyDiaryScreen(animationController: animationController,

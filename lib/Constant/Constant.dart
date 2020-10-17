@@ -10,6 +10,7 @@ String globalBaseUrl = "https://tokoterserah.com/";
 String globalPathAuth = "api/auth/";
 String globalPathWish='api/wish/';
 String globalPathProduct='api/product/';
+String globalPathCart='api/cart/';
 
 
 

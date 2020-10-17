@@ -47,6 +47,9 @@ pointGroup(int value) {
 }
 
 decimalPointOne(String value){
-    return NumberFormat("#,##0.0").format(double.parse(value));
+    return NumberFormat("#,##0.0", "id_ID").format(double.parse(value));
 }
 
+decimalPointTwo(double value) {
+  return NumberFormat("#,##0.00", "id_ID").format(value);
+}
