@@ -15,9 +15,15 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
+// import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class DesignCourseHomeScreen extends StatefulWidget {
+  final String jenis;
+  final String search;
+const DesignCourseHomeScreen(
+      {Key key, this.jenis='semua',this.search=''})
+      : super(key: key);
+
   @override
   _DesignCourseHomeScreenState createState() => _DesignCourseHomeScreenState();
 }
@@ -216,7 +222,10 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    editingController.text=widget.search;
+    _jenisProdukRadioButton=widget.jenis;
+
+
     super.initState();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -306,7 +315,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
         });
   }
 
-  List PickKategoriSearch(int i) {
+  List pickKategoriSearch(int i) {
     int indexx = i * 2;
 
     int unIndex = indexx + (_selecteCategorys.length < indexx + 2 ? 1 : 2);
@@ -376,7 +385,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
   //desain kategori produk
-  Widget KategoriDetail(sizeu) {
+  Widget kategoriDetail(sizeu) {
     return Stack(
       children: <Widget>[
         //body
@@ -425,7 +434,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       padding: EdgeInsets.only(left: 0, right: 7, top: 10),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: PickKategoriSearch(i),
+                        children: pickKategoriSearch(i),
                       ),
                     );
                   }),
@@ -615,12 +624,12 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   //Set value from check box
   void _onCategorySelected(
-      bool selected, int category_id, String category_name) {
+      bool selected, int categoryId, String categoryNama) {
     if (selected == true) {
       if (_selecteCategorys.length < 4) {
         setState(() {
-          _selecteCategorys.add(category_id);
-          _selectKategoriDetail.add({"id": category_id, "nama": category_name});
+          _selecteCategorys.add(categoryId);
+          _selectKategoriDetail.add({"id": categoryId, "nama": categoryNama});
         });
       } else {
         showDialog(
@@ -688,14 +697,14 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
       }
     } else {
       setState(() {
-        print(category_name);
+        print(categoryNama);
 
-        _selecteCategorys.remove(category_id);
+        _selecteCategorys.remove(categoryId);
 
-        _selectKategoriDetail.removeWhere((item) => item['id'] == category_id);
+        _selectKategoriDetail.removeWhere((item) => item['id'] == categoryId);
         // _selectKategoriDetail.removeAt(0);
 
-        // Stream.fromIterable(_selectKategoriDetail).asyncMap((item) async => {"id": category_id, "nama": await category_name }).where((m) => m['id'] != category_id).toList();
+        // Stream.fromIterable(_selectKategoriDetail).asyncMap((item) async => {"id": categoryId, "nama": await categoryNama }).where((m) => m['id'] != categoryId).toList();
         // Stream.fromIterable(replytile).asyncMap((item) async => {"item": item, "id": await item.id }).where((m) => m.id != '001').map((m) => m.item)).toList()
         // _listofTaskUI.removeAt(_quantity);
       });
@@ -767,7 +776,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
             width: sizeu.width - sizeu.width / 5,
             child: Drawer(
                 child: (isKategori
-                    ? KategoriDetail(sizeu)
+                    ? kategoriDetail(sizeu)
                     : Stack(
                         children: <Widget>[
                           //header
@@ -891,7 +900,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                                                                       CrossAxisAlignment
                                                                           .start,
                                                                   children:
-                                                                      PickKategoriSearch(
+                                                                      pickKategoriSearch(
                                                                           i),
                                                                 ),
                                                               );
@@ -1463,7 +1472,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                 decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    labelText: "Cari Produk",
+                    // labelText: "Cari Produk",
                     labelStyle: TextStyle(color: Colors.grey),
                     hintText: "Cari Produk",
                     hintStyle: TextStyle(color: Colors.grey),
@@ -1572,7 +1581,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
 /**
- * TODO Show List grid produk toko
+ * TODO:: Show List grid produk toko
  * 
  */
   Widget getPopularCourseUI() {

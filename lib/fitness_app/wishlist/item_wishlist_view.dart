@@ -524,9 +524,11 @@ class MealsView extends StatelessWidget {
                                                                         .green,
                                                                     onPressed:
                                                                         () {
-                                                                      // removeWishlishCard(
-                                                                      //     index, loadWishlist['id']);
-                                                                      // print('hapus wishlist '+ loadWishlist['id'].toString());
+                                                                          Navigator.pop(
+                                                                          context);
+                                                                      removeWishlishCard(
+                                                                          index, loadWishlist['id']);
+                                                                      print('hapus wishlist '+ loadWishlist['id'].toString());
                                                                     },
                                                                   ),
                                                                   Spacer(

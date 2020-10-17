@@ -8,6 +8,19 @@ setHarga(Map<String, dynamic> obj) {
       : (obj['diskon'] != null ? obj['harga_diskon'] : obj['harga']));
 }
 
+minQty(Map<String, dynamic> obj){
+  return int.parse(obj['min_qty'] != null ? obj['min_qty'] : '1');
+}
+
+setMinOrder(Map<String, dynamic> obj){
+  int minnQty=minQty(obj);
+  return double.parse(minnQty >int.parse(obj['stock']) ? obj['stock'] : minnQty.toString());
+}
+
+kondToCart(Map<String, dynamic> obj){
+  return double.parse(minQty(obj).toString())>setMinOrder(obj);
+}
+
 disconCondition(Map<String, dynamic> obj) {
   return obj['isGrosir'] > 0
       ? (obj['isDiskonGrosir']>0?int.parse(obj['diskonGrosir']) :0 )
