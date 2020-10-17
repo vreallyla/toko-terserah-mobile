@@ -1,6 +1,6 @@
-// import 'package:best_flutter_ui_templates/model/register_model.dart';
+import 'package:best_flutter_ui_templates/model/register_model.dart';
 import 'package:flutter/material.dart';
-// import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -17,6 +17,8 @@ class CartList extends StatefulWidget {
 }
 
 class _CartListState extends State<CartList> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   List<dynamic> _listCart;
 
   List _selecteCarts = List();
@@ -66,16 +68,16 @@ class _CartListState extends State<CartList> {
    * Set Check box active or not by cart_id
    * 
    */
-  void _onCartSelected(bool selected, cart_id,total) {
+  void _onCartSelected(bool selected, cart_id, total) {
     if (selected == true) {
       setState(() {
         _selecteCarts.add(cart_id);
-         _total = _total + int.parse(total);
+        _total = _total + int.parse(total);
       });
     } else {
       setState(() {
         _selecteCarts.remove(cart_id);
-         _total = _total - int.parse(total);
+        _total = _total - int.parse(total);
       });
     }
     log(_selecteCarts.toString());
@@ -93,7 +95,7 @@ class _CartListState extends State<CartList> {
           //Check if id contais in list
         } else {
           //if doesnt exist
-          _onCartSelected(isCheckAll, element['id'],element['total']);
+          _onCartSelected(isCheckAll, element['id'], element['total']);
           // _total = _total + int.parse(element['total']);
         }
       });
@@ -101,12 +103,80 @@ class _CartListState extends State<CartList> {
       _listCart.forEach((element) {
         if (_selecteCarts.contains(element['id'])) {
           //Check if id contais in list
-          _onCartSelected(isCheckAll, element['id'],element['total']);
+          _onCartSelected(isCheckAll, element['id'], element['total']);
           // _total = _total - int.parse(element['total']);
         } else {
-            //if doesnt exist
+          //if doesnt exist
         }
       });
+    }
+  }
+
+  /**
+   * Confirm delete Item Cart
+   * 
+   */
+  confirmHapus(context, id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text("Apakah anda yakin ingin menghapus data ini ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                "Ya",
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                showSnackBar("Lanjut mas Semongko", Colors.green,
+                    Icon(Icons.check_circle_outline));
+              },
+            ),
+            FlatButton(
+              child: Text("Tidak"),
+              onPressed: () {
+                //Put your code here which you want to execute on No button click.
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /**
+   * Cutom Alert response
+   * 
+   */
+  showSnackBar(String value, Color color, Icon icons) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: Row(
+        children: <Widget>[
+          icons,
+          SizedBox(
+            width: 20,
+          ),
+          Text(value)
+        ],
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+  _checkCart() {
+    if (_selecteCarts.length < 1) {
+      showSnackBar("Item Keranjang belum dipilih", Colors.red,
+          Icon(Icons.close_outlined));
+    } else {
+      showSnackBar("Lanjut mas Semongko", Colors.green,
+          Icon(Icons.check_circle_outline));
     }
   }
 
@@ -125,6 +195,7 @@ class _CartListState extends State<CartList> {
     //final wh_ = MediaQuery.of(context).size;
 
     return new Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.grey[200],
         brightness: Brightness.light,
@@ -207,7 +278,8 @@ class _CartListState extends State<CartList> {
                   child: Checkbox(
                     value: _selecteCarts.contains(_listCart[i]['id']),
                     onChanged: (bool selected) {
-                      _onCartSelected(selected, _listCart[i]['id'],_listCart[i]['total']);
+                      _onCartSelected(
+                          selected, _listCart[i]['id'], _listCart[i]['total']);
                     },
                     activeColor: Colors.green,
                     checkColor: Colors.white,
@@ -290,22 +362,24 @@ class _CartListState extends State<CartList> {
                     // color: Colors.red,
                     child: IconButton(
                       icon: Icon(Icons.delete),
-                      onPressed: () {},
+                      onPressed: () {
+                        confirmHapus(context, _listCart[i]['qty']);
+                      },
                       color: Colors.black54,
                     ),
                   ),
-                  Container(
-                    width: 20,
-                    height: 30,
-                    margin: EdgeInsets.only(right: 15),
-                    alignment: Alignment.topLeft,
-                    // color: Colors.yellow,
-                    child: IconButton(
-                      icon: Icon(Icons.favorite),
-                      onPressed: () {},
-                      color: Colors.black54,
-                    ),
-                  ),
+                  // Container(
+                  //   width: 20,
+                  //   height: 30,
+                  //   margin: EdgeInsets.only(right: 15),
+                  //   alignment: Alignment.topLeft,
+                  //   // color: Colors.yellow,
+                  //   child: IconButton(
+                  //     icon: Icon(Icons.favorite),
+                  //     onPressed: () {},
+                  //     color: Colors.black54,
+                  //   ),
+                  // ),
                   Container(
                     padding: EdgeInsets.only(top: 5),
                     child: Row(
@@ -405,7 +479,8 @@ class _CartListState extends State<CartList> {
             InkWell(
               onTap: () {
                 // Navigate to the second screen using a named route.
-                Navigator.pushNamed(context, '/checkout');
+                // Navigator.pushNamed(context, '/checkout');
+                _checkCart();
               },
               child: Container(
                 height: 50,
