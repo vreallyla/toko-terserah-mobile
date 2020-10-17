@@ -65,7 +65,11 @@ confirmHapus(BuildContext context, idx) {
                     "Authorization":
                         "Bearer " + (tokenFixed != null ? tokenFixed : '')
                   });
-              print(response.statusCode);
+              var temprespon;
+              temprespon = await jsonDecode(response.body.toString());
+              if (temprespon != null) {
+                dataUserDefault = temprespon["data"];
+              }
               Navigator.of(context).pop();
             },
           ),
@@ -411,8 +415,11 @@ class _AlamatListState extends State<AlamatList> {
                 child: RaisedButton(
                   onPressed: () => Navigator.pushNamed(context, '/inputalamat',
                           arguments: null)
-                      .then((value) async {
+                      .then((value) {
                     _getUser();
+                    setState(() {
+                      // refresh state
+                    });
                   }),
                   child: Text(
                     'TAMBAH ALAMAT',
@@ -431,7 +438,21 @@ class _AlamatListState extends State<AlamatList> {
 }
 // end stack end
 
-class AlamatTransaksi extends StatelessWidget {
+class AlamatTransaksi extends StatefulWidget {
+  @override
+  _AlamatTransaksiState createState() => _AlamatTransaksiState();
+}
+
+class _AlamatTransaksiState extends State<AlamatTransaksi> {
+  @override
+  void initState() {
+    if (this.mounted) {
+      setState(() {});
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -474,14 +495,37 @@ class AlamatTransaksi extends StatelessWidget {
                   //   ),
                   // ),
                   PopupMenuItem(
-                    value: 0,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.home, color: Colors.green),
-                        Text("Jadikan Alamat Utama"),
-                      ],
-                    ),
-                  )
+                      value: 0,
+                      child: InkWell(
+                        onTap: () async {
+                          print("https://tokoterserah.com/" +
+                              "api/address/set_utama/" +
+                              dataUserDefault[index]["id"].toString());
+                          print(tokenFixed);
+                          Response response = await http.post(
+                              "https://tokoterserah.com/" +
+                                  "api/address/set_utama/" +
+                                  dataUserDefault[index]["id"].toString(),
+                              headers: {
+                                "Accept": "application/json",
+                                "Authorization": "Bearer " +
+                                    (tokenFixed != null ? tokenFixed : '')
+                              });
+                          // var temprespon;
+                          // temprespon =
+                          //     await jsonDecode(response.body.toString());
+                          // if (temprespon != null) {
+                          //   dataUserDefault = temprespon["data"];
+                          // }
+                          Navigator.of(context).pop();
+                        },
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.home, color: Colors.green),
+                            Text("Jadikan Alamat Utama"),
+                          ],
+                        ),
+                      ))
                 ],
                 context: context,
               );
@@ -651,8 +695,11 @@ class AlamatTransaksi extends StatelessWidget {
                         width: (size.width - 40) / 2,
                         child: InkWell(
                           onTap: () => Navigator.pushNamed(
-                              context, '/inputalamat',
-                              arguments: dataUserDefault[index]),
+                                  context, '/inputalamat',
+                                  arguments: dataUserDefault[index])
+                              .then((value) {
+                            setState(() {});
+                          }),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,

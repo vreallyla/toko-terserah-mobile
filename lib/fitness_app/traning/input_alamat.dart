@@ -70,7 +70,9 @@ class _InputAlamatState extends State<InputAlamat> {
       "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
     });
     tempProv = await jsonDecode(responseprov.body.toString());
-    dataProv = tempProv["data"]["province"];
+    if (tempProv != null) {
+      dataProv = tempProv["data"]["province"];
+    }
 
     Response responseocc =
         await http.get(globalBaseUrl + "api/address/occupancy", headers: {
@@ -78,7 +80,9 @@ class _InputAlamatState extends State<InputAlamat> {
       "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
     });
     tempocc = await jsonDecode(responseocc.body.toString());
-    dataOcc = tempocc["data"]["city"];
+    if (tempocc != null) {
+      dataOcc = tempocc["data"]["city"];
+    }
     // Response response =
     //     await http.get(globalBaseUrl + "api/address/kota", headers: {
     //   "Accept": "application/json",
@@ -150,7 +154,9 @@ class _InputAlamatState extends State<InputAlamat> {
             "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
           });
       tempKota = await jsonDecode(responsekota.body.toString());
-      dataKota = tempKota["data"]["city"];
+      if (tempKota != null) {
+        dataKota = tempKota["data"]["city"];
+      }
       Response responsecamat = await http.get(
           globalBaseUrl + "api/address/kecamatan?kota_id=" + _mySelection,
           headers: {
@@ -158,7 +164,9 @@ class _InputAlamatState extends State<InputAlamat> {
             "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
           });
       tempCamat = await jsonDecode(responsecamat.body.toString());
-      dataKecamatan = tempCamat["data"]["district"];
+      if (tempCamat != null) {
+        dataKecamatan = tempCamat["data"]["district"];
+      }
     }
 
     if (this.mounted) {
@@ -190,7 +198,14 @@ class _InputAlamatState extends State<InputAlamat> {
       _postalcodeController.text = "";
     } else {
       idxalamat = args["id"].toString();
-      _getDetailuser();
+      if (dataEdit == null) {
+        _namaController.text = "";
+        _namapenerimaController.text = "";
+        _alamatController.text = "";
+        _telpController.text = "";
+        _postalcodeController.text = "";
+        _getDetailuser();
+      }
     }
     //final wh_ = MediaQuery.of(context).size;
     return new Scaffold(
@@ -300,7 +315,25 @@ class _InputAlamatState extends State<InputAlamat> {
                     color: Colors.green,
                   ))),
         ),
-        body: AlamatTransaksi());
+        body: WillPopScope(
+          child: AlamatTransaksi(),
+          onWillPop: () async {
+            setState(() {
+              _mySelection = null;
+              _mySelection2 = null;
+              _mySelection3 = null;
+              _mySelectionProv = null;
+              dataEdit = null;
+              _alamatController.text = null;
+              _namaController.text = null;
+              _namapenerimaController.text = null;
+              _postalcodeController.text = null;
+              _telpController.text = null;
+            });
+
+            return true;
+          },
+        ));
   }
 }
 // end stack end
@@ -324,8 +357,13 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
         _mySelection2 = null;
         _mySelection3 = null;
         _mySelectionProv = null;
+        dataEdit = null;
+        _alamatController.text = null;
+        _namaController.text = null;
+        _namapenerimaController.text = null;
+        _postalcodeController.text = null;
+        _telpController.text = null;
       });
-      ;
     }
 
     super.initState();
@@ -530,10 +568,12 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                             "Bearer " + (tokenFixed != null ? tokenFixed : '')
                       });
                   var tempList = await jsonDecode(responseKt.body.toString());
-                  print(tempList["data"]["city"]);
-                  setState(() {
-                    dataKota = tempList["data"]["city"];
-                  });
+                  if (tempList != null) {
+                    print(tempList["data"]["city"]);
+                    setState(() {
+                      dataKota = tempList["data"]["city"];
+                    });
+                  }
                   setState(() {
                     _mySelection = null;
                     _mySelection2 = null;
