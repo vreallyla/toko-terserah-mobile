@@ -172,8 +172,8 @@ class _CartListState extends State<CartList> {
 
   _checkCart() {
     if (_selecteCarts.length < 1) {
-      showSnackBar("Item Keranjang belum dipilih", Colors.red,
-          Icon(Icons.close_outlined));
+      showSnackBar(
+          "Item Keranjang belum dipilih", Colors.red, Icon(Icons.close));
     } else {
       showSnackBar("Lanjut mas Semongko", Colors.green,
           Icon(Icons.check_circle_outline));

@@ -16,31 +16,23 @@ import 'package:http/http.dart' as http;
 String tokenFixed = '';
 
 class AlamatList extends StatefulWidget {
+  final _AlamatListState als = _AlamatListState();
+  void getuser() {
+    als._getUser();
+  }
+
   @override
-  _AlamatListState createState() => _AlamatListState();
+  State<StatefulWidget> createState() => als;
+  //_AlamatListState createState() => _AlamatListState();
 }
 
-class Post {
-  String id;
-  Post({this.id});
-
-  factory Post.fromJson(Map json) {
-    return Post(
-      id: json['id'],
-    );
-  }
-  Map toMap() {
-    var map = new Map();
-    map["id"] = id;
-    return map;
-  }
-}
+final alamatlist = AlamatList();
 
 var dataUserDefault;
 var dataKecamatan;
 List dataJenisAlamat;
 List dataKota;
-
+String ishapus = "n";
 confirmHapus(BuildContext context, idx) {
   showDialog(
     context: context,
@@ -52,6 +44,7 @@ confirmHapus(BuildContext context, idx) {
           FlatButton(
             child: Text("Ya"),
             onPressed: () async {
+              ishapus = "y";
               print("https://tokoterserah.com/" +
                   "api/address/delete/" +
                   idx.toString());
@@ -65,11 +58,15 @@ confirmHapus(BuildContext context, idx) {
                     "Authorization":
                         "Bearer " + (tokenFixed != null ? tokenFixed : '')
                   });
-              var temprespon;
-              temprespon = await jsonDecode(response.body.toString());
-              if (temprespon != null) {
-                dataUserDefault = temprespon["data"];
-              }
+              //AlamatList._getUser
+              // var temprespon;
+              // temprespon = await jsonDecode(response.body.toString());
+              // if (temprespon != null) {
+              //   dataUserDefault = temprespon["data"];
+              // }
+              //   dataUserDefault.removeAt(idx);
+              alamatlist.getuser();
+
               Navigator.of(context).pop();
             },
           ),
@@ -369,8 +366,11 @@ class _AlamatListState extends State<AlamatList> {
   var dataUser;
   String diff;
 
-  _getUser() async {
+  void _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (ishapus == "y") {
+      prefs.reload();
+    }
     tokenFixed = prefs.getString('token');
     dataUser = prefs.getString('dataUser');
     if (dataUser != null) {
@@ -378,7 +378,9 @@ class _AlamatListState extends State<AlamatList> {
       print(dataUser['user']['get_alamat']);
       dataUserDefault = dataUser['user']['get_alamat'];
     }
-    setState(() {});
+    if (ishapus == "n") {
+      setState(() {});
+    }
   }
 
   @override
@@ -453,6 +455,7 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
     super.initState();
   }
 
+  var dataUser;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -697,7 +700,17 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                           onTap: () => Navigator.pushNamed(
                                   context, '/inputalamat',
                                   arguments: dataUserDefault[index])
-                              .then((value) {
+                              .then((value) async {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            prefs.reload();
+                            tokenFixed = prefs.getString('token');
+                            dataUser = prefs.getString('dataUser');
+                            if (dataUser != null) {
+                              dataUser = await jsonDecode(dataUser);
+                              print(dataUser['user']['get_alamat']);
+                              dataUserDefault = dataUser['user']['get_alamat'];
+                            }
                             setState(() {});
                           }),
                           child: Row(
