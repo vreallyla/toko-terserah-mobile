@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:best_flutter_ui_templates/design_course/course_info_screen.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail2.dart';
 import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -1707,7 +1708,16 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       child: InkWell(
                         onTap: () {
                           // Navigate to the second screen using a named route.
-                          Navigator.pushNamed(context, '/produk');
+                          // Navigator.pushNamed(context, '/produk');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetail2(
+                                productId: dataJson[i]
+                                              ["id"].toString(),
+                              ),
+                            )
+                            );
                         },
                         child: Container(
                           child: Column(
@@ -1814,7 +1824,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
                       child: Container(
                           margin: EdgeInsets.all(3),
                           child: Text(
-                            'Grosir',
+                            dataJson[i]
+                                              ["isGrosir"]>0 ? 'Grosir':'Retail',
                             style: TextStyle(
                               color: Colors.green[800],
                               fontWeight: FontWeight.bold,

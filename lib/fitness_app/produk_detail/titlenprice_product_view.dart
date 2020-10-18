@@ -218,7 +218,7 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                           child: Row(
                             children: <Widget>[
                               Text("Berat : ", style: TextStyle(fontSize: 13)),
-                              new Text(pointGroup(int.parse(widget.detailList['berat']))+" kg ",
+                              new Text(decimalPointTwo(double.parse(widget.detailList['berat']) / 1000)+" kg ",
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.green,

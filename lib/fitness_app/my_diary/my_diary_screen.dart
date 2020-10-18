@@ -442,6 +442,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             children: [
               TitleView(
                 titleTxt: 'Flash Sale',
+                funcClick: () {
+                  widget.searchAlocation('semua', '');
+                },
                 subTxt: 'Lainnya',
                 animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                     CurvedAnimation(
@@ -473,6 +476,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             children: [
               TitleView(
                 titleTxt: 'Produk Terbaru',
+                funcClick: () {
+                  widget.searchAlocation('semua', '');
+                },
                 subTxt: 'Lainnya',
                 animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                     CurvedAnimation(
@@ -504,6 +510,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             children: [
               TitleView(
                 titleTxt: 'Produk Terlaris',
+                funcClick: () {
+                  widget.searchAlocation('semua', '');
+                },
                 subTxt: 'Lainnya',
                 animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                     CurvedAnimation(
@@ -535,6 +544,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             children: [
               TitleView(
                 titleTxt: 'Produk Unggulan',
+                funcClick: () {
+                  widget.searchAlocation('semua', '');
+                },
                 subTxt: 'Lainnya',
                 animation: Tween<double>(begin: 0.0, end: 1.0).animate(
                     CurvedAnimation(

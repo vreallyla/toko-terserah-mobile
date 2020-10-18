@@ -42,6 +42,7 @@ class QnAProductView extends StatelessWidget {
           content: Container(
             width: MediaQuery.of(context).size.width / 1.3,
             height: MediaQuery.of(context).size.height / 3,
+            padding: EdgeInsets.only(left:15,right:15),
             decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               color: const Color(0xFFFFFF),
@@ -64,7 +65,7 @@ class QnAProductView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             Text(
-                              'Ajukan',
+                              'AJUKAN PERTANYAAN',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18.0,
@@ -188,7 +189,7 @@ class QnAProductView extends StatelessWidget {
       return Column(
         children: [
           cardPertanyaan(
-              '${dataQnA[0]['user_id']}',
+              '${dataQnA[0]['user']}',
               '${diffForhumans(DateTime.parse(dataQnA[0]['created_at']))}',
               '${dataQnA[0]['tanya']}'),
           // Jawaban QNA

@@ -1,3 +1,4 @@
+import 'package:best_flutter_ui_templates/fitness_app/midtrans/midtrans_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -196,6 +197,14 @@ class FooterApp extends StatelessWidget {
                   ]),
             ),
             InkWell(
+              onTap: (){
+                 Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MidFlutterDemo(),
+                            )
+                            );
+              },
               child: Container(
                 height: 50,
                 color: Colors.green[300],
