@@ -1,6 +1,7 @@
 import 'package:best_flutter_ui_templates/model/register_model.dart';
 import 'package:flutter/material.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -152,7 +153,7 @@ class _CartListState extends State<CartList> {
    * Cutom Alert response
    * 
    */
-  showSnackBar(String value, Color color, Icon icons) {
+  showSnackBar(String value, Color color,  icons) {
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
@@ -173,10 +174,11 @@ class _CartListState extends State<CartList> {
   _checkCart() {
     if (_selecteCarts.length < 1) {
       showSnackBar("Item Keranjang belum dipilih", Colors.red,
-          Icon(Icons.close_outlined));
+          FaIcon(FontAwesomeIcons.timesCircle));
     } else {
       showSnackBar("Lanjut mas Semongko", Colors.green,
-          Icon(Icons.check_circle_outline));
+          FaIcon(FontAwesomeIcons.checkCircle));
+          Navigator.pushNamed(context, '/checkout');
     }
   }
 
