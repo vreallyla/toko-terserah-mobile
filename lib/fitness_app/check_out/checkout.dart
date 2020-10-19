@@ -1,12 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/fitness_app/check_out/product_detail_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/midtrans/midtrans_screen.dart';
+import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CheckOut extends StatefulWidget {
-  const CheckOut({Key key, this.animationController}) : super(key: key);
+  const CheckOut({Key key, this.idProducts}) : super(key: key);
 
-  final AnimationController animationController;
+  final List idProducts;
   @override
   _CheckOutState createState() => _CheckOutState();
 }
@@ -20,55 +27,92 @@ class NewItem {
 }
 
 class _CheckOutState extends State<CheckOut> {
-  List<NewItem> items = <NewItem>[
-    new NewItem(
-        false, 'Alamat Pengiriman', SizedBox(), new Icon(Icons.expand_more)),
-    new NewItem(
-        false, 'Opsi Pengiriman', SizedBox(), new Icon(Icons.expand_more)),
-    //give all your items here
-  ];
   PanelController _pc = new PanelController();
+
+  bool isConnect = true;
+  bool isLoading = false;
+  Map<String, dynamic> productDetail = {};
+
+  _getDataApi() async {
+    List data = [6, 11];
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await KeranjangModel.getCart(data).then((value) {
+          isLoading = false;
+
+          if (value.error) {
+          } else {
+            productDetail = json.decode(value.data);
+            setState(() {});
+          }
+        });
+      }
+    } on SocketException catch (_) {
+      // print('dasd');
+      isConnect = false;
+      isLoading = false;
+
+      setState(() {});
+    }
+  }
+
+  Widget noConnection() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 70),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Koneksi Terputus',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Periksa sambungan internet kamu',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                setState(() {
+                  // isLoading = true;
+                  isConnect = true;
+                  _getDataApi();
+                });
+              },
+              color: Colors.green,
+              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  // ignore: must_call_super
+  void initState() {
+    isLoading = true;
+    _getDataApi();
+  }
 
   ExpansionPanelList listcheckout;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    items = <NewItem>[
-      new NewItem(items[0].isExpanded, 'Alamat Pengiriman', DetailAlamat(),
-          new Icon(Icons.expand_more)),
-      new NewItem(items[1].isExpanded, 'Opsi Pengiriman', DetailPengiriman(),
-          new Icon(Icons.expand_more)),
-      //give all your items here
-    ];
     //final wh_ = MediaQuery.of(context).size;
-    listcheckout = ExpansionPanelList(
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          items[index].isExpanded = !isExpanded;
-          print(items[index].isExpanded);
-        });
-      },
-      children: items.map((NewItem item) {
-        return new ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            print(item.isExpanded);
-            return new ListTile(
-                title: new Text(
-              item.header,
-              textAlign: TextAlign.left,
-              style: new TextStyle(
-                fontSize: 18.0,
-                color: Colors.green,
-                fontWeight: FontWeight.w200,
-              ),
-            ));
-          },
-          isExpanded: item.isExpanded,
-          body: item.body,
-        );
-      }).toList(),
-    );
 
     return new Scaffold(
       appBar: AppBar(
@@ -91,78 +135,322 @@ class _CheckOutState extends State<CheckOut> {
         ],
       ),
       bottomNavigationBar: FooterApp(),
-      body: SlidingUpPanel(
-        boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(.4), blurRadius: 3.0)
-        ],
-       
-        minHeight: 60,
-        maxHeight: 220,
-        controller: _pc,
-      onPanelOpened: () {
-          // print(coba);
-      
-        },
-        onPanelClosed: () {
-          // print(coba);
-        },
-        panel: Center(
-          child: ApplyVoucher(),
-        ),
-        body: _body(),
-        collapsed: Row(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 25),
-            ),
-            SizedBox(
-              width: 18,
-              child: FaIcon(
-                FontAwesomeIcons.ticketAlt,
-                color: Colors.green,
-                size: 18,
+      body: isLoading
+          ? reqLoad()
+          : SlidingUpPanel(
+              boxShadow: [
+                BoxShadow(color: Colors.grey.withOpacity(.4), blurRadius: 3.0)
+              ],
+              minHeight: 60,
+              maxHeight: 220,
+              controller: _pc,
+              onPanelOpened: () {
+                // print(coba);
+              },
+              onPanelClosed: () {
+                // print(coba);
+              },
+              panel: Center(
+                child: ApplyVoucher(),
+              ),
+              body: _body(),
+              collapsed: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 25),
+                  ),
+                  SizedBox(
+                    width: 18,
+                    child: FaIcon(
+                      FontAwesomeIcons.ticketAlt,
+                      color: Colors.green,
+                      size: 18,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                  ),
+                  SizedBox(
+                      width: size.width - 223, child: Text('Voucher Diskon')),
+                  SizedBox(
+                    width: 150,
+                    child: RaisedButton(
+                      color: Colors.green,
+                      child: Text(
+                        "GUNAKAN VOUCHER",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 12, color: Colors.white),
+                      ),
+                      onPressed: () => _pc.open(),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 10),
-            ),
-            SizedBox(width: size.width - 223, child: Text('Voucher Diskon')),
-            SizedBox(
-              width: 150,
-              child: RaisedButton(
-                color: Colors.green,
-                child: Text(
-                  "GUNAKAN VOUCHER",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: Colors.white),
-                ),
-                onPressed: () => _pc.open(),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   Widget _body() {
-    return 
-      Container(
-        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child:
-
-      ListView(
+    return Container(
+      // padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: ListView(
         children: <Widget>[
           Container(
               child: Column(
-            children: [CardCart(), listcheckout],
+            children: [
+              CheckOutProductDetailView(product: productDetail),
+              ExpandableNotifier(
+                  child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: <Widget>[
+                    
+                      ScrollOnExpand(
+                        scrollOnExpand: true,
+                        scrollOnCollapse: true,
+                        child: ExpandablePanel(
+                          theme: const ExpandableThemeData(
+                            headerAlignment:
+                                ExpandablePanelHeaderAlignment.center,
+                            tapBodyToCollapse: true,
+                          ),
+                          header: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                "ExpandablePanel",
+                                style: Theme.of(context).textTheme.body2,
+                              )),
+                          collapsed: Text(
+                            'dasd',
+                            softWrap: true,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          expanded: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              for (var _ in Iterable.generate(5))
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      'dasd',
+                                      softWrap: true,
+                                      overflow: TextOverflow.fade,
+                                    )),
+                            ],
+                          ),
+                          builder: (_, collapsed, expanded) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 10),
+                              child: Expandable(
+                                collapsed: collapsed,
+                                expanded: expanded,
+                                theme: const ExpandableThemeData(
+                                    crossFadePoint: 0),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    
+                    ],
+                  ),
+                ),
+              ))
+           , ExpandableNotifier(
+                  child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: <Widget>[
+                    
+                      ScrollOnExpand(
+                        scrollOnExpand: true,
+                        scrollOnCollapse: true,
+                        child: ExpandablePanel(
+                          theme: const ExpandableThemeData(
+                            headerAlignment:
+                                ExpandablePanelHeaderAlignment.center,
+                            tapBodyToCollapse: true,
+                          ),
+                          header: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                "ExpandablePanel",
+                                style: Theme.of(context).textTheme.body2,
+                              )),
+                          collapsed: Text(
+                            'dasd',
+                            softWrap: true,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          expanded: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              for (var _ in Iterable.generate(5))
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      'dasd',
+                                      softWrap: true,
+                                      overflow: TextOverflow.fade,
+                                    )),
+                            ],
+                          ),
+                          builder: (_, collapsed, expanded) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 10),
+                              child: Expandable(
+                                collapsed: collapsed,
+                                expanded: expanded,
+                                theme: const ExpandableThemeData(
+                                    crossFadePoint: 0),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    
+                    ],
+                  ),
+                ),
+              ))
+            , ExpandableNotifier(
+                  child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: <Widget>[
+                    
+                      ScrollOnExpand(
+                        scrollOnExpand: true,
+                        scrollOnCollapse: true,
+                        child: ExpandablePanel(
+                          theme: const ExpandableThemeData(
+                            headerAlignment:
+                                ExpandablePanelHeaderAlignment.center,
+                            tapBodyToCollapse: true,
+                          ),
+                          header: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                "ExpandablePanel",
+                                style: Theme.of(context).textTheme.body2,
+                              )),
+                          collapsed: Text(
+                            'dasd',
+                            softWrap: true,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          expanded: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              for (var _ in Iterable.generate(5))
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      'dasd',
+                                      softWrap: true,
+                                      overflow: TextOverflow.fade,
+                                    )),
+                            ],
+                          ),
+                          builder: (_, collapsed, expanded) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 10),
+                              child: Expandable(
+                                collapsed: collapsed,
+                                expanded: expanded,
+                                theme: const ExpandableThemeData(
+                                    crossFadePoint: 0),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    
+                    ],
+                  ),
+                ),
+              ))
+            
+            , ExpandableNotifier(
+                  child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: <Widget>[
+                    
+                      ScrollOnExpand(
+                        scrollOnExpand: true,
+                        scrollOnCollapse: true,
+                        child: ExpandablePanel(
+                          theme: const ExpandableThemeData(
+                            headerAlignment:
+                                ExpandablePanelHeaderAlignment.center,
+                            tapBodyToCollapse: true,
+                          ),
+                          header: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text(
+                                "ExpandablePanel",
+                                style: Theme.of(context).textTheme.body2,
+                              )),
+                          collapsed: Text(
+                            'dasd',
+                            softWrap: true,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          expanded: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              for (var _ in Iterable.generate(5))
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: Text(
+                                      'dasd',
+                                      softWrap: true,
+                                      overflow: TextOverflow.fade,
+                                    )),
+                            ],
+                          ),
+                          builder: (_, collapsed, expanded) {
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 10),
+                              child: Expandable(
+                                collapsed: collapsed,
+                                expanded: expanded,
+                                theme: const ExpandableThemeData(
+                                    crossFadePoint: 0),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    
+                    ],
+                  ),
+                ),
+              ))
+           
+            ],
           )),
         ],
       ),
-
-      );
-       }
+    );
+  }
 }
 
 class FooterApp extends StatelessWidget {
@@ -197,13 +485,12 @@ class FooterApp extends StatelessWidget {
                   ]),
             ),
             InkWell(
-              onTap: (){
-                 Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MidFlutterDemo(),
-                            )
-                            );
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MidFlutterDemo(),
+                    ));
               },
               child: Container(
                 height: 50,
@@ -235,10 +522,9 @@ class ApplyVoucher extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(top: 25),
       height: 130,
-      padding: EdgeInsets.fromLTRB(10,0, 10, 15),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 15),
       decoration: BoxDecoration(
         color: Colors.white,
-       
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -365,29 +651,6 @@ class DetailAlamat extends StatelessWidget {
               maxLines: 4,
             ),
           ),
-          // Padding(
-          //   padding: EdgeInsets.fromLTRB(15, 0, 15, 15),
-          //   child: Row(
-          //     children: [
-          //       Text(
-          //         'Kota :',
-          //         style: TextStyle(
-          //           fontSize: 15,
-          //         ),
-          //         textAlign: TextAlign.start,
-          //         maxLines: 7,
-          //       ),
-          //       Text(
-          //         'Surabaya',
-          //         style: TextStyle(
-          //           fontSize: 15,
-          //         ),
-          //         textAlign: TextAlign.justify,
-          //         maxLines: 7,
-          //       ),
-          //     ],
-          //   ),
-          // ),
         ],
       ),
     );
@@ -466,213 +729,6 @@ class DetailPengiriman extends StatelessWidget {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class CardCart extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final sizeu = MediaQuery.of(context).size;
-
-    return Container(
-      height: sizeu.width / 2 - sizeu.width / 15,
-      padding: EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          bottomRight: Radius.circular(8.0),
-          bottomLeft: Radius.circular(8.0),
-          topLeft: Radius.circular(8.0),
-          topRight: Radius.circular(8.0),
-        ),
-        boxShadow: [
-          //background color of box
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 0.5, // soften the shadow
-            spreadRadius: .5, //extend the shadow
-            offset: Offset(
-              .5, // Move to right 10  horizontally
-              .5, // Move to bottom 10 Vertically
-            ),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(crossAxisAlignment: CrossAxisAlignment.start,
-              // mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                // Container(
-                //   width: 30,
-                //   height: sizeu.width / 4 / 1.5,
-                //   alignment: Alignment.topLeft,
-                //   // color: Colors.red,
-                //   child: Checkbox(
-                //     value: false,
-                //     onChanged: (value) {},
-                //     activeColor: Colors.green,
-                //     checkColor: Colors.white,
-                //     tristate: false,
-                //   ),
-                // ),
-                Container(
-                  height: sizeu.width / 4 / 1.5,
-                  width: sizeu.width / 4 / 1.5,
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(8.0),
-                      bottomLeft: Radius.circular(8.0),
-                      topLeft: Radius.circular(8.0),
-                      topRight: Radius.circular(8.0),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: sizeu.width / 3 - sizeu.width / 17,
-                  width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 30 - 30,
-                  // color: Colors.red,
-                  padding: EdgeInsets.only(left: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        alignment: Alignment.topLeft,
-                        width: sizeu.width - 50 - sizeu.width / 4 - 10,
-                        child: Text(
-                          'Ini Nama Barangnya tinggal diisi disini gak apa-apa kok :)',
-                          maxLines: 2,
-                          style: TextStyle(
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      Card(
-                        color: Colors.green[100],
-                        child: Container(
-                            margin: EdgeInsets.all(2),
-                            child: Text(
-                              'Grosir',
-                              style: TextStyle(
-                                color: Colors.green[800],
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            )),
-                      ),
-                      Container(
-                        alignment: Alignment.topLeft,
-                        width: sizeu.width - 50 - sizeu.width / 4 - 10,
-                        child: Text(
-                          'Rp 40.000',
-                          maxLines: 2,
-                          style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      // Row(
-                      //   children: [
-                      //     Card(
-                      //       color: Colors.red[100],
-                      //       child: Container(
-                      //           margin: EdgeInsets.all(2),
-                      //           child: Text(
-                      //             '-10%',
-                      //             style: TextStyle(
-                      //               color: Colors.red[800],
-                      //               fontWeight: FontWeight.bold,
-                      //               fontSize: 12,
-                      //             ),
-                      //           )),
-                      //     ),
-                      //     Text(
-                      //       'Rp50.000,00',
-                      //       style: TextStyle(
-                      //           fontSize: 15,
-                      //           decoration: TextDecoration.lineThrough),
-                      //       textAlign: TextAlign.left,
-                      //     ),
-                      //   ],
-                      // ),
-                    ],
-                  ),
-                ),
-              ]),
-          // Container(
-          //     height: (sizeu.width / 2 - sizeu.width / 15) -
-          //         30 -
-          //         (sizeu.width / 3 - sizeu.width / 17),
-          //     margin: EdgeInsets.only(left: sizeu.width / 4 / 1.5 + 30),
-          //     // color: Colors.yellow,
-          //     child: Row(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: <Widget>[
-          //         Container(
-          //           width: 20,
-          //           height: 30,
-          //           alignment: Alignment.topLeft,
-          //           margin: EdgeInsets.only(right: 15),
-          //           // color: Colors.red,
-          //           child: IconButton(
-          //             icon: Icon(Icons.delete),
-          //             onPressed: () {},
-          //             color: Colors.black54,
-          //           ),
-          //         ),
-          //         Container(
-          //           width: 20,
-          //           height: 30,
-          //           margin: EdgeInsets.only(right: 15),
-          //           alignment: Alignment.topLeft,
-          //           // color: Colors.yellow,
-          //           child: IconButton(
-          //             icon: Icon(Icons.favorite),
-          //             onPressed: () {},
-          //             color: Colors.black54,
-          //           ),
-          //         ),
-          //         Container(
-          //           padding: EdgeInsets.only(top: 5),
-          //           child: Row(
-          //             children: <Widget>[
-          //               ButtonTheme(
-          //                 padding: EdgeInsets.only(top: 0),
-          //                 minWidth: 10.0,
-          //                 height: 20.0,
-          //                 child: FlatButton(
-          //                   color: Colors.black26,
-          //                   onPressed: () {},
-          //                   child: Icon(Icons.remove),
-          //                 ),
-          //               ),
-          //               SizedBox(
-          //                 width: 30,
-          //                 child: TextField(
-          //                   textAlign: TextAlign.center,
-          //                   controller: TextEditingController()..text = '1',
-          //                   onChanged: (text) => {},
-          //                 ),
-          //               ),
-          //               ButtonTheme(
-          //                 padding: EdgeInsets.only(top: 0),
-          //                 minWidth: 10.0,
-          //                 height: 20.0,
-          //                 child: FlatButton(
-          //                   color: Colors.black26,
-          //                   onPressed: () {},
-          //                   child: Icon(Icons.add),
-          //                 ),
-          //               ),
-          //             ],
-          //           ),
-          //         )
-          //       ],
-          //     )),
         ],
       ),
     );

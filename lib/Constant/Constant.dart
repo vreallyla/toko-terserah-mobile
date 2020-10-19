@@ -18,6 +18,7 @@ String locationAva='storage/users/ava/';
 String locationBgPhoto='storage/users/background/';
 String locationProductImage='storage/produk/thumb/';
 String locationBannerImage="storage/banner/";
+
 // String locationProductImage="storage/produk/thumb/";
 
 //asset
