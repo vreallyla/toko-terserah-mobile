@@ -33,55 +33,6 @@ var dataKecamatan;
 List dataJenisAlamat;
 List dataKota;
 String ishapus = "n";
-confirmHapus(BuildContext context, idx) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Konfirmasi'),
-        content: Text("Apakah anda yakin ingin menghapus data ini ?"),
-        actions: <Widget>[
-          FlatButton(
-            child: Text("Ya"),
-            onPressed: () async {
-              ishapus = "y";
-              print("https://tokoterserah.com/" +
-                  "api/address/delete/" +
-                  idx.toString());
-              print(tokenFixed);
-              Response response = await http.post(
-                  "https://tokoterserah.com/" +
-                      "api/address/delete/" +
-                      idx.toString(),
-                  headers: {
-                    "Accept": "application/json",
-                    "Authorization":
-                        "Bearer " + (tokenFixed != null ? tokenFixed : '')
-                  });
-              //AlamatList._getUser
-              // var temprespon;
-              // temprespon = await jsonDecode(response.body.toString());
-              // if (temprespon != null) {
-              //   dataUserDefault = temprespon["data"];
-              // }
-              //   dataUserDefault.removeAt(idx);
-              alamatlist.getuser();
-
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            child: Text("Tidak"),
-            onPressed: () {
-              //Put your code here which you want to execute on No button click.
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
 
 void showAlertDialog(BuildContext context, idx) {
   TextEditingController _namaController = new TextEditingController();
@@ -367,12 +318,15 @@ class _AlamatListState extends State<AlamatList> {
   String diff;
 
   void _getUser() async {
+    await Future<dynamic>.delayed(const Duration(milliseconds: 50));
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (ishapus == "y") {
-      prefs.reload();
+      await prefs.reload();
     }
+
     tokenFixed = prefs.getString('token');
     dataUser = prefs.getString('dataUser');
+    print(prefs.getString('dataUser'));
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
       print(dataUser['user']['get_alamat']);
@@ -388,6 +342,63 @@ class _AlamatListState extends State<AlamatList> {
     _getUser();
 
     super.initState();
+  }
+
+  confirmHapus(BuildContext context, idx) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text("Apakah anda yakin ingin menghapus data ini ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Ya"),
+              onPressed: () async {
+                ishapus = "y";
+                print("https://tokoterserah.com/" +
+                    "api/address/delete/" +
+                    idx.toString());
+                print(tokenFixed);
+                Response response = await http.post(
+                    "https://tokoterserah.com/" +
+                        "api/address/delete/" +
+                        idx.toString(),
+                    headers: {
+                      "Accept": "application/json",
+                      "Authorization":
+                          "Bearer " + (tokenFixed != null ? tokenFixed : '')
+                    });
+                var tempData;
+
+                Response responsetemp = await http.get(
+                    globalBaseUrl +
+                        "api/address?user_id=" +
+                        dataUserDefault[0]["user_id"].toString(),
+                    headers: {
+                      "Accept": "application/json",
+                      "Authorization":
+                          "Bearer " + (tokenFixed != null ? tokenFixed : '')
+                    });
+                tempData = await jsonDecode(responsetemp.body.toString());
+                if (tempData != null) {
+                  dataUserDefault = tempData["data"]["address"];
+                }
+                alamatlist.getuser();
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text("Tidak"),
+              onPressed: () {
+                //Put your code here which you want to execute on No button click.
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -417,8 +428,24 @@ class _AlamatListState extends State<AlamatList> {
                 child: RaisedButton(
                   onPressed: () => Navigator.pushNamed(context, '/inputalamat',
                           arguments: null)
-                      .then((value) {
-                    _getUser();
+                      .then((value) async {
+                    // _getUser();
+                    var tempData;
+
+                    Response responsetemp = await http.get(
+                        globalBaseUrl +
+                            "api/address?user_id=" +
+                            dataUserDefault[0]["user_id"].toString(),
+                        headers: {
+                          "Accept": "application/json",
+                          "Authorization":
+                              "Bearer " + (tokenFixed != null ? tokenFixed : '')
+                        });
+                    tempData = await jsonDecode(responsetemp.body.toString());
+                    if (tempData != null) {
+                      dataUserDefault = tempData["data"]["address"];
+                    }
+
                     setState(() {
                       // refresh state
                     });
@@ -514,12 +541,33 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                                 "Authorization": "Bearer " +
                                     (tokenFixed != null ? tokenFixed : '')
                               });
+                          var tempData;
+
+                          Response responsetemp = await http.get(
+                              globalBaseUrl +
+                                  "api/address?user_id=" +
+                                  dataUserDefault[0]["user_id"].toString(),
+                              headers: {
+                                "Accept": "application/json",
+                                "Authorization": "Bearer " +
+                                    (tokenFixed != null ? tokenFixed : '')
+                              });
+                          tempData =
+                              await jsonDecode(responsetemp.body.toString());
+                          if (tempData != null) {
+                            dataUserDefault = tempData["data"]["address"];
+                          }
+
+                          setState(() {
+                            // refresh state
+                          });
                           // var temprespon;
                           // temprespon =
                           //     await jsonDecode(response.body.toString());
                           // if (temprespon != null) {
                           //   dataUserDefault = temprespon["data"];
                           // }
+
                           Navigator.of(context).pop();
                         },
                         child: Row(
@@ -701,17 +749,26 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                                   context, '/inputalamat',
                                   arguments: dataUserDefault[index])
                               .then((value) async {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            prefs.reload();
-                            tokenFixed = prefs.getString('token');
-                            dataUser = prefs.getString('dataUser');
-                            if (dataUser != null) {
-                              dataUser = await jsonDecode(dataUser);
-                              print(dataUser['user']['get_alamat']);
-                              dataUserDefault = dataUser['user']['get_alamat'];
+                            var tempData;
+
+                            Response responsetemp = await http.get(
+                                globalBaseUrl +
+                                    "api/address?user_id=" +
+                                    dataUserDefault[0]["user_id"].toString(),
+                                headers: {
+                                  "Accept": "application/json",
+                                  "Authorization": "Bearer " +
+                                      (tokenFixed != null ? tokenFixed : '')
+                                });
+                            tempData =
+                                await jsonDecode(responsetemp.body.toString());
+                            if (tempData != null) {
+                              dataUserDefault = tempData["data"]["address"];
                             }
-                            setState(() {});
+
+                            setState(() {
+                              // refresh state
+                            });
                           }),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -734,8 +791,70 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                           alignment: Alignment.center,
                           width: (size.width - 40) / 2,
                           child: InkWell(
-                            onTap: () => confirmHapus(
-                                context, dataUserDefault[index]["id"]),
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Konfirmasi'),
+                                  content: Text(
+                                      "Apakah anda yakin ingin menghapus data ini ?"),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      child: Text("Ya"),
+                                      onPressed: () async {
+                                        ishapus = "y";
+                                        print("https://tokoterserah.com/" +
+                                            "api/address/delete/" +
+                                            dataUserDefault[index]["id"]
+                                                .toString());
+                                        print(tokenFixed);
+                                        Response response = await http.post(
+                                            "https://tokoterserah.com/" +
+                                                "api/address/delete/" +
+                                                dataUserDefault[index]["id"]
+                                                    .toString(),
+                                            headers: {
+                                              "Accept": "application/json",
+                                              "Authorization": "Bearer " +
+                                                  (tokenFixed != null
+                                                      ? tokenFixed
+                                                      : '')
+                                            });
+                                        var tempData;
+
+                                        Response responsetemp = await http.get(
+                                            globalBaseUrl +
+                                                "api/address?user_id=" +
+                                                dataUserDefault[0]["user_id"]
+                                                    .toString(),
+                                            headers: {
+                                              "Accept": "application/json",
+                                              "Authorization": "Bearer " +
+                                                  (tokenFixed != null
+                                                      ? tokenFixed
+                                                      : '')
+                                            });
+                                        tempData = await jsonDecode(
+                                            responsetemp.body.toString());
+                                        if (tempData != null) {
+                                          dataUserDefault =
+                                              tempData["data"]["address"];
+                                        }
+                                        setState(() {});
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("Tidak"),
+                                      onPressed: () {
+                                        //Put your code here which you want to execute on No button click.
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
