@@ -52,8 +52,6 @@ dependencies:
   flutter_html: ^1.0.0
   sliding_up_panel: ^1.0.2
   url_launcher: ^5.7.5
-  mid_flutter: ^0.0.2
-  
 
 dev_dependencies:
   flutter_test:
