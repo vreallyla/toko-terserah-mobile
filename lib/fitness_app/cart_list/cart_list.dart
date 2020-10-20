@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -29,6 +30,8 @@ class _CartListState extends State<CartList> {
   int _total = 0;
 
   String _token;
+
+  final formatter = new NumberFormat("#,###");
 
   Future _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -292,6 +295,10 @@ class _CartListState extends State<CartList> {
                   height: sizeu.width / 4 / 1.5,
                   width: sizeu.width / 4 / 1.5,
                   decoration: BoxDecoration(
+                    image: new DecorationImage(
+                                      image: NetworkImage(globalBaseUrl +locationProductImage + _listCart[i]['get_produk']['gambar'] ??
+                                          'https://via.placeholder.com/300'),
+                                      fit: BoxFit.cover),
                     color: Colors.black26,
                     borderRadius: const BorderRadius.only(
                       bottomRight: Radius.circular(8.0),
@@ -337,7 +344,7 @@ class _CartListState extends State<CartList> {
                         alignment: Alignment.topLeft,
                         width: sizeu.width - 50 - sizeu.width / 4 - 10,
                         child: Text(
-                          'Rp ${_listCart[i]['total']}',
+                          'Rp ${formatter.format(int.parse(_listCart[i]['total']))}',
                           maxLines: 2,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
@@ -470,7 +477,7 @@ class _CartListState extends State<CartList> {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      'Rp ${_total}',
+                      'Rp ${formatter.format(_total)}',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 16,
