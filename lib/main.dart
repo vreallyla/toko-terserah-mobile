@@ -21,6 +21,7 @@ import 'fitness_app/transaksi_detail/transaksi_detail_screen.dart';
 import 'fitness_app/profil_detail/profile_detail_screen.dart';
 import 'fitness_app/traning/alamat_list.dart';
 import 'fitness_app/traning/input_alamat.dart';
+import 'SplashScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
-        '/': (context) => FitnessAppHomeScreen(),
+        '/home': (context) => FitnessAppHomeScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/produk': (context) => ProductDetail(),
         '/produk2': (context) => ProductDetail2(),
@@ -74,7 +75,7 @@ class MyApp extends StatelessWidget {
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.android,
       ),
-      //home: FitnessAppHomeScreen(),
+      home: SplashScreen(),
     );
   }
 }

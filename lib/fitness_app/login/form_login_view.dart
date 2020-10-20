@@ -116,7 +116,7 @@ class _FormLoginViewState extends State<FormLoginView> {
                     if(!value.error){
                       // Navigator.pop(context,jsonEncode({"load":true}));
                       Navigator.of(context)
-    .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false,arguments: {"after_login":true});
+    .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false,arguments: {"after_login":true});
                       
                     }else{
                       loginModel = value;

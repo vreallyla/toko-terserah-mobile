@@ -220,7 +220,7 @@ class _TrainingScreenState extends State<TrainingScreen>
                                           });
                                         }
                                         Navigator.of(context)
-                                            .pushNamedAndRemoveUntil('/',
+                                            .pushNamedAndRemoveUntil('/home',
                                                 (Route<dynamic> route) => false,
                                                 arguments: {
                                               "after_logout": true
