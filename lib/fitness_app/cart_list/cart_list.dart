@@ -69,6 +69,34 @@ class _CartListState extends State<CartList> {
   }
 
   /**
+   * Delete Selected Cart Item
+   * 
+   */
+  _deleteCart(id) async {
+    try {
+      var response = await http.post(
+          globalBaseUrl + globalPathCart + 'delete_cart',
+          body: {"id": id.toString()},
+          headers: {"Authorization": "Bearer " + _token});
+
+      var _response = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        setState(() {
+          isLoading = true;
+        });
+        _getData();
+        showSnackBar(_response['data']['message'], Colors.green,
+            Icon(Icons.check_circle_outline));
+      } else {
+        showSnackBar(
+            _response['data']['message'], Colors.red, Icon(Icons.close));
+      }
+    } catch (e) {
+      showSnackBar(e.toString(), Colors.red, Icon(Icons.close));
+    }
+  }
+
+  /**
    * Set Check box active or not by cart_id
    * 
    */
@@ -126,7 +154,7 @@ class _CartListState extends State<CartList> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Konfirmasi'),
-          content: Text("Apakah anda yakin ingin menghapus data ini ?"),
+          content: Text("Apakah anda yakin ingin menghapus item ini ?"),
           actions: <Widget>[
             FlatButton(
               child: Text(
@@ -135,8 +163,8 @@ class _CartListState extends State<CartList> {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
-                showSnackBar("Lanjut mas Semongko", Colors.green,
-                    Icon(Icons.check_circle_outline));
+
+                _deleteCart(id);
               },
             ),
             FlatButton(
@@ -296,9 +324,11 @@ class _CartListState extends State<CartList> {
                   width: sizeu.width / 4 / 1.5,
                   decoration: BoxDecoration(
                     image: new DecorationImage(
-                                      image: NetworkImage(globalBaseUrl +locationProductImage + _listCart[i]['get_produk']['gambar'] ??
-                                          'https://via.placeholder.com/300'),
-                                      fit: BoxFit.cover),
+                        image: NetworkImage(globalBaseUrl +
+                                locationProductImage +
+                                _listCart[i]['get_produk']['gambar'] ??
+                            'https://via.placeholder.com/300'),
+                        fit: BoxFit.cover),
                     color: Colors.black26,
                     borderRadius: const BorderRadius.only(
                       bottomRight: Radius.circular(8.0),
@@ -372,7 +402,7 @@ class _CartListState extends State<CartList> {
                     child: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        confirmHapus(context, _listCart[i]['qty']);
+                        confirmHapus(context, _listCart[i]['id']);
                       },
                       color: Colors.black54,
                     ),
