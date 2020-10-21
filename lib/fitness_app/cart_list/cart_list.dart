@@ -69,6 +69,30 @@ class _CartListState extends State<CartList> {
   }
 
   /**
+   * increase decrease qty item
+   * 
+   */
+  _changeQty(id, qty) async {
+    try {
+      //do something
+      var response = await http.post(globalBaseUrl + 'api/cart/update_cart',
+          body: {
+            "id": id.toString(),
+            "qty": qty.toString()},
+          headers: {"Authorization": "Bearer " + _token});
+          var _response = json.decode(response.body);
+          
+    } on SocketException catch (_) {
+      //catch Socket error
+      isConnect = false;
+      isLoading = false;
+      setState(() {});
+    } catch (e) {
+      //catch any error
+    }
+  }
+
+  /**
    * Delete Selected Cart Item
    * 
    */
