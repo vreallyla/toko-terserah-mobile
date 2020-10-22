@@ -7,11 +7,15 @@ import 'pertanyaan_detail.dart' as detail;
 
 class QnAProductView extends StatelessWidget {
   final List<dynamic> dataQnA;
+  Function(String) callback;
+  final String token;
 
   QnAProductView({
     Key key,
     /*@required*/
     this.dataQnA,
+    this.callback,
+    this.token
   }) : super(key: key);
 
   void showAlertDialog(BuildContext context) {
@@ -19,13 +23,16 @@ class QnAProductView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        final emailField = TextFormField(
+        final emailField = TextField(
           maxLines: 5,
           controller: _emailController,
           keyboardType: TextInputType.multiline,
           style: TextStyle(
             color: Colors.black,
           ),
+          onSubmitted: (value){
+              callback(value.toString());
+          },
           decoration: InputDecoration(
             hintText: 'Pertanyaan',
             labelText: 'Ajukan Pertanyaan Anda :',
@@ -53,7 +60,10 @@ class QnAProductView extends StatelessWidget {
               children: <Widget>[
                 emailField,
                 MaterialButton(
-                  onPressed: () {},
+                  onPressed: () {
+                      callback(_emailController.text);
+                        Navigator.of(context).pop();
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / 12,

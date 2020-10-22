@@ -9,10 +9,15 @@ import 'package:best_flutter_ui_templates/fitness_app/produk_detail/review_produ
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/titlenprice_product_view.dart';
 import 'package:best_flutter_ui_templates/model/product_model.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
 
 import 'CustomShowDialog.dart';
 import 'carousel_product_view.dart';
 import 'cart_card_view.dart';
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 
 class ProductDetail2 extends StatefulWidget {
   const ProductDetail2({Key key, this.productId = ''}) : super(key: key);
@@ -60,7 +65,26 @@ class _ProductDetail2State extends State<ProductDetail2>
   //jml cart
   int jmlCart = 0;
 
+  //
+  String qna = 'Hello', _token;
+
+  //Key untuk menumculkan snackbar
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  //simpan data user
+  var dataUser;
+
   _addCart(int qty) async {}
+
+  Future _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print(_token);
+    setState(() {
+      _token = prefs.getString('token');
+      dataUser = jsonDecode(prefs.getString('dataUser'));
+    });
+    print(dataUser['user']['id']);
+  }
 
   void showAddDialog(BuildContext context) {
     showDialog(
@@ -158,59 +182,80 @@ class _ProductDetail2State extends State<ProductDetail2>
     }
   }
 
-  Widget noConnection() {
-    return Container(
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(top: 70),
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.center,
-            height: 160,
-            width: 160,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/fitness_app/not_found.gif'),
-                fit: BoxFit.fitHeight,
-              ),
-            ),
-            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-          ),
-          Text(
-            'Koneksi Terputus',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-          ),
-          Text('Periksa sambungan internet kamu',
-              style: TextStyle(color: Colors.black54)),
-          Container(
-            margin: EdgeInsets.only(top: 15),
-            child: RaisedButton(
-              onPressed: () {
-                setState(() {
-                  // isLoading = true;
-                  isConnect = true;
-                  _getDataApi();
-                });
-              },
-              color: Colors.green,
-              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
-            ),
-          )
-        ],
-      ),
-    );
+  _submitQna(newAbc) async {
+    try {
+      if (_token != null) {
+        if (newAbc == null || newAbc == '') {
+          //if parameter null
+
+          showSnackBar("Silahkan isi kolom pertanyaannya dulu Sob", Colors.red,
+              FaIcon(FontAwesomeIcons.timesCircle));
+        } else {
+         
+          var response =
+              await http.post(globalBaseUrl + globalPathProduct + 'qna', body: {
+            'user_id': dataUser['user']['id'].toString(),
+            'produk_id': widget.productId,
+            'tanya': newAbc
+          }, headers: {
+            "Authorization": "Bearer " + _token
+          });
+          var _response = json.decode(response.body);
+           showSnackBar(_response['data']['message'],
+              Colors.green, Icon(Icons.announcement_outlined));
+        }
+
+        setState(() {
+        
+        });
+        _getDataApi();
+      } else {
+        showSnackBar("Silahhkan Login Sob untuk bertanya", Colors.red,
+            FaIcon(FontAwesomeIcons.timesCircle));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   // ignore: must_call_super
   void initState() {
     idProduct = widget.productId;
-    _getDataApi();
+    _getToken();
+    Future.delayed(Duration(seconds: 1), () {
+      _getDataApi();
+    });
     Future.delayed(Duration(seconds: 1), () {
       addAllListData();
     });
   }
 
+  /**
+   * Cutom Alert response
+   * 
+   */
+  showSnackBar(String value, Color color, icons) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: Row(
+        children: <Widget>[
+          icons,
+          SizedBox(
+            width: 20,
+          ),
+          Text(value)
+        ],
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+/**
+ * Add view to list 
+ */
   void addAllListData() {
     listViews = [];
 
@@ -235,12 +280,17 @@ class _ProductDetail2State extends State<ProductDetail2>
       ));
     }
 
-    listViews.add(QnAProductView(dataQnA: qnAData));
+    listViews.add(QnAProductView(
+      dataQnA: qnAData,
+      callback: _submitQna,
+      token: _token,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(70.0),
           child: HeaderPage(countCard: jmlCart)),
@@ -300,6 +350,49 @@ class _ProductDetail2State extends State<ProductDetail2>
         child: ListView(
           children: listViews,
         ),
+      ),
+    );
+  }
+
+  Widget noConnection() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 70),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Koneksi Terputus',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Periksa sambungan internet kamu',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                setState(() {
+                  // isLoading = true;
+                  isConnect = true;
+                  _getDataApi();
+                });
+              },
+              color: Colors.green,
+              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
       ),
     );
   }
