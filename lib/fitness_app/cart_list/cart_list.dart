@@ -39,18 +39,19 @@ class _CartListState extends State<CartList> {
     setState(() {
       _token = prefs.getString('token');
     });
-    log(_token);
   }
 
   _getData() async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        var response = await http.get(globalBaseUrl + 'api/cart',
-            headers: {"Authorization": "Bearer " + _token});
-        var _response = json.decode(response.body);
+      if (_token != null) {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          var response = await http.get(globalBaseUrl + 'api/cart',
+              headers: {"Authorization": "Bearer " + _token});
+          var _response = json.decode(response.body);
 
-        _listCart = _response['data']['produk'];
+          _listCart = _response['data']['produk'];
+        }
         setState(() {
           isLoading = false;
         });
@@ -76,12 +77,9 @@ class _CartListState extends State<CartList> {
     try {
       //do something
       var response = await http.post(globalBaseUrl + 'api/cart/update_cart',
-          body: {
-            "id": id.toString(),
-            "qty": qty.toString()},
+          body: {"id": id.toString(), "qty": qty.toString()},
           headers: {"Authorization": "Bearer " + _token});
-          var _response = json.decode(response.body);
-          
+      var _response = json.decode(response.body);
     } on SocketException catch (_) {
       //catch Socket error
       isConnect = false;
@@ -272,26 +270,114 @@ class _CartListState extends State<CartList> {
           // )
         ],
       ),
-      bottomNavigationBar: footer(context),
-      body: isLoading
-          ? reqLoad()
-          : Container(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _listCart.length == null ? 0 : _listCart.length,
-                  itemBuilder: (context, i) {
-                    return Column(
-                      children: [
-                        cardKerangjang(context, i),
-                        SizedBox(
-                          height: 20,
-                        )
-                      ],
-                    );
-                  })),
+      bottomNavigationBar:footer(context),
+      body: (_token == null
+          ? noLogin()
+          : (!isConnect
+              ? noConnection()
+              : (!isLoading ? mainContainter(context) : reqLoad()))),
     );
+  }
+
+  Widget noLogin() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 120),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Maaf Sob',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Silahkan login untuk menggunakan fitur ini',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              color: Colors.green,
+              child: Text('Login', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget noConnection() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 120),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Koneksi Terputus',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Periksa sambungan internet kamu',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                setState(() {
+                  isLoading = true;
+                  isConnect = true;
+                  _getData();
+                });
+              },
+              color: Colors.green,
+              child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget mainContainter(context) {
+    return Container(
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: _listCart.length == null ? 0 : _listCart.length,
+            itemBuilder: (context, i) {
+              return Column(
+                children: [
+                  cardKerangjang(context, i),
+                  SizedBox(
+                    height: 20,
+                  )
+                ],
+              );
+            }));
   }
 
   Widget cardKerangjang(context, i) {
