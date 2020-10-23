@@ -40,7 +40,8 @@ class WishlistModel {
 
     String apiURL = globalBaseUrl +  "api/wish"+(q.length>0 ? '?q='+ q : '');
 
-    print(apiURL);
+    print(tokenFixed);
+    print('asd');
 
     try {
       var apiResult = await http.get(apiURL, headers: {
@@ -50,7 +51,7 @@ class WishlistModel {
 
       print('data wishlist status code : ' + apiResult.statusCode.toString());
 
-      // print(json.decode(apiResult.body));
+      print(apiResult.statusCode);
 
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);

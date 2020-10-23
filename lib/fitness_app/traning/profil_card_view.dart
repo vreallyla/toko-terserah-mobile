@@ -319,9 +319,9 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   false),
               cardIconProgress(
                   colProgress,
-                  'Beri Ranting',
+                  'Selesai',
                   FaIcon(
-                    FontAwesomeIcons.solidStar,
+                    FontAwesomeIcons.solidHandshake,
                     color: Colors.grey,
                     size: 18,
                   ),

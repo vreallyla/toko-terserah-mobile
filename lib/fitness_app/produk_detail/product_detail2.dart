@@ -81,9 +81,12 @@ class _ProductDetail2State extends State<ProductDetail2>
     // print(_token);
     setState(() {
       _token = prefs.getString('token');
-      dataUser = jsonDecode(prefs.getString('dataUser'));
+      if(_token != null){
+          dataUser = jsonDecode(prefs.getString('dataUser'));
+      }
+    
     });
-    print(dataUser['user']['id']);
+    
   }
 
   void showAddDialog(BuildContext context) {
@@ -198,11 +201,11 @@ class _ProductDetail2State extends State<ProductDetail2>
             'produk_id': widget.productId,
             'tanya': newAbc
           }, headers: {
-            "Authorization": "Bearer " + _token
+            "Authorization": "Bearer " + null
           });
           var _response = json.decode(response.body);
            showSnackBar(_response['data']['message'],
-              Colors.green, Icon(Icons.announcement_outlined));
+              Colors.green, Icon(Icons.announcement));
         }
 
         setState(() {

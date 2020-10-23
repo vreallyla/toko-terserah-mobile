@@ -34,7 +34,8 @@ class _CheckOutState extends State<CheckOut> {
   Map<String, dynamic> productDetail = {};
 
   _getDataApi() async {
-    List data = [6, 11];
+    List data = [ 15];
+    print(data);
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -45,6 +46,7 @@ class _CheckOutState extends State<CheckOut> {
           } else {
             productDetail = json.decode(value.data);
             setState(() {});
+            // print('hello');
           }
         });
       }

@@ -56,6 +56,7 @@ class _WishlistScreenState extends State<WishlistScreen>
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await WishlistModel.getWish(searchInput.text).then((value) {
+          print(value.error);
           if (value.error) {
             isLogin = false;
           }

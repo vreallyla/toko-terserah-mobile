@@ -52,11 +52,8 @@ dependencies:
   flutter_html: ^1.0.0
   sliding_up_panel: ^1.0.2
   url_launcher: ^5.7.5
-<<<<<<< HEAD
   # mid_flutter: ^0.0.2
   
-=======
->>>>>>> 8efea75320c7e4dd40c56d56ebae3c8bfc52ae7a
 
 dev_dependencies:
   flutter_test:
