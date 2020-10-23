@@ -14,6 +14,7 @@ class ItemWishlistView extends StatefulWidget {
       this.mainScreenAnimationController,
       this.mainScreenAnimation,
       this.countWishlist,
+      this.functAddCart,
       this.dataWishlist})
       : super(key: key);
 
@@ -21,6 +22,7 @@ class ItemWishlistView extends StatefulWidget {
   final Animation<dynamic> mainScreenAnimation;
   final int countWishlist;
   final List dataWishlist;
+  final Function(String id, String qty) functAddCart;
 
   @override
   _ItemWishlistViewState createState() => _ItemWishlistViewState();
@@ -117,6 +119,9 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
                               animationController.forward();
 
                               return MealsView(removeWishlishCard,
+                                  functAddCarts: (id, qty) {
+                                widget.functAddCart(id, qty);
+                              },
                                   loadWishlist: loadWishlist[index],
                                   animation: animation,
                                   animationController: animationController,
@@ -137,6 +142,7 @@ class MealsView extends StatelessWidget {
       {Key key,
       this.loadWishlist,
       this.animationController,
+      this.functAddCarts,
       this.animation,
       this.index})
       : super(key: key);
@@ -146,6 +152,8 @@ class MealsView extends StatelessWidget {
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final Function(int iCard, int iDB) removeWishlishCard;
+  final Function(String id, String qty) functAddCarts;
+
   // print(this
 
   @override
@@ -369,8 +377,7 @@ class MealsView extends StatelessWidget {
                                               style: TextStyle(
                                                   fontSize: product[
                                                                   'is_diskon'] !=
-                                                              0 
-                                                              ||
+                                                              0 ||
                                                           product['isDiskonGrosir'] !=
                                                               0
                                                       ? 15
@@ -409,7 +416,9 @@ class MealsView extends StatelessWidget {
                                       color: Colors.white,
                                       width: sizeu.width - 50 - 80,
                                       child: RaisedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          functAddCarts(product['id'].toString(), '1');
+                                        },
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(4)),
@@ -524,11 +533,15 @@ class MealsView extends StatelessWidget {
                                                                         .green,
                                                                     onPressed:
                                                                         () {
-                                                                          Navigator.pop(
+                                                                      Navigator.pop(
                                                                           context);
                                                                       removeWishlishCard(
-                                                                          index, loadWishlist['id']);
-                                                                      print('hapus wishlist '+ loadWishlist['id'].toString());
+                                                                          index,
+                                                                          loadWishlist[
+                                                                              'id']);
+                                                                      print('hapus wishlist ' +
+                                                                          loadWishlist['id']
+                                                                              .toString());
                                                                     },
                                                                   ),
                                                                   Spacer(

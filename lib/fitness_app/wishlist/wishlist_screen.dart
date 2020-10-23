@@ -4,6 +4,7 @@ import 'dart:io';
 
 // import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,14 +42,15 @@ class _WishlistScreenState extends State<WishlistScreen>
     var resWishlist = prefs.getString('dataWishlist');
     // print(resWishlist);
 
-    if (resWishlist != null) {
+    if (resWishlist != null && isLogin) {
       isLoading = false;
       dataTest = json.decode(resWishlist)['data'];
       // print('dasd');
       // print(dataTest);
-      addAllListData();
-      setState(() {});
-    } else {}
+
+    }
+    addAllListData();
+    setState(() {});
   }
 
   _getDataApi() async {
@@ -57,11 +59,13 @@ class _WishlistScreenState extends State<WishlistScreen>
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await WishlistModel.getWish(searchInput.text).then((value) {
           print(value.error);
+          print('a');
           if (value.error) {
             isLogin = false;
+            setState(() {});
           }
+          isLoading = false;
           _setData();
-          print(value.data);
         });
       }
     } on SocketException catch (_) {
@@ -71,6 +75,69 @@ class _WishlistScreenState extends State<WishlistScreen>
       addAllListData();
       setState(() {});
     }
+  }
+
+  _addCartApi(String id, String qty) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await KeranjangModel.addCart(id, qty).then((value) {
+          print(value.data);
+
+          if (value.error) {
+            isLogin = false;
+            setState(() {
+              addAllListData();
+            });
+          }
+        });
+      }
+    } on SocketException catch (_) {
+      // print('dasd');
+      isConnect = false;
+      isLoading = false;
+      addAllListData();
+      setState(() {});
+    }
+  }
+
+  Widget noLogin() {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 80),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            'Maaf Sob',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text('Silahkan login untuk menggunakan fitur ini',
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              color: Colors.green,
+              child: Text('Login', style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget noConnection() {
@@ -209,12 +276,14 @@ class _WishlistScreenState extends State<WishlistScreen>
         ),
       ),
     ));
-    if(!isConnect){
+    if (!isConnect) {
       listViews.add(noConnection());
     }
     //loading
     else if (isLoading) {
       listViews.add(reqLoad());
+    } else if (!isLogin) {
+      listViews.add(noLogin());
     } else if (dataTest.length == 0) {
       listViews.add(dataKosong());
     }
@@ -222,6 +291,9 @@ class _WishlistScreenState extends State<WishlistScreen>
     else {
       listViews.add(
         ItemWishlistView(
+          functAddCart: (String id, String qty) {
+            _addCartApi(id, qty);
+          },
           mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                   parent: widget.animationController,
