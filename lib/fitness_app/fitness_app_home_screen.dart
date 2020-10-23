@@ -18,6 +18,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
   AnimationController animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
+  int qtyCart=0;
 
   Widget tabBody = Container(
     color: FintnessAppTheme.background,
@@ -118,6 +119,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
           child: SizedBox(),
         ),
         BottomBarView(
+          addQtyCart:qtyCart,
           tabIconsList: tabIconsList,
           addClick: () {},
           changeIndex: (int index) {
@@ -159,7 +161,12 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      WishlistScreen(animationController: animationController);
+                      WishlistScreen(animationController: animationController,funcChangeCartQty:(int qty){
+                        qtyCart=qty;
+                        setState(() {
+                          
+                        });
+                      });
                 });
               });
             } else if (index == 3) {

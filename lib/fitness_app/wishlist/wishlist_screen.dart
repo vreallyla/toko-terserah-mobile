@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 // import 'dart:developer';
 import 'dart:io';
@@ -13,9 +14,13 @@ import '../fintness_app_theme.dart';
 import './item_wishlist_view.dart';
 
 class WishlistScreen extends StatefulWidget {
-  const WishlistScreen({Key key, this.animationController}) : super(key: key);
+  const WishlistScreen(
+      {Key key, this.animationController, this.funcChangeCartQty})
+      : super(key: key);
 
   final AnimationController animationController;
+  final Function(int qty) funcChangeCartQty;
+  // final AnimationController animationController;
   @override
   _WishlistScreenState createState() => _WishlistScreenState();
 }
@@ -31,6 +36,8 @@ class _WishlistScreenState extends State<WishlistScreen>
   bool isLogin = true;
   bool isConnect = true;
   bool isLoading = true;
+  bool isLoading2 = false;
+  Timer _timer;
   TextEditingController searchInput = new TextEditingController();
 
   double topBarOpacity = 0.0;
@@ -59,12 +66,13 @@ class _WishlistScreenState extends State<WishlistScreen>
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await WishlistModel.getWish(searchInput.text).then((value) {
           print(value.error);
-          print('a');
+
           if (value.error) {
             isLogin = false;
             setState(() {});
           }
           isLoading = false;
+
           _setData();
         });
       }
@@ -78,22 +86,90 @@ class _WishlistScreenState extends State<WishlistScreen>
   }
 
   _addCartApi(String id, String qty) async {
+    setState(() {
+      isLoading2 = true;
+    });
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await KeranjangModel.addCart(id, qty).then((value) {
-          print(value.data);
+          isLoading2 = false;
+          Map<String, dynamic> res = json.decode(value.data);
+          // print(value.data);
 
-          if (value.error) {
+          if (value.error && !res.containsKey('error')) {
             isLogin = false;
             setState(() {
               addAllListData();
             });
+          } else {
+            // widget.funcChangeCartQty(jsonDecode(value.data))['count_cart'];
+            // print(jsonDecode(value.data));
+            widget.funcChangeCartQty(res['count_cart']);
           }
+
+          showDialog(
+              context: context,
+              builder: (BuildContext builderContext) {
+                _timer = Timer(Duration(seconds: 2), () {
+                  Navigator.of(context).pop();
+                });
+
+                return new AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  content: Builder(
+                    builder: (context) {
+                      // Get available height and width of the build area of this widget. Make a choice depending on the size.
+                      var height = MediaQuery.of(context).size.height;
+                      var width = MediaQuery.of(context).size.width;
+
+                      return Container(
+                        height: 120,
+                        width: width - 400,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 20),
+                              child: Text(
+                                value.error
+                                    ? (res.containsKey('error')
+                                        ? 'Stok Kosong!'
+                                        : 'Gagal memasukkan ke Keranjang!')
+                                    : 'Wishlist telah dimasukan ke keranjang!',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 100,
+                              child: RaisedButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                color: value.error ? Colors.red : Colors.green,
+                                child: Text(
+                                  'OK',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }).then((val) {
+            if (_timer.isActive) {
+              _timer.cancel();
+            }
+          });
+
+          setState(() {});
         });
       }
     } on SocketException catch (_) {
       // print('dasd');
+      isLoading2 = false;
+
       isConnect = false;
       isLoading = false;
       addAllListData();
@@ -344,6 +420,7 @@ class _WishlistScreenState extends State<WishlistScreen>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       color: FintnessAppTheme.background,
       child: Scaffold(
@@ -362,7 +439,23 @@ class _WishlistScreenState extends State<WishlistScreen>
               getAppBarUI(),
               SizedBox(
                 height: MediaQuery.of(context).padding.bottom,
-              )
+              ),
+              isLoading2
+                  ? Container(
+                      width: size.width,
+                      height: size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                      ),
+                      child: Image.asset(
+                        'assets/fitness_app/global_loader.gif',
+                        scale: 5,
+                      ),
+                    )
+                  : Text(
+                      '',
+                      style: TextStyle(fontSize: 0),
+                    )
             ],
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail2.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
@@ -179,7 +180,13 @@ class MealsView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
-                        Navigator.pushNamed(context, '/produk');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductDetail2(
+                                productId: product['id'].toString(),
+                              ),
+                            ));
                       },
                       child:
                           //rubah gambar
@@ -417,7 +424,14 @@ class MealsView extends StatelessWidget {
                                       width: sizeu.width - 50 - 80,
                                       child: RaisedButton(
                                         onPressed: () {
-                                          functAddCarts(product['id'].toString(), '1');
+                                          if ((product['isGrosir'] == 1
+                                              ? int.parse(product['min_qty']) <=
+                                                  int.parse(product['stock'])
+                                              : int.parse(product['stock']) !=
+                                                  0)) {
+                                            functAddCarts(
+                                                product['id'].toString(), '1');
+                                          }
                                         },
                                         shape: RoundedRectangleBorder(
                                             borderRadius:

@@ -144,7 +144,16 @@ class KeranjangModel {
             data: resData,
           );
         }
-      } else {
+      } 
+      else if(apiResult.statusCode == 400){
+        // stok kosong
+        return KeranjangModel(
+          error: true,
+          data: jsonEncode({"error": msgFail['MSG_WRONG']}),
+        );
+      }
+      
+      else {
         // other failed
         return KeranjangModel(
           error: true,

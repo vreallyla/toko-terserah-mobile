@@ -12,11 +12,12 @@ import '../models/tabIcon_data.dart';
 
 class BottomBarView extends StatefulWidget {
   const BottomBarView(
-      {Key key, this.tabIconsList, this.changeIndex, this.addClick})
+      {Key key, this.tabIconsList, this.changeIndex, this.addClick, this.addQtyCart:0})
       : super(key: key);
 
   final Function(int index) changeIndex;
   final Function addClick;
+  final int addQtyCart;
   final List<TabIconData> tabIconsList;
   @override
   _BottomBarViewState createState() => _BottomBarViewState();
@@ -230,7 +231,8 @@ class _BottomBarViewState extends State<BottomBarView>
                                   child: Text(
                                     (countCart > 99
                                         ? '99+'
-                                        : countCart.toString()),
+                                        : (widget.addQtyCart>0 ? widget.addQtyCart.toString() :countCart.toString() )
+                                        ),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500,
