@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail2.dart';
+import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
@@ -16,6 +20,7 @@ class ItemWishlistView extends StatefulWidget {
       this.mainScreenAnimation,
       this.countWishlist,
       this.functAddCart,
+      this.eventHandle,
       this.dataWishlist})
       : super(key: key);
 
@@ -24,6 +29,7 @@ class ItemWishlistView extends StatefulWidget {
   final int countWishlist;
   final List dataWishlist;
   final Function(String id, String qty) functAddCart;
+  final Function(bool login, bool loading, bool loadingOverlay) eventHandle;
 
   @override
   _ItemWishlistViewState createState() => _ItemWishlistViewState();
@@ -160,7 +166,8 @@ class MealsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
-    var product = loadWishlist['get_produk'];
+    Map<String,dynamic> product = loadWishlist['get_produk'];
+    int stok = product.containsKey('stock') ?int.parse(product['stock']) : 0;
 
     return AnimatedBuilder(
       animation: animationController,
@@ -293,7 +300,7 @@ class MealsView extends StatelessWidget {
                                               child: Container(
                                                   margin: EdgeInsets.all(2),
                                                   child: Text(
-                                                    (product['stock'] + ' pcs'),
+                                                    (stok.toString() + ' pcs'),
                                                     style: TextStyle(
                                                       color: Colors.blue[800],
                                                       fontWeight:

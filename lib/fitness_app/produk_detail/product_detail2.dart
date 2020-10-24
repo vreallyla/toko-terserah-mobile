@@ -65,6 +65,8 @@ class _ProductDetail2State extends State<ProductDetail2>
   //jml cart
   int jmlCart = 0;
 
+  bool loadOverlay=false;
+
   //
   String qna = 'Hello', _token;
 
@@ -73,6 +75,13 @@ class _ProductDetail2State extends State<ProductDetail2>
 
   //simpan data user
   var dataUser;
+
+  //overlay loading event
+  void loadOverlayEvent(bool cond){
+    setState(() {
+      loadOverlay=cond;
+    });
+  }
 
   _addCart(int qty) async {}
 
@@ -96,7 +105,7 @@ class _ProductDetail2State extends State<ProductDetail2>
         return CustomAlertDialog(
           content: Container(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height / 3,
+            height: 250,
             decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               color: const Color(0xFFFFFF),
@@ -118,7 +127,7 @@ class _ProductDetail2State extends State<ProductDetail2>
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 18,
+                    height: MediaQuery.of(context).size.height / 15,
                     padding: EdgeInsets.all(1.0),
                     child: Material(
                         color: kondToCart(detailProduct) || jmlh_pcs == 0
@@ -264,7 +273,9 @@ class _ProductDetail2State extends State<ProductDetail2>
 
     listViews.add(CarouselProductView(imageList: imageLists));
 
-    listViews.add(TitleNPriceProductView(detailList: detailProduct));
+    listViews.add(TitleNPriceProductView(detailList: detailProduct,funcLoad:(bool cond){
+      loadOverlayEvent(cond);
+    }));
     Map<String, dynamic> mapDetailCard = detailProduct;
 
     listViews.add(DetailCardView(
@@ -292,67 +303,127 @@ class _ProductDetail2State extends State<ProductDetail2>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: PreferredSize(
           preferredSize: Size.fromHeight(70.0),
-          child: HeaderPage(countCard: jmlCart)),
+          child: Stack(
+            children: [
+              HeaderPage(countCard: jmlCart),
+               loadOverlay
+                  ? Container(
+                      width: size.width,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                      
+                      )
+                    )
+                  : Text(
+                      '',
+                      style: TextStyle(fontSize: 0),
+                    )
+            ],
+          )),
       bottomNavigationBar: PreferredSize(
         preferredSize: Size.fromHeight(80.0),
         child: BottomAppBar(
-          child: new Row(
-            children: <Widget>[
-              Spacer(flex: 1),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: ButtonTheme(
-                  minWidth: 150,
-                  height: 40,
-                  child: RaisedButton(
-                    child: Text(
-                      'MASUKKAN KERANJANG',
-                      style: TextStyle(color: Colors.green),
+          child: Stack(
+            children: [
+              new Row(
+                children: <Widget>[
+                  Spacer(flex: 1),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: ButtonTheme(
+                      minWidth: 150,
+                      height: 40,
+                      child: RaisedButton(
+                        child: Text(
+                          'MASUKKAN KERANJANG',
+                          style: TextStyle(color: Colors.green),
+                        ),
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.green)),
+                        onPressed: () {
+                          // Navigate to the second screen using a named route.
+                          if (detailProduct.containsKey('nama')) {
+                            jmlh_pcs = setMinOrder(detailProduct).round();
+                          }
+                          showAddDialog(context);
+                        },
+                      ),
                     ),
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.green)),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/cart_list');
-                    },
                   ),
-                ),
-              ),
-              Spacer(flex: 1),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: ButtonTheme(
-                  minWidth: 150,
-                  height: 40,
-                  child: RaisedButton(
-                    child: Text(
-                      'BELI SEKARANG',
-                      style: TextStyle(color: Colors.white),
+                  Spacer(flex: 1),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: ButtonTheme(
+                      minWidth: 150,
+                      height: 40,
+                      child: RaisedButton(
+                        child: Text(
+                          'BELI SEKARANG',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Colors.green,
+                        onPressed: () {
+                          
+                          Navigator.pushNamed(context, '/cart_list');
+
+                        },
+                      ),
                     ),
-                    color: Colors.green,
-                    onPressed: () {
-                      // Navigate to the second screen using a named route.
-                      if (detailProduct.containsKey('nama')) {
-                        jmlh_pcs = setMinOrder(detailProduct).round();
-                      }
-                      showAddDialog(context);
-                    },
                   ),
-                ),
+                  Spacer(flex: 1),
+                ],
               ),
-              Spacer(flex: 1),
+             loadOverlay
+                  ? Container(
+                      width: size.width,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                      
+                      )
+                    )
+                  : Text(
+                      '',
+                      style: TextStyle(fontSize: 0),
+                    )
+            
             ],
           ),
         ),
       ),
-      body: Container(
-        child: ListView(
-          children: listViews,
-        ),
+      body: Stack(
+        children: [
+          Container(
+            child: ListView(
+              children: listViews,
+            ),
+          ),
+             loadOverlay
+                  ? Container(
+                      width: size.width,
+                      height: size.height,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(.2),
+                      ),
+                      child: Image.asset(
+                        'assets/fitness_app/global_loader.gif',
+                        scale: 5,
+                      ),
+                    )
+                  : Text(
+                      '',
+                      style: TextStyle(fontSize: 0),
+                    )
+            
+        ],
       ),
     );
   }
