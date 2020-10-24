@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
 import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
@@ -18,7 +20,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
   AnimationController animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-  int qtyCart=0;
+  int qtyCart = 0;
 
   Widget tabBody = Container(
     color: FintnessAppTheme.background,
@@ -39,31 +41,45 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
       animationController = AnimationController(
           duration: const Duration(milliseconds: 200), vsync: this);
 
-      if (arguments != null ? (arguments['after_login']!=null || arguments['after_logout']!=null) : false) {
+      if (arguments != null
+          ? (arguments['after_login'] != null ||
+              arguments['after_logout'] != null)
+          : false) {
         tabIconsList[3].isSelected = true;
+      
         tabBody = TrainingScreen(animationController: animationController);
-      } else if (arguments != null ? arguments['search_product']!=null : false) {
+      } else if (arguments != null
+          ? arguments['search_product'] != null
+          : false) {
         arguments['search_product'] = null;
-        
+        qtyCart=arguments['qtyCart'];
         tabIconsList[1].isSelected = true;
-        tabBody = DesignCourseHomeScreen(
+        tabBody = HomeDesignCourse(
           search: arguments['keyword_product'],
         );
       } else {
         tabIconsList[0].isSelected = true;
-        tabBody=MyDiaryScreen(animationController: animationController,
-                      searchAlocation:(String jenis,String search){
-                        setState(() {
-                        tabBody =DesignCourseHomeScreen(jenis: jenis,search: search,);
-                         tabIconsList.forEach((TabIconData tab) {
-                            tab.isSelected = false;
-                          });
+        tabBody = MyDiaryScreen(
+          animationController: animationController,
+          searchAlocation: (String jenis, String search) {
+            setState(() {
+              tabBody = HomeDesignCourse(
+                jenis: jenis,
+                search: search,
+              );
+              tabIconsList.forEach((TabIconData tab) {
+                tab.isSelected = false;
+              });
 
-                          tabIconsList[1].isSelected=true;
-                          
-                        });
-                      }
-                      );
+              tabIconsList[1].isSelected = true;
+            });
+          },
+          funcChangeCartQty: (int qty) {
+            qtyCart = qty;
+            
+            setState(() {});
+          },
+        );
       }
     });
 
@@ -119,7 +135,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
           child: SizedBox(),
         ),
         BottomBarView(
-          addQtyCart:qtyCart,
+          addQtyCart: qtyCart,
           tabIconsList: tabIconsList,
           addClick: () {},
           changeIndex: (int index) {
@@ -129,20 +145,27 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody =
-                      MyDiaryScreen(animationController: animationController,
-                      searchAlocation:(String jenis,String search){
-                        setState(() {
-                        tabBody =DesignCourseHomeScreen(jenis: jenis,search: search,);
-                         tabIconsList.forEach((TabIconData tab) {
-                            tab.isSelected = false;
-                          });
-
-                          tabIconsList[1].isSelected=true;
-                          
+                  tabBody = MyDiaryScreen(
+                    animationController: animationController,
+                    searchAlocation: (String jenis, String search) {
+                      setState(() {
+                        tabBody = HomeDesignCourse(
+                          jenis: jenis,
+                          search: search,
+                        );
+                        tabIconsList.forEach((TabIconData tab) {
+                          tab.isSelected = false;
                         });
-                      }
-                      );
+
+                        tabIconsList[1].isSelected = true;
+                      });
+                    },
+                    funcChangeCartQty: (int qty) {
+                      qtyCart = qty;
+                    
+                      setState(() {});
+                    },
+                  );
                 });
               });
             } else if (index == 1) {
@@ -151,7 +174,11 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody = DesignCourseHomeScreen();
+                  tabBody = HomeDesignCourse(funcChangeCartQty: (int qty) {
+                    qtyCart = qty;
+                    // print(qty.toString());
+                    setState(() {});
+                  });
                 });
               });
             } else if (index == 2) {
@@ -160,13 +187,15 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody =
-                      WishlistScreen(animationController: animationController,funcChangeCartQty:(int qty){
-                        qtyCart=qty;
-                        setState(() {
-                          
-                        });
-                      });
+                  tabBody = WishlistScreen(
+                    
+                      animationController: animationController,
+                      funcChangeCartQty: (int qty) {
+                        qtyCart = qty;
+                        setState(() {});
+                      },
+                      
+                      );
                 });
               });
             } else if (index == 3) {

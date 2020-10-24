@@ -16,7 +16,7 @@ import './item_wishlist_view.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen(
-      {Key key, this.animationController, this.funcChangeCartQty})
+      {Key key, this.animationController, this.funcChangeCartQty,})
       : super(key: key);
 
   final AnimationController animationController;
@@ -388,6 +388,9 @@ class _WishlistScreenState extends State<WishlistScreen>
     else {
       listViews.add(
         ItemWishlistView(
+          qtyCart:(int qty){
+            widget.funcChangeCartQty(qty);
+          },
           eventHandle: (bool login, bool loading, bool loadingOverlay) {
             setLogin(login);
             setLoading(loading);

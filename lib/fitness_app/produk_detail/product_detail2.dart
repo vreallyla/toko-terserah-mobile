@@ -7,6 +7,7 @@ import 'package:best_flutter_ui_templates/fitness_app/produk_detail/detail_card_
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/qna_product_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/review_product_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/titlenprice_product_view.dart';
+import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
 import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 import 'package:best_flutter_ui_templates/model/product_model.dart';
 import 'package:flutter/material.dart';
@@ -92,17 +93,19 @@ class _ProductDetail2State extends State<ProductDetail2>
         await KeranjangModel.addCart(id, qty).then((value) {
           Map<String, dynamic> res = json.decode(value.data);
 
-          if (value.error && !res.containsKey('error')) {
+          if (value.error
+              // && !res.containsKey('error')
+              ) {
             loadNotice(context, 'Terjadi Kesalahan!', true, 'OK', () {
               Navigator.of(context).pop();
             });
           }
           // login exc
-          else if (res.containsKey('error')) {
-            loadNotice(context, 'Anda Belum Login!', false, 'LOGIN', () {
-              Navigator.pushNamed(context, '/login');
-            });
-          }
+          // else if (res.containsKey('error')) {
+          //   loadNotice(context, 'Anda Belum Login!', false, 'LOGIN', () {
+          //     Navigator.pushNamed(context, '/login');
+          //   });
+          // }
           //success
           else {
             print(res);
@@ -114,7 +117,7 @@ class _ProductDetail2State extends State<ProductDetail2>
             }
 
             _getDataApi();
-            Future.delayed(Duration(seconds: 1), () {
+            Future.delayed(Duration(seconds: 0), () {
               if (redirect) {
                 loadOverlayEvent(false);
 
@@ -230,6 +233,7 @@ class _ProductDetail2State extends State<ProductDetail2>
             imageLists = detailProduct['galeri'] ?? [detailProduct['gambar']];
             reviewData = dataLoad['review'];
             qnAData = dataLoad['qna'];
+            isLogin=dataLoad['is_login'];
             print(reviewData['data']);
             addAllListData();
             setState(() {});
@@ -359,120 +363,143 @@ class _ProductDetail2State extends State<ProductDetail2>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: PreferredSize(
-          preferredSize: Size.fromHeight(70.0),
-          child: Stack(
-            children: [
-              HeaderPage(countCard: jmlCart),
-              loadOverlay
-                  ? Container(
-                      width: size.width,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
-                      ))
-                  : Text(
-                      '',
-                      style: TextStyle(fontSize: 0),
-                    )
-            ],
-          )),
-      bottomNavigationBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
-        child: BottomAppBar(
-          child: Stack(
-            children: [
-              new Row(
-                children: <Widget>[
-                  Spacer(flex: 1),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: ButtonTheme(
-                      minWidth: 150,
-                      height: 40,
-                      child: RaisedButton(
-                        child: Text(
-                          'MASUKKAN KERANJANG',
-                          style: TextStyle(color: Colors.green),
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.pop(context, jmlCart);
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: PreferredSize(
+            preferredSize: Size.fromHeight(70.0),
+            child: Stack(
+              children: [
+                HeaderPage(countCard: jmlCart),
+                loadOverlay
+                    ? Container(
+                        width: size.width,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(.2),
+                        ))
+                    : Text(
+                        '',
+                        style: TextStyle(fontSize: 0),
+                      )
+              ],
+            )),
+        bottomNavigationBar: PreferredSize(
+          preferredSize: Size.fromHeight(80.0),
+          child: BottomAppBar(
+            child: Stack(
+              children: [
+                new Row(
+                  children: <Widget>[
+                    Spacer(flex: 1),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: ButtonTheme(
+                        minWidth: 150,
+                        height: 40,
+                        child: RaisedButton(
+                          child: Text(
+                            'MASUKKAN KERANJANG',
+                            style: TextStyle(color: Colors.green),
+                          ),
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.green)),
+                          onPressed: () {
+                            // Navigate to the second screen using a named route.
+                            if (detailProduct.containsKey('nama')) {
+                              jmlh_pcs = setMinOrder(detailProduct).round();
+                            }
+                            print(detailProduct);
+                            if ( isLogin
+                               ) {
+                              showAddDialog(context);
+                            } else {
+                              loadNotice(
+                                  context, 'Harap Login Dulu', false, 'LOGIN',
+                                  () {
+                                Navigator.pushNamed(context, '/login');
+                              });
+                            }
+                          },
                         ),
-                        color: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.green)),
-                        onPressed: () {
-                          // Navigate to the second screen using a named route.
-                          if (detailProduct.containsKey('nama')) {
-                            jmlh_pcs = setMinOrder(detailProduct).round();
-                          }
-                          showAddDialog(context);
-                        },
                       ),
                     ),
-                  ),
-                  Spacer(flex: 1),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: ButtonTheme(
-                      minWidth: 150,
-                      height: 40,
-                      child: RaisedButton(
-                        child: Text(
-                          'BELI SEKARANG',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        color: Colors.green,
-                        onPressed: () {
-                      loadOverlayEvent(true);
+                    Spacer(flex: 1),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: ButtonTheme(
+                        minWidth: 150,
+                        height: 40,
+                        child: RaisedButton(
+                          child: Text(
+                            'BELI SEKARANG',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: Colors.green,
+                          onPressed: () {
+                            if (isLogin) {
+                              loadOverlayEvent(true);
 
-                          _addCart(detailProduct['id'].toString(), 1.toString(),
-                              true);
-                        },
+                              _addCart(detailProduct['id'].toString(),
+                                  1.toString(), true);
+                            } else {
+                              loadNotice(
+                                  context, 'Harap Login Dulu', false, 'LOGIN',
+                                  () {
+                                Navigator.pushNamed(context, '/login');
+                              });
+                            }
+                          },
+                        ),
                       ),
                     ),
-                  ),
-                  Spacer(flex: 1),
-                ],
-              ),
-              loadOverlay
-                  ? Container(
-                      width: size.width,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
-                      ))
-                  : Text(
-                      '',
-                      style: TextStyle(fontSize: 0),
-                    )
-            ],
-          ),
-        ),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            child: ListView(
-              children: listViews,
+                    Spacer(flex: 1),
+                  ],
+                ),
+                loadOverlay
+                    ? Container(
+                        width: size.width,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(.2),
+                        ))
+                    : Text(
+                        '',
+                        style: TextStyle(fontSize: 0),
+                      )
+              ],
             ),
           ),
-          loadOverlay
-              ? Container(
-                  width: size.width,
-                  height: size.height,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(.2),
-                  ),
-                  child: Image.asset(
-                    'assets/fitness_app/global_loader.gif',
-                    scale: 5,
-                  ),
-                )
-              : Text(
-                  '',
-                  style: TextStyle(fontSize: 0),
-                )
-        ],
+        ),
+        body: Stack(
+          children: [
+            Container(
+              child: ListView(
+                children: listViews,
+              ),
+            ),
+            loadOverlay
+                ? Container(
+                    width: size.width,
+                    height: size.height,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.2),
+                    ),
+                    child: Image.asset(
+                      'assets/fitness_app/global_loader.gif',
+                      scale: 5,
+                    ),
+                  )
+                : Text(
+                    '',
+                    style: TextStyle(fontSize: 0),
+                  )
+          ],
+        ),
       ),
     );
   }
@@ -538,7 +565,7 @@ class HeaderPage extends StatelessWidget {
         offset: Offset(-5, 0),
         child: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.pop(context, countCard),
         ),
       ),
       titleSpacing: -30,
@@ -548,8 +575,11 @@ class HeaderPage extends StatelessWidget {
         child: TextField(
           onChanged: (value) {},
           onSubmitted: (v) {
-            Navigator.of(context).pushNamed('/',
-                arguments: {"search_product": true, 'keyword_product': v});
+            Navigator.of(context).pushNamed('/home', arguments: {
+              "search_product": true,
+              'keyword_product': v,
+              "qtyCart": countCard
+            });
           },
           controller: editingController,
           decoration: InputDecoration(

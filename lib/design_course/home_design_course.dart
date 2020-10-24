@@ -18,15 +18,16 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 // import 'package:searchable_dropdown/searchable_dropdown.dart';
 
-class DesignCourseHomeScreen extends StatefulWidget {
+class HomeDesignCourse extends StatefulWidget {
   final String jenis;
   final String search;
-const DesignCourseHomeScreen(
-      {Key key, this.jenis='semua',this.search=''})
+  final Function(int qty) funcChangeCartQty;
+  const HomeDesignCourse(
+      {Key key, this.jenis = 'semua', this.search = '',this.funcChangeCartQty,})
       : super(key: key);
 
   @override
-  _DesignCourseHomeScreenState createState() => _DesignCourseHomeScreenState();
+  _HomeDesignCourseState createState() => _HomeDesignCourseState();
 }
 
 class NewItem {
@@ -37,7 +38,7 @@ class NewItem {
   NewItem(this.isExpanded, this.header, this.body, this.iconpic);
 }
 
-class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
+class _HomeDesignCourseState extends State<HomeDesignCourse> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CategoryType categoryType = CategoryType.ui;
   String dropdownValue;
@@ -62,22 +63,20 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     //give all your items here
   ];
 
-  
-
   Future getData() async {
     try {
-
-     print( _selecteCategorys.join(','));
+      print(_selecteCategorys.join(','));
       var param = jsonEncode({
         "limit": _limit.toString(),
         "name": editingController.text,
         "awal": _currentRangeValues.start.toString(),
         "akhir": _currentRangeValues.end.toString(),
         "jenis": _jenisProdukRadioButton,
-        "kategori":_selecteCategorys.length>0? _selecteCategorys.join(',') :null
+        "kategori":
+            _selecteCategorys.length > 0 ? _selecteCategorys.join(',') : null
       });
 
-    print(param);
+      print(param);
       http.Response item = await http.post(globalBaseUrl + 'api/search',
           body: param,
           headers: {
@@ -223,9 +222,8 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
   @override
   void initState() {
-    editingController.text=widget.search;
-    _jenisProdukRadioButton=widget.jenis;
-
+    editingController.text = widget.search;
+    _jenisProdukRadioButton = widget.jenis;
 
     super.initState();
 
@@ -606,6 +604,23 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
     Navigator.of(context).pop();
   }
 
+  _toProductDetail(BuildContext context, String id) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final resultDetail = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ProductDetail2(
+            productId: id,
+          ),
+        ));
+
+
+    setState(() {
+      widget.funcChangeCartQty(resultDetail );
+    });
+  }
+
   _inputToSlider(String awal, String akhir) {
     try {
       log("Awal : " + awal + " Akhir : " + akhir);
@@ -624,8 +639,7 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
   }
 
   //Set value from check box
-  void _onCategorySelected(
-      bool selected, int categoryId, String categoryNama) {
+  void _onCategorySelected(bool selected, int categoryId, String categoryNama) {
     if (selected == true) {
       if (_selecteCategorys.length < 4) {
         setState(() {
@@ -1651,195 +1665,206 @@ class _DesignCourseHomeScreenState extends State<DesignCourseHomeScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(top: 2),
-      child:  dataJson.length==0?dataKosong():SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        header: WaterDropHeader(),
-        footer: CustomFooter(
-          builder: (BuildContext context, LoadStatus mode) {
-            Widget body;
-            if (mode == LoadStatus.idle) {
-              body = Text("geser ke atas untuk memuat");
-            } else if (mode == LoadStatus.loading) {
-              body = Text('Tunggu');
-            } else if (mode == LoadStatus.failed) {
-              body = Text("Gagal dimuat!");
-            } else if (mode == LoadStatus.canLoading) {
-              body = Text("release to load more");
-            } else {
-              body = Text("No more Data");
-            }
-            return Container(
-              height: 55.0,
-              child: Center(child: body),
-            );
-          },
-        ),
-        controller: _refreshController,
-        onRefresh: _onRefresh,
-        onLoading: _onLoading,
-        child: 
-       
-        ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.all(5),
-          shrinkWrap: true,
-          itemCount: dataJson == null ? 0 : dataJson.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, i) {
-            return new SizedBox(
-              width: sizeu.width / 3,
-              child: Stack(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 5, left: 1, right: 5, bottom: 5),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 7,
-                            offset: Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          // Navigate to the second screen using a named route.
-                          // Navigator.pushNamed(context, '/produk');
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetail2(
-                                productId: dataJson[i]
-                                              ["id"].toString(),
-                              ),
-                            )
-                            );
-                        },
-                        child: Container(
-                          child: Column(
-                            children: [
-                              //rubah gambar
-                              Container(
-                                height: sizeu.width / 2,
-                                decoration: new BoxDecoration(
-                                  image: new DecorationImage(
-                                      image: NetworkImage(dataJson[i]
-                                              ["image_path"] ??
-                                          'https://via.placeholder.com/300'),
-                                      fit: BoxFit.cover),
-                                  color: Colors.grey,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomRight: Radius.circular(0),
-                                    bottomLeft: Radius.circular(0),
-                                    topLeft: Radius.circular(8.0),
-                                    topRight: Radius.circular(8.0),
-                                  ),
+      child: dataJson.length == 0
+          ? dataKosong()
+          : SmartRefresher(
+              enablePullDown: true,
+              enablePullUp: true,
+              header: WaterDropHeader(),
+              footer: CustomFooter(
+                builder: (BuildContext context, LoadStatus mode) {
+                  Widget body;
+                  if (mode == LoadStatus.idle) {
+                    body = Text("geser ke atas untuk memuat");
+                  } else if (mode == LoadStatus.loading) {
+                    body = Text('Tunggu');
+                  } else if (mode == LoadStatus.failed) {
+                    body = Text("Gagal dimuat!");
+                  } else if (mode == LoadStatus.canLoading) {
+                    body = Text("release to load more");
+                  } else {
+                    body = Text("No more Data");
+                  }
+                  return Container(
+                    height: 55.0,
+                    child: Center(child: body),
+                  );
+                },
+              ),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.all(5),
+                shrinkWrap: true,
+                itemCount: dataJson == null ? 0 : dataJson.length,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (context, i) {
+                  return new SizedBox(
+                    width: sizeu.width / 3,
+                    child: Stack(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5, left: 1, right: 5, bottom: 5),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
                                 ),
-                              ),
+                              ],
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                // Navigate to the second screen using a named route.
+                                // Navigator.pushNamed(context, '/produk');
 
-                              //konten
-                              Container(
-                                // padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
-                                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                height: 110,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(0),
-                                    topRight: Radius.circular(0),
-                                    bottomRight: Radius.circular(8.0),
-                                    bottomLeft: Radius.circular(8.0),
-                                  ),
-                                ),
+                                _toProductDetail(
+                                  context,
+                                  dataJson[i]["id"].toString(),
+                                );
+                              },
+                              child: Container(
                                 child: Column(
                                   children: [
+                                    //rubah gambar
                                     Container(
-                                      alignment: Alignment.topLeft,
-                                      child: RichText(
-                                        overflow: TextOverflow.ellipsis,
-                                        strutStyle: StrutStyle(fontSize: 12.0),
-                                        text: TextSpan(
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                            text: '${dataJson[i]["nama"]}' ??
-                                                '-'),
+                                      height: sizeu.width / 2,
+                                      decoration: new BoxDecoration(
+                                        image: new DecorationImage(
+                                            image: NetworkImage(dataJson[i]
+                                                    ["image_path"] ??
+                                                'https://via.placeholder.com/300'),
+                                            fit: BoxFit.cover),
+                                        color: Colors.grey,
+                                        borderRadius: const BorderRadius.only(
+                                          bottomRight: Radius.circular(0),
+                                          bottomLeft: Radius.circular(0),
+                                          topLeft: Radius.circular(8.0),
+                                          topRight: Radius.circular(8.0),
+                                        ),
                                       ),
                                     ),
+
+                                    //konten
                                     Container(
-                                      padding: EdgeInsets.only(top: 5),
-                                      alignment: Alignment.topLeft,
-                                      child: Text(
-                                       setHarga(dataJson[i]),
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                        maxLines: 2,
+                                      // padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                      height: 110,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(0),
+                                          topRight: Radius.circular(0),
+                                          bottomRight: Radius.circular(8.0),
+                                          bottomLeft: Radius.circular(8.0),
+                                        ),
                                       ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        Card(
-                                          color: Colors.red[100],
-                                          child: Container(
-                                              margin: EdgeInsets.all(3),
-                                              child: Text(
-                                                '-'+disconCondition(dataJson[i]).toString()+'%',
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            child: RichText(
+                                              overflow: TextOverflow.ellipsis,
+                                              strutStyle:
+                                                  StrutStyle(fontSize: 12.0),
+                                              text: TextSpan(
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                  text:
+                                                      '${dataJson[i]["nama"]}' ??
+                                                          '-'),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.only(top: 5),
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              setHarga(dataJson[i]),
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold),
+                                              maxLines: 2,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Card(
+                                                color: Colors.red[100],
+                                                child: Container(
+                                                    margin: EdgeInsets.all(3),
+                                                    child: Text(
+                                                      '-' +
+                                                          disconCondition(
+                                                                  dataJson[i])
+                                                              .toString() +
+                                                          '%',
+                                                      style: TextStyle(
+                                                        color: Colors.red[800],
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 9,
+                                                      ),
+                                                    )),
+                                              ),
+                                              Text(
+                                                beforeDisc(dataJson[i]),
                                                 style: TextStyle(
-                                                  color: Colors.red[800],
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 9,
-                                                ),
-                                              )),
-                                        ),
-                                        Text(
-                                          beforeDisc(dataJson[i]),
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              decoration:
-                                                  TextDecoration.lineThrough),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ],
+                                                    fontSize: 12,
+                                                    decoration: TextDecoration
+                                                        .lineThrough),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ],
+                                          ),
+                                          starJadi(
+                                              double.parse(dataJson[i]
+                                                      ['avg_ulasan']
+                                                  .toString()),
+                                              dataJson[i]['count_ulasan']
+                                                  .toString()),
+                                        ],
+                                      ),
                                     ),
-                                    starJadi(double.parse(dataJson[i]['avg_ulasan'].toString()), dataJson[i]['count_ulasan'].toString()),
                                   ],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        Container(
+                          padding: const EdgeInsets.only(
+                              top: 15, left: 10, right: 5, bottom: 16),
+                          alignment: Alignment.topLeft,
+                          child: Card(
+                            color: Colors.green[100],
+                            child: Container(
+                                margin: EdgeInsets.all(3),
+                                child: Text(
+                                  dataJson[i]["isGrosir"] > 0
+                                      ? 'Grosir'
+                                      : 'Retail',
+                                  style: TextStyle(
+                                    color: Colors.green[800],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.only(
-                        top: 15, left: 10, right: 5, bottom: 16),
-                    alignment: Alignment.topLeft,
-                    child: Card(
-                      color: Colors.green[100],
-                      child: Container(
-                          margin: EdgeInsets.all(3),
-                          child: Text(
-                            dataJson[i]
-                                              ["isGrosir"]>0 ? 'Grosir':'Retail',
-                            style: TextStyle(
-                              color: Colors.green[800],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
-                          )),
-                    ),
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 

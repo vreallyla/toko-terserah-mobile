@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 String tokenFixed = '';
+String userData = '';
 
 _setToken(String token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();

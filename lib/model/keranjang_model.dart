@@ -6,11 +6,24 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 String tokenFixed = '';
+String userData='';
 
 _setHome(String dataa) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   await prefs.setString('dataHome', dataa);
+}
+
+_setUser(String dataa) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('dataUser', dataa);
+}
+_getUser() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  userData = prefs.getString('dataUser');
+  //  prefs.getString('token');
 }
 
 _getToken() async {
@@ -99,11 +112,13 @@ class KeranjangModel {
 
   static Future<KeranjangModel> addCart(String id, String qty ) async {
     await _getToken();
+    await _getUser();
 
 
     String apiURL = globalBaseUrl  + globalPathCart+'add_cart';
+    Map<String,dynamic> dataaUser=json.decode(userData);
 
-
+    print(dataaUser['count_cart']);
     print(apiURL);
 
     try {
@@ -137,8 +152,8 @@ class KeranjangModel {
         } else {
           //data received
           String resData = jsonEncode(json.decode(apiResult.body)['data']);
-
-
+          dataaUser['count_cart']=json.decode(apiResult.body)['data']['count_cart'];
+          await _setUser(json.encode(dataaUser));
           return KeranjangModel(
             error: jsonObject['error'],
             data: resData,

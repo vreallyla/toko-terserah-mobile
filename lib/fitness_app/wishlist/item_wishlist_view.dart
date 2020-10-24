@@ -21,6 +21,7 @@ class ItemWishlistView extends StatefulWidget {
       this.countWishlist,
       this.functAddCart,
       this.eventHandle,
+      this.qtyCart,
       this.dataWishlist})
       : super(key: key);
 
@@ -29,6 +30,7 @@ class ItemWishlistView extends StatefulWidget {
   final int countWishlist;
   final List dataWishlist;
   final Function(String id, String qty) functAddCart;
+  final Function(int qty) qtyCart;
   final Function(bool login, bool loading, bool loadingOverlay) eventHandle;
 
   @override
@@ -126,7 +128,9 @@ class _ItemWishlistViewState extends State<ItemWishlistView>
                               animationController.forward();
 
                               return MealsView(removeWishlishCard,
-                                  functAddCarts: (id, qty) {
+                                  qtyCart: (int qty) {
+                                widget.qtyCart(qty);
+                              }, functAddCarts: (id, qty) {
                                 widget.functAddCart(id, qty);
                               },
                                   loadWishlist: loadWishlist[index],
@@ -148,6 +152,7 @@ class MealsView extends StatelessWidget {
   const MealsView(this.removeWishlishCard,
       {Key key,
       this.loadWishlist,
+      this.qtyCart,
       this.animationController,
       this.functAddCarts,
       this.animation,
@@ -156,6 +161,8 @@ class MealsView extends StatelessWidget {
 
   final loadWishlist;
   final int index;
+  final Function(int qty) qtyCart;
+
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final Function(int iCard, int iDB) removeWishlishCard;
@@ -166,8 +173,22 @@ class MealsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
-    Map<String,dynamic> product = loadWishlist['get_produk'];
-    int stok = product.containsKey('stock') ?int.parse(product['stock']) : 0;
+    Map<String, dynamic> product = loadWishlist['get_produk'];
+    int stok = product.containsKey('stock') ? int.parse(product['stock']) : 0;
+
+    _toProductDetail(BuildContext context, String id) async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final resultDetail = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetail2(
+              productId: id,
+            ),
+          ));
+
+      qtyCart(resultDetail);
+    }
 
     return AnimatedBuilder(
       animation: animationController,
@@ -187,13 +208,8 @@ class MealsView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetail2(
-                                productId: product['id'].toString(),
-                              ),
-                            ));
+
+                        _toProductDetail(context, product['id'].toString());
                       },
                       child:
                           //rubah gambar

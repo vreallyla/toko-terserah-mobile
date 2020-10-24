@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'package:best_flutter_ui_templates/fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
 //import 'package:best_flutter_ui_templates/main.dart';
 import 'package:flutter/material.dart';
@@ -291,6 +292,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
             ),
             child: Row(children: [
               cardIconProgress(
+                0,
                   colProgress,
                   'Belum Bayar',
                   FaIcon(
@@ -300,6 +302,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   ),
                   false),
               cardIconProgress(
+                1,
                   colProgress,
                   'Dikemas',
                   FaIcon(
@@ -309,6 +312,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   ),
                   true),
               cardIconProgress(
+                2,
                   colProgress,
                   'Dikirim',
                   FaIcon(
@@ -318,6 +322,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
                   ),
                   false),
               cardIconProgress(
+                3,
                   colProgress,
                   'Selesai',
                   FaIcon(
@@ -334,6 +339,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
   }
 
   Widget cardIconProgress(
+    int index,
       double colProgress, String judul, Widget iconn, bool dataAvail) {
     List layer = <Widget>[];
 
@@ -371,7 +377,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
     }
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(context, '/proses_beli');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => BoughtProccessScreen(index: index,)),);
       },
       child: Stack(
         children: layer,

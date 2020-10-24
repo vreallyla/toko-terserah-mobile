@@ -25,11 +25,17 @@ import 'package:url_launcher/url_launcher.dart';
 //import 'package:floating_search_bar/floating_search_bar.dart';
 
 class MyDiaryScreen extends StatefulWidget {
-  const MyDiaryScreen({Key key, this.animationController, this.searchAlocation})
-      : super(key: key);
+  const MyDiaryScreen({
+    Key key,
+    this.animationController,
+    this.searchAlocation,
+    this.funcChangeCartQty,
+  }) : super(key: key);
 
   final AnimationController animationController;
   final Function(String jenis, String search) searchAlocation;
+  final Function(int qty) funcChangeCartQty;
+
   @override
   _MyDiaryScreenState createState() => _MyDiaryScreenState();
 }
@@ -47,14 +53,15 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   List dataUnggulan = [];
   List dataTerlaris = [];
   bool isConnect = true;
-    int _current = 0;
-
+  int _current = 0;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
   TextStyle txtstyle = TextStyle(color: Colors.white);
   Color coloricon = Colors.white;
+
+  
 
   _getHome(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -192,7 +199,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             options: CarouselOptions(
               onPageChanged: (i, r) {
                 setState(() {
-                  
                   _current = i;
                 });
               },
@@ -245,7 +251,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             }).toList(),
           ),
           Container(
-            margin: EdgeInsets.only(top:260),
+            margin: EdgeInsets.only(top: 260),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: dataHome.map((url) {
@@ -255,7 +261,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                   height: 4.0,
                   margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
                   decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                    borderRadius: BorderRadius.all(Radius.circular(2)),
 
                     // shape: BoxShape.circle,
                     color: _current == index
@@ -454,6 +460,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 animationController: widget.animationController,
               ),
               ItemSquareView(
+                  eventSetCart: (int qty) {
+                    widget.funcChangeCartQty(qty);
+                    // print(qty);
+                    // widget.funcChangeCartQty(qty);
+                    setState(() {});
+                  },
                   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
                       .animate(CurvedAnimation(
                           parent: widget.animationController,

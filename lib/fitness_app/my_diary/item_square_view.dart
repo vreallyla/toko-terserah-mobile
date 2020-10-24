@@ -14,12 +14,14 @@ class ItemSquareView extends StatefulWidget {
       {Key key,
       this.mainScreenAnimationController,
       this.mainScreenAnimation,
+      this.eventSetCart,
       this.dataCard})
       : super(key: key);
 
   final AnimationController mainScreenAnimationController;
   final Animation<dynamic> mainScreenAnimation;
   final List<dynamic> dataCard;
+  final Function(int qty) eventSetCart;
 
   @override
   _ItemSquareViewState createState() => _ItemSquareViewState();
@@ -79,6 +81,9 @@ class _ItemSquareViewState extends State<ItemSquareView>
                   animationController.forward();
 
                   return MealsView(
+                      eventSetCart: (int qty) {
+                        widget.eventSetCart(qty);
+                      },
                       mealsListData: widget.dataCard[index],
                       animation: animation,
                       animationController: animationController,
@@ -100,6 +105,7 @@ class MealsView extends StatelessWidget {
       this.mealsListData,
       this.animationController,
       this.animation,
+      this.eventSetCart,
       this.countData})
       : super(key: key);
 
@@ -107,10 +113,26 @@ class MealsView extends StatelessWidget {
   final AnimationController animationController;
   final Animation<dynamic> animation;
   final int countData;
+  final Function(int qty) eventSetCart;
 
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
+
+    _toProductDetail(BuildContext context, String id) async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final resultDetail = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDetail2(
+              productId: id,
+            ),
+          ));
+
+      eventSetCart(resultDetail);
+      
+    }
 
     return AnimatedBuilder(
       animation: animationController,
@@ -130,13 +152,9 @@ class MealsView extends StatelessWidget {
                     child: InkWell(
                       onTap: () {
                         // Navigate to the second screen using a named route.
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductDetail2(
-                                productId: mealsListData['id'].toString(),
-                              ),
-                            ));
+
+                        _toProductDetail(
+                            context, mealsListData['id'].toString());
                       },
                       child: Column(
                         children: [
