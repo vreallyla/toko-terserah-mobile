@@ -11,6 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:best_flutter_ui_templates/fitness_app/check_out/checkout.dart';
+import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -72,6 +74,33 @@ class _CartListState extends State<CartList> {
     }
   }
 
+  _switchWishedApi(String id) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await WishlistModel.switchWish(id).then((value) {
+          Map<String, dynamic> res = json.decode(value.data);
+
+          if (value.error) {
+            showSnackBar('Terjadi Kesalahan!', Colors.red, Icon(Icons.close));
+          }
+          //success
+          else {
+            // showSnackBar('Berhasil Memfavoritkan produk', Colors.green,
+            //     Icon(Icons.check_circle_outline));
+          }
+          _getData();
+        });
+      }
+    } on SocketException catch (_) {
+      showSnackBar('Terjadi Kesalahan!', Colors.red, Icon(Icons.close));
+      setState(() {});
+    }
+  }
+
   /**
    * increase decrease qty item
    * 
@@ -84,12 +113,12 @@ class _CartListState extends State<CartList> {
           body: {"id": id.toString(), "qty": qty.toString()},
           headers: {"Authorization": "Bearer " + _token});
       var _response = json.decode(response.body);
-       setState(() {
-          isLoading = true;
-        });
-        _getData();
-       showSnackBar(_response['data']['message'], Colors.green,
-            Icon(Icons.check_circle_outline));
+      setState(() {
+        isLoading = true;
+      });
+      _getData();
+      showSnackBar(_response['data']['message'], Colors.green,
+          Icon(Icons.check_circle_outline));
     } on SocketException catch (_) {
       //catch Socket error
       isConnect = false;
@@ -235,6 +264,10 @@ class _CartListState extends State<CartList> {
     ));
   }
 
+/**
+ *  send parameter to checkout 
+ * 
+ */
   _checkCart() {
     if (_selecteCarts.length < 1) {
       showSnackBar("Item Keranjang belum dipilih", Colors.red,
@@ -242,7 +275,14 @@ class _CartListState extends State<CartList> {
     } else {
       showSnackBar("Lanjut mas Semongko", Colors.green,
           FaIcon(FontAwesomeIcons.checkCircle));
-      Navigator.pushNamed(context, '/checkout');
+      Navigator.push(
+          //push screen to check out and send parameter
+          context,
+          MaterialPageRoute(
+            builder: (context) => CheckOut(
+              idProducts: _selecteCarts,
+            ),
+          ));
     }
   }
 
@@ -353,7 +393,7 @@ class _CartListState extends State<CartList> {
                                   child: Container(
                                       margin: EdgeInsets.all(2),
                                       child: Text(
-                                        'Stock ${_listCart[i]['get_produk']['stock'] ?? 0} pcs',
+                                        'Tersedia ${_listCart[i]['get_produk']['stock'] ?? 0} pcs',
                                         style: TextStyle(
                                           color: Colors.red[800],
                                           fontWeight: FontWeight.bold,
@@ -402,7 +442,7 @@ class _CartListState extends State<CartList> {
                 MaterialButton(
                   onPressed: () {
                     print('Hello');
-                     Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                     _changeQty(cart_id, qty.round());
                   },
                   child: Container(
@@ -727,113 +767,69 @@ class _CartListState extends State<CartList> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // Container(
-                  //   width: 20,
-                  //   height: 30,
-                  //   alignment: Alignment.topLeft,
-                  //   margin: EdgeInsets.only(right: 15),
-                  //   // color: Colors.red,
-                  //   child: IconButton(
-                  //     icon: Icon(Icons.delete),
-                  //     onPressed: () {
-
-                  //     },
-                  //     color: Colors.black54,
-                  //   ),
-                  // ),
-                  // Container(
-                  //   width: 20,
-                  //   height: 30,
-                  //   margin: EdgeInsets.only(right: 15),
-                  //   alignment: Alignment.topLeft,
-                  //   // color: Colors.yellow,
-                  //   child: IconButton(
-                  //     icon: Icon(Icons.favorite),
-                  //     onPressed: () {},
-                  //     color: Colors.black54,
-                  //   ),
-                  // ),
                   Container(
                     padding: EdgeInsets.only(top: 5),
                     child: Row(
                       children: <Widget>[
+                        //Wishlist
                         Container(
                             width: 80,
                             padding: EdgeInsets.only(left: 5),
                             color: Colors.white,
-                            child: RaisedButton(
+                            child: FlatButton(
+                              onPressed: () {
+                                _switchWishedApi(
+                                    '${_listCart[i]['get_produk']['id']}');
+                              },
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(4)),
+                              color: Colors.white,
+                              child: Icon(
+                                _listCart[i]['get_produk']['getWishlist'] == 0
+                                    ? Icons.favorite_border
+                                    : Icons.favorite,
+                                color: Colors.green[300],
+                              ),
+                            )),
+
+                        //Sunting
+                        Container(
+                            width: 80,
+                            padding: EdgeInsets.only(left: 5),
+                            color: Colors.white,
+                            child: FlatButton(
+                              onPressed: () {
+                                _suntingCart(i, context);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.white),
+                                  borderRadius: BorderRadius.circular(4)),
+                              color: Colors.white,
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.yellow[800],
+                              ),
+                            )),
+
+                        //Hapus
+                        Container(
+                            width: 80,
+                            padding: EdgeInsets.only(left: 5),
+                            color: Colors.white,
+                            child: FlatButton(
                               onPressed: () {
                                 confirmHapus(context, _listCart[i]['id']);
                               },
                               shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.black12),
+                                  side: BorderSide(color: Colors.white),
                                   borderRadius: BorderRadius.circular(4)),
-                              color: Colors.red[400],
+                              color: Colors.white,
                               child: Icon(
                                 Icons.delete,
-                                color: Colors.white,
+                                color: Colors.red[400],
                               ),
                             )),
-                        Container(
-                            padding: EdgeInsets.only(left: 5),
-                            color: Colors.white,
-                            child: RaisedButton(
-                                onPressed: () {
-                                  _suntingCart(i, context);
-                                },
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(4)),
-                                color: Colors.green[300],
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.edit,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                ))),
-                        // ButtonTheme(
-                        //   padding: EdgeInsets.only(top: 0),
-                        //   minWidth: 10.0,
-                        //   height: 20.0,
-                        //   child: FlatButton(
-                        //     color: Colors.green[300],
-                        //     onPressed: () {
-                        //       setState(() {
-                        //         qty = qty - 1;
-                        //       });
-                        //       setState(() {});
-                        //       print(qty);
-                        //     },
-                        //     child: Icon(Icons.remove),
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   width: 30,
-                        //   child: TextField(
-                        //     readOnly: true,
-                        //     textAlign: TextAlign.center,
-                        //     controller: TextEditingController()
-                        //       ..text = '${qty}',
-                        //     onChanged: (text) => {},
-                        //   ),
-                        // ),
-                        // ButtonTheme(
-                        //   padding: EdgeInsets.only(top: 0),
-                        //   minWidth: 10.0,
-                        //   height: 20.0,
-                        //   child: FlatButton(
-                        //     color: Colors.black26,
-                        //     onPressed: () {
-                        //       setState(() {
-                        //         qty = qty + 1;
-                        //       });
-                        //       print(qty);
-                        //     },
-                        //     child: Icon(Icons.add),
-                        //   ),
-                        // ),
                       ],
                     ),
                   )
