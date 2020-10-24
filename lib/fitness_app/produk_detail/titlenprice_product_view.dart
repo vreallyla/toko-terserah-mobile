@@ -34,7 +34,9 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
           Map<String, dynamic> res = json.decode(value.data);
 
           if (value.error) {
-            loadNotice(context, 'Terjadi Kesalahan!');
+            loadNotice(context, 'Terjadi Kesalahan!', true, 'OK', () {
+              Navigator.of(context).pop();
+            });
           }
           //success
           else {
@@ -45,7 +47,9 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
       }
     } on SocketException catch (_) {
       widget.funcLoad(false);
-      loadNotice(context, 'Terjadi Kesalahan!');
+      loadNotice(context, 'Terjadi Kesalahan!', true, 'OK', () {
+              Navigator.of(context).pop();
+            });
       setState(() {});
     }
   }

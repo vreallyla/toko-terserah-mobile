@@ -34,7 +34,7 @@ class _CheckOutState extends State<CheckOut> {
   Map<String, dynamic> productDetail = {};
 
   _getDataApi() async {
-    List data = [ 15];
+    List data = widget.idProducts;
     print(data);
     try {
       final result = await InternetAddress.lookup('google.com');

@@ -45,7 +45,7 @@ final msgSuccess = {
 
 void dateParseJson() {}
 
-void loadNotice(context, String pesan) {
+void loadNotice(context, String pesan,bool warning,String textBtn, Function() btnEvent) {
   Timer _timer;
 
   showDialog(
@@ -72,17 +72,17 @@ void loadNotice(context, String pesan) {
                     Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 20),
                       child: Text(
-                        'Wishlist telah dimasukan ke keranjang!',
+                        pesan,
                         textAlign: TextAlign.center,
                       ),
                     ),
                     SizedBox(
                       width: 100,
                       child: RaisedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        color: Colors.green,
+                        onPressed: () => btnEvent(),
+                        color: warning ? Colors.red : Colors.green,
                         child: Text(
-                          'OK',
+                          textBtn,
                           style: TextStyle(color: Colors.white),
                         ),
                       ),

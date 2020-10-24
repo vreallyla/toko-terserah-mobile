@@ -7,6 +7,7 @@ import 'package:best_flutter_ui_templates/fitness_app/produk_detail/detail_card_
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/qna_product_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/review_product_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/titlenprice_product_view.dart';
+import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 import 'package:best_flutter_ui_templates/model/product_model.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
@@ -65,7 +66,7 @@ class _ProductDetail2State extends State<ProductDetail2>
   //jml cart
   int jmlCart = 0;
 
-  bool loadOverlay=false;
+  bool loadOverlay = false;
 
   //
   String qna = 'Hello', _token;
@@ -77,25 +78,72 @@ class _ProductDetail2State extends State<ProductDetail2>
   var dataUser;
 
   //overlay loading event
-  void loadOverlayEvent(bool cond){
+  void loadOverlayEvent(bool cond) {
     setState(() {
-      loadOverlay=cond;
+      loadOverlay = cond;
     });
   }
 
-  _addCart(int qty) async {}
+// tambah ke kerenjang event
+  _addCart(String id, String qty, bool redirect) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await KeranjangModel.addCart(id, qty).then((value) {
+          Map<String, dynamic> res = json.decode(value.data);
+
+          if (value.error && !res.containsKey('error')) {
+            loadNotice(context, 'Terjadi Kesalahan!', true, 'OK', () {
+              Navigator.of(context).pop();
+            });
+          }
+          // login exc
+          else if (res.containsKey('error')) {
+            loadNotice(context, 'Anda Belum Login!', false, 'LOGIN', () {
+              Navigator.pushNamed(context, '/login');
+            });
+          }
+          //success
+          else {
+            print(res);
+            if (!redirect) {
+              loadNotice(
+                  context, 'Berhasil ditambah ke keranjang!', false, 'OK', () {
+                Navigator.of(context).pop();
+              });
+            }
+
+            _getDataApi();
+            Future.delayed(Duration(seconds: 1), () {
+              if (redirect) {
+                loadOverlayEvent(false);
+
+                Navigator.pushNamed(context, '/cart_list');
+              }
+            });
+          }
+          setState(() {});
+        });
+      }
+    } on SocketException catch (_) {
+      loadOverlayEvent(false);
+
+      loadNotice(context, 'Terjadi Kesalahan!', true, 'OK', () {
+        Navigator.of(context).pop();
+      });
+      setState(() {});
+    }
+  }
 
   Future _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // print(_token);
     setState(() {
       _token = prefs.getString('token');
-      if(_token != null){
-          dataUser = jsonDecode(prefs.getString('dataUser'));
+      if (_token != null) {
+        dataUser = jsonDecode(prefs.getString('dataUser'));
       }
-    
     });
-    
   }
 
   void showAddDialog(BuildContext context) {
@@ -123,7 +171,12 @@ class _ProductDetail2State extends State<ProductDetail2>
                     }),
                 MaterialButton(
                   onPressed: () {
-                    print(jmlh_pcs);
+                    if (!(kondToCart(detailProduct) || jmlh_pcs == 0)) {
+                      Navigator.of(context).pop();
+                      loadOverlayEvent(true);
+                      _addCart(detailProduct['id'].toString(),
+                          jmlh_pcs.toString(), false);
+                    }
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -163,6 +216,8 @@ class _ProductDetail2State extends State<ProductDetail2>
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await ProductModel.getProduct(idProduct).then((value) {
+          loadOverlayEvent(false);
+
           if (value.error) {
             isLogin = false;
           } else {
@@ -203,7 +258,6 @@ class _ProductDetail2State extends State<ProductDetail2>
           showSnackBar("Silahkan isi kolom pertanyaannya dulu Sob", Colors.red,
               FaIcon(FontAwesomeIcons.timesCircle));
         } else {
-         
           var response =
               await http.post(globalBaseUrl + globalPathProduct + 'qna', body: {
             'user_id': dataUser['user']['id'].toString(),
@@ -213,13 +267,11 @@ class _ProductDetail2State extends State<ProductDetail2>
             "Authorization": "Bearer " + null
           });
           var _response = json.decode(response.body);
-           showSnackBar(_response['data']['message'],
-              Colors.green, Icon(Icons.announcement));
+          showSnackBar(_response['data']['message'], Colors.green,
+              Icon(Icons.announcement));
         }
 
-        setState(() {
-        
-        });
+        setState(() {});
         _getDataApi();
       } else {
         showSnackBar("Silahhkan Login Sob untuk bertanya", Colors.red,
@@ -235,10 +287,10 @@ class _ProductDetail2State extends State<ProductDetail2>
   void initState() {
     idProduct = widget.productId;
     _getToken();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 0), () {
       _getDataApi();
     });
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 0), () {
       addAllListData();
     });
   }
@@ -273,9 +325,11 @@ class _ProductDetail2State extends State<ProductDetail2>
 
     listViews.add(CarouselProductView(imageList: imageLists));
 
-    listViews.add(TitleNPriceProductView(detailList: detailProduct,funcLoad:(bool cond){
-      loadOverlayEvent(cond);
-    }));
+    listViews.add(TitleNPriceProductView(
+        detailList: detailProduct,
+        funcLoad: (bool cond) {
+          loadOverlayEvent(cond);
+        }));
     Map<String, dynamic> mapDetailCard = detailProduct;
 
     listViews.add(DetailCardView(
@@ -312,15 +366,13 @@ class _ProductDetail2State extends State<ProductDetail2>
           child: Stack(
             children: [
               HeaderPage(countCard: jmlCart),
-               loadOverlay
+              loadOverlay
                   ? Container(
                       width: size.width,
                       height: 100,
                       decoration: BoxDecoration(
                         color: Colors.grey.withOpacity(.2),
-                      
-                      )
-                    )
+                      ))
                   : Text(
                       '',
                       style: TextStyle(fontSize: 0),
@@ -371,9 +423,10 @@ class _ProductDetail2State extends State<ProductDetail2>
                         ),
                         color: Colors.green,
                         onPressed: () {
-                          
-                          Navigator.pushNamed(context, '/cart_list');
+                      loadOverlayEvent(true);
 
+                          _addCart(detailProduct['id'].toString(), 1.toString(),
+                              true);
                         },
                       ),
                     ),
@@ -381,20 +434,17 @@ class _ProductDetail2State extends State<ProductDetail2>
                   Spacer(flex: 1),
                 ],
               ),
-             loadOverlay
+              loadOverlay
                   ? Container(
                       width: size.width,
                       height: 60,
                       decoration: BoxDecoration(
                         color: Colors.grey.withOpacity(.2),
-                      
-                      )
-                    )
+                      ))
                   : Text(
                       '',
                       style: TextStyle(fontSize: 0),
                     )
-            
             ],
           ),
         ),
@@ -406,23 +456,22 @@ class _ProductDetail2State extends State<ProductDetail2>
               children: listViews,
             ),
           ),
-             loadOverlay
-                  ? Container(
-                      width: size.width,
-                      height: size.height,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.2),
-                      ),
-                      child: Image.asset(
-                        'assets/fitness_app/global_loader.gif',
-                        scale: 5,
-                      ),
-                    )
-                  : Text(
-                      '',
-                      style: TextStyle(fontSize: 0),
-                    )
-            
+          loadOverlay
+              ? Container(
+                  width: size.width,
+                  height: size.height,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(.2),
+                  ),
+                  child: Image.asset(
+                    'assets/fitness_app/global_loader.gif',
+                    scale: 5,
+                  ),
+                )
+              : Text(
+                  '',
+                  style: TextStyle(fontSize: 0),
+                )
         ],
       ),
     );
