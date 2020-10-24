@@ -40,8 +40,6 @@ class WishlistModel {
 
     String apiURL = globalBaseUrl +  "api/wish"+(q.length>0 ? '?q='+ q : '');
 
-    print(tokenFixed);
-    print('asd');
 
     try {
       var apiResult = await http.get(apiURL, headers: {
@@ -153,5 +151,67 @@ class WishlistModel {
       );
     }
   }
+
+   static Future<WishlistModel> switchWish(String id) async {
+    await _getToken();
+
+    String apiURL = globalBaseUrl + globalPathWish + "switch" ;
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.post(apiURL, 
+      body:{
+        "id":id
+      },
+      headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('switch wishlist status code : ' + apiResult.statusCode.toString());
+
+      // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+        // print(jsonObject['status']);
+
+        if (json.decode(apiResult.body)['status'] != null) {
+          // token untuk kirim request habis
+          return WishlistModel(
+            error: true,
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
+          );
+        } else {
+          //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['data']);
+          print(resData);
+          //set data user to shared prefrence
+          _setWishlist(resData);
+
+          return WishlistModel(
+            error: jsonObject['error'],
+            data: jsonEncode(json.decode(apiResult.body)['data']),
+          );
+        }
+      } else {
+        // other failed
+        return WishlistModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return WishlistModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
 
 }

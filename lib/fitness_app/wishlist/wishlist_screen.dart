@@ -5,6 +5,7 @@ import 'dart:io';
 
 // import 'package:best_flutter_ui_templates/model/user_model.dart';
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
 import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 import 'package:flutter/material.dart';
@@ -72,12 +73,10 @@ class _WishlistScreenState extends State<WishlistScreen>
             setState(() {});
           }
           isLoading = false;
-
           _setData();
         });
       }
     } on SocketException catch (_) {
-      // print('dasd');
       isConnect = false;
       isLoading = false;
       addAllListData();
@@ -99,14 +98,15 @@ class _WishlistScreenState extends State<WishlistScreen>
 
           if (value.error && !res.containsKey('error')) {
             isLogin = false;
-            setState(() {
-              addAllListData();
-            });
           } else {
             // widget.funcChangeCartQty(jsonDecode(value.data))['count_cart'];
             // print(jsonDecode(value.data));
             widget.funcChangeCartQty(res['count_cart']);
           }
+          setState(() {
+            _getDataApi();
+            addAllListData();
+          });
 
           showDialog(
               context: context,
@@ -259,6 +259,27 @@ class _WishlistScreenState extends State<WishlistScreen>
     );
   }
 
+  //show login message on screen
+  void setLogin(bool cond) {
+    setState(() {
+      isLogin = cond;
+    });
+  }
+
+  // change screen with loading image
+  void setLoading(bool cond) {
+    setState(() {
+      isLoading = cond;
+    });
+  }
+
+  // block screen
+  void setOverlay(bool cond) {
+    setState(() {
+      isLoading2 = cond;
+    });
+  }
+
   @override
   void initState() {
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -367,6 +388,11 @@ class _WishlistScreenState extends State<WishlistScreen>
     else {
       listViews.add(
         ItemWishlistView(
+          eventHandle: (bool login, bool loading, bool loadingOverlay) {
+            setLogin(login);
+            setLoading(loading);
+            setOverlay(loadingOverlay);
+          },
           functAddCart: (String id, String qty) {
             _addCartApi(id, qty);
           },

@@ -1,23 +1,59 @@
+import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
+import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
-
 class TitleNPriceProductView extends StatefulWidget {
-  const TitleNPriceProductView({Key key, this.detailList}) : super(key: key);
+  const TitleNPriceProductView({Key key, this.detailList, this.funcLoad})
+      : super(key: key);
   final Map<String, dynamic> detailList;
+  final Function(bool cond) funcLoad;
 
   @override
   _TitleNPriceProductViewState createState() => _TitleNPriceProductViewState();
 }
 
 class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
+  bool wished = false;
+
+  _switchWishedApi(String id) async {
+    setState(() {
+      widget.funcLoad(true);
+    });
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await WishlistModel.switchWish(id).then((value) {
+          widget.funcLoad(false);
+
+          Map<String, dynamic> res = json.decode(value.data);
+
+          if (value.error) {
+            loadNotice(context, 'Terjadi Kesalahan!');
+          }
+          //success
+          else {
+            wished = res['status_wished'];
+          }
+          setState(() {});
+        });
+      }
+    } on SocketException catch (_) {
+      widget.funcLoad(false);
+      loadNotice(context, 'Terjadi Kesalahan!');
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    // wished = widget.detailList['isWished'] > 0;
 
     return widget.detailList == null
         ? Container(
@@ -58,12 +94,12 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                   ),
                 ),
                 //judul
-               Container(
-                                  height: 15,
-                                  margin: EdgeInsets.only(top: 5),
-                                  color: Colors.blueGrey.withOpacity(.5),
-                                ),//bintang
-             ],
+                Container(
+                  height: 15,
+                  margin: EdgeInsets.only(top: 5),
+                  color: Colors.blueGrey.withOpacity(.5),
+                ), //bintang
+              ],
             ))
         : Container(
             padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
@@ -84,7 +120,7 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                 setHarga(widget.detailList),
+                                  setHarga(widget.detailList),
                                   style: TextStyle(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold),
@@ -94,20 +130,37 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                                     Card(
                                       color: Colors.red[100],
                                       child: Container(
-                                          padding: EdgeInsets.all(disconCondition(widget.detailList)>0 ?5 :0),
+                                          padding: EdgeInsets.all(
+                                              disconCondition(
+                                                          widget.detailList) >
+                                                      0
+                                                  ? 5
+                                                  : 0),
                                           child: Text(
-                                            '-'+disconCondition(widget.detailList).toString()+'%',
+                                            '-' +
+                                                disconCondition(
+                                                        widget.detailList)
+                                                    .toString() +
+                                                '%',
                                             style: TextStyle(
                                               color: Colors.red[800],
                                               fontWeight: FontWeight.bold,
-                                              fontSize: disconCondition(widget.detailList)>0  ?15 : 0  ,
+                                              fontSize: disconCondition(
+                                                          widget.detailList) >
+                                                      0
+                                                  ? 15
+                                                  : 0,
                                             ),
                                           )),
                                     ),
                                     Text(
                                       beforeDisc(widget.detailList),
                                       style: TextStyle(
-                                          fontSize: disconCondition(widget.detailList)>0?20:0,
+                                          fontSize: disconCondition(
+                                                      widget.detailList) >
+                                                  0
+                                              ? 20
+                                              : 0,
                                           decoration:
                                               TextDecoration.lineThrough),
                                       textAlign: TextAlign.left,
@@ -115,19 +168,29 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                                   ],
                                 ),
                               ])),
-                      Container(
-                        width: 70,
-                        alignment: Alignment.topRight,
-                        child: InkWell(
-                          onTap: (){},
-                                                  child: IconButton(
-                            icon: widget.detailList['isWished']>0?Icon(Icons.favorite,color: Colors.pink,):Icon(Icons.favorite_border,),
-                            
-                            onPressed: null,
-                            iconSize: 35,
-                          ),
-                        ),
-                      ),
+                      InkWell(
+                          onTap: () {
+                            setState(() {
+                              _switchWishedApi(
+                                  widget.detailList['id'].toString());
+                            });
+                          },
+                          child: Container(
+                            width: 70,
+                            alignment: Alignment.topRight,
+                            child: (wished != widget.detailList['isWished'] > 0
+                                    ? wished
+                                    : widget.detailList['isWished'] > 0)
+                                ? Icon(
+                                    Icons.favorite,
+                                    color: Colors.pink,
+                                    size: 35,
+                                  )
+                                : Icon(
+                                    Icons.favorite_border,
+                                    size: 35,
+                                  ),
+                          )),
                     ],
                   ),
                 ),
@@ -170,14 +233,18 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                         size: 25,
                       ),
                       Text(
-                        ' '+decimalPointOne(widget.detailList['avg_ulasan'].toString()),
+                        ' ' +
+                            decimalPointOne(
+                                widget.detailList['avg_ulasan'].toString()),
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '  ('+pointGroup(widget.detailList['count_ulasan'])+' ulasan)',
+                        '  (' +
+                            pointGroup(widget.detailList['count_ulasan']) +
+                            ' ulasan)',
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.black45,
@@ -201,7 +268,10 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                             child: Row(
                               children: <Widget>[
                                 Text("Stok : ", style: TextStyle(fontSize: 13)),
-                                new Text(pointGroup(int.parse(widget.detailList['stock']))+" pcs ",
+                                new Text(
+                                    pointGroup(int.parse(
+                                            widget.detailList['stock'])) +
+                                        " pcs ",
                                     style: TextStyle(
                                         fontSize: 13,
                                         color: Colors.green,
@@ -218,7 +288,11 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                           child: Row(
                             children: <Widget>[
                               Text("Berat : ", style: TextStyle(fontSize: 13)),
-                              new Text(decimalPointTwo(double.parse(widget.detailList['berat']) / 1000)+" kg ",
+                              new Text(
+                                  decimalPointTwo(double.parse(
+                                              widget.detailList['berat']) /
+                                          1000) +
+                                      " kg ",
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.green,
@@ -234,7 +308,13 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                           child: Row(
                             children: <Widget>[
                               Text("Minim : ", style: TextStyle(fontSize: 13)),
-                              new Text(pointGroup(isGrosir(widget.detailList)=='Grosir'?int.parse(widget.detailList['min_qty']):1)+" pcs ",
+                              new Text(
+                                  pointGroup(isGrosir(widget.detailList) ==
+                                              'Grosir'
+                                          ? int.parse(
+                                              widget.detailList['min_qty'])
+                                          : 1) +
+                                      " pcs ",
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.green,
