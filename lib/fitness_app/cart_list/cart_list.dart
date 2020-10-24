@@ -1,3 +1,4 @@
+import 'package:best_flutter_ui_templates/fitness_app/produk_detail/CustomShowDialog.dart';
 import 'package:best_flutter_ui_templates/model/register_model.dart';
 import 'package:flutter/material.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
@@ -9,6 +10,7 @@ import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer';
 import 'package:intl/intl.dart';
+import 'package:flutter_spinbox/flutter_spinbox.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -31,7 +33,7 @@ class _CartListState extends State<CartList> {
 
   String _token;
 
-  final formatter = new NumberFormat("#,###");
+  final formatter = new NumberFormat("#,###.00", 'id_ID');
 
   Future _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -51,6 +53,7 @@ class _CartListState extends State<CartList> {
           var _response = json.decode(response.body);
 
           _listCart = _response['data']['produk'];
+          print(_listCart);
         }
         setState(() {
           isLoading = false;
@@ -73,13 +76,20 @@ class _CartListState extends State<CartList> {
    * increase decrease qty item
    * 
    */
-  _changeQty(id, qty) async {
+  _changeQty(int id, int qty) async {
     try {
       //do something
+      print(id);
       var response = await http.post(globalBaseUrl + 'api/cart/update_cart',
           body: {"id": id.toString(), "qty": qty.toString()},
           headers: {"Authorization": "Bearer " + _token});
       var _response = json.decode(response.body);
+       setState(() {
+          isLoading = true;
+        });
+        _getData();
+       showSnackBar(_response['data']['message'], Colors.green,
+            Icon(Icons.check_circle_outline));
     } on SocketException catch (_) {
       //catch Socket error
       isConnect = false;
@@ -87,6 +97,7 @@ class _CartListState extends State<CartList> {
       setState(() {});
     } catch (e) {
       //catch any error
+      print(e);
     }
   }
 
@@ -235,6 +246,196 @@ class _CartListState extends State<CartList> {
     }
   }
 
+  /**
+   * Showing Modal sunting item
+   * 
+   */
+  _suntingCart(int i, BuildContext context) {
+    final sizeu = MediaQuery.of(context).size;
+    double qty = double.parse(_listCart[i]['qty']);
+    double minOrder =
+        double.parse(_listCart[i]['get_produk']['min_qty'] ?? '1');
+    double maxOrder = double.parse(_listCart[i]['get_produk']['stock'] ?? '0') +
+        double.parse(_listCart[i]['qty'] ?? '0');
+    int cart_id = _listCart[i]['id'];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          content: Container(
+            height: sizeu.width / 1.6,
+            padding: EdgeInsets.fromLTRB(15, 0, 0, 5),
+            decoration: new BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: const Color(0xFFFFFF),
+              borderRadius: new BorderRadius.all(new Radius.circular(32.0)),
+            ),
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(crossAxisAlignment: CrossAxisAlignment.start,
+                    // mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        height: sizeu.width / 4 / 1.5,
+                        width: sizeu.width / 4 / 1.5,
+                        margin: EdgeInsets.only(top: 20),
+                        decoration: BoxDecoration(
+                          image: new DecorationImage(
+                              image: NetworkImage(globalBaseUrl +
+                                      locationProductImage +
+                                      _listCart[i]['get_produk']['gambar'] ??
+                                  'https://via.placeholder.com/300'),
+                              fit: BoxFit.cover),
+                          color: Colors.black26,
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(8.0),
+                            bottomLeft: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: sizeu.width / 3 - sizeu.width / 17,
+                        width:
+                            sizeu.width - sizeu.width / 4 / 1.5 - 20 - 30 - 30,
+                        // color: Colors.red,
+                        padding: EdgeInsets.only(left: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              alignment: Alignment.topLeft,
+                              width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                              child: Text(
+                                '${_listCart[i]['get_produk']['nama']}',
+                                maxLines: 2,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Card(
+                                  color: Colors.green[100],
+                                  child: Container(
+                                      margin: EdgeInsets.all(2),
+                                      child: Text(
+                                        _listCart[i]['get_produk']
+                                                    ['isGrosir'] ==
+                                                1
+                                            ? "Grosir"
+                                            : 'Retail',
+                                        style: TextStyle(
+                                          color: Colors.green[800],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      )),
+                                ),
+                                Card(
+                                  color: Colors.blue[100],
+                                  child: Container(
+                                      margin: EdgeInsets.all(2),
+                                      child: Text(
+                                        '${_listCart[i]['qty']} pcs',
+                                        style: TextStyle(
+                                          color: Colors.blue[800],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      )),
+                                ),
+                                Card(
+                                  color: Colors.red[100],
+                                  child: Container(
+                                      margin: EdgeInsets.all(2),
+                                      child: Text(
+                                        'Stock ${_listCart[i]['get_produk']['stock'] ?? 0} pcs',
+                                        style: TextStyle(
+                                          color: Colors.red[800],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      )),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              alignment: Alignment.topLeft,
+                              width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                              child: Text(
+                                'Rp ${formatter.format(int.parse(_listCart[i]['total']))}',
+                                maxLines: 2,
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.topLeft,
+                              width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                              child: Text(
+                                'Minimal ' +
+                                    '${_listCart[i]['get_produk']['min_qty'] ?? 1}' +
+                                    ' Pcs',
+                                maxLines: 1,
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.blueGrey),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ]),
+                SpinBox(
+                  min: minOrder,
+                  max: maxOrder,
+                  value: qty,
+                  onChanged: (value) {
+                    // print(int.parse(value.toString()));
+                    qty = value;
+                    print(qty);
+                  },
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    print('Hello');
+                     Navigator.of(context).pop();
+                    _changeQty(cart_id, qty.round());
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 18,
+                    padding: EdgeInsets.all(1.0),
+                    child: Material(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'SIMPAN',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontFamily: 'helvetica_neue_light',
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -270,7 +471,7 @@ class _CartListState extends State<CartList> {
           // )
         ],
       ),
-      bottomNavigationBar:footer(context),
+      bottomNavigationBar: footer(context),
       body: (_token == null
           ? noLogin()
           : (!isConnect
@@ -382,6 +583,7 @@ class _CartListState extends State<CartList> {
 
   Widget cardKerangjang(context, i) {
     final sizeu = MediaQuery.of(context).size;
+    int qty = int.parse(_listCart[i]['qty']);
 
     return Container(
       height: sizeu.width / 2 - sizeu.width / 15,
@@ -410,6 +612,7 @@ class _CartListState extends State<CartList> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          //Info Section
           Row(crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -467,18 +670,37 @@ class _CartListState extends State<CartList> {
                           ),
                         ),
                       ),
-                      Card(
-                        color: Colors.green[100],
-                        child: Container(
-                            margin: EdgeInsets.all(2),
-                            child: Text(
-                              'Grosir',
-                              style: TextStyle(
-                                color: Colors.green[800],
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            )),
+                      Row(
+                        children: [
+                          Card(
+                            color: Colors.green[100],
+                            child: Container(
+                                margin: EdgeInsets.all(2),
+                                child: Text(
+                                  _listCart[i]['get_produk']['isGrosir'] == 1
+                                      ? "Grosir"
+                                      : 'Retail',
+                                  style: TextStyle(
+                                    color: Colors.green[800],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                )),
+                          ),
+                          Card(
+                            color: Colors.blue[100],
+                            child: Container(
+                                margin: EdgeInsets.all(2),
+                                child: Text(
+                                  '${_listCart[i]['qty']} pcs',
+                                  style: TextStyle(
+                                    color: Colors.blue[800],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                )),
+                          ),
+                        ],
                       ),
                       Container(
                         alignment: Alignment.topLeft,
@@ -494,6 +716,8 @@ class _CartListState extends State<CartList> {
                   ),
                 ),
               ]),
+
+          // Bottom button section
           Container(
               height: (sizeu.width / 2 - sizeu.width / 15) -
                   30 -
@@ -503,20 +727,20 @@ class _CartListState extends State<CartList> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    width: 20,
-                    height: 30,
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(right: 15),
-                    // color: Colors.red,
-                    child: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        confirmHapus(context, _listCart[i]['id']);
-                      },
-                      color: Colors.black54,
-                    ),
-                  ),
+                  // Container(
+                  //   width: 20,
+                  //   height: 30,
+                  //   alignment: Alignment.topLeft,
+                  //   margin: EdgeInsets.only(right: 15),
+                  //   // color: Colors.red,
+                  //   child: IconButton(
+                  //     icon: Icon(Icons.delete),
+                  //     onPressed: () {
+
+                  //     },
+                  //     color: Colors.black54,
+                  //   ),
+                  // ),
                   // Container(
                   //   width: 20,
                   //   height: 30,
@@ -533,35 +757,83 @@ class _CartListState extends State<CartList> {
                     padding: EdgeInsets.only(top: 5),
                     child: Row(
                       children: <Widget>[
-                        ButtonTheme(
-                          padding: EdgeInsets.only(top: 0),
-                          minWidth: 10.0,
-                          height: 20.0,
-                          child: FlatButton(
-                            color: Colors.black26,
-                            onPressed: () {},
-                            child: Icon(Icons.remove),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 30,
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            controller: TextEditingController()
-                              ..text = '${_listCart[i]['qty']}',
-                            onChanged: (text) => {},
-                          ),
-                        ),
-                        ButtonTheme(
-                          padding: EdgeInsets.only(top: 0),
-                          minWidth: 10.0,
-                          height: 20.0,
-                          child: FlatButton(
-                            color: Colors.black26,
-                            onPressed: () {},
-                            child: Icon(Icons.add),
-                          ),
-                        ),
+                        Container(
+                            width: 80,
+                            padding: EdgeInsets.only(left: 5),
+                            color: Colors.white,
+                            child: RaisedButton(
+                              onPressed: () {
+                                confirmHapus(context, _listCart[i]['id']);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.black12),
+                                  borderRadius: BorderRadius.circular(4)),
+                              color: Colors.red[400],
+                              child: Icon(
+                                Icons.delete,
+                                color: Colors.white,
+                              ),
+                            )),
+                        Container(
+                            padding: EdgeInsets.only(left: 5),
+                            color: Colors.white,
+                            child: RaisedButton(
+                                onPressed: () {
+                                  _suntingCart(i, context);
+                                },
+                                shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: Colors.black12),
+                                    borderRadius: BorderRadius.circular(4)),
+                                color: Colors.green[300],
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ))),
+                        // ButtonTheme(
+                        //   padding: EdgeInsets.only(top: 0),
+                        //   minWidth: 10.0,
+                        //   height: 20.0,
+                        //   child: FlatButton(
+                        //     color: Colors.green[300],
+                        //     onPressed: () {
+                        //       setState(() {
+                        //         qty = qty - 1;
+                        //       });
+                        //       setState(() {});
+                        //       print(qty);
+                        //     },
+                        //     child: Icon(Icons.remove),
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   width: 30,
+                        //   child: TextField(
+                        //     readOnly: true,
+                        //     textAlign: TextAlign.center,
+                        //     controller: TextEditingController()
+                        //       ..text = '${qty}',
+                        //     onChanged: (text) => {},
+                        //   ),
+                        // ),
+                        // ButtonTheme(
+                        //   padding: EdgeInsets.only(top: 0),
+                        //   minWidth: 10.0,
+                        //   height: 20.0,
+                        //   child: FlatButton(
+                        //     color: Colors.black26,
+                        //     onPressed: () {
+                        //       setState(() {
+                        //         qty = qty + 1;
+                        //       });
+                        //       print(qty);
+                        //     },
+                        //     child: Icon(Icons.add),
+                        //   ),
+                        // ),
                       ],
                     ),
                   )
