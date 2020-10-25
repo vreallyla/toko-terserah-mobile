@@ -274,7 +274,7 @@ class _EveryTapState extends State<EveryTap> {
                 total: decimalPointTwo(double.parse(res['total_harga'])),
                 jenis: ress['tab_name'],
                 photo: res['recent_produk']['gambar'],
-                id: res['id'],
+                id: res['id'].toString(),
               ),
             ],
           ),
@@ -406,7 +406,7 @@ class CardBoughts extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => TransaksiDetailScreen(
-              dashboardId: id.toString(),
+              dashboardId: id,
             ),
           ));
       },
