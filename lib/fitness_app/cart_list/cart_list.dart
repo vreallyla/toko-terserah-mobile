@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/checkout.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
+import 'package:best_flutter_ui_templates/design_course/test.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -283,6 +284,14 @@ class _CartListState extends State<CartList> {
               idProducts: _selecteCarts,
             ),
           ));
+          //  Navigator.push(
+          // //push screen to check out and send parameter
+          // context,
+          // MaterialPageRoute(
+          //   builder: (context) => TestWebView(
+              
+          //   ),
+          // ));
     }
   }
 
