@@ -49,9 +49,11 @@ dependencies:
   progressive_image: ^1.0.1
   image_picker: ^0.6.7+11
   cached_network_image: ^2.3.2+1
-  flutter_html: ^1.0.0
+  flutter_html: ^1.0.2
   sliding_up_panel: ^1.0.2
   url_launcher: ^5.7.5
+  flutter_webview_plugin: ^0.3.11
+  
   # mid_flutter: ^0.0.2
   
 
