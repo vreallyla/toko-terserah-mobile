@@ -3,6 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
 
 class TransaksiDetailScreen extends StatefulWidget {
+  const TransaksiDetailScreen({Key key, this.dashboardId})
+      : super(key: key);
+
+  final String dashboardId;
   @override
   _TransaksiDetailScreenState createState() => _TransaksiDetailScreenState();
 }

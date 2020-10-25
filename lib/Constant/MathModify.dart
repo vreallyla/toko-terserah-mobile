@@ -10,13 +10,13 @@ import 'dart:core';
     String dua = '< semenit lalu';
     String tiga = ' menit lalu';
     String empat = '< sejam lalu';
-    String lima = ' jam lalu';
+    String lima = ' jam yang lalu';
     String enam = '< sehari lalu';
-    String tujuh = ' hari lalu';
-    String delapan = ' minggu lalu';
+    String tujuh = ' hari yang lalu';
+    String delapan = ' minggu yang lalu';
     String sembilan = ' sebulan lalu';
     String sepuluh = '< setahun lalu';
-    String sebelas = ' tahun lalu';
+    String sebelas = ' tahun yang lalu';
     String duabelas = '> 5 tahun';
     String diffForHumans;
 
