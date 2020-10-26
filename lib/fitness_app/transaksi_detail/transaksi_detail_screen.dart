@@ -1,17 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 
 class TransaksiDetailScreen extends StatefulWidget {
-  const TransaksiDetailScreen({Key key, this.dashboardId})
+  const TransaksiDetailScreen({Key key, this.dashboardId, this.status})
       : super(key: key);
 
   final String dashboardId;
+  final String status;
   @override
   _TransaksiDetailScreenState createState() => _TransaksiDetailScreenState();
 }
 
 class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
+  String _token;
+
+  bool isLoading = true, isConnect = true;
+
+  var _data;
+
+  Future _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print(_token);
+    setState(() {
+      _token = prefs.getString('token');
+    });
+  }
+
+  _getData() async {
+    try {
+      if (_token != null) {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          var response = await http.get(
+              globalBaseUrl + 'api/dashboard/detail/' + widget.dashboardId,
+              headers: {"Authorization": "Bearer " + _token});
+          var _response = json.decode(response.body);
+          _data = _response;
+          print(_response);
+        }
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } on SocketException catch (_) {
+      isConnect = false;
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(widget.dashboardId);
+    _getToken();
+    Future.delayed(Duration(milliseconds: 50), () {
+      _getData();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -44,22 +100,39 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                   color: Colors.green,
                 ))),
       ),
-      body: Container(
-        color: Colors.grey[300],
-        child: ListView(children: <Widget>[
-          StatusTransaksi(),
-          AlamatTransaksi(),
-          TrackerTransaksi(),
-          HeadDaftarTransaksi(),
-          TransaksiVia(),
-        ]),
-      ),
+      body: isLoading
+          ? reqLoad()
+          : Container(
+              color: Colors.grey[300],
+              child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: <Widget>[
+                    StatusTransaksi(
+                      data: _data,
+                      status: widget.status,
+                    ),
+                    AlamatTransaksi(
+                      data: _data['data']['alamat_pengiriman'],
+                    ),
+                    TrackerTransaksi(),
+                    HeadDaftarTransaksi(
+                      dataItem: _data['data']['carts'],
+                      data: _data
+                    ),
+                    // TransaksiVia(),
+                  ]),
+            ),
     );
   }
 }
 // end stack end
 
 class StatusTransaksi extends StatelessWidget {
+  final Map<String, dynamic> data;
+  final String status;
+
+  const StatusTransaksi({this.data, this.status});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -84,7 +157,7 @@ class StatusTransaksi extends StatelessWidget {
                     ),
                   ),
                   Container(
-                      width: size.width - 30 - 100 - 30,
+                      width: size.width / 3,
                       child: Text('Status',
                           style: TextStyle(
                             color: Colors.black,
@@ -92,9 +165,9 @@ class StatusTransaksi extends StatelessWidget {
                             fontSize: 18,
                           ))),
                   Container(
-                    width: 100,
+                    width: size.width / 2,
                     alignment: Alignment.centerRight,
-                    child: Text('20 Sept 2020',
+                    child: Text('${status}',
                         style: TextStyle(
                           color: Colors.black54,
                         )),
@@ -106,11 +179,11 @@ class StatusTransaksi extends StatelessWidget {
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(width: 110, child: Text('No Invoice')),
+                  Container(width: 110, child: Text('Invoice')),
                   Container(
                       width: size.width - 30 - 110 - 30,
                       child: Text(
-                        ': 3012/sadki/21393',
+                        ':${data['data']['uni_code']}',
                         maxLines: 2,
                       )),
                 ]),
@@ -126,7 +199,8 @@ class StatusTransaksi extends StatelessWidget {
                   ),
                   Container(
                       width: size.width - 30 - 110 - 30,
-                      child: Text(': 05 Agust 2020', maxLines: 2)),
+                      child: Text(': ${data['data']['tgl_diterima'] ?? '-'}',
+                          maxLines: 2)),
                 ]),
           ),
         ],
@@ -136,6 +210,9 @@ class StatusTransaksi extends StatelessWidget {
 }
 
 class AlamatTransaksi extends StatelessWidget {
+  final Map<String, dynamic> data;
+
+  const AlamatTransaksi({this.data});
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -188,7 +265,7 @@ class AlamatTransaksi extends StatelessWidget {
                 Container(
                     width: size.width - 30 - 30,
                     child: Text(
-                      'Fahmi Rizky Maulidy',
+                      '${data['nama']}',
                       maxLines: 1,
                     )),
               ]),
@@ -202,7 +279,7 @@ class AlamatTransaksi extends StatelessWidget {
                 Container(
                     width: size.width - 30 - 30,
                     child: Text(
-                      '(+62) 081553847015',
+                      '${data['telp']}',
                       maxLines: 1,
                     )),
               ]),
@@ -216,7 +293,7 @@ class AlamatTransaksi extends StatelessWidget {
                 Container(
                     width: size.width - 30 - 30,
                     child: Text(
-                      'Jl. Menanggal no. 4, Menanggal, Surabaya',
+                      '${data['alamat']}',
                       maxLines: 4,
                     )),
               ]),
@@ -331,10 +408,14 @@ class TrackerTransaksi extends StatelessWidget {
 }
 
 class HeadDaftarTransaksi extends StatelessWidget {
+ final Map<String, dynamic> data;
+  final List dataItem;
+  const HeadDaftarTransaksi({this.dataItem,this.data});
+  
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+final formatter = new NumberFormat("#,###.00", 'id_ID');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -365,7 +446,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                 ),
                 Container(
                     width: size.width - 30 - 30 - 100,
-                    child: Text('Daftar Pesanan',
+                    child: Text('Daftar Pesanan (${dataItem.length} item)',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
@@ -391,73 +472,80 @@ class HeadDaftarTransaksi extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   // daftar pesanan
-                  Container(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: 70,
-                          height: 70,
-                          margin: EdgeInsets.only(right: 10),
-                          color: Colors.grey,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(top: 7),
-                              width: size.width - 60 - 80,
-                              child: Text(
-                                'Nama Barang Disini',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.green,
-                                ),
-                                maxLines: 2,
+                  ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: dataItem.length == null ? 0 : dataItem.length,
+                      itemBuilder: (context, i) {
+                        return Container(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: 70,
+                                height: 70,
+                                margin: EdgeInsets.only(right: 10),
+                                color: Colors.grey,
                               ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 7),
-                              width: size.width - 60 - 80,
-                              child: Text(
-                                'X1',
-                                maxLines: 2,
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 7),
-                              alignment: Alignment.topRight,
-                              width: size.width - 60 - 80,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '(Rp500.000,-)',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                      decoration: TextDecoration.lineThrough,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.only(top: 7),
+                                    width: size.width - 60 - 80,
+                                    child: Text(
+                                      '${dataItem[i]['produk']['nama']}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.green,
+                                      ),
+                                      maxLines: 2,
                                     ),
                                   ),
-                                  Text(
-                                    '  Rp10.000,-',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.green,
+                                  Container(
+                                    padding: EdgeInsets.only(top: 7),
+                                    width: size.width - 60 - 80,
+                                    child: Text(
+                                      'X ${dataItem[i]['qty']}',
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 7),
+                                    alignment: Alignment.topRight,
+                                    width: size.width - 60 - 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        // Text(
+                                        //   '(Rp500.000,-)',
+                                        //   style: TextStyle(
+                                        //     fontSize: 12,
+                                        //     fontWeight: FontWeight.w500,
+                                        //     color: Colors.black54,
+                                        //     decoration:
+                                        //         TextDecoration.lineThrough,
+                                        //   ),
+                                        // ),
+                                        Text(
+                                          '  Rp ${formatter.format(int.parse(dataItem[i]['total']))}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                            ],
+                          ),
+                        );
+                      })
                 ],
               ),
             ),
@@ -487,7 +575,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp10.000,-',
+                          child: Text('Rp${formatter.format(data['data']['subtotal'])}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -510,7 +598,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp5.000,-',
+                          child: Text('Rp${formatter.format(int.parse(data['data']['ongkir']))}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -558,7 +646,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp15.000,-',
+                          child: Text('Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'])}',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
