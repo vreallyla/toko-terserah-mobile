@@ -274,8 +274,8 @@ class _CartListState extends State<CartList> {
       showSnackBar("Item Keranjang belum dipilih", Colors.red,
           FaIcon(FontAwesomeIcons.timesCircle));
     } else {
-      showSnackBar("Lanjut mas Semongko", Colors.green,
-          FaIcon(FontAwesomeIcons.checkCircle));
+      // showSnackBar("Lanjut mas Semongko", Colors.green,
+      //     FaIcon(FontAwesomeIcons.checkCircle));
       Navigator.push(
           //push screen to check out and send parameter
           context,
@@ -416,7 +416,7 @@ class _CartListState extends State<CartList> {
                               alignment: Alignment.topLeft,
                               width: sizeu.width - 50 - sizeu.width / 4 - 10,
                               child: Text(
-                                'Rp ${formatter.format(int.parse(_listCart[i]['total']))}',
+                                'Rp${formatter.format(int.parse(_listCart[i]['total']))}',
                                 maxLines: 2,
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold),
@@ -755,7 +755,7 @@ class _CartListState extends State<CartList> {
                         alignment: Alignment.topLeft,
                         width: sizeu.width - 50 - sizeu.width / 4 - 10,
                         child: Text(
-                          'Rp ${formatter.format(int.parse(_listCart[i]['total']))}',
+                          'Rp${formatter.format(int.parse(_listCart[i]['total']))}',
                           maxLines: 2,
                           style: TextStyle(
                               fontSize: 15, fontWeight: FontWeight.bold),
@@ -894,7 +894,7 @@ class _CartListState extends State<CartList> {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      'Rp ${formatter.format(_total)}',
+                      'Rp${formatter.format(_total)}',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 16,
@@ -910,7 +910,7 @@ class _CartListState extends State<CartList> {
               },
               child: Container(
                 height: 50,
-                color: Colors.green[300],
+                color: Colors.green,
                 alignment: Alignment.center,
                 width: 90,
                 child: Text(
@@ -985,7 +985,7 @@ class FooterApp extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      'Rp ${total}',
+                      'Rp${total}',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 16,

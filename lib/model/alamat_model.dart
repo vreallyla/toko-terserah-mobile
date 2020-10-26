@@ -35,6 +35,59 @@ class AlamatModel {
     );
   }
 
+  static Future<AlamatModel> getAlamat() async {
+    await _getToken();
+
+    String apiURL = globalBaseUrl  + "api/address";
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.get(apiURL, headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('data alamat status code : ' + apiResult.statusCode.toString());
+          // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+
+        if (json.decode(apiResult.body)['status'] != null) {
+          // token untuk kirim request habis
+          return AlamatModel(
+            error: true,
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
+          );
+        } else {
+          //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['data']);
+
+          return AlamatModel(
+            error: jsonObject['error'],
+            data: jsonEncode(resData),
+          );
+        }
+      } else {
+        // other failed
+        return AlamatModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return AlamatModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
+
   static Future<AlamatModel> akunRes() async {
     await _getToken();
 
@@ -88,6 +141,8 @@ class AlamatModel {
       );
     }
   }
+
+
 
   static Future<AlamatModel> checkEmail(String email) async {
     String apiURL = globalBaseUrl + globalPathAuth + "check_email";

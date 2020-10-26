@@ -2,12 +2,16 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/design_course/test.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/product_detail_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/midtrans/midtrans_screen.dart';
+import 'package:best_flutter_ui_templates/model/alamat_model.dart';
 import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
+import 'package:best_flutter_ui_templates/model/midtrans_model.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CheckOut extends StatefulWidget {
@@ -31,11 +35,19 @@ class _CheckOutState extends State<CheckOut> {
 
   bool isConnect = true;
   bool isLoading = false;
+  bool loadOverlay = false;
   Map<String, dynamic> productDetail = {};
 
+  //overlay loading event
+  void loadOverlayEvent(bool cond) {
+    setState(() {
+      loadOverlay = cond;
+    });
+  }
+
   _getDataApi() async {
-    List data = [15];
-    print(data);
+    List data = widget.idProducts;
+
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -52,6 +64,88 @@ class _CheckOutState extends State<CheckOut> {
       }
     } on SocketException catch (_) {
       // print('dasd');
+      isConnect = false;
+      isLoading = false;
+
+      setState(() {});
+    }
+  }
+
+  _getAlamatApi() async {
+    List data = widget.idProducts;
+    // print(data);
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await AlamatModel.getAlamat().then((value) {
+          isLoading = false;
+
+          if (value.error) {
+          } else {
+            // productDetail = json.decode(value.data);
+            // print(value.data);
+            // print('qwx');
+            setState(() {});
+            // print('hello');
+          }
+        });
+      }
+    } on SocketException catch (_) {
+      // print('dasd');
+      isConnect = false;
+      isLoading = false;
+
+      setState(() {});
+    }
+  }
+
+  _getSnapMidtransApi() async {
+    loadOverlayEvent(true);
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await MidtransModel.getSnap({
+          'pengiriman_id': '1',
+          'penagihan_id': '1',
+          'ongkir': '100000',
+          'discount_price': '',
+          'cart_ids': '56,58,59',
+          'total': '50000',
+        }).then((value) {
+          loadOverlayEvent(false);
+
+          if (value.error) {
+          } else {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TestWebView(
+                    pengirimanId: '1',
+                    penagihanId: '1',
+                    cartIds: '56,58,59',
+                    discountPrice: '',
+                    ongkir: '100000',
+                    total: '50000',
+                    snapToken: value.data,
+                    weight: '3',
+                    note: 'Coba aja dulu',
+                    durasiPengiriman: '2-3',
+                    promoCode: 'logistik',
+                    opsi: 'logistik',
+                    kodeKurir: 'jne',
+                    layananKurir: 'CTC',
+                    token:tokenFixed,
+                  ),
+                ));
+            setState(() {});
+            // print('hello');
+          }
+        });
+      }
+    } on SocketException catch (_) {
+      loadOverlayEvent(false);
+
       isConnect = false;
       isLoading = false;
 
@@ -101,12 +195,25 @@ class _CheckOutState extends State<CheckOut> {
       ),
     );
   }
+String tokenFixed='';
+
+  _getToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  tokenFixed = prefs.getString('token');
+  //  prefs.getString('token');
+}
 
   @override
   // ignore: must_call_super
   void initState() {
     isLoading = true;
+    _getToken();
+
     _getDataApi();
+    _getAlamatApi();
+    // _getSnapMidtransApi();
+    super.initState();
   }
 
   ExpansionPanelList listcheckout;
@@ -136,7 +243,24 @@ class _CheckOutState extends State<CheckOut> {
           // )
         ],
       ),
-      bottomNavigationBar: FooterApp(),
+      bottomNavigationBar: Stack(
+        children: [
+          FooterApp(sendMidtrans: () {
+            _getSnapMidtransApi();
+          }),
+          loadOverlay
+              ? Container(
+                  width: size.width,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(.0),
+                  ))
+              : Text(
+                  '',
+                  style: TextStyle(fontSize: 0),
+                )
+        ],
+      ),
       body: isLoading
           ? reqLoad()
           : SlidingUpPanel(
@@ -153,9 +277,32 @@ class _CheckOutState extends State<CheckOut> {
                 // print(coba);
               },
               panel: Center(
-                child: ApplyVoucher(),
+                child: Stack(
+                  children: [
+                    ApplyVoucher(),
+                  ],
+                ),
               ),
-              body: _body(),
+              body: Stack(
+                children: [
+                  _body(),
+                  loadOverlay
+                      ? Container(
+                          width: size.width,
+                          height: size.height - 130,
+                          child: Image.asset(
+                            'assets/fitness_app/global_loader.gif',
+                            scale: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.withOpacity(.0),
+                          ))
+                      : Text(
+                          '',
+                          style: TextStyle(fontSize: 0),
+                        )
+                ],
+              ),
               collapsed: Row(
                 children: [
                   Padding(
@@ -177,7 +324,7 @@ class _CheckOutState extends State<CheckOut> {
                   SizedBox(
                     width: 150,
                     child: RaisedButton(
-                      color: Colors.green,
+                      color: Colors.deepOrange,
                       child: Text(
                         "GUNAKAN VOUCHER",
                         textAlign: TextAlign.center,
@@ -208,7 +355,6 @@ class _CheckOutState extends State<CheckOut> {
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: <Widget>[
-                    
                       ScrollOnExpand(
                         scrollOnExpand: true,
                         scrollOnCollapse: true,
@@ -221,14 +367,32 @@ class _CheckOutState extends State<CheckOut> {
                           header: Padding(
                               padding: EdgeInsets.all(10),
                               child: Text(
-                                "ExpandablePanel",
+                                "Alamat Pengiriman",
                                 style: Theme.of(context).textTheme.body2,
                               )),
-                          collapsed: Text(
-                            'dasd',
-                            softWrap: true,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                          collapsed: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Fahmi',
+                                softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              Text(
+                                'Jl. Sudirman No.1, Candi, Sidoajo, Jawa Timur',
+                                softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                'dasd',
+                                softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                           expanded: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,19 +421,17 @@ class _CheckOutState extends State<CheckOut> {
                           },
                         ),
                       ),
-                    
                     ],
                   ),
                 ),
-              ))
-           , ExpandableNotifier(
+              )),
+              ExpandableNotifier(
                   child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: <Widget>[
-                    
                       ScrollOnExpand(
                         scrollOnExpand: true,
                         scrollOnCollapse: true,
@@ -318,19 +480,17 @@ class _CheckOutState extends State<CheckOut> {
                           },
                         ),
                       ),
-                    
                     ],
                   ),
                 ),
-              ))
-            , ExpandableNotifier(
+              )),
+              ExpandableNotifier(
                   child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: <Widget>[
-                    
                       ScrollOnExpand(
                         scrollOnExpand: true,
                         scrollOnCollapse: true,
@@ -379,20 +539,17 @@ class _CheckOutState extends State<CheckOut> {
                           },
                         ),
                       ),
-                    
                     ],
                   ),
                 ),
-              ))
-            
-            , ExpandableNotifier(
+              )),
+              ExpandableNotifier(
                   child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: Column(
                     children: <Widget>[
-                    
                       ScrollOnExpand(
                         scrollOnExpand: true,
                         scrollOnCollapse: true,
@@ -441,12 +598,10 @@ class _CheckOutState extends State<CheckOut> {
                           },
                         ),
                       ),
-                    
                     ],
                   ),
                 ),
               ))
-           
             ],
           )),
         ],
@@ -456,6 +611,9 @@ class _CheckOutState extends State<CheckOut> {
 }
 
 class FooterApp extends StatelessWidget {
+  const FooterApp({Key key, this.sendMidtrans}) : super(key: key);
+
+  final Function() sendMidtrans;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -478,7 +636,7 @@ class FooterApp extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      'Rp 4.000.000',
+                      'Rp4.000.000',
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 18,
@@ -488,15 +646,11 @@ class FooterApp extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MidFlutterDemo(),
-                    ));
+                sendMidtrans();
               },
               child: Container(
                 height: 50,
-                color: Colors.green[300],
+                color: Colors.green,
                 alignment: Alignment.center,
                 width: 90,
                 child: Text(
