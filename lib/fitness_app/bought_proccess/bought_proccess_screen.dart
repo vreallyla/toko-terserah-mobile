@@ -87,8 +87,10 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
               // print(defaultTabSettings[index]);
               setState(() {});
             }
-            setState(() {
-              defaultTabSettings[index]['isLoading'] = false;
+            Future.delayed(Duration(milliseconds: 100), () {
+              setState(() {
+                defaultTabSettings[index]['isLoading'] = false;
+              });
             });
           });
         });
@@ -268,6 +270,8 @@ class _EveryTapState extends State<EveryTap> {
                   jenis: ress['tab_name'],
                   photo: res['recent_produk']['gambar'],
                   id: res['id'].toString(),
+                  isAmbil: res['isAmbil'],
+                  track: res['recent_track'],
                 ),
               ],
             ),
@@ -286,7 +290,9 @@ class CardBoughts extends StatelessWidget {
       this.photo,
       this.jmlhPlus,
       this.id,
-      this.total})
+      this.total,
+      this.isAmbil,
+      this.track})
       : super(key: key);
 
   final String jenis;
@@ -297,6 +303,8 @@ class CardBoughts extends StatelessWidget {
   final String tanggal;
   final String jmlhPlus;
   final String total;
+  final int isAmbil;
+  final Map<String, dynamic> track;
 
   @override
   Widget build(BuildContext context) {
@@ -320,7 +328,7 @@ class CardBoughts extends StatelessWidget {
 
       case 'dikemas':
         {
-          tagTab = 'Pesanan Sedang Dikemas';
+          tagTab = isAmbil == 1 ? 'SIAP DIAMBIL' : 'SEDANG DIKEMAS';
           hei = 250;
           dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
 
@@ -331,21 +339,21 @@ class CardBoughts extends StatelessWidget {
       case 'dikirim':
         {
           //statements;
-          tagTab = 'Pesanan Sedang Dikirim';
+          tagTab = 'DALAM PENGIRIMAN';
           hei = 280;
           dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
 
-          dataCard.add(trackCard(sizeu));
+          dataCard.add(trackCard(sizeu, track));
           dataCard.add(totalCard(sizeu, total, false));
         }
         break;
       case 'selesai':
         {
           //statements;
-          tagTab = 'PESANAN TELAH DITERIMA';
+          tagTab = 'PESANAN SELESAI';
           hei = hei = 290;
           dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
-          dataCard.add(trackCard(sizeu));
+          dataCard.add(trackCard(sizeu, track));
 
           dataCard.add(totalCard(sizeu, total, true));
         }
@@ -508,7 +516,7 @@ class CardBoughts extends StatelessWidget {
     );
   }
 
-  Widget trackCard(final sizeu) {
+  Widget trackCard(final sizeu, var track) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -532,11 +540,18 @@ class CardBoughts extends StatelessWidget {
                       color: Colors.green[800],
                       size: 16,
                     ),
-                    Text(
-                      ' [lokasi akhir disini]',
-                      style: TextStyle(
-                        color: Colors.green[800],
-                        fontWeight: FontWeight.w500,
+                    Container(
+                      child: Flexible(
+                        child: RichText(
+                          overflow: TextOverflow.ellipsis,
+                          strutStyle: StrutStyle(fontSize: 12.0),
+                          text: TextSpan(
+                              style: TextStyle(
+                                color: Colors.green[800],
+                                fontWeight: FontWeight.w500,
+                              ),
+                              text: ' ${track['manifest_description']}'),
+                        ),
                       ),
                     )
                   ],

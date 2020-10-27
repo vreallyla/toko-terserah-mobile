@@ -68,7 +68,7 @@ class MyApp extends StatelessWidget {
         '/listalamat': (context) => AlamatList(),
         '/inputalamat': (context) => InputAlamat(),
       },
-      title: 'Test Apps',
+      title: 'Toko Terserah',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.green,
