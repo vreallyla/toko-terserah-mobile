@@ -1,3 +1,4 @@
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -155,6 +156,12 @@ class CheckOutCard extends StatelessWidget {
                             topLeft: Radius.circular(8.0),
                             topRight: Radius.circular(8.0),
                           ),
+                          image: DecorationImage(
+                                  image: NetworkImage(globalBaseUrl+locationProductImage+
+                                      product['get_produk']
+                                          ['gambar']),
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
                       Card(

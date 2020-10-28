@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 String tokenFixed = '';
-String userData='';
+String userData = '';
 
 _setHome(String dataa) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -19,6 +19,7 @@ _setUser(String dataa) async {
 
   await prefs.setString('dataUser', dataa);
 }
+
 _getUser() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -49,13 +50,17 @@ class KeranjangModel {
     );
   }
 
-  static Future<KeranjangModel> getCart(List ids ) async {
+  static Future<KeranjangModel> checkPromo(
+      String kode, String subtotal, String ongkir) async {
     await _getToken();
 
-    String idSeparator= ids.join(',');
-
-    String apiURL = globalBaseUrl  + 'api/cart?id='+idSeparator;
-
+    String apiURL = globalBaseUrl +
+        'api/checkout/promo?kode=' +
+        kode +
+        '&subtotal=' +
+        subtotal +
+        '&ongkir=' +
+        ongkir;
 
     print(apiURL);
 
@@ -65,7 +70,73 @@ class KeranjangModel {
         "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
       });
 
-      print('data cart checkout status code : ' + apiResult.statusCode.toString());
+      print(
+          'check promo code status code : ' + apiResult.statusCode.toString());
+
+      // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+        print('data home success');
+
+        // print(jsonObject['status']);
+
+        if (jsonObject['status'] != null|| jsonObject['error']==true) {
+          // token untuk kirim request habis
+          return KeranjangModel(
+            error: true,
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
+          );
+        } else {
+          //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['data']);
+
+          return KeranjangModel(
+            error: jsonObject['error'],
+            data: resData,
+          );
+        }
+      } else {
+        var jsonObject = json.decode(apiResult.body);
+
+        // other failed
+        return KeranjangModel(
+          error: true,
+          data: jsonEncode({
+            "message": jsonObject['message'] != null
+                ? jsonObject['message']
+                : msgFail['MSG_WRONG']
+          }),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return KeranjangModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
+  static Future<KeranjangModel> getCart(List ids) async {
+    await _getToken();
+
+    String idSeparator = ids.join(',');
+
+    String apiURL = globalBaseUrl + 'api/cart?id=' + idSeparator;
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.get(apiURL, headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('data cart checkout status code : ' +
+          apiResult.statusCode.toString());
 
       // print(json.decode(apiResult.body));
 
@@ -85,7 +156,6 @@ class KeranjangModel {
         } else {
           //data received
           String resData = jsonEncode(json.decode(apiResult.body)['data']);
-
 
           return KeranjangModel(
             error: jsonObject['error'],
@@ -109,25 +179,21 @@ class KeranjangModel {
     }
   }
 
-
-  static Future<KeranjangModel> addCart(String id, String qty ) async {
+  static Future<KeranjangModel> addCart(String id, String qty) async {
     await _getToken();
     await _getUser();
 
-
-    String apiURL = globalBaseUrl  + globalPathCart+'add_cart';
-    Map<String,dynamic> dataaUser=json.decode(userData);
+    String apiURL = globalBaseUrl + globalPathCart + 'add_cart';
+    Map<String, dynamic> dataaUser = json.decode(userData);
 
     print(dataaUser['count_cart']);
     print(apiURL);
 
     try {
-      var apiResult = await http.post(apiURL, 
-      body:{
-        "id":id,
-        "qty":qty,
-      },
-      headers: {
+      var apiResult = await http.post(apiURL, body: {
+        "id": id,
+        "qty": qty,
+      }, headers: {
         "Accept": "application/json",
         "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
       });
@@ -152,23 +218,21 @@ class KeranjangModel {
         } else {
           //data received
           String resData = jsonEncode(json.decode(apiResult.body)['data']);
-          dataaUser['count_cart']=json.decode(apiResult.body)['data']['count_cart'];
+          dataaUser['count_cart'] =
+              json.decode(apiResult.body)['data']['count_cart'];
           await _setUser(json.encode(dataaUser));
           return KeranjangModel(
             error: jsonObject['error'],
             data: resData,
           );
         }
-      } 
-      else if(apiResult.statusCode == 400){
+      } else if (apiResult.statusCode == 400) {
         // stok kosong
         return KeranjangModel(
           error: true,
           data: jsonEncode({"error": msgFail['MSG_WRONG']}),
         );
-      }
-      
-      else {
+      } else {
         // other failed
         return KeranjangModel(
           error: true,
@@ -184,5 +248,4 @@ class KeranjangModel {
       );
     }
   }
-
 }
