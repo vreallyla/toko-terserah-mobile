@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
@@ -24,6 +25,8 @@ class BoughtProccessScreen extends StatefulWidget {
 
 class _BoughtProccessScreenState extends State<BoughtProccessScreen>
     with SingleTickerProviderStateMixin {
+
+      
   List<Map> defaultTabSettings = [
     {
       "index": 0,
@@ -181,21 +184,33 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             EveryTap(
+              getApi: (int index){
+                _getDataApi(index);
+              },
               index: 0,
               data: defaultTabSettings,
               dataHistory: defaultTabSettings[0]['data'],
             ),
             EveryTap(
+              getApi: (int index){
+                _getDataApi(index);
+              },
               index: 1,
               data: defaultTabSettings,
               dataHistory: defaultTabSettings[1]['data'],
             ),
             EveryTap(
+              getApi: (int index){
+                _getDataApi(index);
+              },
               index: 2,
               data: defaultTabSettings,
               dataHistory: defaultTabSettings[2]['data'],
             ),
             EveryTap(
+              getApi: (int index){
+                _getDataApi(index);
+              },
               index: 3,
               data: defaultTabSettings,
               dataHistory: defaultTabSettings[3]['data'],
@@ -212,11 +227,12 @@ Widget judulTab(String judul) {
 }
 
 class EveryTap extends StatefulWidget {
-  const EveryTap({Key key, this.index: 0, this.data, this.dataHistory})
+  const EveryTap({Key key, this.index: 0, this.data, this.dataHistory,this.getApi})
       : super(key: key);
 
   final int index;
   final List data;
+  final Function(int index) getApi;
   final List dataHistory;
 
   @override
@@ -229,6 +245,7 @@ class _EveryTapState extends State<EveryTap> {
     // TODO: implement initState
     Future.delayed(Duration(seconds: 1), () {
       print(widget.dataHistory.length);
+      print('Index Tab (every): '+widget.index.toString());
     });
 
     super.initState();
@@ -242,11 +259,11 @@ class _EveryTapState extends State<EveryTap> {
           : (widget.data[widget.index]['data'].length == 0
               ? dataKosong()
               //set card with data
-              : setCard(widget.data[widget.index]))),
+              : setCard(widget.data[widget.index],widget.index))),
     );
   }
 
-  Widget setCard(ress) {
+  Widget setCard(ress,int indextab) {
     return ListView.builder(
         padding: EdgeInsets.all(0),
         itemCount:
@@ -266,12 +283,16 @@ class _EveryTapState extends State<EveryTap> {
                           .format(DateTime.parse(res['created_at'])) +
                       ' WIB',
                   jmlhPlus: res['total_produk'].toString(),
+                  getApi: (int index){
+                    widget.getApi(index);
+                  },
                   total: decimalPointTwo(double.parse(res['total_harga'])),
                   jenis: ress['tab_name'],
                   photo: res['recent_produk']['gambar'],
                   id: res['id'].toString(),
                   isAmbil: res['isAmbil'],
                   track: res['recent_track'],
+                  index: indextab,
                 ),
               ],
             ),
@@ -292,7 +313,9 @@ class CardBoughts extends StatelessWidget {
       this.id,
       this.total,
       this.isAmbil,
-      this.track})
+      this.getApi,
+      this.track,
+      this.index})
       : super(key: key);
 
   final String jenis;
@@ -302,8 +325,10 @@ class CardBoughts extends StatelessWidget {
   final String judul;
   final String tanggal;
   final String jmlhPlus;
+  final Function(int index) getApi;
   final String total;
   final int isAmbil;
+  final int index;
   final Map<String, dynamic> track;
 
   @override
@@ -316,9 +341,9 @@ class CardBoughts extends StatelessWidget {
     switch (jenis) {
       case 'belum bayar':
         {
-          tagTab = 'MENUNGGU PEMBAYARAN';
+          tagTab = 'MENUNGGzU PEMBAYARAN';
           hei = 250;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index, context));
 
           dataCard.add(totalCard(sizeu, total, false));
 
@@ -330,7 +355,7 @@ class CardBoughts extends StatelessWidget {
         {
           tagTab = isAmbil == 1 ? 'SIAP DIAMBIL' : 'SEDANG DIKEMAS';
           hei = 250;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index,  context));
 
           dataCard.add(totalCard(sizeu, total, false));
           //statements;
@@ -341,7 +366,7 @@ class CardBoughts extends StatelessWidget {
           //statements;
           tagTab = 'DALAM PENGIRIMAN';
           hei = 280;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index,  context));
 
           dataCard.add(trackCard(sizeu, track));
           dataCard.add(totalCard(sizeu, total, false));
@@ -352,7 +377,8 @@ class CardBoughts extends StatelessWidget {
           //statements;
           tagTab = 'PESANAN SELESAI';
           hei = hei = 290;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
+          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index,  context));
+
           dataCard.add(trackCard(sizeu, track));
 
           dataCard.add(totalCard(sizeu, total, true));
@@ -397,6 +423,7 @@ class CardBoughts extends StatelessWidget {
     String tanggal,
     String inv,
     String jmlhPlus,
+    int index,
     final context,
   ) {
     return InkWell(
@@ -408,7 +435,11 @@ class CardBoughts extends StatelessWidget {
                 dashboardId: inv,
                 status: tag,
               ),
-            ));
+            )).then((value)  {
+              // BoughtProccessScreen().createState()._getDataApi(index),
+              getApi(index);
+              print('index Tab : '+ index.toString());
+            });
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -550,7 +581,8 @@ class CardBoughts extends StatelessWidget {
                                 color: Colors.green[800],
                                 fontWeight: FontWeight.w500,
                               ),
-                              text: ' ${track['manifest_description']}'),
+                              text:
+                                  ' ${track == null ? 'PESANAN TELAH DIAMBIL' : track['manifest_description']}'),
                         ),
                       ),
                     )
@@ -596,20 +628,21 @@ class CardBoughts extends StatelessWidget {
       ),
     );
 
-    if (rating) {
-      dataFooter.add(Container(
-        width: 100,
-        child: RaisedButton(
-          onPressed: () {},
-          color: Colors.green,
-          child: Text(
-            'Nilai',
-            style: TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
-          ),
-        ),
-      ));
-    }
+    // if (rating) {
+    //   dataFooter.add(Container(
+    //     width: 100,
+    //     child: RaisedButton(
+    //       onPressed: () {},
+    //       color: Colors.green,
+    //       child: Text(
+    //         'Nilai',
+    //         style: TextStyle(
+    //             color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
+    //       ),
+    //     ),
+    //   )
+    //   );
+    // }
 
     return Container(
       width: sizeu.width - 30,

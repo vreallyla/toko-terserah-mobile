@@ -6,8 +6,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:best_flutter_ui_templates/fitness_app/cart_list/cart_list.dart';
+import 'invoice.dart';
 
 class TransaksiDetailScreen extends StatefulWidget {
   const TransaksiDetailScreen({Key key, this.dashboardId, this.status})
@@ -20,6 +23,8 @@ class TransaksiDetailScreen extends StatefulWidget {
 }
 
 class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   String _token;
 
   bool isLoading = true, isConnect = true;
@@ -57,6 +62,182 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
     }
   }
 
+  /**
+   * Cutom Alert response
+   * 
+   */
+  showSnackBar(String value, Color color, icons) {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    _scaffoldKey.currentState?.removeCurrentSnackBar();
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: Row(
+        children: <Widget>[
+          icons,
+          SizedBox(
+            width: 20,
+          ),
+          Flexible(
+              child: Text(
+            value,
+            maxLines: 2,
+          ))
+        ],
+      ),
+      backgroundColor: color,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+/**
+   * Confirm 
+   * 
+   */
+  confirm(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text("Apakah Anda Telah Menerima Pesanan Anda ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                "Ya",
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                _barangDiAmbil();
+              },
+            ),
+            FlatButton(
+              child: Text("Tidak"),
+              onPressed: () {
+                //Put your code here which you want to execute on No button click.
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /**
+   * Confirm reorder
+   * 
+   */
+  reorder(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text(
+              "Apakah Anda yakin akan memesan ulang semua produk yang ada di pesanan ini ?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                "Ya",
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                _pesanLagi(context);
+              },
+            ),
+            FlatButton(
+              child: Text("Tidak"),
+              onPressed: () {
+                //Put your code here which you want to execute on No button click.
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /**
+   * Confirm reorder
+   * 
+   */
+  checkout(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Konfirmasi'),
+          content: Text("Apakah Anda ingin checkout sekarang?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(
+                "Ya",
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () async {
+                MaterialPageRoute(
+                  builder: (context) => CartList(),
+                );
+              },
+            ),
+            FlatButton(
+              child: Text("Tidak"),
+              onPressed: () {
+                //Put your code here which you want to execute on No button click.
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  _barangDiAmbil() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        var response = await http.post(
+            globalBaseUrl + 'api/dashboard/received/' + widget.dashboardId,
+            headers: {"Authorization": "Bearer " + _token});
+        var _response = json.decode(response.body);
+        showSnackBar(_response['data']['message'], Colors.green,
+            Icon(Icons.check_circle_outline));
+        setState(() {
+          isLoading = true;
+        });
+        _getData();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  _pesanLagi(context) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        var response = await http.post(
+            globalBaseUrl + 'api/dashboard/reorder/' + widget.dashboardId,
+            headers: {"Authorization": "Bearer " + _token});
+        var _response = json.decode(response.body);
+
+        showSnackBar(_response['data']['message'], Colors.green,
+            Icon(Icons.check_circle_outline));
+        setState(() {
+          isLoading = true;
+        });
+        _getData();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -72,6 +253,7 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
     return new Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
@@ -83,23 +265,89 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      bottomNavigationBar: PreferredSize(
-        preferredSize: Size.fromHeight(80.0),
-        child: BottomAppBar(
-            child: Container(
-                padding: EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                ),
-                child: RaisedButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Nilai',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  color: Colors.green,
-                ))),
-      ),
+      bottomNavigationBar: isLoading
+          ? reqLoad()
+          : (_data['data']['isAmbil'] == 1
+              ? PreferredSize(
+                  preferredSize: Size.fromHeight(80.0),
+                  child: BottomAppBar(
+                      child: Container(
+                          padding: EdgeInsets.only(
+                            left: 15,
+                            right: 15,
+                          ),
+                          child: RaisedButton(
+                            onPressed: () {
+                              //Jika Barang Diambil Sendiri
+                              if (_data['data']['tgl_diterima'] == null) {
+                                confirm(context);
+                              } else {
+                                reorder(context);
+                              }
+                            },
+                            child: Text(
+                              _data['data']['tgl_diterima'] == null
+                                  ? 'Tandai Barang Telah Diambil'
+                                  : 'PESAN ULANG',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            color: Colors.green,
+                          ))),
+                )
+              : (_data['data']['recent_track'] == null
+                  ? PreferredSize(
+                      preferredSize: Size.fromHeight(80.0),
+                      child: BottomAppBar(
+                          child: Container(
+                              padding: EdgeInsets.only(
+                                left: 15,
+                                right: 15,
+                              ),
+                              child: Container(
+                                height: 1.0,
+                              ))),
+                    )
+                  : (_data['data']['tgl_diterima'] == null
+                      ? PreferredSize(
+                          preferredSize: Size.fromHeight(80.0),
+                          child: BottomAppBar(
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                  ),
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      //Jika Barang Sudah dikirim Tapi belum Diterima
+                                      confirm(context);
+                                    },
+                                    child: Text(
+                                      'Tandai Barang Telah Diterima',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    color: Colors.green,
+                                  ))),
+                        )
+                      : PreferredSize(
+                          preferredSize: Size.fromHeight(80.0),
+                          child: BottomAppBar(
+                              child: Container(
+                                  padding: EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                  ),
+                                  child: RaisedButton(
+                                    onPressed: () {
+                                      //Jika barang telah sampai dan sudah diterima
+                                      reorder(context);
+                                    },
+                                    child: Text(
+                                      'PESAN ULANG',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    color: Colors.green,
+                                  ))),
+                        )))),
       body: isLoading
           ? reqLoad()
           : Container(
@@ -143,73 +391,98 @@ class StatusTransaksi extends StatelessWidget {
 
   const StatusTransaksi({this.data, this.status});
 
+  _launchURL() async {
+    const url =
+        'https://tokoterserah.com/api/dashboard/invoice/PYM5F9573618F30C1603629921?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdG9rb3RlcnNlcmFoLmNvbVwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYwMzQyMjY4MywiZXhwIjoxNjA3MDIyNjgzLCJuYmYiOjE2MDM0MjI2ODMsImp0aSI6IkxWTEl5eGhEYXFMY1JaNW4iLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.llHiUXKS5nFNN0RLp1RfFA5_eqrQ4lTGPDvq_7_HLTE';
+    if (await canLaunch(url)) {
+      await launch(url,forceWebView: true);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
-      color: Colors.green[100],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-              margin: EdgeInsets.only(bottom: 7),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: 30,
-                    child: FaIcon(
-                      FontAwesomeIcons.infoCircle,
-                      color: Colors.black54,
-                      size: 18,
+    return GestureDetector(
+      onTap: () {
+        print('Go to Invoice # ${data['data']['uni_code']}');
+
+        Navigator.push(
+            //push screen to check out and send parameter
+            context,
+            MaterialPageRoute(
+              builder: (context) => Invoice(
+                code: data['data']['file_invoice'],
+              ),
+            ));
+      },
+      // onTap: _launchURL,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+        color: Colors.green[100],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                margin: EdgeInsets.only(bottom: 7),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      width: 30,
+                      child: FaIcon(
+                        FontAwesomeIcons.infoCircle,
+                        color: Colors.black54,
+                        size: 18,
+                      ),
                     ),
-                  ),
-                  Container(
-                      width: size.width / 3,
-                      child: Text('Status',
+                    Container(
+                        width: size.width / 3,
+                        child: Text('Status',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ))),
+                    Container(
+                      width: size.width / 2,
+                      alignment: Alignment.centerRight,
+                      child: Text('${status}',
                           style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 18,
-                          ))),
-                  Container(
-                    width: size.width / 2,
-                    alignment: Alignment.centerRight,
-                    child: Text('${status}',
-                        style: TextStyle(
-                          color: Colors.black54,
-                        )),
-                  )
-                ],
-              )),
-          Container(
-            padding: EdgeInsets.only(left: 30),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                      width: size.width - 30 - 110 - 30,
-                      child: Text('${data['data']['uni_code']}')),
-                ]),
-          ),
-          Container(
-            padding: EdgeInsets.only(left: 30, top: 5),
-            child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    width: 110,
-                    child: Text('Tgl. Diterima'),
-                  ),
-                  Container(
-                      width: size.width - 30 - 110 - 30,
-                      child: Text(': ${data['data']['tgl_diterima'] ?? '-'}',
-                          maxLines: 2)),
-                ]),
-          ),
-        ],
+                            color: Colors.black54,
+                          )),
+                    )
+                  ],
+                )),
+            Container(
+              padding: EdgeInsets.only(left: 30),
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                        width: size.width - 30 - 110 - 30,
+                        child: Text('${data['data']['uni_code']}')),
+                  ]),
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 30, top: 5),
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      width: 110,
+                      child: Text('Tgl. Diterima'),
+                    ),
+                    Container(
+                        width: size.width - 30 - 110 - 30,
+                        child: Text(': ${data['data']['tgl_diterima'] ?? '-'}',
+                            maxLines: 2)),
+                  ]),
+            ),
+          ],
+        ),
       ),
     );
   }
