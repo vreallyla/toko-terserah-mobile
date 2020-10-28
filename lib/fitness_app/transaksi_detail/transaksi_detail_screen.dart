@@ -406,19 +406,19 @@ class StatusTransaksi extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
-      // onTap: () {
-      //   print('Go to Invoice # ${data['data']['uni_code']}');
+      onTap: () {
+        print('Go to Invoice # ${data['data']['uni_code']}');
 
-      //   Navigator.push(
-      //       //push screen to check out and send parameter
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => Invoice(
-      //           code: data['data']['uni_code'],
-      //         ),
-      //       ));
-      // },
-      onTap: _launchURL,
+        Navigator.push(
+            //push screen to check out and send parameter
+            context,
+            MaterialPageRoute(
+              builder: (context) => Invoice(
+                code: data['data']['file_invoice'],
+              ),
+            ));
+      },
+      // onTap: _launchURL,
       child: Container(
         padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
         color: Colors.green[100],
