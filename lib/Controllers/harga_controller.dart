@@ -8,6 +8,21 @@ setHarga(Map<String, dynamic> obj) {
       : (obj['diskon'] != null ? obj['harga_diskon'] : obj['harga']));
 }
 
+setHargaWithQty(Map<String, dynamic> obj, double qty ) {
+  double harga=nilaiDoubleHarga(obj);
+  
+  return withCurrency((harga*qty).toString());
+  // return harga;
+}
+
+nilaiDoubleHarga(Map<String, dynamic> obj){
+  return double.parse(obj['harga_grosir'] != null
+      ? (obj['diskonGrosir'] != null
+          ? obj['harga_diskon_grosir']
+          : obj['harga_grosir'])
+      : (obj['diskon'] != null ? obj['harga_diskon'] : obj['harga']));
+}
+
 minQty(Map<String, dynamic> obj){
   return int.parse(obj['min_qty'] != null ? obj['min_qty'] : '1');
 }
@@ -35,7 +50,7 @@ beforeDisc(Map<String, dynamic> obj) {
 
 withCurrency(String val) {
   var numberFormat = NumberFormat.currency(locale: "id_ID", symbol: "Rp");
-  return numberFormat.format(int.parse(val));
+  return numberFormat.format(double.parse(val));
 }
 
 isGrosir(Map<String, dynamic> obj) {

@@ -67,7 +67,66 @@ class AlamatModel {
 
           return AlamatModel(
             error: jsonObject['error'],
-            data: jsonEncode(resData),
+            data: resData,
+          );
+        }
+      } else {
+        // other failed
+        return AlamatModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return AlamatModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
+  static Future<AlamatModel> getRajaOngkir(String destination, String weight) async {
+    await _getToken();
+
+    String apiURL = globalBaseUrl  + "api/rajaongkir/cost";
+
+    //requst destination=id_kecamatan & weight=berat keseluruhan product
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.post(apiURL, 
+      body:{
+        'destination':destination,
+        "weight":weight,
+      },
+      headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('data raja ongkir status code : ' + apiResult.statusCode.toString());
+          // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+
+        if (json.decode(apiResult.body) == null) {
+          // token untuk kirim request habis
+          return AlamatModel(
+            error: true,
+            data: jsonEncode({"message": msgFail['MSG_TOKEN_EXP']}),
+          );
+        } else {
+          //data received
+          String resData = jsonEncode(json.decode(apiResult.body)['rajaongkir']);
+
+          return AlamatModel(
+            error: false,
+            data: resData,
           );
         }
       } else {

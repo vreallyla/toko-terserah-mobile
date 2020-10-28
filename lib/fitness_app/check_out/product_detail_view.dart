@@ -31,7 +31,10 @@ class _CheckOutProductDetailViewState extends State<CheckOutProductDetailView> {
 
       dataList.add(eventCollapse());
     } else {
-      dataList.add(CheckOutCard(product: widget.product.containsKey('count_produk')?  widget.product['produk'][0] :{}));
+      dataList.add(CheckOutCard(
+          product: widget.product.containsKey('count_produk')
+              ? widget.product['produk'][0]
+              : {}));
       if (widget.product.containsKey('count_produk') &&
           widget.product['count_produk'] > 1) {
         dataList.add(eventCollapse());
@@ -46,7 +49,7 @@ class _CheckOutProductDetailViewState extends State<CheckOutProductDetailView> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
-      margin: EdgeInsets.only(bottom:15),
+      margin: EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
         color: Colors.white,
         // borderRadius: const BorderRadius.only(
@@ -56,15 +59,11 @@ class _CheckOutProductDetailViewState extends State<CheckOutProductDetailView> {
         //   topRight: Radius.circular(8.0),
         // ),
         boxShadow: [
-          //background color of box
           BoxShadow(
-            color: Colors.black45,
-            blurRadius: 1, // soften the shadow
-            spreadRadius: .3, //extend the shadow
-            offset: Offset(
-              .5, // Move to right 10  horizontally
-              .5, // Move to bottom 10 Vertically
-            ),
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
           ),
         ],
       ),
@@ -98,7 +97,13 @@ class _CheckOutProductDetailViewState extends State<CheckOutProductDetailView> {
           children: [
             Text(
               count > 1
-                  ? (show ? 'Sembunyikan Produk' : 'Tampilkan +'+(widget.product.containsKey('count_produk')? (widget.product['count_produk']-1).toString():0)+' Produk Lagi')
+                  ? (show
+                      ? 'Sembunyikan Produk'
+                      : 'Tampilkan +' +
+                          (widget.product.containsKey('count_produk')
+                              ? (widget.product['count_produk'] - 1).toString()
+                              : 0) +
+                          ' Produk Lagi')
                   : '',
               style: TextStyle(
                   fontSize: count > 1 ? 14 : 0,
@@ -129,177 +134,185 @@ class CheckOutCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
-    bool kond=product.containsKey('id');
-  
+    bool kond = product.containsKey('id');
 
-    return kond?Container(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Stack(
-              children: [
-                Container(
-                  height: sizeu.width / 4 / 1.5,
-                  width: sizeu.width / 4 / 1.5,
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(8.0),
-                      bottomLeft: Radius.circular(8.0),
-                      topLeft: Radius.circular(8.0),
-                      topRight: Radius.circular(8.0),
-                    ),
-                  ),
-                ),
-                Card(
-                  color: Colors.green[100],
-                  child: Container(
-                      margin: EdgeInsets.all(2),
-                      child: kond? Text(
-                       isGrosir(product['get_produk']),
-                        style: TextStyle(
-                          color: Colors.green[800],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 9,
-                        ),
-                      ): Container(
-                        height: 9,
-                        width: 9,
-                        color: Colors.grey,
-                      )
-                      ),
-                ),
-              ],
-            ),
-            Container(
-              // height: sizeu.width / 3 - sizeu.width / 17,
-              width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 30 - 30,
-              // color: Colors.red,
-              padding: EdgeInsets.only(left: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return kond
+        ? Container(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.only(bottom: 3),
-                    width: sizeu.width - 50 - sizeu.width / 4 - 10,
-                    child: Text(
-                      product['get_produk']['nama'],
-                      maxLines: 2,
-                      style: TextStyle(
-                        fontSize: 15,
+                  Stack(
+                    children: [
+                      Container(
+                        height: sizeu.width / 4 / 1.5,
+                        width: sizeu.width / 4 / 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(8.0),
+                            bottomLeft: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Text(
-                    pointGroup(int.parse(product['qty']))+' Pcs ('+decimalPointTwo(double.parse(product['berat'])/1000)+' Kg)',
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                      fontSize: 11,
-                    ),
+                      Card(
+                        color: Colors.green[100],
+                        child: Container(
+                            margin: EdgeInsets.all(2),
+                            child: kond
+                                ? Text(
+                                    isGrosir(product['get_produk']),
+                                    style: TextStyle(
+                                      color: Colors.green[800],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 9,
+                                    ),
+                                  )
+                                : Container(
+                                    height: 9,
+                                    width: 9,
+                                    color: Colors.grey,
+                                  )),
+                      ),
+                    ],
                   ),
                   Container(
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.only(top: 2),
-                    width: sizeu.width - 50 - sizeu.width / 4 - 10,
-                    child: Row(
-                      children: [
-                        Text(
-                          disconCondition(product['get_produk'])>0?beforeDisc(product['get_produk']):'',
-                          maxLines: 2,
-                          style: TextStyle(
-                              decoration: TextDecoration.lineThrough,
-                              color: Colors.grey[700],
-                              fontSize: disconCondition(product['get_produk'])>0? 15: 0),
+                    // height: sizeu.width / 3 - sizeu.width / 17,
+                    width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 30 - 30,
+                    // color: Colors.red,
+                    padding: EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.only(bottom: 3),
+                          width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                          child: Text(
+                            product['get_produk']['nama'],
+                            maxLines: 2,
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
                         ),
                         Text(
-                          setHarga(product['get_produk']),
-                          maxLines: 2,
+                          pointGroup(int.parse(product['qty'])) +
+                              ' Pcs (' +
+                              decimalPointTwo(
+                                  double.parse(product['berat']) / 1000) +
+                              ' Kg)',
                           style: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold),
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                            fontSize: 11,
+                          ),
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.only(top: 2),
+                          width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                          child: Row(
+                            children: [
+                              // Text(
+                              //   disconCondition(product['get_produk']) > 0
+                              //       ? beforeDisc(product['get_produk'])
+                              //       : '',
+                              //   maxLines: 2,
+                              //   style: TextStyle(
+                              //       decoration: TextDecoration.lineThrough,
+                              //       color: Colors.grey[700],
+                              //       fontSize:
+                              //           disconCondition(product['get_produk']) >
+                              //                   0
+                              //               ? 15
+                              //               : 0),
+                              // ),
+
+                              Text(
+                                setHargaWithQty(product['get_produk'],
+                                    double.parse(product['qty'])),
+                                maxLines: 2,
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ]),
-    )
-  :Container(
-      padding: EdgeInsets.only(bottom: 10),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Stack(
-              children: [
-                Container(
-                  height: sizeu.width / 4 / 1.5,
-                  width: sizeu.width / 4 / 1.5,
-                  decoration: BoxDecoration(
-                    color: Colors.black26,
-                    borderRadius: const BorderRadius.only(
-                      bottomRight: Radius.circular(8.0),
-                      bottomLeft: Radius.circular(8.0),
-                      topLeft: Radius.circular(8.0),
-                      topRight: Radius.circular(8.0),
+                ]),
+          )
+        : Container(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start,
+                // mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Stack(
+                    children: [
+                      Container(
+                        height: sizeu.width / 4 / 1.5,
+                        width: sizeu.width / 4 / 1.5,
+                        decoration: BoxDecoration(
+                          color: Colors.black26,
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(8.0),
+                            bottomLeft: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                            topRight: Radius.circular(8.0),
+                          ),
+                        ),
+                      ),
+                      Card(
+                        color: Colors.green[100],
+                        child: Container(
+                            margin: EdgeInsets.all(2),
+                            child: kond
+                                ? Text(
+                                    isGrosir(product['get_produk']),
+                                    style: TextStyle(
+                                      color: Colors.green[800],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 9,
+                                    ),
+                                  )
+                                : Container(
+                                    height: 9,
+                                    width: 9,
+                                    color: Colors.grey,
+                                  )),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    // height: sizeu.width / 3 - sizeu.width / 17,
+                    width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 30 - 30,
+
+                    // color: Colors.red,
+                    padding: EdgeInsets.only(left: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.topLeft,
+                          color: Colors.grey,
+                          padding: EdgeInsets.only(bottom: 3),
+                          width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                        ),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          padding: EdgeInsets.only(top: 2),
+                          color: Colors.grey,
+                          height: 9,
+                          width: sizeu.width - 50 - sizeu.width / 4 - 10,
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                Card(
-                  color: Colors.green[100],
-                  child: Container(
-                      margin: EdgeInsets.all(2),
-                      child: kond? Text(
-                       isGrosir(product['get_produk']),
-                        style: TextStyle(
-                          color: Colors.green[800],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 9,
-                        ),
-                      ): Container(
-                        height: 9,
-                        width: 9,
-                        color: Colors.grey,
-                      )
-                      ),
-                ),
-              ],
-            ),
-            Container(
-              // height: sizeu.width / 3 - sizeu.width / 17,
-              width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 30 - 30,
-             
-              // color: Colors.red,
-              padding: EdgeInsets.only(left: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                        color: Colors.grey,
-
-                    padding: EdgeInsets.only(bottom: 3),
-                    width: sizeu.width - 50 - sizeu.width / 4 - 10,
-                   
-                  ),
-                 
-                  Container(
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.only(top: 2),
-                        color: Colors.grey,
-                        height: 9,
-
-
-                    width: sizeu.width - 50 - sizeu.width / 4 - 10,
-                  ),
-                ],
-              ),
-            ),
-          ]),
-    );
-  
+                ]),
+          );
   }
 }
