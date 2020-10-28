@@ -133,7 +133,7 @@ class _InputAlamatState extends State<InputAlamat> {
     tempProv = await jsonDecode(responseprov.body.toString());
     dataEdit = tempProv["data"];
 
-    print("data edit : " + dataEdit["occupancy_id"].toString());
+    print("data edit : " + dataEdit.toString());
     if (dataEdit != null) {
       _mySelection3 = dataEdit["occupancy_id"]["id"].toString();
       _mySelection = dataEdit["kota_id"].toString();

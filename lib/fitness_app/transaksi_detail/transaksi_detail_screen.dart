@@ -1,17 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+
+import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 
 class TransaksiDetailScreen extends StatefulWidget {
-  const TransaksiDetailScreen({Key key, this.dashboardId})
+  const TransaksiDetailScreen({Key key, this.dashboardId, this.status})
       : super(key: key);
 
   final String dashboardId;
+  final String status;
   @override
   _TransaksiDetailScreenState createState() => _TransaksiDetailScreenState();
 }
 
 class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
+  String _token;
+
+  bool isLoading = true, isConnect = true;
+
+  var _data;
+
+  Future _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // print(_token);
+    setState(() {
+      _token = prefs.getString('token');
+    });
+  }
+
+  _getData() async {
+    try {
+      if (_token != null) {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          var response = await http.get(
+              globalBaseUrl + 'api/dashboard/detail/' + widget.dashboardId,
+              headers: {"Authorization": "Bearer " + _token});
+          var _response = json.decode(response.body);
+          _data = _response;
+          print(_response);
+        }
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } on SocketException catch (_) {
+      isConnect = false;
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(widget.dashboardId);
+    _getToken();
+    Future.delayed(Duration(milliseconds: 50), () {
+      _getData();
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -44,22 +100,49 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                   color: Colors.green,
                 ))),
       ),
-      body: Container(
-        color: Colors.grey[300],
-        child: ListView(children: <Widget>[
-          StatusTransaksi(),
-          AlamatTransaksi(),
-          TrackerTransaksi(),
-          HeadDaftarTransaksi(),
-          TransaksiVia(),
-        ]),
-      ),
+      body: isLoading
+          ? reqLoad()
+          : Container(
+              color: Colors.grey[300],
+              child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: <Widget>[
+                    StatusTransaksi(
+                      data: _data,
+                      status: widget.status,
+                    ),
+                    HeadDaftarTransaksi(
+                        dataItem: _data['data']['carts'], data: _data),
+                    AlamatTransaksi(
+                      data: _data['data']['alamat_pengiriman'],
+                    ),
+                    _data['data']['isLunas'] == 1
+                        ? (_data['data']['recent_track'] == null
+                            ? Dikemas(
+                                status: _data['data']['status'],
+                                isAmbil: _data['data']['isAmbil'],
+                              )
+                            : TrackerTransaksi(
+                                dataTracking: _data['data']['full_track'],
+                                kurir: _data['data']['kode_kurir'],
+                                layanan: _data['data']['layanan_kurir'],
+                              ))
+                        : Container(),
+
+                    // TransaksiVia(),
+                  ]),
+            ),
     );
   }
 }
 // end stack end
 
 class StatusTransaksi extends StatelessWidget {
+  final Map<String, dynamic> data;
+  final String status;
+
+  const StatusTransaksi({this.data, this.status});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -78,13 +161,13 @@ class StatusTransaksi extends StatelessWidget {
                   Container(
                     width: 30,
                     child: FaIcon(
-                      FontAwesomeIcons.paperclip,
+                      FontAwesomeIcons.infoCircle,
                       color: Colors.black54,
                       size: 18,
                     ),
                   ),
                   Container(
-                      width: size.width - 30 - 100 - 30,
+                      width: size.width / 3,
                       child: Text('Status',
                           style: TextStyle(
                             color: Colors.black,
@@ -92,9 +175,9 @@ class StatusTransaksi extends StatelessWidget {
                             fontSize: 18,
                           ))),
                   Container(
-                    width: 100,
+                    width: size.width / 2,
                     alignment: Alignment.centerRight,
-                    child: Text('20 Sept 2020',
+                    child: Text('${status}',
                         style: TextStyle(
                           color: Colors.black54,
                         )),
@@ -106,13 +189,9 @@ class StatusTransaksi extends StatelessWidget {
             child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(width: 110, child: Text('No Invoice')),
                   Container(
                       width: size.width - 30 - 110 - 30,
-                      child: Text(
-                        ': 3012/sadki/21393',
-                        maxLines: 2,
-                      )),
+                      child: Text('${data['data']['uni_code']}')),
                 ]),
           ),
           Container(
@@ -122,11 +201,12 @@ class StatusTransaksi extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     width: 110,
-                    child: Text('Telah Diterima'),
+                    child: Text('Tgl. Diterima'),
                   ),
                   Container(
                       width: size.width - 30 - 110 - 30,
-                      child: Text(': 05 Agust 2020', maxLines: 2)),
+                      child: Text(': ${data['data']['tgl_diterima'] ?? '-'}',
+                          maxLines: 2)),
                 ]),
           ),
         ],
@@ -136,12 +216,16 @@ class StatusTransaksi extends StatelessWidget {
 }
 
 class AlamatTransaksi extends StatelessWidget {
+  final Map<String, dynamic> data;
+
+  const AlamatTransaksi({this.data});
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Container(
       padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+      margin: EdgeInsets.only(bottom: 15),
       color: Colors.white,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
@@ -188,7 +272,7 @@ class AlamatTransaksi extends StatelessWidget {
                 Container(
                     width: size.width - 30 - 30,
                     child: Text(
-                      'Fahmi Rizky Maulidy',
+                      '${data['nama']}',
                       maxLines: 1,
                     )),
               ]),
@@ -202,7 +286,7 @@ class AlamatTransaksi extends StatelessWidget {
                 Container(
                     width: size.width - 30 - 30,
                     child: Text(
-                      '(+62) 081553847015',
+                      '${data['telp']}',
                       maxLines: 1,
                     )),
               ]),
@@ -216,7 +300,7 @@ class AlamatTransaksi extends StatelessWidget {
                 Container(
                     width: size.width - 30 - 30,
                     child: Text(
-                      'Jl. Menanggal no. 4, Menanggal, Surabaya',
+                      '${data['alamat']}',
                       maxLines: 4,
                     )),
               ]),
@@ -227,8 +311,14 @@ class AlamatTransaksi extends StatelessWidget {
 }
 
 class TrackerTransaksi extends StatelessWidget {
+  final List dataTracking;
+  final String kurir;
+  final String layanan;
+  const TrackerTransaksi({this.dataTracking, this.kurir, this.layanan});
+
   @override
   Widget build(BuildContext context) {
+    final dateFormat = new DateFormat.yMMMMd('id_ID');
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -266,7 +356,7 @@ class TrackerTransaksi extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: InkWell(
                 onTap: () {},
-                child: Text('Lacak',
+                child: Text('',
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
@@ -276,53 +366,128 @@ class TrackerTransaksi extends StatelessWidget {
             )
           ],
         )),
-        Stack(
+        Column(
           children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(left: 15, top: 10),
-              padding: EdgeInsets.only(left: 15, bottom: 15),
-              decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(width: 0.5, color: Colors.black54),
-                ),
-                color: Colors.white,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  //lokasi tracker
-                  Container(
-                    width: size.width - 30 - 30,
-                    child: Text(
-                      '[lokasi akhir disini]',
-                      style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18),
-                      maxLines: 2,
-                    ),
-                  ),
-                  Container(
-                    width: size.width - 30 - 30,
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text('Nama Ekspedisi : Kode Ekspedisi'),
-                  ),
-                  Container(
-                    width: size.width - 30 - 30,
-                    padding: EdgeInsets.only(top: 5),
-                    child: Text('20 Sept 2020',
-                        style: TextStyle(color: Colors.green)),
-                  )
-                ],
-              ),
-            ),
-            Container(
-                margin: EdgeInsets.only(top: 10, left: 10.5),
-                decoration: BoxDecoration(
-                  color: Colors.green[300],
-                ),
-                height: 10,
-                width: 10),
+            ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount:
+                    dataTracking.length == null ? 0 : dataTracking.length,
+                itemBuilder: (context, i) {
+                  if (i == 0) {
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 15,
+                          ),
+                          padding: EdgeInsets.only(left: 15, bottom: 15),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left:
+                                  BorderSide(width: 0.5, color: Colors.black54),
+                            ),
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              //lokasi tracker
+                              Container(
+                                width: size.width - 30 - 30,
+                                child: Text(
+                                  '${dataTracking[i]['manifest_description']}',
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18),
+                                  maxLines: 2,
+                                ),
+                              ),
+                              Container(
+                                width: size.width - 30 - 30,
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                    '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )'),
+                              ),
+                              Container(
+                                width: size.width - 30 - 30,
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                    '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
+                                    style: TextStyle(color: Colors.green)),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(top: 10, left: 10.5),
+                            decoration: BoxDecoration(
+                              color: Colors.green[300],
+                            ),
+                            height: 10,
+                            width: 10),
+                      ],
+                    );
+                  } else {
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 15,
+                          ),
+                          padding: EdgeInsets.only(left: 15, bottom: 15),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left:
+                                  BorderSide(width: 0.5, color: Colors.black54),
+                            ),
+                            color: Colors.white,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              //lokasi tracker
+                              Container(
+                                width: size.width - 30 - 30,
+                                child: Text(
+                                  '${dataTracking[i]['manifest_description']}',
+                                  style: TextStyle(
+                                      color: Colors.grey[500],
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 18),
+                                  maxLines: 2,
+                                ),
+                              ),
+                              Container(
+                                width: size.width - 30 - 30,
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                  '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )',
+                                  style: TextStyle(color: Colors.grey[500]),
+                                ),
+                              ),
+                              Container(
+                                width: size.width - 30 - 30,
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                    '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
+                                    style: TextStyle(color: Colors.grey[500])),
+                              )
+                            ],
+                          ),
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(top: 10, left: 10.5),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[500],
+                            ),
+                            height: 10,
+                            width: 10),
+                      ],
+                    );
+                  }
+                }),
           ],
         )
       ]),
@@ -331,10 +496,14 @@ class TrackerTransaksi extends StatelessWidget {
 }
 
 class HeadDaftarTransaksi extends StatelessWidget {
+  final Map<String, dynamic> data;
+  final List dataItem;
+  const HeadDaftarTransaksi({this.dataItem, this.data});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    final formatter = new NumberFormat("#,###.00", 'id_ID');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -365,7 +534,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                 ),
                 Container(
                     width: size.width - 30 - 30 - 100,
-                    child: Text('Daftar Pesanan',
+                    child: Text('Daftar Pesanan (${dataItem.length} item)',
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.w500,
@@ -391,73 +560,80 @@ class HeadDaftarTransaksi extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   // daftar pesanan
-                  Container(
-                    padding: EdgeInsets.only(top: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: 70,
-                          height: 70,
-                          margin: EdgeInsets.only(right: 10),
-                          color: Colors.grey,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.only(top: 7),
-                              width: size.width - 60 - 80,
-                              child: Text(
-                                'Nama Barang Disini',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.green,
-                                ),
-                                maxLines: 2,
+                  ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: dataItem.length == null ? 0 : dataItem.length,
+                      itemBuilder: (context, i) {
+                        return Container(
+                          padding: EdgeInsets.only(top: 10),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: 70,
+                                height: 70,
+                                margin: EdgeInsets.only(right: 10),
+                                color: Colors.grey,
                               ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 7),
-                              width: size.width - 60 - 80,
-                              child: Text(
-                                'X1',
-                                maxLines: 2,
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(top: 7),
-                              alignment: Alignment.topRight,
-                              width: size.width - 60 - 80,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '(Rp500.000,-)',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                      decoration: TextDecoration.lineThrough,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.only(top: 7),
+                                    width: size.width - 60 - 80,
+                                    child: Text(
+                                      '${dataItem[i]['produk']['nama']}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.green,
+                                      ),
+                                      maxLines: 2,
                                     ),
                                   ),
-                                  Text(
-                                    '  Rp10.000,-',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.green,
+                                  Container(
+                                    padding: EdgeInsets.only(top: 7),
+                                    width: size.width - 60 - 80,
+                                    child: Text(
+                                      'X ${dataItem[i]['qty']}',
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 7),
+                                    alignment: Alignment.topRight,
+                                    width: size.width - 60 - 80,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        // Text(
+                                        //   '(Rp500.000,-)',
+                                        //   style: TextStyle(
+                                        //     fontSize: 12,
+                                        //     fontWeight: FontWeight.w500,
+                                        //     color: Colors.black54,
+                                        //     decoration:
+                                        //         TextDecoration.lineThrough,
+                                        //   ),
+                                        // ),
+                                        Text(
+                                          '  Rp ${formatter.format(int.parse(dataItem[i]['total']))}',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                            ],
+                          ),
+                        );
+                      })
                 ],
               ),
             ),
@@ -487,7 +663,8 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp10.000,-',
+                          child: Text(
+                              'Rp${formatter.format(data['data']['subtotal'])}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -510,7 +687,8 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp5.000,-',
+                          child: Text(
+                              'Rp${formatter.format(int.parse(data['data']['ongkir']))}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -558,7 +736,8 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp15.000,-',
+                          child: Text(
+                              'Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'])}',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
@@ -571,6 +750,124 @@ class HeadDaftarTransaksi extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class Dikemas extends StatelessWidget {
+  final String status;
+  final int isAmbil;
+  const Dikemas({this.status, this.isAmbil});
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return isAmbil == 1
+        ? Container(
+            padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+            margin: EdgeInsets.only(bottom: 15),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(width: 0.5, color: Colors.black26),
+              ),
+              color: Colors.white,
+            ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(
+                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: 30,
+                    child: FaIcon(
+                      FontAwesomeIcons.shippingFast,
+                      color: Colors.green,
+                      size: 18,
+                    ),
+                  ),
+                  Container(
+                      width: size.width - 30 - 100 - 30,
+                      child: Text('Status Pengiriman',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                          ))),
+                  Container(
+                    width: 100,
+                    alignment: Alignment.centerRight,
+                    child: InkWell(
+                      onTap: () {},
+                      child: Text('',
+                          style: TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          )),
+                    ),
+                  )
+                ],
+              )),
+              Column(
+                children: <Widget>[
+                  Stack(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: 15,
+                        ),
+                        padding: EdgeInsets.only(left: 15, bottom: 15),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(width: 0.5, color: Colors.black54),
+                          ),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            //lokasi tracker
+                            Container(
+                              width: size.width - 30 - 30,
+                              child: Text(
+                                '${status}',
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 18),
+                                maxLines: 2,
+                              ),
+                            ),
+                            Container(
+                              width: size.width - 30 - 30,
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(
+                                isAmbil == 1 ? 'Ambil di Toko Terserah' : '',
+                                style: TextStyle(color: Colors.black54),
+                              ),
+                            ),
+                            Container(
+                              width: size.width - 30 - 30,
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(isAmbil == 1 ? 'Hari ini' : '',
+                                  style: TextStyle(color: Colors.green)),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 10, left: 10.5),
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                          ),
+                          height: 10,
+                          width: 10),
+                    ],
+                  )
+                ],
+              )
+            ]),
+          )
+        : Container();
   }
 }
 

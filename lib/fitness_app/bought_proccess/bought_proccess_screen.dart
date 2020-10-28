@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:best_flutter_ui_templates/aa/globals.dart' as globals;
 import 'package:intl/intl.dart';
+
 class BoughtProccessScreen extends StatefulWidget {
   const BoughtProccessScreen({Key key, this.animationController, this.index: 0})
       : super(key: key);
@@ -26,35 +27,33 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
   List<Map> defaultTabSettings = [
     {
       "index": 0,
+      "isLoading": false,
       "tab_name": "belum bayar",
       "response": "belum_bayar",
       "data": [],
-      "isLoading": false,
     },
     {
       "index": 1,
+      "isLoading": false,
       "tab_name": "dikemas",
       "response": "dikemas_diambil",
       "data": [],
-      "isLoading": false,
     },
     {
       "index": 2,
+      "isLoading": false,
       "tab_name": "dikirim",
       "response": "dikirim",
       "data": [],
-      "isLoading": false,
     },
     {
       "index": 3,
+      "isLoading": false,
       "tab_name": "selesai",
       "response": "selesai",
       "data": [],
-      "isLoading": false,
     },
   ];
-
-
 
   TabController _controller;
 
@@ -66,33 +65,34 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
 
     defaultTabSettings[index]['data'] = <Widget>[];
 
-    
     try {
       String status = defaultTabSettings[index]['response'];
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await BoughtModel.getBought(status).then((value) {
-          setState(() {
-            defaultTabSettings[index]['isLoading'] = false;
-          });
           // when error data is Map
-          if (value.error) {
-            Map<String, dynamic> res = json.decode(value.data);
+          Future.delayed(Duration(milliseconds: 50), () {
+            if (value.error) {
+              Map<String, dynamic> res = json.decode(value.data);
 
-            loadNotice(context, res['message'], true, 'OK', () {
-              Navigator.of(context).pop();
+              loadNotice(context, res['message'], true, 'OK', () {
+                Navigator.of(context).pop();
+              });
+            }
+            // when success data is List for loop
+
+            else {
+              List res = json.decode(value.data);
+              defaultTabSettings[index]['data'] = res;
+              // print(defaultTabSettings[index]);
+              setState(() {});
+            }
+            Future.delayed(Duration(milliseconds: 100), () {
+              setState(() {
+                defaultTabSettings[index]['isLoading'] = false;
+              });
             });
-          }
-          // when success data is List for loop
-
-          else {
-            List res = json.decode(value.data);
-            defaultTabSettings[index]['data'] = res;
-          }
-          setState(() {
-            
           });
-          
         });
       }
     } on SocketException catch (_) {
@@ -108,11 +108,11 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
   @override
   Widget initState() {
     _getDataApi(widget.index);
-    globals.tabController = _controller;
+    // globals.tabController = _controller;
     super.initState();
   }
 
-   bool _mounted = true;
+  bool _mounted = true;
   bool get mounted => _mounted;
 
   @override
@@ -144,14 +144,12 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
             controller: _controller,
             onTap: (v) {
               print(v);
-              
-                _getDataApi(v);
-                setState(() {
+
+              _getDataApi(v);
+              setState(() {
                 // _controller=new TabController(length: 4, vsync: this, initialIndex: v);
-                  _controller.animateTo(3);
-                });
-             
-          
+                // _controller.animateTo(3);
+              });
             },
             labelStyle:
                 TextStyle(color: Colors.green, fontWeight: FontWeight.w500),
@@ -180,12 +178,28 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
           ),
         ),
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            EveryTap(index: 0,data:defaultTabSettings),
-            EveryTap(index: 1,data:defaultTabSettings),
-                       EveryTap(index: 2,data:defaultTabSettings),
-            EveryTap(index: 3,data:defaultTabSettings),
-
+            EveryTap(
+              index: 0,
+              data: defaultTabSettings,
+              dataHistory: defaultTabSettings[0]['data'],
+            ),
+            EveryTap(
+              index: 1,
+              data: defaultTabSettings,
+              dataHistory: defaultTabSettings[1]['data'],
+            ),
+            EveryTap(
+              index: 2,
+              data: defaultTabSettings,
+              dataHistory: defaultTabSettings[2]['data'],
+            ),
+            EveryTap(
+              index: 3,
+              data: defaultTabSettings,
+              dataHistory: defaultTabSettings[3]['data'],
+            ),
           ],
         ),
       ),
@@ -197,93 +211,74 @@ Widget judulTab(String judul) {
   return Center(child: Text(judul, style: TextStyle(fontSize: 12)));
 }
 
-class CircleTabIndicator extends Decoration {
-  final BoxPainter _painter;
-
-  CircleTabIndicator({@required Color color, @required double radius})
-      : _painter = _CirclePainter(color, radius);
-
-  @override
-  BoxPainter createBoxPainter([onChanged]) => _painter;
-}
-
-class _CirclePainter extends BoxPainter {
-  final Paint _paint;
-  final double radius;
-
-  _CirclePainter(Color color, this.radius)
-      : _paint = Paint()
-          ..color = color
-          ..isAntiAlias = true;
-
-  @override
-  void paint(Canvas canvas, Offset offset, ImageConfiguration cfg) {
-    final Offset circleOffset =
-        offset + Offset(cfg.size.width / 2, cfg.size.height - radius - 5);
-    canvas.drawCircle(circleOffset, radius, _paint);
-  }
-}
-
 class EveryTap extends StatefulWidget {
-  const EveryTap({Key key,  this.index: 0, this.data})
+  const EveryTap({Key key, this.index: 0, this.data, this.dataHistory})
       : super(key: key);
 
   final int index;
   final List data;
+  final List dataHistory;
 
   @override
   _EveryTapState createState() => _EveryTapState();
 }
 
 class _EveryTapState extends State<EveryTap> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    Future.delayed(Duration(seconds: 1), () {
+      print(widget.dataHistory.length);
+    });
 
-
-
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: (widget.data[widget.index]['isLoading']
-                ? reqLoad()
-                : (widget.data[widget.index]['data'].length == 0
-                    ? dataKosong()
-                    //set card with data
-                    : setCard(widget.data[widget.index]))),
+          ? reqLoad()
+          : (widget.data[widget.index]['data'].length == 0
+              ? dataKosong()
+              //set card with data
+              : setCard(widget.data[widget.index]))),
     );
   }
 
-  Widget setCard( ress) {
- 
-  return ListView.builder(
-      padding: EdgeInsets.all(0),
-      itemCount: 1,
-      physics: BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-      
-   var res = widget.data[widget.index]['data'][index];
+  Widget setCard(ress) {
+    return ListView.builder(
+        padding: EdgeInsets.all(0),
+        itemCount:
+            widget.dataHistory.length == null ? 0 : widget.dataHistory.length,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          var res = widget.data[widget.index]['data'][index];
 
-        return Container(
-          child: Column(
-            children: [
-              // Text('dasd'),
-              CardBoughts(
-                inv: res['uni_code'],
-                judul: res['recent_produk']['nama'],
-                tanggal: new DateFormat( "dd MMM y HH:mm", 'id_ID').format(DateTime.parse(res['created_at']))+' WIB',
-                jmlhPlus: res['total_produk'].toString(),
-                total: decimalPointTwo(double.parse(res['total_harga'])),
-                jenis: ress['tab_name'],
-                photo: res['recent_produk']['gambar'],
-                id: res['id'].toString(),
-              ),
-            ],
-          ),
-        );
-      });
+          return Container(
+            child: Column(
+              children: [
+                // Text('dasd'),
+                CardBoughts(
+                  inv: res['uni_code'],
+                  judul: res['recent_produk']['nama'],
+                  tanggal: new DateFormat("dd MMM y HH:mm", 'id_ID')
+                          .format(DateTime.parse(res['created_at'])) +
+                      ' WIB',
+                  jmlhPlus: res['total_produk'].toString(),
+                  total: decimalPointTwo(double.parse(res['total_harga'])),
+                  jenis: ress['tab_name'],
+                  photo: res['recent_produk']['gambar'],
+                  id: res['id'].toString(),
+                  isAmbil: res['isAmbil'],
+                  track: res['recent_track'],
+                ),
+              ],
+            ),
+          );
+        });
+  }
 }
-
-}
-
 
 class CardBoughts extends StatelessWidget {
   const CardBoughts(
@@ -295,7 +290,9 @@ class CardBoughts extends StatelessWidget {
       this.photo,
       this.jmlhPlus,
       this.id,
-      this.total})
+      this.total,
+      this.isAmbil,
+      this.track})
       : super(key: key);
 
   final String jenis;
@@ -306,6 +303,8 @@ class CardBoughts extends StatelessWidget {
   final String tanggal;
   final String jmlhPlus;
   final String total;
+  final int isAmbil;
+  final Map<String, dynamic> track;
 
   @override
   Widget build(BuildContext context) {
@@ -327,9 +326,9 @@ class CardBoughts extends StatelessWidget {
         }
         break;
 
-      case 'PESANAN MASIH DIKEMAS':
+      case 'dikemas':
         {
-          tagTab = judul;
+          tagTab = isAmbil == 1 ? 'SIAP DIAMBIL' : 'SEDANG DIKEMAS';
           hei = 250;
           dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
 
@@ -337,24 +336,24 @@ class CardBoughts extends StatelessWidget {
           //statements;
         }
         break;
-      case 'PESANAN SEDANG DIKIRIM':
+      case 'dikirim':
         {
           //statements;
-          tagTab = 'Pesanan Sedang Dikirim';
+          tagTab = 'DALAM PENGIRIMAN';
           hei = 280;
           dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
 
-          dataCard.add(trackCard(sizeu));
+          dataCard.add(trackCard(sizeu, track));
           dataCard.add(totalCard(sizeu, total, false));
         }
         break;
       case 'selesai':
         {
           //statements;
-          tagTab = 'PESANAN TELAH DITERIMA';
+          tagTab = 'PESANAN SELESAI';
           hei = hei = 290;
           dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, context));
-          dataCard.add(trackCard(sizeu));
+          dataCard.add(trackCard(sizeu, track));
 
           dataCard.add(totalCard(sizeu, total, true));
         }
@@ -403,12 +402,13 @@ class CardBoughts extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TransaksiDetailScreen(
-              dashboardId: id,
-            ),
-          ));
+            context,
+            MaterialPageRoute(
+              builder: (context) => TransaksiDetailScreen(
+                dashboardId: inv,
+                status: tag,
+              ),
+            ));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,7 +516,7 @@ class CardBoughts extends StatelessWidget {
     );
   }
 
-  Widget trackCard(final sizeu) {
+  Widget trackCard(final sizeu, var track) {
     return InkWell(
       onTap: () {},
       child: Container(
@@ -540,11 +540,18 @@ class CardBoughts extends StatelessWidget {
                       color: Colors.green[800],
                       size: 16,
                     ),
-                    Text(
-                      ' [lokasi akhir disini]',
-                      style: TextStyle(
-                        color: Colors.green[800],
-                        fontWeight: FontWeight.w500,
+                    Container(
+                      child: Flexible(
+                        child: RichText(
+                          overflow: TextOverflow.ellipsis,
+                          strutStyle: StrutStyle(fontSize: 12.0),
+                          text: TextSpan(
+                              style: TextStyle(
+                                color: Colors.green[800],
+                                fontWeight: FontWeight.w500,
+                              ),
+                              text: ' ${track['manifest_description']}'),
+                        ),
                       ),
                     )
                   ],
