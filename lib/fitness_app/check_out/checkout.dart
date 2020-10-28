@@ -6,6 +6,7 @@ import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/expandeable_custom.dart';
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:best_flutter_ui_templates/design_course/test.dart';
+import 'package:best_flutter_ui_templates/fitness_app/check_out/apply_voucher_form.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/product_detail_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/midtrans/midtrans_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
@@ -58,6 +59,11 @@ class _CheckOutState extends State<CheckOut> {
   bool opsiLogistikCollapse = false;
   bool catatanCollapse = false;
 
+  //voucher
+  bool showVoucher = false;
+  String kodeVoucherDigunakan = '';
+  Map<String, dynamic> dataVoucher={"test":'das'};
+
   //harga
   double totalProduct = 0;
   double potonganVoucher = 0;
@@ -74,9 +80,6 @@ class _CheckOutState extends State<CheckOut> {
   List rajaOngkirData = [];
   List dataLayanan = [];
   Map<String, dynamic> layananDetail;
-
-  // gunakan voucher
-  String kodeVoucherDigunakan = '';
 
   //overlay loading event
   void loadOverlayEvent(bool cond) {
@@ -155,7 +158,49 @@ class _CheckOutState extends State<CheckOut> {
         });
       }
     } on SocketException catch (_) {
-      loadNotice(context, 'hello', true, 'OK', () {});
+      loadNotice(context, 'Terjadi kesalahan!', true, 'OK', () {
+        Navigator.of(context).pop();
+      });
+
+      isConnect = false;
+      isLoading = false;
+      isWrong = true;
+
+      setState(() {});
+    }
+  }
+
+  _checkKodePromo(String kode) async {
+    loadOverlayEvent(true);
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await KeranjangModel.checkPromo(
+                kode, totalProduct.toString(), tambahanOngkir.toString())
+            .then((value) {
+          Map<String, dynamic> resProduct = json.decode(value.data);
+          dataVoucher = resProduct;
+          loadOverlayEvent(false);
+          print(dataVoucher);
+
+          if (!value.error) {
+            kodeVoucherDigunakan = kode;
+            potonganVoucher =
+                -1 * double.parse(resProduct['discount_price'].toString());
+              _pc.close();
+          } else {
+            kodeVoucherDigunakan = '';
+            potonganVoucher = 0;
+          }
+          setState(() {});
+        });
+      }
+    } on SocketException catch (_) {
+      loadNotice(context, 'Terjadi kesalahan!', true, 'OK', () {
+        Navigator.of(context).pop();
+      });
+      loadOverlayEvent(false);
 
       isConnect = false;
       isLoading = false;
@@ -216,12 +261,12 @@ class _CheckOutState extends State<CheckOut> {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await MidtransModel.getSnap({
-          'pengiriman_id': '1',
-          'penagihan_id': '1',
-          'ongkir': '100000',
-          'discount_price': '',
-          'cart_ids': '56,58,59',
-          'total': '50000',
+          'pengiriman_id': alamatPengiriman['id'].toString(),
+          'penagihan_id': alamatPenagihan['id'].toString(),
+          'ongkir': (tambahanOngkir).toString(),
+          'discount_price': (potonganVoucher*-1).toString(),
+          'cart_ids': widget.idProducts.join(',').toString(),
+          'total': (totalProduct+tambahanOngkir+potonganVoucher).toString(),
         }).then((value) {
           loadOverlayEvent(false);
 
@@ -231,20 +276,20 @@ class _CheckOutState extends State<CheckOut> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TestWebView(
-                    pengirimanId: '1',
-                    penagihanId: '1',
-                    cartIds: '56,58,59',
-                    discountPrice: '',
-                    ongkir: '100000',
-                    total: '50000',
+                    pengirimanId: alamatPengiriman['id'].toString(),
+                    penagihanId: alamatPenagihan['id'].toString(),
+                    cartIds: widget.idProducts.join(',').toString(),
+                    discountPrice: (potonganVoucher*-1).toString(),
+                    ongkir: (tambahanOngkir).toString(),
+                    total: (totalProduct+tambahanOngkir+potonganVoucher).toString(),
                     snapToken: value.data,
-                    weight: '3',
-                    note: 'Coba aja dulu',
-                    durasiPengiriman: '2-3',
-                    promoCode: 'logistik',
-                    opsi: 'logistik',
-                    kodeKurir: 'jne',
-                    layananKurir: 'CTC',
+                    weight: beratProduct.toString(),
+                    note: catatanValue,
+                    durasiPengiriman: layananDetail['cost']!=null? layananDetail['cost'][0]['etd']:'-',
+                    promoCode: kodeVoucherDigunakan,
+                    opsi: pilihanOpsi,
+                    kodeKurir: kodeKurir.toString(),
+                    layananKurir: layananKurir.toString(),
                     token: tokenFixed,
                   ),
                 ));
@@ -401,7 +446,14 @@ class _CheckOutState extends State<CheckOut> {
         children: [
           FooterApp(
               sendMidtrans: () {
+                if(pilihanOpsi.length>0){
                 _getSnapMidtransApi();
+                }else{
+                  loadNotice(context,'Harap pilih opsi pengiriman!',true,'OK',(){
+        Navigator.of(context).pop();
+
+                  });
+                }
               },
               total:
                   (totalProduct + tambahanOngkir + potonganVoucher).toString()),
@@ -439,24 +491,47 @@ class _CheckOutState extends State<CheckOut> {
                         ),
                       ],
                       minHeight: 60,
-                      maxHeight: 220,
+                      maxHeight: 170,
                       controller: _pc,
                       onPanelOpened: () {
-                        // print(coba);
+                        showVoucher = true;
+                        setState(() {
+                          print(showVoucher);
+                        });
                       },
                       onPanelClosed: () {
-                        // print(coba);
+                        showVoucher = false;
+                        setState(() {
+                          print(showVoucher);
+                        });
                       },
-                      panel: Center(
-                        child: Stack(
-                          children: [
-                            ApplyVoucher(),
-                          ],
-                        ),
+                      panel: Stack(
+                        children: [
+                          ApplyVoucherForm(
+                              showing: showVoucher,
+                              dataVoucher: dataVoucher,
+                              sendApi: (String kode) {
+                                _checkKodePromo(kode);
+                              }),
+                          loadOverlay
+                              ? Container(
+                                  color: Colors.grey.withOpacity(.0),
+                                )
+                              : Text(
+                                  '',
+                                  style: TextStyle(fontSize: 0),
+                                )
+                        ],
                       ),
+
                       body: Stack(
                         children: [
-                          _body(),
+                          new GestureDetector(
+                              onTap: () {
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                              },
+                              child: _body()),
                           loadOverlay
                               ? Container(
                                   width: size.width,
@@ -493,13 +568,13 @@ class _CheckOutState extends State<CheckOut> {
                           ),
                           SizedBox(
                               width: size.width - 223,
-                              child: Text('Voucher Diskon')),
+                              child: Text(dataVoucher.containsKey('caption')?'Potongan -Rp'+decimalPointTwo(potonganVoucher*-1) :'Voucher Diskon')),
                           SizedBox(
                             width: 150,
                             child: RaisedButton(
                               color: Colors.deepOrange,
                               child: Text(
-                                "GUNAKAN VOUCHER",
+                                dataVoucher.containsKey('caption')?'VOUCHER LAIN':"GUNAKAN VOUCHER",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 12, color: Colors.white),
@@ -576,11 +651,9 @@ class _CheckOutState extends State<CheckOut> {
               height: 30,
               child: RaisedButton(
                 onPressed: () {
-                  catatanCollapse=false;
-                  catatanValue=catatanInput.text;
-                  setState(() {
-                    
-                  });
+                  catatanCollapse = false;
+                  catatanValue = catatanInput.text;
+                  setState(() {});
                 },
                 color: Colors.green,
                 child: Text(
@@ -1167,6 +1240,7 @@ class _CheckOutState extends State<CheckOut> {
                       opsiLogistikCollapse = false;
                       kodeKurir = layananKurir = '';
                       pilihanOpsi = '';
+                      dataLayanan=[];
                       setState(() {});
                     },
                     color: Colors.white,
@@ -1188,6 +1262,8 @@ class _CheckOutState extends State<CheckOut> {
                       opsiLogistikCollapse = false;
                       opsiCollapse = false;
                       pilihanOpsi = 'logistik';
+                      tambahanOngkir = double.parse(
+                          layananDetail['cost'][0]['value'].toString());
                       setState(() {});
                     },
                     color: kodeKurir.length > 0 && layananKurir.length > 0
@@ -1664,6 +1740,12 @@ class _CheckOutState extends State<CheckOut> {
                 ],
               ),
             ),
+             dataLayanan.length == 0
+                ? Text(
+                    '',
+                    style: TextStyle(fontSize: 0),
+                  )
+                :
             Text('Jenis Layanan :'),
             dataLayanan.length == 0
                 ? Text(
@@ -1674,12 +1756,13 @@ class _CheckOutState extends State<CheckOut> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: dataLayanan.map((e) {
                       var das = <Widget>[];
-
+                    
                       for (var i = 0; i < e.length; i++) {
                         das.add(InkWell(
                           onTap: () {
                             layananKurir = e[i]['service'];
                             layananDetail = e[i];
+
                             setState(() {});
                           },
                           child: Container(
@@ -1871,8 +1954,8 @@ class _CheckOutState extends State<CheckOut> {
                           totalProduct > 200000) {
                         setState(() {
                           pilihanOpsi = 'terserah';
-                          opsiCollapse = false;
                           tambahanOngkir = 0;
+                          opsiCollapse = false;
                         });
                       }
                     },
@@ -1916,6 +1999,7 @@ class _CheckOutState extends State<CheckOut> {
                       opsiCollapse = !opsiCollapse;
                       pilihanOpsi = 'ambil';
                       tambahanOngkir = 0;
+
                       setState(() {});
                     },
                     child: Container(
@@ -2056,99 +2140,6 @@ class FooterApp extends StatelessWidget {
             )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ApplyVoucher extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final sizeu = MediaQuery.of(context).size;
-
-    return Container(
-      margin: EdgeInsets.only(top: 25),
-      height: 130,
-      padding: EdgeInsets.fromLTRB(10, 0, 10, 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              alignment: Alignment.topLeft,
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text('Punya kode voucher? masukkan di sini',
-                  style: TextStyle(color: Colors.black54))),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(
-                width: sizeu.width - 80 - 30,
-                height: 40,
-                child: TextField(
-                  textAlign: TextAlign.left,
-                  onChanged: (text) => {},
-                  decoration: new InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 10),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black54, width: 1),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.black38, width: 1),
-                    ),
-                    hintText: 'Masukkan kode voucher',
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 5),
-                child: SizedBox(
-                  height: 40,
-                  width: 75,
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(4.0),
-                        bottomLeft: Radius.circular(4.0),
-                        topLeft: Radius.circular(4.0),
-                        topRight: Radius.circular(4.0),
-                      ),
-                    ),
-                    onPressed: () {},
-                    color: Colors.green,
-                    child: Text(
-                      'SET',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              )
-            ],
-          ),
-          Padding(
-              padding: EdgeInsets.fromLTRB(1, 10, 1, 1),
-              child: RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.green, fontSize: 15),
-                  children: [
-                    TextSpan(text: 'Voucher FREE1 telah dipakai '),
-                    WidgetSpan(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-        ],
       ),
     );
   }
