@@ -28,6 +28,7 @@ int lenBarcode = 6;
 
 final msgFail = {
   "MSG_TIMEOUT": 'Connection timeout...',
+  
   "MSG_NOTFOUND": 'Data Not Found',
   "MSG_WRONG": 'Somehing wrong, check your connection...',
   "MSG_LOGIN_EXC": 'Email atau Password Salah...',
@@ -150,3 +151,42 @@ Widget dataKosong() {
     ),
   );
 }
+
+ Widget pesanFullScreen(Function eventBtn, String notice, String subnotice,String txtBtn) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(top: 70),
+      child: Column(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            height: 160,
+            width: 160,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/fitness_app/not_found.gif'),
+                fit: BoxFit.fitHeight,
+              ),
+            ),
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
+          ),
+          Text(
+            notice,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          ),
+          Text(subnotice,
+              style: TextStyle(color: Colors.black54)),
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            child: RaisedButton(
+              onPressed: () {
+                eventBtn();
+              },
+              color: Colors.green,
+              child: Text(txtBtn, style: TextStyle(color: Colors.white)),
+            ),
+          )
+        ],
+      ),
+    );
+  }
