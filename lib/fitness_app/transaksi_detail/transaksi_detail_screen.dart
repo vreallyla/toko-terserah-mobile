@@ -526,7 +526,7 @@ class AlamatTransaksi extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: InkWell(
                 onTap: () {},
-                child: Text('Salin',
+                child: Text('',
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
@@ -984,7 +984,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp0,-',
+                          child: Text('Rp${formatter.format(int.parse(data['data']['discount']?? '0'))}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -1010,7 +1010,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
                           child: Text(
-                              'Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'])}',
+                              'Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'] - int.parse(data['data']['discount']?? '0'))}',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
