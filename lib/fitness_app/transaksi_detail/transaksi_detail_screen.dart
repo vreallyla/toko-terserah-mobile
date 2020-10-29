@@ -395,7 +395,7 @@ class StatusTransaksi extends StatelessWidget {
     const url =
         'https://tokoterserah.com/api/dashboard/invoice/PYM5F9573618F30C1603629921?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvdG9rb3RlcnNlcmFoLmNvbVwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYwMzQyMjY4MywiZXhwIjoxNjA3MDIyNjgzLCJuYmYiOjE2MDM0MjI2ODMsImp0aSI6IkxWTEl5eGhEYXFMY1JaNW4iLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.llHiUXKS5nFNN0RLp1RfFA5_eqrQ4lTGPDvq_7_HLTE';
     if (await canLaunch(url)) {
-      await launch(url,forceWebView: true);
+      await launch(url, forceWebView: true);
     } else {
       throw 'Could not launch $url';
     }
@@ -848,6 +848,8 @@ class HeadDaftarTransaksi extends StatelessWidget {
                                 height: 70,
                                 margin: EdgeInsets.only(right: 10),
                                 color: Colors.grey,
+                                child:  FadeInImage(placeholder: NetworkImage('https://tokoterserah.com/storage/produk/thumb/placeholder.jpg'), 
+                                image: NetworkImage('https://tokoterserah.com/storage/produk/thumb/'+'${dataItem[i]['produk']['gambar']}'))
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -984,7 +986,8 @@ class HeadDaftarTransaksi extends StatelessWidget {
                       Container(
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
-                          child: Text('Rp${formatter.format(int.parse(data['data']['discount']?? '0'))}',
+                          child: Text(
+                              'Rp${formatter.format(int.parse(data['data']['discount'] ?? '0'))}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -1010,7 +1013,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
                           child: Text(
-                              'Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'] - int.parse(data['data']['discount']?? '0'))}',
+                              'Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'] - int.parse(data['data']['discount'] ?? '0'))}',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,

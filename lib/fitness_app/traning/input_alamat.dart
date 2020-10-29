@@ -57,8 +57,7 @@ class _InputAlamatState extends State<InputAlamat> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     tokenFixed = prefs.getString('token');
     dataUser = prefs.getString('dataUser');
-    
-  
+
     var tempList;
     var tempocc;
     var tempProv;
@@ -500,32 +499,28 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                 Spacer()
               ],
             ),
-            Row(
-              children: <Widget>[
-                DropdownButton(
-                  isDense: true,
-                  iconSize: 16,
-                  icon: Icon(Icons.arrow_drop_down),
-                  items: dataOcc != null
-                      ? dataOcc.map((item) {
-                          return new DropdownMenuItem(
-                            child: new Text(
-                              item['name'],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            value: item['id'].toString(),
-                          );
-                        }).toList()
-                      : null,
-                  onChanged: (newVal) async {
-                    setState(() {
-                      _mySelection3 = newVal;
-                    });
-                  },
-                  value: _mySelection3,
-                ),
-                Spacer(),
-              ],
+            DropdownButton(
+              isExpanded: true,
+              isDense: true,
+              iconSize: 16,
+              icon: Icon(Icons.arrow_drop_down),
+              items: dataOcc != null
+                  ? dataOcc.map((item) {
+                      return new DropdownMenuItem(
+                        child: new Text(
+                          item['name'],
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        value: item['id'].toString(),
+                      );
+                    }).toList()
+                  : null,
+              onChanged: (newVal) async {
+                setState(() {
+                  _mySelection3 = newVal;
+                });
+              },
+              value: _mySelection3,
             ),
             namapenerimaField,
             telpField,
@@ -540,52 +535,46 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                 Spacer()
               ],
             ),
-            Row(
-              children: <Widget>[
-                DropdownButton(
-                  isDense: true,
-                  iconSize: 16,
-                  icon: Icon(Icons.arrow_drop_down),
-                  items: dataProv != null
-                      ? dataProv.map((item) {
-                          return new DropdownMenuItem(
-                            child: new Text(
-                              item['nama'],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            value: item['id'].toString(),
-                          );
-                        }).toList()
-                      : null,
-                  onChanged: (newVal) async {
-                    setState(() {
-                      _mySelectionProv = newVal;
+            DropdownButton(
+              isExpanded: true,
+              isDense: true,
+              iconSize: 16,
+              icon: Icon(Icons.arrow_drop_down),
+              items: dataProv != null
+                  ? dataProv.map((item) {
+                      return new DropdownMenuItem(
+                        child: new Text(
+                          item['nama'],
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        value: item['id'].toString(),
+                      );
+                    }).toList()
+                  : null,
+              onChanged: (newVal) async {
+                setState(() {
+                  _mySelectionProv = newVal;
+                });
+                Response responseKt = await http.get(
+                    globalBaseUrl + "api/address/kota?provinsi_id=" + newVal,
+                    headers: {
+                      "Accept": "application/json",
+                      "Authorization":
+                          "Bearer " + (tokenFixed != null ? tokenFixed : '')
                     });
-                    Response responseKt = await http.get(
-                        globalBaseUrl +
-                            "api/address/kota?provinsi_id=" +
-                            newVal,
-                        headers: {
-                          "Accept": "application/json",
-                          "Authorization":
-                              "Bearer " + (tokenFixed != null ? tokenFixed : '')
-                        });
-                    var tempList = await jsonDecode(responseKt.body.toString());
-                    if (tempList != null) {
-                      print(tempList["data"]["city"]);
-                      setState(() {
-                        dataKota = tempList["data"]["city"];
-                      });
-                    }
-                    setState(() {
-                      _mySelection = null;
-                      _mySelection2 = null;
-                    });
-                  },
-                  value: _mySelectionProv,
-                ),
-                Spacer(),
-              ],
+                var tempList = await jsonDecode(responseKt.body.toString());
+                if (tempList != null) {
+                  print(tempList["data"]["city"]);
+                  setState(() {
+                    dataKota = tempList["data"]["city"];
+                  });
+                }
+                setState(() {
+                  _mySelection = null;
+                  _mySelection2 = null;
+                });
+              },
+              value: _mySelectionProv,
             ),
             Row(
               children: <Widget>[
@@ -597,50 +586,43 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                 Spacer()
               ],
             ),
-            Row(
-              children: <Widget>[
-                DropdownButton(
-                  isDense: true,
-                  iconSize: 16,
-                  icon: Icon(Icons.arrow_drop_down),
-                  items: dataKota != null
-                      ? dataKota.map((item) {
-                          return new DropdownMenuItem(
-                            child: new Text(
-                              item['nama'],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            value: item['kota_id'].toString(),
-                          );
-                        }).toList()
-                      : null,
-                  onChanged: (newVal) async {
-                    setState(() {
-                      _mySelection = newVal;
+            DropdownButton(
+              isExpanded: true,
+              isDense: true,
+              iconSize: 16,
+              icon: Icon(Icons.arrow_drop_down),
+              items: dataKota != null
+                  ? dataKota.map((item) {
+                      return new DropdownMenuItem(
+                        child: new Text(
+                          item['nama'],
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        value: item['kota_id'].toString(),
+                      );
+                    }).toList()
+                  : null,
+              onChanged: (newVal) async {
+                setState(() {
+                  _mySelection = newVal;
+                });
+                Response responseKcm = await http.get(
+                    globalBaseUrl + "api/address/kecamatan?kota_id=" + newVal,
+                    headers: {
+                      "Accept": "application/json",
+                      "Authorization":
+                          "Bearer " + (tokenFixed != null ? tokenFixed : '')
                     });
-                    Response responseKcm = await http.get(
-                        globalBaseUrl +
-                            "api/address/kecamatan?kota_id=" +
-                            newVal,
-                        headers: {
-                          "Accept": "application/json",
-                          "Authorization":
-                              "Bearer " + (tokenFixed != null ? tokenFixed : '')
-                        });
-                    var tempList =
-                        await jsonDecode(responseKcm.body.toString());
-                    print(tempList["data"]["district"]);
-                    setState(() {
-                      dataKecamatan = tempList["data"]["district"];
-                    });
-                    setState(() {
-                      _mySelection2 = null;
-                    });
-                  },
-                  value: _mySelection,
-                ),
-                Spacer(),
-              ],
+                var tempList = await jsonDecode(responseKcm.body.toString());
+                print(tempList["data"]["district"]);
+                setState(() {
+                  dataKecamatan = tempList["data"]["district"];
+                });
+                setState(() {
+                  _mySelection2 = null;
+                });
+              },
+              value: _mySelection,
             ),
             Row(
               children: <Widget>[
@@ -652,36 +634,32 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                 Spacer()
               ],
             ),
-            Row(
-              children: <Widget>[
-                DropdownButton(
-                  isDense: true,
-                  iconSize: 16,
-                  icon: Icon(Icons.arrow_drop_down),
-                  items: dataKecamatan != null
-                      ? dataKecamatan.map((item) {
-                          return new DropdownMenuItem(
-                            child: new Text(
-                              item['nama'].toString() != null
-                                  ? item['nama'].toString()
-                                  : null,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            value: item['id'].toString() != null
-                                ? item['id'].toString()
-                                : null,
-                          );
-                        }).toList()
-                      : null,
-                  onChanged: (newVal) {
-                    setState(() {
-                      _mySelection2 = newVal;
-                    });
-                  },
-                  value: _mySelection2,
-                ),
-                Spacer()
-              ],
+            DropdownButton(
+              isExpanded: true,
+              isDense: true,
+              iconSize: 16,
+              icon: Icon(Icons.arrow_drop_down),
+              items: dataKecamatan != null
+                  ? dataKecamatan.map((item) {
+                      return new DropdownMenuItem(
+                        child: new Text(
+                          item['nama'].toString() != null
+                              ? item['nama'].toString()
+                              : null,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        value: item['id'].toString() != null
+                            ? item['id'].toString()
+                            : null,
+                      );
+                    }).toList()
+                  : null,
+              onChanged: (newVal) {
+                setState(() {
+                  _mySelection2 = newVal;
+                });
+              },
+              value: _mySelection2,
             ),
             postalcodeField,
           ],
