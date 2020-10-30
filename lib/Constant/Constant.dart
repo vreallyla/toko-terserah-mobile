@@ -67,11 +67,11 @@ void loadNotice(context, String pesan,bool warning,String textBtn, Function() bt
 
               return Container(
                 height: 120,
-                width: width - 400,
+                // width: 200,
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 20),
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
                         pesan,
                         textAlign: TextAlign.center,
