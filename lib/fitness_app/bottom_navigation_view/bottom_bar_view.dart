@@ -12,11 +12,14 @@ import '../models/tabIcon_data.dart';
 
 class BottomBarView extends StatefulWidget {
   const BottomBarView(
-      {Key key, this.tabIconsList, this.changeIndex, this.addClick, this.addQtyCart:0})
+      {Key key, this.tabIconsList,
+      this.changeParentCart,
+       this.changeIndex, this.addClick, this.addQtyCart:0})
       : super(key: key);
 
   final Function(int index) changeIndex;
   final Function addClick;
+  final Function(int jmlh) changeParentCart;
   final int addQtyCart;
   final List<TabIconData> tabIconsList;
   @override
@@ -50,7 +53,9 @@ class _BottomBarViewState extends State<BottomBarView>
       // Navigator.pop on the Selection Screen.
       final resultDetail = await Navigator.pushNamed(context, '/cart_list');
 
-      print(resultDetail);
+      setState(() {
+        widget.changeParentCart(resultDetail);
+      });
 
       
       

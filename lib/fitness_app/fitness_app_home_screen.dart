@@ -135,6 +135,11 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
           child: SizedBox(),
         ),
         BottomBarView(
+          changeParentCart:(int jmlh){
+            setState(() {
+              qtyCart=jmlh;
+            });
+          },
           addQtyCart: qtyCart,
           tabIconsList: tabIconsList,
           addClick: () {},

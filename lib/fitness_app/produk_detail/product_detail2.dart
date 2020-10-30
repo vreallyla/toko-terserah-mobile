@@ -85,6 +85,20 @@ class _ProductDetail2State extends State<ProductDetail2>
     });
   }
 
+  //callback jumlah cart
+  _checkJmlhCart() async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+
+      setState(() {
+        jmlCart=resultDetail;
+      });
+
+      
+      
+    }
+
 // tambah ke kerenjang event
   _addCart(String id, String qty, bool redirect) async {
     try {
@@ -121,7 +135,7 @@ class _ProductDetail2State extends State<ProductDetail2>
               if (redirect) {
                 loadOverlayEvent(false);
 
-                Navigator.pushNamed(context, '/cart_list');
+                _checkJmlhCart();
               }
             });
           }
@@ -373,7 +387,11 @@ class _ProductDetail2State extends State<ProductDetail2>
             preferredSize: Size.fromHeight(70.0),
             child: Stack(
               children: [
-                HeaderPage(countCard: jmlCart),
+                HeaderPage(countCard: jmlCart,setJmlhCart:(int jmlh){
+                  setState(() {
+                    jmlCart=jmlh;
+                  });
+                }),
                 loadOverlay
                     ? Container(
                         width: size.width,
@@ -549,9 +567,22 @@ class _ProductDetail2State extends State<ProductDetail2>
 }
 
 class HeaderPage extends StatelessWidget {
-  HeaderPage({Key key, this.countCard}) : super(key: key);
+  HeaderPage({Key key, this.countCard,this.setJmlhCart}) : super(key: key);
 
   int countCard;
+  Function(int jmlh) setJmlhCart;
+
+  //callback jumlah cart
+  _checkJmlhCart(BuildContext context) async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+
+   setJmlhCart(resultDetail);
+
+      
+      
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -606,7 +637,7 @@ class HeaderPage extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(right: 15),
           child: InkWell(
-            onTap: () => Navigator.of(context).pushNamed('/cart_list'),
+            onTap: () => _checkJmlhCart(context),
             child: Stack(
               children: <Widget>[
                 Container(
