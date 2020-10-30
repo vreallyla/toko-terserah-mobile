@@ -45,6 +45,17 @@ class _BottomBarViewState extends State<BottomBarView>
     setState(() {});
   }
 
+  _checkJmlhCart() async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+
+      print(resultDetail);
+
+      
+      
+    }
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -209,7 +220,7 @@ class _BottomBarViewState extends State<BottomBarView>
                           focusColor: Colors.transparent,
                           onTap: () {
                             widget.addClick();
-                            Navigator.pushNamed(context, '/cart_list');
+                           _checkJmlhCart();
                           },
                           child: Stack(
                             children: <Widget>[
@@ -231,7 +242,8 @@ class _BottomBarViewState extends State<BottomBarView>
                                   child: Text(
                                     (countCart > 99
                                         ? '99+'
-                                        : (widget.addQtyCart>0 ? widget.addQtyCart.toString() :countCart.toString() )
+                                        : (widget.addQtyCart>0 ? widget.addQtyCart.toString()
+                                         :countCart.toString() )
                                         ),
                                     style: TextStyle(
                                         color: Colors.white,

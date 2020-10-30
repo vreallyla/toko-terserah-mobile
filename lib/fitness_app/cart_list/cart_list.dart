@@ -36,6 +36,11 @@ class _CartListState extends State<CartList> {
 
   String _token;
 
+  int jmlhCart = 0;
+
+  // lock back when load data
+  bool canBack = false;
+
   final formatter = new NumberFormat("#,###.00", 'id_ID');
 
   Future _getToken() async {
@@ -47,16 +52,23 @@ class _CartListState extends State<CartList> {
   }
 
   _getData() async {
+    setState(() {
+      canBack = false;
+    });
     try {
       if (_token != null) {
         final result = await InternetAddress.lookup('google.com');
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          setState(() {
+            canBack = true;
+          });
           var response = await http.get(globalBaseUrl + 'api/cart',
               headers: {"Authorization": "Bearer " + _token});
           var _response = json.decode(response.body);
 
           _listCart = _response['data']['produk'];
-          print(_listCart);
+          jmlhCart = _response['data']['count_produk'];
+          // print(_listCart);
         }
         setState(() {
           isLoading = false;
@@ -71,6 +83,8 @@ class _CartListState extends State<CartList> {
     } on SocketException catch (_) {
       isConnect = false;
       isLoading = false;
+      canBack = true;
+
       setState(() {});
     }
   }
@@ -78,13 +92,16 @@ class _CartListState extends State<CartList> {
   _switchWishedApi(String id) async {
     setState(() {
       isLoading = true;
+      canBack = false;
     });
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await WishlistModel.switchWish(id).then((value) {
           Map<String, dynamic> res = json.decode(value.data);
-
+          setState(() {
+            canBack = true;
+          });
           if (value.error) {
             showSnackBar('Terjadi Kesalahan!', Colors.red, Icon(Icons.close));
           }
@@ -98,6 +115,8 @@ class _CartListState extends State<CartList> {
       }
     } on SocketException catch (_) {
       showSnackBar('Terjadi Kesalahan!', Colors.red, Icon(Icons.close));
+      canBack = true;
+
       setState(() {});
     }
   }
@@ -107,6 +126,9 @@ class _CartListState extends State<CartList> {
    * 
    */
   _changeQty(int id, int qty) async {
+    setState(() {
+      canBack = false;
+    });
     try {
       //do something
       print(id);
@@ -116,6 +138,7 @@ class _CartListState extends State<CartList> {
       var _response = json.decode(response.body);
       setState(() {
         isLoading = true;
+        canBack = true;
       });
       _getData();
       showSnackBar(_response['data']['message'], Colors.green,
@@ -124,6 +147,8 @@ class _CartListState extends State<CartList> {
       //catch Socket error
       isConnect = false;
       isLoading = false;
+      canBack = true;
+
       setState(() {});
     } catch (e) {
       //catch any error
@@ -136,11 +161,18 @@ class _CartListState extends State<CartList> {
    * 
    */
   _deleteCart(id) async {
+    setState(() {
+      canBack = false;
+    });
     try {
       var response = await http.post(
           globalBaseUrl + globalPathCart + 'delete_cart',
           body: {"id": id.toString()},
           headers: {"Authorization": "Bearer " + _token});
+
+      setState(() {
+        canBack = true;
+      });
 
       var _response = jsonDecode(response.body);
       if (response.statusCode == 200) {
@@ -150,11 +182,17 @@ class _CartListState extends State<CartList> {
         _getData();
         showSnackBar(_response['data']['message'], Colors.green,
             Icon(Icons.check_circle_outline));
+        setState(() {
+          jmlhCart = _response['data']['count_produk'];
+        });
       } else {
         showSnackBar(
             _response['data']['message'], Colors.red, Icon(Icons.close));
       }
     } catch (e) {
+      setState(() {
+        canBack = true;
+      });
       showSnackBar(e.toString(), Colors.red, Icon(Icons.close));
     }
   }
@@ -284,14 +322,14 @@ class _CartListState extends State<CartList> {
               idProducts: _selecteCarts,
             ),
           ));
-          //  Navigator.push(
-          // //push screen to check out and send parameter
-          // context,
-          // MaterialPageRoute(
-          //   builder: (context) => TestWebView(
-              
-          //   ),
-          // ));
+      //  Navigator.push(
+      // //push screen to check out and send parameter
+      // context,
+      // MaterialPageRoute(
+      //   builder: (context) => TestWebView(
+
+      //   ),
+      // ));
     }
   }
 
@@ -489,6 +527,7 @@ class _CartListState extends State<CartList> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _getToken();
     Future.delayed(Duration(seconds: 1), () {
       _getData();
@@ -499,33 +538,54 @@ class _CartListState extends State<CartList> {
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
 
-    return new Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Colors.grey[200],
-        brightness: Brightness.light,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+    return WillPopScope(
+      onWillPop: () {
+        if (canBack) {
+          Navigator.pop(context, jmlhCart);
+        } else {
+          showSnackBar(
+              'Harap tunggu loading!', Colors.red, Icon(Icons.notifications));
+
+          return;
+        }
+      },
+      child: new Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: Colors.grey[200],
+          brightness: Brightness.light,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () {
+              if (canBack) {
+                Navigator.pop(context, jmlhCart);
+              } else {
+                showSnackBar('Harap tunggu loading!', Colors.red,
+                    Icon(Icons.notifications));
+
+                return;
+              }
+            },
+          ),
+          title: const Text(
+            'Keranjang',
+            style: TextStyle(color: Colors.black),
+          ),
+          actions: <Widget>[
+            // IconButton(
+            //   icon: Icon(Icons.notifications),
+            //   onPressed: () {},
+            //   color: Colors.black,
+            // )
+          ],
         ),
-        title: const Text(
-          'Keranjang',
-          style: TextStyle(color: Colors.black),
-        ),
-        actions: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.notifications),
-          //   onPressed: () {},
-          //   color: Colors.black,
-          // )
-        ],
+        bottomNavigationBar: footer(context),
+        body: (_token == null
+            ? noLogin()
+            : (!isConnect
+                ? noConnection()
+                : (!isLoading ? mainContainter(context) : reqLoad()))),
       ),
-      bottomNavigationBar: footer(context),
-      body: (_token == null
-          ? noLogin()
-          : (!isConnect
-              ? noConnection()
-              : (!isLoading ? mainContainter(context) : reqLoad()))),
     );
   }
 
