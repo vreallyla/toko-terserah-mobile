@@ -62,7 +62,7 @@ class _CheckOutState extends State<CheckOut> {
   //voucher
   bool showVoucher = false;
   String kodeVoucherDigunakan = '';
-  Map<String, dynamic> dataVoucher = {"test": 'das'};
+  Map<String, dynamic> dataVoucher={"test":'das'};
 
   //harga
   double totalProduct = 0;
@@ -188,7 +188,7 @@ class _CheckOutState extends State<CheckOut> {
             kodeVoucherDigunakan = kode;
             potonganVoucher =
                 -1 * double.parse(resProduct['discount_price'].toString());
-            _pc.close();
+              _pc.close();
           } else {
             kodeVoucherDigunakan = '';
             potonganVoucher = 0;
@@ -226,20 +226,18 @@ class _CheckOutState extends State<CheckOut> {
         await AlamatModel.getAlamat().then((value) {
           isLoading = false;
           Map<String, dynamic> resAlamat = json.decode(value.data);
-          loadOverlayEvent(false);
-          setState(() {});
+
           if (value.error) {
             resError(resAlamat);
           } else {
             isLoading = false;
             daftarAlamat = resAlamat['address'];
-            if (alamatPenagihan == null) {
-              alamatPengiriman = alamatPenagihan = resAlamat['isUtama'] != null
-                  ? resAlamat['isUtama']
-                  : (resAlamat['address'].length > 0
-                      ? resAlamat['address'][0]
-                      : null);
-            }
+            alamatPengiriman = alamatPenagihan = resAlamat['isUtama'] != null
+                ? resAlamat['isUtama']
+                : (resAlamat['address'].length > 0
+                    ? resAlamat['address'][0]
+                    : null);
+
             dataSurabaya = resAlamat['surabaya'];
             _getHargaByRajaOngkir();
 
@@ -251,7 +249,7 @@ class _CheckOutState extends State<CheckOut> {
       // print('dasd');
       isConnect = false;
       isLoading = false;
-      loadOverlayEvent(false);
+
       setState(() {});
     }
   }
@@ -266,9 +264,9 @@ class _CheckOutState extends State<CheckOut> {
           'pengiriman_id': alamatPengiriman['id'].toString(),
           'penagihan_id': alamatPenagihan['id'].toString(),
           'ongkir': (tambahanOngkir).toString(),
-          'discount_price': (potonganVoucher * -1).toString(),
+          'discount_price': (potonganVoucher*-1).toString(),
           'cart_ids': widget.idProducts.join(',').toString(),
-          'total': (totalProduct + tambahanOngkir + potonganVoucher).toString(),
+          'total': (totalProduct+tambahanOngkir+potonganVoucher).toString(),
         }).then((value) {
           loadOverlayEvent(false);
 
@@ -281,16 +279,13 @@ class _CheckOutState extends State<CheckOut> {
                     pengirimanId: alamatPengiriman['id'].toString(),
                     penagihanId: alamatPenagihan['id'].toString(),
                     cartIds: widget.idProducts.join(',').toString(),
-                    discountPrice: (potonganVoucher * -1).toString(),
+                    discountPrice: (potonganVoucher*-1).toString(),
                     ongkir: (tambahanOngkir).toString(),
-                    total: (totalProduct + tambahanOngkir + potonganVoucher)
-                        .toString(),
+                    total: (totalProduct+tambahanOngkir+potonganVoucher).toString(),
                     snapToken: value.data,
                     weight: beratProduct.toString(),
                     note: catatanValue,
-                    durasiPengiriman: layananDetail['cost'] != null
-                        ? layananDetail['cost'][0]['etd']
-                        : '-',
+                    durasiPengiriman: (layananDetail!=null ? layananDetail.containsKey('cost') :false)? layananDetail['cost'][0]['etd']:'-',
                     promoCode: kodeVoucherDigunakan,
                     opsi: pilihanOpsi,
                     kodeKurir: kodeKurir.toString(),
@@ -451,12 +446,12 @@ class _CheckOutState extends State<CheckOut> {
         children: [
           FooterApp(
               sendMidtrans: () {
-                if (pilihanOpsi.length > 0) {
-                  _getSnapMidtransApi();
-                } else {
-                  loadNotice(
-                      context, 'Harap pilih opsi pengiriman!', true, 'OK', () {
-                    Navigator.of(context).pop();
+                if(pilihanOpsi.length>0){
+                _getSnapMidtransApi();
+                }else{
+                  loadNotice(context,'Harap pilih opsi pengiriman!',true,'OK',(){
+        Navigator.of(context).pop();
+
                   });
                 }
               },
@@ -573,18 +568,13 @@ class _CheckOutState extends State<CheckOut> {
                           ),
                           SizedBox(
                               width: size.width - 223,
-                              child: Text(dataVoucher.containsKey('caption')
-                                  ? 'Potongan -Rp' +
-                                      decimalPointTwo(potonganVoucher * -1)
-                                  : 'Voucher Diskon')),
+                              child: Text(dataVoucher.containsKey('caption')?'Potongan -Rp'+decimalPointTwo(potonganVoucher*-1) :'Voucher Diskon')),
                           SizedBox(
                             width: 150,
                             child: RaisedButton(
                               color: Colors.deepOrange,
                               child: Text(
-                                dataVoucher.containsKey('caption')
-                                    ? 'VOUCHER LAIN'
-                                    : "GUNAKAN VOUCHER",
+                                dataVoucher.containsKey('caption')?'VOUCHER LAIN':"GUNAKAN VOUCHER",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 12, color: Colors.white),
@@ -1048,13 +1038,7 @@ class _CheckOutState extends State<CheckOut> {
               width: _width - 30,
               height: 30,
               child: RaisedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/inputalamat', arguments: null)
-                      .then((value) {
-                    loadOverlayEvent(true);
-                    _getAlamatApi();
-                  });
-                },
+                onPressed: () {},
                 color: Colors.green,
                 child: Text(
                   'TAMBAH ALAMAT',
@@ -1256,7 +1240,7 @@ class _CheckOutState extends State<CheckOut> {
                       opsiLogistikCollapse = false;
                       kodeKurir = layananKurir = '';
                       pilihanOpsi = '';
-                      dataLayanan = [];
+                      dataLayanan=[];
                       setState(() {});
                     },
                     color: Colors.white,
@@ -1756,12 +1740,13 @@ class _CheckOutState extends State<CheckOut> {
                 ],
               ),
             ),
-            dataLayanan.length == 0
+             dataLayanan.length == 0
                 ? Text(
                     '',
                     style: TextStyle(fontSize: 0),
                   )
-                : Text('Jenis Layanan :'),
+                :
+            Text('Jenis Layanan :'),
             dataLayanan.length == 0
                 ? Text(
                     '',
@@ -1771,7 +1756,7 @@ class _CheckOutState extends State<CheckOut> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: dataLayanan.map((e) {
                       var das = <Widget>[];
-
+                    
                       for (var i = 0; i < e.length; i++) {
                         das.add(InkWell(
                           onTap: () {
