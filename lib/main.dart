@@ -22,6 +22,7 @@ import 'fitness_app/profil_detail/profile_detail_screen.dart';
 import 'fitness_app/traning/alamat_list.dart';
 import 'fitness_app/traning/input_alamat.dart';
 import 'fitness_app/traning/privacy.dart';
+import 'fitness_app/traning/ketentuan.dart';
 import 'SplashScreen.dart';
 
 void main() async {
@@ -68,7 +69,8 @@ class MyApp extends StatelessWidget {
         '/profile_detail': (context) => ProfileDetailScreen(),
         '/listalamat': (context) => AlamatList(),
         '/inputalamat': (context) => InputAlamat(),
-        '/privacy' : (context) => Privacy()
+        '/privacy' : (context) => Privacy(),
+        '/ketentuan' : (context) => Ketentuan()
       },
       title: 'Toko Terserah',
       debugShowCheckedModeBanner: false,

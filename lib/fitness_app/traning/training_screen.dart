@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../fintness_app_theme.dart';
 import './profil_card_view.dart';
 import 'package:barcode_flutter/barcode_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import '../../bar_icons.dart';
 import 'dart:async';
@@ -155,6 +156,16 @@ class _TrainingScreenState extends State<TrainingScreen>
       case 'alamat':
         {
           Navigator.pushNamed(context, '/listalamat');
+        }
+        break;
+      case 'hub':
+        {
+          launch("tel://+628113051081");
+        }
+        break;
+      case 'ketentuan':
+        {
+          Navigator.pushNamed(context, '/ketentuan');
         }
         break;
       case 'privacy':
@@ -529,7 +540,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       false,
       false,
       'Hubungi langsung tim kami',
-      'barcode',
+      'hub',
     ));
 
     listViews.add(rowButton(
@@ -538,7 +549,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       true,
       false,
       '',
-      'barcode',
+      'ketentuan',
     ));
 
     listViews.add(rowButton(
