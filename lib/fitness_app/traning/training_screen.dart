@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/EventHelper.dart';
+import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
@@ -269,7 +270,7 @@ class _TrainingScreenState extends State<TrainingScreen>
 
     tokenFixed = prefs.getString('token');
     kodeBarcode = prefs.getString('dataUser');
-    print(tokenFixed);
+    // print(tokenFixed);
     isLoading = true;
 
     _getBarcode();
@@ -400,6 +401,13 @@ class _TrainingScreenState extends State<TrainingScreen>
       listViews = <Widget>[];
       listViews.add(
         ProfilCardView(
+          loadData:(){
+            isLoading=true;
+            setState(() {
+              // addAllListData();
+            });
+            _getToken();
+          },
           mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                   parent: widget.animationController,

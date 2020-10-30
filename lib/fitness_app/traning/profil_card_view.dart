@@ -20,10 +20,11 @@ import 'package:intl/intl.dart';
 
 class ProfilCardView extends StatefulWidget {
   const ProfilCardView(
-      {Key key, this.mainScreenAnimationController, this.mainScreenAnimation})
+      {Key key, this.loadData,this.mainScreenAnimationController, this.mainScreenAnimation})
       : super(key: key);
 
   final AnimationController mainScreenAnimationController;
+  final Function loadData;
   final Animation<dynamic> mainScreenAnimation;
 
   @override
@@ -39,6 +40,16 @@ class _ProfilCardViewState extends State<ProfilCardView>
   DateTime tglDaftar, tglUpdate;
   var dataUser;
   String diff;
+
+  //callback jumlah cart
+  _checkAkun() async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final resultDetail = await Navigator.pushNamed(context, '/profile_detail');
+   print('hell');
+
+   widget.loadData();
+  }
 
   _getUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -110,7 +121,7 @@ class _ProfilCardViewState extends State<ProfilCardView>
         children: <Widget>[
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/profile_detail');
+              _checkAkun();
             },
             child: Stack(
               children: <Widget>[

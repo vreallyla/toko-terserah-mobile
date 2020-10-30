@@ -10,7 +10,7 @@ import 'package:best_flutter_ui_templates/fitness_app/transaksi_detail/transaksi
 import 'package:best_flutter_ui_templates/model/bought_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:best_flutter_ui_templates/aa/globals.dart' as globals;
+
 import 'package:intl/intl.dart';
 
 class BoughtProccessScreen extends StatefulWidget {

@@ -131,7 +131,7 @@ class _CartListState extends State<CartList> {
     });
     try {
       //do something
-      print(id);
+      // print(id);
       var response = await http.post(globalBaseUrl + 'api/cart/update_cart',
           body: {"id": id.toString(), "qty": qty.toString()},
           headers: {"Authorization": "Bearer " + _token});
@@ -483,12 +483,12 @@ class _CartListState extends State<CartList> {
                   onChanged: (value) {
                     // print(int.parse(value.toString()));
                     qty = value;
-                    print(qty);
+                    // print(qty);
                   },
                 ),
                 MaterialButton(
                   onPressed: () {
-                    print('Hello');
+                    // print('Hello');
                     Navigator.of(context).pop();
                     _changeQty(cart_id, qty.round());
                   },

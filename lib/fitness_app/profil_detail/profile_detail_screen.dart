@@ -955,61 +955,66 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
-    return new GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      child: new Scaffold(
-          key: _scaffoldKey,
-          body: isLoading
-              ? reqLoad()
-              : Stack(
-                  children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-                        Container(
-                          height: 180,
-                          color: Colors.green,
-                        ),
-                        Container(
-                          //My container or any other widget
-                          color: Colors.grey.withOpacity(0.2),
-
-                          child: ListView(children: <Widget>[
-                            headerAva(context),
-                            inputForm(context),
-                            Padding(
-                              padding: EdgeInsets.only(top: 15),
-                            ),
-                            akunFrom(context),
-                          ]),
-                        ),
-                      ],
-                    ),
-                    new Positioned(
-                      //Place it at the top, and not use the entire screen
-                      top: 0.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: AppBar(
-                        leading: IconButton(
-                          icon: IconShadowWidget(
-                            Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 36,
-                            ),
-                            shadowColor: Colors.black54,
+    return WillPopScope(
+        onWillPop: () {
+          Navigator.pop(context, true);
+        },
+          child: new GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: new Scaffold(
+            key: _scaffoldKey,
+            body: isLoading
+                ? reqLoad()
+                : Stack(
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          Container(
+                            height: 180,
+                            color: Colors.green,
                           ),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
+                          Container(
+                            //My container or any other widget
+                            color: Colors.grey.withOpacity(0.2),
 
-                        backgroundColor: Colors.transparent, //No more green
-                        elevation: 0.0, //Shadow gone
+                            child: ListView(children: <Widget>[
+                              headerAva(context),
+                              inputForm(context),
+                              Padding(
+                                padding: EdgeInsets.only(top: 15),
+                              ),
+                              akunFrom(context),
+                            ]),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                )),
+                      new Positioned(
+                        //Place it at the top, and not use the entire screen
+                        top: 0.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: AppBar(
+                          leading: IconButton(
+                            icon: IconShadowWidget(
+                              Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                                size: 36,
+                              ),
+                              shadowColor: Colors.black54,
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+
+                          backgroundColor: Colors.transparent, //No more green
+                          elevation: 0.0, //Shadow gone
+                        ),
+                      ),
+                    ],
+                  )),
+      ),
     );
   }
 

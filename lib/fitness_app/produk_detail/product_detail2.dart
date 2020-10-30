@@ -87,17 +87,15 @@ class _ProductDetail2State extends State<ProductDetail2>
 
   //callback jumlah cart
   _checkJmlhCart() async {
-      // Navigator.push returns a Future that completes after calling
-      // Navigator.pop on the Selection Screen.
-      final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+    print(resultDetail);
 
-      setState(() {
-        jmlCart=resultDetail;
-      });
-
-      
-      
-    }
+    setState(() {
+      jmlCart = resultDetail;
+    });
+  }
 
 // tambah ke kerenjang event
   _addCart(String id, String qty, bool redirect) async {
@@ -247,7 +245,7 @@ class _ProductDetail2State extends State<ProductDetail2>
             imageLists = detailProduct['galeri'] ?? [detailProduct['gambar']];
             reviewData = dataLoad['review'];
             qnAData = dataLoad['qna'];
-            isLogin=dataLoad['is_login'];
+            isLogin = dataLoad['is_login'];
             print(reviewData['data']);
             addAllListData();
             setState(() {});
@@ -387,11 +385,13 @@ class _ProductDetail2State extends State<ProductDetail2>
             preferredSize: Size.fromHeight(70.0),
             child: Stack(
               children: [
-                HeaderPage(countCard: jmlCart,setJmlhCart:(int jmlh){
-                  setState(() {
-                    jmlCart=jmlh;
-                  });
-                }),
+                HeaderPage(
+                    countCard: jmlCart,
+                    setJmlhCart: (int jmlh) {
+                      setState(() {
+                        jmlCart = jmlh;
+                      });
+                    }),
                 loadOverlay
                     ? Container(
                         width: size.width,
@@ -432,8 +432,7 @@ class _ProductDetail2State extends State<ProductDetail2>
                               jmlh_pcs = setMinOrder(detailProduct).round();
                             }
                             print(detailProduct);
-                            if ( isLogin
-                               ) {
+                            if (isLogin) {
                               showAddDialog(context);
                             } else {
                               loadNotice(
@@ -567,22 +566,19 @@ class _ProductDetail2State extends State<ProductDetail2>
 }
 
 class HeaderPage extends StatelessWidget {
-  HeaderPage({Key key, this.countCard,this.setJmlhCart}) : super(key: key);
+  HeaderPage({Key key, this.countCard, this.setJmlhCart}) : super(key: key);
 
   int countCard;
   Function(int jmlh) setJmlhCart;
 
   //callback jumlah cart
   _checkJmlhCart(BuildContext context) async {
-      // Navigator.push returns a Future that completes after calling
-      // Navigator.pop on the Selection Screen.
-      final resultDetail = await Navigator.pushNamed(context, '/cart_list');
-
-   setJmlhCart(resultDetail);
-
-      
-      
-    }
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+    print(resultDetail);
+    setJmlhCart(resultDetail);
+  }
 
   @override
   Widget build(BuildContext context) {

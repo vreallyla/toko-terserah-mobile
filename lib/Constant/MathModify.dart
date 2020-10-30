@@ -28,13 +28,13 @@ import 'dart:core';
       diffForHumans=dua.toString();
     } else if (menit <= 30) {
       // per menit
-      diffForHumans=tiga.toString();
+      diffForHumans=menit.toString()+tiga.toString();
     } else if (menit > 30 && menit <= 60) {
       // sebelum sejam
       diffForHumans=empat.toString();
     } else if (jam <= 12) {
       // per jam
-      diffForHumans=lima.toString();
+      diffForHumans=jam.toString()+lima.toString();
     } else if (jam > 12 && jam <= 24) {
       // sebelum sehari
       diffForHumans=enam.toString();

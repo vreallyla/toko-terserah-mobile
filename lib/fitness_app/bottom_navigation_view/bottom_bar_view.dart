@@ -52,7 +52,7 @@ class _BottomBarViewState extends State<BottomBarView>
       // Navigator.push returns a Future that completes after calling
       // Navigator.pop on the Selection Screen.
       final resultDetail = await Navigator.pushNamed(context, '/cart_list');
-
+      print(resultDetail);
       setState(() {
         widget.changeParentCart(resultDetail);
       });
