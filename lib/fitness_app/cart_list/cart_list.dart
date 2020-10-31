@@ -79,6 +79,10 @@ class _CartListState extends State<CartList> {
         //   // log(element['id'].toString());
         //   _total = _total + int.parse(element['total']);
         // });
+      } else if (_token == null) {
+        setState(() {
+          canBack = true;
+        });
       }
     } on SocketException catch (_) {
       isConnect = false;
@@ -526,12 +530,12 @@ class _CartListState extends State<CartList> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
 
     _getToken();
     Future.delayed(Duration(seconds: 1), () {
       _getData();
     });
+    super.initState();
   }
 
   @override

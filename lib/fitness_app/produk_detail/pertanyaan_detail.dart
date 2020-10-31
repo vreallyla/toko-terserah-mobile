@@ -122,7 +122,7 @@ class PertanyaanProduk extends StatelessWidget {
     return Column(
       children: [
         cardPertanyaan(
-            '${dataQnA[i]['user']}',
+            '${dataQnA[i]['user'] ?? '******'}',
             '${diffForhumans(DateTime.parse(dataQnA[i]['created_at']))}',
             '${dataQnA[i]['tanya']}'),
         jawabanQna(i)
