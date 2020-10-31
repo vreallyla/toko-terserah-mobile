@@ -94,7 +94,9 @@ class _TestWebViewState extends State<TestWebView>
   void initState() {
     _getToken();
     flutterWebviewPlugin.onUrlChanged.listen((String url) {
+      print(url);
       if (url.indexOf('#telah-success') > -1) {
+        print('asd');
         _toProsesDashboard();
       }
     });

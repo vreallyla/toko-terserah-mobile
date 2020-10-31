@@ -377,6 +377,7 @@ class _ProductDetail2State extends State<ProductDetail2>
 
     return WillPopScope(
       onWillPop: () {
+        
         Navigator.pop(context, jmlCart);
       },
       child: Scaffold(

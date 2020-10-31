@@ -61,8 +61,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   TextStyle txtstyle = TextStyle(color: Colors.white);
   Color coloricon = Colors.white;
 
-  
-
   _getHome(context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var dataRes = json.decode(prefs.getString('dataHome'));
@@ -460,10 +458,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 animationController: widget.animationController,
               ),
               ItemSquareView(
-                  eventSetCart: (int qty) {
-                    widget.funcChangeCartQty(qty);
-                    // print(qty);
+                  eventSetCart: (int qty) async {
                     // widget.funcChangeCartQty(qty);
+                    // print(qty);
+                    widget.funcChangeCartQty(qty);
                     setState(() {});
                   },
                   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
@@ -500,6 +498,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 animationController: widget.animationController,
               ),
               ItemSquareView(
+                  eventSetCart: (int qty) async {
+                    // widget.funcChangeCartQty(qty);
+                    // print(qty);
+                    widget.funcChangeCartQty(qty);
+                    setState(() {});
+                  },
                   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
                       .animate(CurvedAnimation(
                           parent: widget.animationController,
@@ -534,6 +538,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 animationController: widget.animationController,
               ),
               ItemSquareView(
+                  eventSetCart: (int qty) async {
+                    // widget.funcChangeCartQty(qty);
+                    // print(qty);
+                    widget.funcChangeCartQty(qty);
+                    setState(() {});
+                  },
                   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
                       .animate(CurvedAnimation(
                           parent: widget.animationController,
@@ -568,6 +578,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                 animationController: widget.animationController,
               ),
               ItemSquareView(
+                  eventSetCart: (int qty) async {
+                    // widget.funcChangeCartQty(qty);
+                    // print(qty);
+                    widget.funcChangeCartQty(qty);
+                    setState(() {});
+                  },
                   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0)
                       .animate(CurvedAnimation(
                           parent: widget.animationController,

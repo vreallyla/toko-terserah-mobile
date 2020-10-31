@@ -32,6 +32,20 @@ class _ItemSquareViewState extends State<ItemSquareView>
   AnimationController animationController;
   List<MealsListData> mealsListData = MealsListData.tabIconsList;
 
+  Future<int> _toProductDetail(BuildContext context, String id) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ProductDetail2(
+                  productId: id,
+                )));
+
+    return Future.value(result);
+    // eventSetCart(result);
+  }
+
   @override
   void initState() {
     animationController = AnimationController(
@@ -71,7 +85,7 @@ class _ItemSquareViewState extends State<ItemSquareView>
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
                   final int count =
-                      mealsListData.length > 10 ? 10 : mealsListData.length;
+                      mealsListData.length;
                   final Animation<double> animation =
                       Tween<double>(begin: 0.0, end: 1.0).animate(
                           CurvedAnimation(
@@ -81,8 +95,17 @@ class _ItemSquareViewState extends State<ItemSquareView>
                   animationController.forward();
 
                   return MealsView(
-                      eventSetCart: (int qty) {
-                        widget.eventSetCart(qty);
+                      eventSetCart: (int qty) async {
+                        // int val=await qty;
+                        // widget.eventSetCart( val);
+                      },
+                      linkIn: (int id) async {
+                        // async {
+                        final value =
+                            await _toProductDetail(context, id.toString());
+                        widget.eventSetCart( value);
+
+                        // },
                       },
                       mealsListData: widget.dataCard[index],
                       animation: animation,
@@ -105,6 +128,7 @@ class MealsView extends StatelessWidget {
       this.mealsListData,
       this.animationController,
       this.animation,
+      this.linkIn,
       this.eventSetCart,
       this.countData})
       : super(key: key);
@@ -114,26 +138,13 @@ class MealsView extends StatelessWidget {
   final Animation<dynamic> animation;
   final int countData;
   final Function(int qty) eventSetCart;
+  final Function(int qty) linkIn;
 
   @override
   Widget build(BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
 
-    _toProductDetail(BuildContext context, String id) async {
-      // Navigator.push returns a Future that completes after calling
-      // Navigator.pop on the Selection Screen.
-      final resultDetail = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductDetail2(
-              productId: id,
-            ),
-          ));
-
-      eventSetCart(resultDetail);
-      
-    }
-
+   
     return AnimatedBuilder(
       animation: animationController,
       builder: (BuildContext context, Widget child) {
@@ -150,11 +161,14 @@ class MealsView extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         top: 0, left: 1, right: 5, bottom: 0),
                     child: InkWell(
-                      onTap: () {
-                        // Navigate to the second screen using a named route.
-
-                        _toProductDetail(
-                            context, mealsListData['id'].toString());
+                      onTap: ()
+                          // async {
+                          //   final value = await _toProductDetail(
+                          //       context, mealsListData['id'].toString());
+                          //   eventSetCart(value);
+                          // },
+                          {
+                        linkIn(mealsListData['id']);
                       },
                       child: Column(
                         children: [
