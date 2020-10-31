@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../fintness_app_theme.dart';
 import './profil_card_view.dart';
 import 'package:barcode_flutter/barcode_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // import '../../bar_icons.dart';
 import 'dart:async';
@@ -157,6 +158,21 @@ class _TrainingScreenState extends State<TrainingScreen>
           Navigator.pushNamed(context, '/listalamat');
         }
         break;
+      case 'hub':
+        {
+          launch("tel://+628113051081");
+        }
+        break;
+      case 'ketentuan':
+        {
+          Navigator.pushNamed(context, '/ketentuan');
+        }
+        break;
+      case 'privacy':
+        {
+          Navigator.pushNamed(context, '/privacy');
+        }
+        break;
       case 'keluar':
         {
           showDialog(
@@ -262,8 +278,6 @@ class _TrainingScreenState extends State<TrainingScreen>
         break;
     }
   }
-
-  
 
   _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -401,8 +415,8 @@ class _TrainingScreenState extends State<TrainingScreen>
       listViews = <Widget>[];
       listViews.add(
         ProfilCardView(
-          loadData:(){
-            isLoading=true;
+          loadData: () {
+            isLoading = true;
             setState(() {
               // addAllListData();
             });
@@ -526,7 +540,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       false,
       false,
       'Hubungi langsung tim kami',
-      'barcode',
+      'hub',
     ));
 
     listViews.add(rowButton(
@@ -535,7 +549,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       true,
       false,
       '',
-      'barcode',
+      'ketentuan',
     ));
 
     listViews.add(rowButton(
@@ -544,7 +558,7 @@ class _TrainingScreenState extends State<TrainingScreen>
       true,
       false,
       '',
-      'barcode',
+      'privacy',
     ));
   }
 
@@ -555,45 +569,48 @@ class _TrainingScreenState extends State<TrainingScreen>
 
   @override
   Widget build(BuildContext context) {
-Widget noConnection(){
-  return Container(
-    alignment: Alignment.center,
-    padding: EdgeInsets.only(top:120),
-      child: Column(
-        children: [
-          Container(
-          alignment: Alignment.center,
-                        height: 160,
-                        width: 160,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/fitness_app/not_found.gif'),
-                            fit: BoxFit.fitHeight,
-                          ),
-                        ),
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
-                      ),
-          Text('Koneksi Terputus',style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),),
-          Text('Periksa sambungan internet kamu',style:TextStyle(color: Colors.black54)),
-          Container(
-            margin:EdgeInsets.only(top:15),
-            child: RaisedButton(
-              onPressed: (){
-                setState(() {
-                  isLoading=true;
-                  isConnect=true;
-                checkConnection();
-                });
-              },
-              color: Colors.green,
-              child: Text('COBA LAGI',style:TextStyle(color: Colors.white)),
+    Widget noConnection() {
+      return Container(
+        alignment: Alignment.center,
+        padding: EdgeInsets.only(top: 120),
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              height: 160,
+              width: 160,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/fitness_app/not_found.gif'),
+                  fit: BoxFit.fitHeight,
+                ),
+              ),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, 15),
             ),
-          )
-        ],
-      ),
-  );
-}
-
+            Text(
+              'Koneksi Terputus',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+            Text('Periksa sambungan internet kamu',
+                style: TextStyle(color: Colors.black54)),
+            Container(
+              margin: EdgeInsets.only(top: 15),
+              child: RaisedButton(
+                onPressed: () {
+                  setState(() {
+                    isLoading = true;
+                    isConnect = true;
+                    checkConnection();
+                  });
+                },
+                color: Colors.green,
+                child: Text('COBA LAGI', style: TextStyle(color: Colors.white)),
+              ),
+            )
+          ],
+        ),
+      );
+    }
 
     return Container(
       color: FintnessAppTheme.background,
