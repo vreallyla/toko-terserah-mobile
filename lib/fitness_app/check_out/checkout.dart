@@ -62,7 +62,7 @@ class _CheckOutState extends State<CheckOut> {
   //voucher
   bool showVoucher = false;
   String kodeVoucherDigunakan = '';
-  Map<String, dynamic> dataVoucher={"test":'das'};
+  Map<String, dynamic> dataVoucher = {"test": 'das'};
 
   //harga
   double totalProduct = 0;
@@ -188,7 +188,7 @@ class _CheckOutState extends State<CheckOut> {
             kodeVoucherDigunakan = kode;
             potonganVoucher =
                 -1 * double.parse(resProduct['discount_price'].toString());
-              _pc.close();
+            _pc.close();
           } else {
             kodeVoucherDigunakan = '';
             potonganVoucher = 0;
@@ -224,13 +224,13 @@ class _CheckOutState extends State<CheckOut> {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await AlamatModel.getAlamat().then((value) {
-          isLoading = false;
+          // isLoading = false;
           Map<String, dynamic> resAlamat = json.decode(value.data);
 
           if (value.error) {
             resError(resAlamat);
           } else {
-            isLoading = false;
+            // isLoading = false;
             daftarAlamat = resAlamat['address'];
             alamatPengiriman = alamatPenagihan = resAlamat['isUtama'] != null
                 ? resAlamat['isUtama']
@@ -264,9 +264,9 @@ class _CheckOutState extends State<CheckOut> {
           'pengiriman_id': alamatPengiriman['id'].toString(),
           'penagihan_id': alamatPenagihan['id'].toString(),
           'ongkir': (tambahanOngkir).toString(),
-          'discount_price': (potonganVoucher*-1).toString(),
+          'discount_price': (potonganVoucher * -1).toString(),
           'cart_ids': widget.idProducts.join(',').toString(),
-          'total': (totalProduct+tambahanOngkir+potonganVoucher).toString(),
+          'total': (totalProduct + tambahanOngkir + potonganVoucher).toString(),
         }).then((value) {
           loadOverlayEvent(false);
 
@@ -279,13 +279,18 @@ class _CheckOutState extends State<CheckOut> {
                     pengirimanId: alamatPengiriman['id'].toString(),
                     penagihanId: alamatPenagihan['id'].toString(),
                     cartIds: widget.idProducts.join(',').toString(),
-                    discountPrice: (potonganVoucher*-1).toString(),
+                    discountPrice: (potonganVoucher * -1).toString(),
                     ongkir: (tambahanOngkir).toString(),
-                    total: (totalProduct+tambahanOngkir+potonganVoucher).toString(),
+                    total: (totalProduct + tambahanOngkir + potonganVoucher)
+                        .toString(),
                     snapToken: value.data,
                     weight: beratProduct.toString(),
                     note: catatanValue,
-                    durasiPengiriman: (layananDetail!=null ? layananDetail.containsKey('cost') :false)? layananDetail['cost'][0]['etd']:'-',
+                    durasiPengiriman: (layananDetail != null
+                            ? layananDetail.containsKey('cost')
+                            : false)
+                        ? layananDetail['cost'][0]['etd']
+                        : '-',
                     promoCode: kodeVoucherDigunakan,
                     opsi: pilihanOpsi,
                     kodeKurir: kodeKurir.toString(),
@@ -362,7 +367,7 @@ class _CheckOutState extends State<CheckOut> {
           beratProduct.toString(),
         ).then((value) {
           loadOverlayEvent(false);
-          print(loadOverlay);
+         
           isLoading = false;
 
           if (value.error) {
@@ -416,6 +421,16 @@ class _CheckOutState extends State<CheckOut> {
 
   ExpansionPanelList listcheckout;
   @override
+  void dispose() {
+    // TODO: implement dispose
+    if (mounted) {
+      setState(() {});
+    }
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
@@ -446,12 +461,12 @@ class _CheckOutState extends State<CheckOut> {
         children: [
           FooterApp(
               sendMidtrans: () {
-                if(pilihanOpsi.length>0){
-                _getSnapMidtransApi();
-                }else{
-                  loadNotice(context,'Harap pilih opsi pengiriman!',true,'OK',(){
-        Navigator.of(context).pop();
-
+                if (pilihanOpsi.length > 0) {
+                  _getSnapMidtransApi();
+                } else {
+                  loadNotice(
+                      context, 'Harap pilih opsi pengiriman!', true, 'OK', () {
+                    Navigator.of(context).pop();
                   });
                 }
               },
@@ -568,13 +583,18 @@ class _CheckOutState extends State<CheckOut> {
                           ),
                           SizedBox(
                               width: size.width - 223,
-                              child: Text(dataVoucher.containsKey('caption')?'Potongan -Rp'+decimalPointTwo(potonganVoucher*-1) :'Voucher Diskon')),
+                              child: Text(dataVoucher.containsKey('caption')
+                                  ? 'Potongan -Rp' +
+                                      decimalPointTwo(potonganVoucher * -1)
+                                  : 'Voucher Diskon')),
                           SizedBox(
                             width: 150,
                             child: RaisedButton(
                               color: Colors.deepOrange,
                               child: Text(
-                                dataVoucher.containsKey('caption')?'VOUCHER LAIN':"GUNAKAN VOUCHER",
+                                dataVoucher.containsKey('caption')
+                                    ? 'VOUCHER LAIN'
+                                    : "GUNAKAN VOUCHER",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontSize: 12, color: Colors.white),
@@ -846,6 +866,7 @@ class _CheckOutState extends State<CheckOut> {
                               pilihanOpsi = '';
                               tambahanOngkir = 0;
                               loadOverlayEvent(true);
+                            
                               _getHargaByRajaOngkir();
                             }
 
@@ -1240,7 +1261,7 @@ class _CheckOutState extends State<CheckOut> {
                       opsiLogistikCollapse = false;
                       kodeKurir = layananKurir = '';
                       pilihanOpsi = '';
-                      dataLayanan=[];
+                      dataLayanan = [];
                       setState(() {});
                     },
                     color: Colors.white,
@@ -1740,13 +1761,12 @@ class _CheckOutState extends State<CheckOut> {
                 ],
               ),
             ),
-             dataLayanan.length == 0
+            dataLayanan.length == 0
                 ? Text(
                     '',
                     style: TextStyle(fontSize: 0),
                   )
-                :
-            Text('Jenis Layanan :'),
+                : Text('Jenis Layanan :'),
             dataLayanan.length == 0
                 ? Text(
                     '',
@@ -1756,7 +1776,7 @@ class _CheckOutState extends State<CheckOut> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: dataLayanan.map((e) {
                       var das = <Widget>[];
-                    
+
                       for (var i = 0; i < e.length; i++) {
                         das.add(InkWell(
                           onTap: () {
@@ -2121,7 +2141,14 @@ class FooterApp extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                sendMidtrans();
+                if (double.parse(total) < 10000) {
+                  loadNotice(
+                      context, 'Minim transaksi >Rp10.000,00', true, 'OK', () {
+                    Navigator.of(context).pop();
+                  });
+                } else {
+                  sendMidtrans();
+                }
               },
               child: Container(
                 height: 50,

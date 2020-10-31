@@ -95,8 +95,8 @@ class _TestWebViewState extends State<TestWebView>
     _getToken();
     flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print(url);
-      if (url.indexOf('#telah-success') > -1) {
-        print('asd');
+      if (url.indexOf('checkout/midtrans/success') > -1) {
+        
         _toProsesDashboard();
       }
     });
@@ -137,15 +137,15 @@ class _TestWebViewState extends State<TestWebView>
           'Pembayaran',
           style: TextStyle(color: Colors.black),
         ),
-        actions: [
-          IconButton(
-              icon: FaIcon(FontAwesomeIcons.history, color: Colors.black),
-              onPressed: () {
-                _toProsesDashboard();
-              }),
+        // actions: [
+        //   IconButton(
+        //       icon: FaIcon(FontAwesomeIcons.history, color: Colors.black),
+        //       onPressed: () {
+        //         _toProsesDashboard();
+        //       }),
 
-          // Icon(Icons.add),
-        ],
+        //   // Icon(Icons.add),
+        // ],
       ),
       initialChild: Container(
         child: const Center(
