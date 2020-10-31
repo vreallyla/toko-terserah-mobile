@@ -280,7 +280,7 @@ class _ProductDetail2State extends State<ProductDetail2>
             'produk_id': widget.productId,
             'tanya': newAbc
           }, headers: {
-            "Authorization": "Bearer " + null
+            "Authorization": "Bearer " + _token
           });
           var _response = json.decode(response.body);
           showSnackBar(_response['data']['message'], Colors.green,

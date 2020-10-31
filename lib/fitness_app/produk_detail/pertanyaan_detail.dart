@@ -14,6 +14,15 @@ class PertanyaanDetail extends StatefulWidget {
 }
 
 class _PertanyaanDetailState extends State<PertanyaanDetail> {
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    print(widget.dataQna);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -113,7 +122,7 @@ class PertanyaanProduk extends StatelessWidget {
     return Column(
       children: [
         cardPertanyaan(
-            'Fahmi',
+            '${dataQnA[i]['user']}',
             '${diffForhumans(DateTime.parse(dataQnA[i]['created_at']))}',
             '${dataQnA[i]['tanya']}'),
         jawabanQna(i)
