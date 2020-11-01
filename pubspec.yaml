@@ -23,7 +23,6 @@ environment:
 dependencies:
   flutter_svg:
   photo_view: ^0.10.2
-  flutter_rating_bar: ^3.0.1+1
   flutter:
     sdk: flutter
 
@@ -54,6 +53,7 @@ dependencies:
   url_launcher: ^5.7.5
   flutter_webview_plugin: ^0.3.11
   advance_pdf_viewer: ^1.2.0
+  flutter_rating_bar: ^3.0.1+1
   
   # mid_flutter: ^0.0.2
   

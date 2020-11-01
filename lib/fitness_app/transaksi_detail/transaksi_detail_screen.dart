@@ -7,6 +7,11 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path/path.dart' as path;
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:async/async.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/fitness_app/cart_list/cart_list.dart';
@@ -29,7 +34,14 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
 
   bool isLoading = true, isConnect = true;
 
+  TextEditingController _ulasanController = new TextEditingController();
+
+  double _star = 3.0;
+
   var _data;
+
+  final picker = ImagePicker();
+  File _image;
 
   Future _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -54,6 +66,11 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
         setState(() {
           isLoading = false;
         });
+        if (_data['data']['tgl_diterima'] != null) {
+          if (_data['data']['is_reviewed'] == 0) {
+            _showModalReview(context);
+          }
+        }
       }
     } on SocketException catch (_) {
       isConnect = false;
@@ -238,6 +255,127 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
     }
   }
 
+  _checkReview() async {
+    _showModalReview(context);
+  }
+
+  /**
+   * Ambil Gambar via kamera 
+   * 
+   */
+  Future getImageCamera(context) async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+
+    setState(() {
+      if (pickedFile != null) {
+        setState(() {
+          _image = File(pickedFile.path);
+          // _ulasanController.text = path.basename(_image.path).toString();
+        });
+        _showModalReview(context);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  /**
+   * Ambil Gambar via Gallery
+   * 
+   */
+  Future getImageGalerry(context) async {
+    final pickedFile =
+        await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        // _showPicker(context);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  /**
+   * Upload Avatar with multipart http 
+   */
+  uploadImage() async {
+    print("Hallo");
+    try {
+      print("object");
+      var stream =
+          new http.ByteStream(DelegatingStream.typed(_image.openRead()));
+      var length = await _image.length();
+      var uri = Uri.parse(
+        globalBaseUrl + "api/product/review/image",
+      );
+
+      var request = new http.MultipartRequest("POST", uri);
+
+      var multipart = new http.MultipartFile("gambar", stream, length,
+          filename: path.basename(_image.path));
+      request.headers.addAll({'Authorization': 'bearer ' + _token});
+      //Field yang dikirimkan
+
+      // request.fields
+      //     .addAll({"user_id": _data['data']['user']['id'].toString()});
+
+      request.files.add(multipart);
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        // showSnackBar("Berhasil Memperbarui Profil", Colors.green,
+        //     Icon(Icons.check_circle_outline));
+        // setState(() {
+        //   isLoading = true;
+        // });
+
+        // _getCountCart();
+      }
+      print(response.statusCode);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+/**
+ * Submit Review 
+ * 
+ */
+  _submitReview() async {
+    print(jsonEncode(_data['data']['keranjang_ids']));
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        if (_image != null) {
+          await uploadImage();
+        }
+
+        var response =
+            await http.post(globalBaseUrl + 'api/product/review', headers: {
+          "Authorization": "Bearer " + _token,
+        }, body: {
+          "uni_code": widget.dashboardId,
+          "bintang": _star.toString(),
+          "produk_ids": jsonEncode(_data['data']['produk_ids']),
+          "user_id": _data['data']['user_id'].toString(),
+          "ulasan": _ulasanController.text,
+          "gambar": _image == null ? '' : path.basename(_image.path).toString(),
+        });
+        var _response = json.decode(response.body);
+        showSnackBar(_response['data']['message'], Colors.green,
+            Icon(Icons.check_circle_outline));
+        print(_response['data']['message']);
+        setState(() {
+          isLoading = true;
+        });
+        _getData();
+      }
+    } catch (e) {}
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -246,7 +384,279 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
     Future.delayed(Duration(milliseconds: 50), () {
       _getData();
     });
+
     super.initState();
+  }
+
+  void _showModalReview(context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return SafeArea(
+            child: Container(
+              child: new Wrap(
+                children: <Widget>[
+                  _image != null
+                      ? Wrap(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              color: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.all(0.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                          'Silahkan Beri Ulasan Untuk Pesananmu',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 18)),
+                                    ),
+                                    RatingBar(
+                                      initialRating: 3,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemPadding:
+                                          EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemBuilder: (context, _) => Icon(
+                                        Icons.star,
+                                        color: Colors.green,
+                                      ),
+                                      onRatingUpdate: (rating) {
+                                        setState(() {
+                                          _star = rating;
+                                        });
+                                        print(rating);
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(5),
+                                      child: SizedBox(
+                                        child: TextField(
+                                          style: TextStyle(
+                                              fontSize: 13.0,
+                                              height: 1,
+                                              color: Colors.black),
+                                          controller: _ulasanController,
+                                          textAlign: TextAlign.start,
+                                          maxLines: 4,
+                                          maxLength: 250,
+                                          decoration: new InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.black54,
+                                                  width: 1),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.black38,
+                                                  width: 1),
+                                            ),
+                                            hintText:
+                                                'Tulisakan Ulasan Anda di sini',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    _image != null
+                                        ? Center(
+                                            child: Padding(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Image.file(
+                                                _image,
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.fitHeight,
+                                              ),
+                                            ),
+                                          ))
+                                        : Wrap(
+                                            children: [
+                                              new ListTile(
+                                                leading: new Icon(
+                                                    Icons.photo_camera),
+                                                title:
+                                                    new Text('Tambahkan foto'),
+                                                onTap: () {
+                                                  getImageCamera(context);
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                    Container(
+                                        color: Colors.white,
+                                        padding: EdgeInsets.all(5),
+                                        height: 100,
+                                        child: Row(
+                                          children: [
+                                            Spacer(
+                                              flex: 1,
+                                            ),
+                                            RaisedButton(
+                                              child: Text(
+                                                'Submit',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              color: Colors.green,
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                _submitReview();
+                                              },
+                                            ),
+                                            Spacer(
+                                              flex: 1,
+                                            ),
+                                          ],
+                                        ))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Wrap(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(10),
+                              color: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.all(0.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                          'Silahkan Beri Ulasan Untuk Pesananmu',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 18)),
+                                    ),
+                                    RatingBar(
+                                      initialRating: 3,
+                                      minRating: 1,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemPadding:
+                                          EdgeInsets.symmetric(horizontal: 4.0),
+                                      itemBuilder: (context, _) => Icon(
+                                        Icons.star,
+                                        color: Colors.green,
+                                      ),
+                                      onRatingUpdate: (rating) {
+                                        setState(() {
+                                          _star = rating;
+                                        });
+                                        print(rating);
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(5),
+                                      child: SizedBox(
+                                        child: TextField(
+                                          style: TextStyle(
+                                              fontSize: 13.0,
+                                              height: 1,
+                                              color: Colors.black),
+                                          controller: _ulasanController,
+                                          textAlign: TextAlign.start,
+                                          maxLines: 4,
+                                          maxLength: 250,
+                                          decoration: new InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 10),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.black54,
+                                                  width: 1),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.black38,
+                                                  width: 1),
+                                            ),
+                                            hintText:
+                                                'Tulisakan Ulasan Anda di sini',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Wrap(
+                                      children: [
+                                        new ListTile(
+                                          leading: new Icon(Icons.photo_camera),
+                                          title: new Text('Tambahkan foto'),
+                                          onTap: () {
+                                            getImageCamera(context);
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                        color: Colors.white,
+                                        padding: EdgeInsets.all(5),
+                                        height: 100,
+                                        child: Row(
+                                          children: [
+                                            Spacer(
+                                              flex: 1,
+                                            ),
+                                            RaisedButton(
+                                              child: Text(
+                                                'Kirim',
+                                                style: TextStyle(
+                                                    color: Colors.white),
+                                              ),
+                                              color: Colors.green,
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                _submitReview();
+                                              },
+                                            ),
+                                            Spacer(
+                                              flex: 1,
+                                            ),
+                                          ],
+                                        ))
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -844,13 +1254,16 @@ class HeadDaftarTransaksi extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Container(
-                                width: 70,
-                                height: 70,
-                                margin: EdgeInsets.only(right: 10),
-                                color: Colors.grey,
-                                child:  FadeInImage(placeholder: NetworkImage('https://tokoterserah.com/storage/produk/thumb/placeholder.jpg'), 
-                                image: NetworkImage('https://tokoterserah.com/storage/produk/thumb/'+'${dataItem[i]['produk']['gambar']}'))
-                              ),
+                                  width: 70,
+                                  height: 70,
+                                  margin: EdgeInsets.only(right: 10),
+                                  color: Colors.grey,
+                                  child: FadeInImage(
+                                      placeholder: NetworkImage(
+                                          'https://tokoterserah.com/storage/produk/thumb/placeholder.jpg'),
+                                      image: NetworkImage(
+                                          'https://tokoterserah.com/storage/produk/thumb/' +
+                                              '${dataItem[i]['produk']['gambar']}'))),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
@@ -963,7 +1376,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
                           child: Text(
-                              'Rp${formatter.format(int.parse(data['data']['ongkir']))}',
+                              'Rp${formatter.format(double.parse(data['data']['ongkir']))}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -987,7 +1400,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
                           child: Text(
-                              'Rp${formatter.format(int.parse(data['data']['discount'] ?? '0'))}',
+                              'Rp${formatter.format(double.parse(data['data']['discount'] ?? '0'))}',
                               style: TextStyle(
                                 color: Colors.black54,
                               ))),
@@ -1013,7 +1426,7 @@ class HeadDaftarTransaksi extends StatelessWidget {
                           alignment: Alignment.topRight,
                           width: (size.width - 30 - 30) - 160,
                           child: Text(
-                              'Rp${formatter.format(int.parse(data['data']['ongkir']) + data['data']['subtotal'] - int.parse(data['data']['discount'] ?? '0'))}',
+                              'Rp${formatter.format(double.parse(data['data']['ongkir']) + data['data']['subtotal'] - double.parse(data['data']['discount'] ?? '0'))}',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
