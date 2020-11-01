@@ -360,7 +360,7 @@ class _ProductDetail2State extends State<ProductDetail2>
     if (reviewData['data'] != null) {
       listViews.add(ReviewProductView(
         dataReview: reviewData,
-        listReview: detailProduct['get_ulasan'],
+        listReview:reviewData['ulasan'],
       ));
     }
 

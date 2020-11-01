@@ -132,6 +132,13 @@ class _UlasanDetailState extends State<UlasanDetail> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print(widget.dataReview);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
@@ -158,10 +165,10 @@ class _UlasanDetailState extends State<UlasanDetail> {
         ),
         body: Container(
           child: ListView(
-            physics:  const BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             children: [
               Column(children: <Widget>[
-                getCategoryUI(),
+                // getCategoryUI(),
                 SizedBox(
                   height: 10,
                 ),
@@ -181,7 +188,7 @@ class _UlasanDetailState extends State<UlasanDetail> {
   }
 }
 
-Widget kontenRiview(context, size ,i, data) {
+Widget kontenRiview(context, size, i, data) {
   return Column(
     children: [
       Container(
@@ -224,7 +231,7 @@ Widget kontenRiview(context, size ,i, data) {
               ),
             ),
             Text(
-              'Fahmi',
+              '${data[i]['get_user']['name']}',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -238,8 +245,11 @@ Widget kontenRiview(context, size ,i, data) {
         padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
         child: Row(
           children: <Widget>[
-            gambarReview(context),
-            gambarReview(context),
+            data[i]['gambar'] == null
+                ? Container()
+                : (data[i]['gambar'] == ""
+                    ? Container()
+                    : gambarReview(context,data[i]['gambar']))
           ],
         ),
       ),
@@ -250,7 +260,7 @@ Widget kontenRiview(context, size ,i, data) {
   );
 }
 
-Container gambarReview(BuildContext context) {
+Container gambarReview(BuildContext context, String url_img) {
   final size = MediaQuery.of(context).size;
 
   return Container(
@@ -262,9 +272,11 @@ Container gambarReview(BuildContext context) {
         width: (size.width - 58) / 4,
         height: (size.width - 58) / 4,
         color: Colors.black26,
-        child: Text(
-          'Gambar',
-        ),
+        child: FadeInImage(
+            placeholder: NetworkImage(
+                'https://tokoterserah.com/storage/produk/ulasan/placeholder.jpg'),
+            image: NetworkImage(
+                'https://tokoterserah.com/storage/produk/ulasan/'+url_img)),
       ),
     ),
   );

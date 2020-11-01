@@ -5,7 +5,7 @@ import 'ulasan_detail.dart' as ulasan;
 
 class ReviewProductView extends StatefulWidget {
   final Map<String, dynamic> dataReview;
-  final List<dynamic> listReview;
+  final List listReview;
   ReviewProductView(
       {Key key,
       /*@required*/
@@ -84,14 +84,20 @@ class _ReviewProductViewState extends State<ReviewProductView> {
             SizedBox(
               height: 84.0,
               child: ListView.builder(
-                  itemCount: widget.dataReview['image'] == null
+                  itemCount: widget.listReview == null
                       ? 0
-                      : widget.dataReview['image'].length,
+                      : (widget.listReview.length > 4
+                          ? 4
+                          : widget.listReview.length),
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, i) {
-                    return gambarReview(context);
+                    return widget.listReview[i]['gambar'] == null
+                        ? Container()
+                        : (widget.listReview[i]['gambar'] == ""
+                            ? Container()
+                            : gambarReview(context,widget.listReview[i]['gambar']));
                   }),
             ),
             // gambarReview(context),
@@ -245,7 +251,7 @@ class _ReviewProductViewState extends State<ReviewProductView> {
     );
   }
 
-  Container gambarReview(BuildContext context) {
+  Container gambarReview(BuildContext context, String url_img) {
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -257,10 +263,11 @@ class _ReviewProductViewState extends State<ReviewProductView> {
           width: (size.width - 58) / 4,
           height: (size.width - 58) / 4,
           color: Colors.black26,
-          child: Text(
-            'Gambar',
-            style: TextStyle(fontSize: 11),
-          ),
+          child:  FadeInImage(
+            placeholder: NetworkImage(
+                'https://tokoterserah.com/storage/produk/ulasan/placeholder.jpg'),
+            image: NetworkImage(
+                'https://tokoterserah.com/storage/produk/ulasan/'+url_img)),
         ),
       ),
     );
