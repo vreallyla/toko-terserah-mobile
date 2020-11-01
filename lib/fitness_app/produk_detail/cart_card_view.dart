@@ -18,7 +18,7 @@ class CardCardView extends StatelessWidget {
     // getPcs(setMinOrder(dataProduct).round());
 
     return Container(
-      height: sizeu.width / 2 - sizeu.width / 15,
+      height: sizeu.width / 2 - sizeu.width / 15+3,
       padding: EdgeInsets.fromLTRB(15, 0, 0, 5),
       decoration: BoxDecoration(
         color: Colors.white,

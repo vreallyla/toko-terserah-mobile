@@ -126,7 +126,7 @@ class _WishlistScreenState extends State<WishlistScreen>
 
                       return Container(
                         height: 120,
-                        width: width - 400,
+                        width: width - 100,
                         child: Column(
                           children: [
                             Padding(

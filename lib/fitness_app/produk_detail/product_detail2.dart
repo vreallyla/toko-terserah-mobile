@@ -168,7 +168,7 @@ class _ProductDetail2State extends State<ProductDetail2>
         return CustomAlertDialog(
           content: Container(
             width: MediaQuery.of(context).size.width,
-            height: 250,
+            height: 260,
             decoration: new BoxDecoration(
               shape: BoxShape.rectangle,
               color: const Color(0xFFFFFF),

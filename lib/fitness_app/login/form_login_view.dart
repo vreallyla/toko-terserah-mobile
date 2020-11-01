@@ -131,7 +131,7 @@ class _FormLoginViewState extends State<FormLoginView> {
                 color: Colors.green,
                 child: (!isLoading
                     ? Text(
-                        'Masuk',
+                        'MASUK',
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.white),
                       )

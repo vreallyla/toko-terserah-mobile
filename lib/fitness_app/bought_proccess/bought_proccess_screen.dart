@@ -14,19 +14,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 
 class BoughtProccessScreen extends StatefulWidget {
-  const BoughtProccessScreen({Key key, this.animationController, this.index: 0})
+  const BoughtProccessScreen(
+      {Key key, this.animationController, this.index: 0, this.backCart: false})
       : super(key: key);
 
   final AnimationController animationController;
   final int index;
+  final bool backCart;
   @override
   _BoughtProccessScreenState createState() => _BoughtProccessScreenState();
 }
 
 class _BoughtProccessScreenState extends State<BoughtProccessScreen>
     with SingleTickerProviderStateMixin {
-
-      
   List<Map> defaultTabSettings = [
     {
       "index": 0,
@@ -140,13 +140,24 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
           brightness: Brightness.light,
           backgroundColor: Colors.grey[200],
           title: const Text(
-            'Daftar Transaksi',
+            'Riwayat Pesanan',
             style: TextStyle(color: Colors.black),
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              if (!widget.backCart) {
+                Navigator.pop(context);
+              } else {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/home', (Route<dynamic> route) => false);
+              }
+            },
           ),
           bottom: TabBar(
             controller: _controller,
             onTap: (v) {
-              print(v);
+              // print(v);
 
               _getDataApi(v);
               setState(() {
@@ -180,42 +191,53 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
             ],
           ),
         ),
-        body: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          children: <Widget>[
-            EveryTap(
-              getApi: (int index){
-                _getDataApi(index);
-              },
-              index: 0,
-              data: defaultTabSettings,
-              dataHistory: defaultTabSettings[0]['data'],
-            ),
-            EveryTap(
-              getApi: (int index){
-                _getDataApi(index);
-              },
-              index: 1,
-              data: defaultTabSettings,
-              dataHistory: defaultTabSettings[1]['data'],
-            ),
-            EveryTap(
-              getApi: (int index){
-                _getDataApi(index);
-              },
-              index: 2,
-              data: defaultTabSettings,
-              dataHistory: defaultTabSettings[2]['data'],
-            ),
-            EveryTap(
-              getApi: (int index){
-                _getDataApi(index);
-              },
-              index: 3,
-              data: defaultTabSettings,
-              dataHistory: defaultTabSettings[3]['data'],
-            ),
-          ],
+        body: WillPopScope(
+          onWillPop: () {
+            if (!widget.backCart) {
+              Navigator.pop(context);
+            } else {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home', (Route<dynamic> route) => false);
+                  
+            }
+          },
+          child: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            children: <Widget>[
+              EveryTap(
+                getApi: (int index) {
+                  _getDataApi(index);
+                },
+                index: 0,
+                data: defaultTabSettings,
+                dataHistory: defaultTabSettings[0]['data'],
+              ),
+              EveryTap(
+                getApi: (int index) {
+                  _getDataApi(index);
+                },
+                index: 1,
+                data: defaultTabSettings,
+                dataHistory: defaultTabSettings[1]['data'],
+              ),
+              EveryTap(
+                getApi: (int index) {
+                  _getDataApi(index);
+                },
+                index: 2,
+                data: defaultTabSettings,
+                dataHistory: defaultTabSettings[2]['data'],
+              ),
+              EveryTap(
+                getApi: (int index) {
+                  _getDataApi(index);
+                },
+                index: 3,
+                data: defaultTabSettings,
+                dataHistory: defaultTabSettings[3]['data'],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -227,7 +249,8 @@ Widget judulTab(String judul) {
 }
 
 class EveryTap extends StatefulWidget {
-  const EveryTap({Key key, this.index: 0, this.data, this.dataHistory,this.getApi})
+  const EveryTap(
+      {Key key, this.index: 0, this.data, this.dataHistory, this.getApi})
       : super(key: key);
 
   final int index;
@@ -245,7 +268,7 @@ class _EveryTapState extends State<EveryTap> {
     // TODO: implement initState
     Future.delayed(Duration(seconds: 1), () {
       print(widget.dataHistory.length);
-      print('Index Tab (every): '+widget.index.toString());
+      print('Index Tab (every): ' + widget.index.toString());
     });
 
     super.initState();
@@ -259,11 +282,11 @@ class _EveryTapState extends State<EveryTap> {
           : (widget.data[widget.index]['data'].length == 0
               ? dataKosong()
               //set card with data
-              : setCard(widget.data[widget.index],widget.index))),
+              : setCard(widget.data[widget.index], widget.index))),
     );
   }
 
-  Widget setCard(ress,int indextab) {
+  Widget setCard(ress, int indextab) {
     return ListView.builder(
         padding: EdgeInsets.all(0),
         itemCount:
@@ -279,11 +302,11 @@ class _EveryTapState extends State<EveryTap> {
                 CardBoughts(
                   inv: res['uni_code'],
                   judul: res['recent_produk']['nama'],
-                  tanggal: new DateFormat("dd MMM y HH:mm", 'id_ID')
+                  tanggal: new DateFormat("dd MMM y HH:mm")
                           .format(DateTime.parse(res['created_at'])) +
                       ' WIB',
                   jmlhPlus: res['total_produk'].toString(),
-                  getApi: (int index){
+                  getApi: (int index) {
                     widget.getApi(index);
                   },
                   total: decimalPointTwo(double.parse(res['total_harga'])),
@@ -343,7 +366,8 @@ class CardBoughts extends StatelessWidget {
         {
           tagTab = 'MENUNGGzU PEMBAYARAN';
           hei = 250;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index, context));
+          dataCard.add(
+              tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, index, context));
 
           dataCard.add(totalCard(sizeu, total, false));
 
@@ -355,7 +379,8 @@ class CardBoughts extends StatelessWidget {
         {
           tagTab = isAmbil == 1 ? 'SIAP DIAMBIL' : 'SEDANG DIKEMAS';
           hei = 250;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index,  context));
+          dataCard.add(
+              tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, index, context));
 
           dataCard.add(totalCard(sizeu, total, false));
           //statements;
@@ -366,7 +391,8 @@ class CardBoughts extends StatelessWidget {
           //statements;
           tagTab = 'DALAM PENGIRIMAN';
           hei = 280;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index,  context));
+          dataCard.add(
+              tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, index, context));
 
           dataCard.add(trackCard(sizeu, track));
           dataCard.add(totalCard(sizeu, total, false));
@@ -377,7 +403,8 @@ class CardBoughts extends StatelessWidget {
           //statements;
           tagTab = 'PESANAN SELESAI';
           hei = hei = 290;
-          dataCard.add(tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus,index,  context));
+          dataCard.add(
+              tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, index, context));
 
           dataCard.add(trackCard(sizeu, track));
 
@@ -435,11 +462,11 @@ class CardBoughts extends StatelessWidget {
                 dashboardId: inv,
                 status: tag,
               ),
-            )).then((value)  {
-              // BoughtProccessScreen().createState()._getDataApi(index),
-              getApi(index);
-              print('index Tab : '+ index.toString());
-            });
+            )).then((value) {
+          // BoughtProccessScreen().createState()._getDataApi(index),
+          getApi(index);
+          print('index Tab : ' + index.toString());
+        });
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

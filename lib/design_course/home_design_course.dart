@@ -22,9 +22,12 @@ class HomeDesignCourse extends StatefulWidget {
   final String jenis;
   final String search;
   final Function(int qty) funcChangeCartQty;
-  const HomeDesignCourse(
-      {Key key, this.jenis = 'semua', this.search = '',this.funcChangeCartQty,})
-      : super(key: key);
+  const HomeDesignCourse({
+    Key key,
+    this.jenis = 'semua',
+    this.search = '',
+    this.funcChangeCartQty,
+  }) : super(key: key);
 
   @override
   _HomeDesignCourseState createState() => _HomeDesignCourseState();
@@ -100,8 +103,12 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
   }
 
   Future getSubKategori() async {
+    setState(() {
+        isLoadingSub = true;
+      });
     try {
-      http.Response item = await http.get(globalBaseUrl + 'api/master/sub');
+      http.Response item = await http
+          .get(globalBaseUrl + 'api/master/sub?nama=' + cariKatagoriInput.text);
 
       if (item.statusCode == 200) {
         Map<String, dynamic> products = jsonDecode(item.body);
@@ -111,7 +118,13 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
           dataSubKategori = products['data'];
         });
       }
+      setState(() {
+        isLoadingSub = false;
+      });
     } catch (e) {
+      setState(() {
+        isLoadingSub = false;
+      });
       log("error getSub : $e");
     }
   }
@@ -219,6 +232,8 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
       debugPrint(_jenisProdukRadioButton); //Debug the choice in console
     });
   }
+
+  bool isLoadingSub = false;
 
   @override
   void initState() {
@@ -400,7 +415,10 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
           //   // daftar kategori
           //   children: widgetContainerKategori,
           // ),
-          child: listKategoriCheckBox(context),
+          child: isLoadingSub ? Padding(
+            padding: const EdgeInsets.only(top:20.0),
+            child: Text('Loading...'),
+          ): listKategoriCheckBox(context),
         ),
         //header
         Container(
@@ -477,17 +495,23 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                         ),
                         style:
                             TextStyle(color: Colors.blueGrey, fontSize: 13.0),
-                        onChanged: (query) {
-                          print(query);
-                          // cariKatagoriInput.text = query;
-
+                        onSubmitted: (val) {
+                          getSubKategori();
                           setState(() {});
                         },
+                        // onChanged: (query) {
+                        //   print(query);
+                        //   // cariKatagoriInput.text = query;
+
+                        //   setState(() {});
+                        // },
                       ),
                     ),
                     InkWell(
                       onTap: () {
                         cariKatagoriInput.text = '';
+                        getSubKategori();
+
                         setState(() {
                           focusCariKategori.requestFocus();
                         });
@@ -615,9 +639,8 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
           ),
         ));
 
-
     setState(() {
-      widget.funcChangeCartQty(resultDetail );
+      widget.funcChangeCartQty(resultDetail);
     });
   }
 

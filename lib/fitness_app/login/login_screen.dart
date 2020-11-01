@@ -160,8 +160,8 @@ class _LoginScreenState extends State<LoginScreen> {
               child: ListView(
                 children: <Widget>[
                   FormLoginView(),
-                  DividerText(),
-                  OtherMethodButton(),
+                  // DividerText(),
+                  // OtherMethodButton(),
                 ],
               ),
             ),

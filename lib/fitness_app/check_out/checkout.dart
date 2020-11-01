@@ -420,15 +420,15 @@ class _CheckOutState extends State<CheckOut> {
   }
 
   ExpansionPanelList listcheckout;
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    if (mounted) {
-      setState(() {});
-    }
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   if (mounted) {
+  //     setState(() {});
+  //   }
 
-    super.dispose();
-  }
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {

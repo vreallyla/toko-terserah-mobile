@@ -596,6 +596,8 @@ class _CartListState extends State<CartList> {
   Widget noLogin() {
     return Container(
       alignment: Alignment.center,
+      color: Color(0xfff0f4f7),
+
       padding: EdgeInsets.only(top: 120),
       child: Column(
         children: [
@@ -634,6 +636,7 @@ class _CartListState extends State<CartList> {
 
   Widget noConnection() {
     return Container(
+      color: Color(0xfff0f4f7),
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 120),
       child: Column(

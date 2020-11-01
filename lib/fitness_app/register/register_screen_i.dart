@@ -95,8 +95,9 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
                 Container(
                   child: ListView(
                     children: <Widget>[
-                      OtherMethodButton(),
-                      DividerText(),
+                      // OtherMethodButton(),
+                      // DividerText(),
+                      Padding(padding: EdgeInsets.only(top:10)),
                       FormRegister(),
                     ],
                   ),
@@ -439,65 +440,67 @@ class OtherMethodButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-              margin: EdgeInsets.only(top: 10),
-              width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
-              height: 40,
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  // side: BorderSide(color: Colors.red)
-                ),
-                onPressed: () {},
-                color: Color(0xFFF74933),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.google,
-                      size: 15,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      '  GOOGLE',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-              )),
-          Container(
-              margin: EdgeInsets.only(top: 10, left: 10),
-              width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
-              height: 40,
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  // side: BorderSide(color: Colors.red)
-                ),
-                onPressed: () {},
-                color: Colors.blue[600],
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    FaIcon(
-                      FontAwesomeIcons.facebookF,
-                      size: 15,
-                      color: Colors.white,
-                    ),
-                    Text(
-                      '  FACEBOOK',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ],
-                ),
-              )),
-        ],
-      ),
+
+      // child: Row(
+      //   crossAxisAlignment: CrossAxisAlignment.start,
+      //   children: <Widget>[
+      //     Container(
+      //         margin: EdgeInsets.only(top: 10),
+      //         width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
+      //         height: 40,
+      //         child: RaisedButton(
+      //           shape: RoundedRectangleBorder(
+      //             borderRadius: BorderRadius.circular(4.0),
+      //             // side: BorderSide(color: Colors.red)
+      //           ),
+      //           onPressed: () {},
+      //           color: Color(0xFFF74933),
+      //           child: Row(
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             children: <Widget>[
+      //               FaIcon(
+      //                 FontAwesomeIcons.google,
+      //                 size: 15,
+      //                 color: Colors.white,
+      //               ),
+      //               Text(
+      //                 '  GOOGLE',
+      //                 style: TextStyle(
+      //                     fontWeight: FontWeight.bold, color: Colors.white),
+      //               ),
+      //             ],
+      //           ),
+      //         )),
+      //     Container(
+      //         margin: EdgeInsets.only(top: 10, left: 10),
+      //         width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
+      //         height: 40,
+      //         child: RaisedButton(
+      //           shape: RoundedRectangleBorder(
+      //             borderRadius: BorderRadius.circular(4.0),
+      //             // side: BorderSide(color: Colors.red)
+      //           ),
+      //           onPressed: () {},
+      //           color: Colors.blue[600],
+      //           child: Row(
+      //             mainAxisAlignment: MainAxisAlignment.center,
+      //             children: <Widget>[
+      //               FaIcon(
+      //                 FontAwesomeIcons.facebookF,
+      //                 size: 15,
+      //                 color: Colors.white,
+      //               ),
+      //               Text(
+      //                 '  FACEBOOK',
+      //                 style: TextStyle(
+      //                     fontWeight: FontWeight.bold, color: Colors.white),
+      //               ),
+      //             ],
+      //           ),
+      //         )),
+      //   ],
+      // ),
+    
     );
   }
 

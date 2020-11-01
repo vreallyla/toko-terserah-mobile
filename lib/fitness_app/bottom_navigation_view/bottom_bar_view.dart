@@ -14,7 +14,7 @@ class BottomBarView extends StatefulWidget {
   const BottomBarView(
       {Key key, this.tabIconsList,
       this.changeParentCart,
-       this.changeIndex, this.addClick, this.addQtyCart:0})
+       this.changeIndex, this.addClick, this.addQtyCart:-1})
       : super(key: key);
 
   final Function(int index) changeIndex;
@@ -247,7 +247,7 @@ class _BottomBarViewState extends State<BottomBarView>
                                   child: Text(
                                     (countCart > 99
                                         ? '99+'
-                                        : (widget.addQtyCart>0 ? widget.addQtyCart.toString()
+                                        : (widget.addQtyCart>=0 ? widget.addQtyCart.toString()
                                          :countCart.toString() )
                                         ),
                                     style: TextStyle(

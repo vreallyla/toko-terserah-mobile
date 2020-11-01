@@ -96,7 +96,6 @@ class _TestWebViewState extends State<TestWebView>
     flutterWebviewPlugin.onUrlChanged.listen((String url) {
       print(url);
       if (url.indexOf('checkout/midtrans/success') > -1) {
-        
         _toProsesDashboard();
       }
     });
@@ -110,16 +109,24 @@ class _TestWebViewState extends State<TestWebView>
     //  prefs.getString('token');
   }
 
-  _toProsesDashboard() async {
-    flutterWebviewPlugin.hide();
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => BoughtProccessScreen(
-                index: 0,
-              )),
-    );
-    flutterWebviewPlugin.show();
+  _toProsesDashboard()  {
+    flutterWebviewPlugin.close();
+     Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => BoughtProccessScreen(
+                  index: 0,
+                  backCart: true,
+                )));
+    // await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (context) => BoughtProccessScreen(
+    //             index: 0,
+    //             backCart:true,
+    //           )),
+    // );
+    // flutterWebviewPlugin.show();
   }
 
   @override

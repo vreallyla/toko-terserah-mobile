@@ -285,7 +285,7 @@ class MealsView extends StatelessWidget {
                                               10,
                                           child: Text(
                                             product['nama'].toString(),
-                                            maxLines: 2,
+                                            maxLines: 1,
                                             style: TextStyle(
                                               fontSize: 15,
                                             ),
