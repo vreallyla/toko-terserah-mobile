@@ -101,8 +101,8 @@ class _FormLoginViewState extends State<FormLoginView> {
               child: RaisedButton(
                 onPressed: () {
                   // changeButton(); 
-                  passwordInput.text = 'secret';
-                  emailInput.text = 'fiqy_a@icloud.com';
+                  // passwordInput.text = 'secret';
+                  // emailInput.text = 'fiqy_a@icloud.com';
                   isLoading=true;
                   loginModel=null;
                   setState(() {});

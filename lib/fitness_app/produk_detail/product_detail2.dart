@@ -303,11 +303,11 @@ class _ProductDetail2State extends State<ProductDetail2>
   void initState() {
     idProduct = widget.productId;
     _getToken();
-    Future.delayed(Duration(seconds: 0), () {
+    Future.delayed(Duration(milliseconds: 50), () {
       _getDataApi();
-    });
-    Future.delayed(Duration(seconds: 0), () {
-      addAllListData();
+      Future.delayed(Duration(seconds: 5), () {
+        addAllListData();
+      });
     });
   }
 
@@ -360,7 +360,7 @@ class _ProductDetail2State extends State<ProductDetail2>
     if (reviewData['data'] != null) {
       listViews.add(ReviewProductView(
         dataReview: reviewData,
-        listReview:reviewData['ulasan'],
+        listReview: reviewData['ulasan'],
       ));
     }
 
@@ -377,7 +377,6 @@ class _ProductDetail2State extends State<ProductDetail2>
 
     return WillPopScope(
       onWillPop: () {
-        
         Navigator.pop(context, jmlCart);
       },
       child: Scaffold(

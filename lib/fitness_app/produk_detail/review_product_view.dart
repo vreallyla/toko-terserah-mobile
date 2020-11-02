@@ -2,6 +2,7 @@ import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
 import 'ulasan_detail.dart' as ulasan;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ReviewProductView extends StatefulWidget {
   final Map<String, dynamic> dataReview;
@@ -97,7 +98,26 @@ class _ReviewProductViewState extends State<ReviewProductView> {
                         ? Container()
                         : (widget.listReview[i]['gambar'] == ""
                             ? Container()
-                            : gambarReview(context,widget.listReview[i]['gambar']));
+                            : Container(
+                                alignment: Alignment.center,
+                                width: 100,
+                                height: 100,
+                                // color: Colors.black26,
+
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      'https://tokoterserah.com/storage/produk/ulasan/' +
+                                          widget.listReview[i]['gambar'],
+                                  placeholder: (context, url) =>
+                                      CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                )));
+
+                    //  gambarReview(
+                    //     context, widget.listReview[i]['gambar'])
+
+                    //     );
                   }),
             ),
             // gambarReview(context),
@@ -152,7 +172,7 @@ class _ReviewProductViewState extends State<ReviewProductView> {
                 ),
               ),
               Text(
-                ' Fahmi',
+                '${widget.dataReview['data']['get_user']['name']}',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
@@ -255,19 +275,26 @@ class _ReviewProductViewState extends State<ReviewProductView> {
     final size = MediaQuery.of(context).size;
 
     return Container(
+      width: 100,
+      height: 100,
       padding: EdgeInsets.only(left: 4, right: 4),
       child: Flexible(
-        flex: 1,
         child: Container(
           alignment: Alignment.center,
-          width: (size.width - 58) / 4,
-          height: (size.width - 58) / 4,
-          color: Colors.black26,
-          child:  FadeInImage(
-            placeholder: NetworkImage(
-                'https://tokoterserah.com/storage/produk/ulasan/placeholder.jpg'),
-            image: NetworkImage(
-                'https://tokoterserah.com/storage/produk/ulasan/'+url_img)),
+          width: 100,
+          height: 100,
+          // color: Colors.black26,
+
+          child: CachedNetworkImage(
+            imageUrl:
+                'https://tokoterserah.com/storage/produk/ulasan/' + url_img,
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
+          // FadeInImage(
+          //     placeholder: AssetImage('assets/fitness_app/logo.png'),
+          //     image: NetworkImage(
+          //         'https://tokoterserah.com/storage/produk/ulasan/' + url_img)),
         ),
       ),
     );

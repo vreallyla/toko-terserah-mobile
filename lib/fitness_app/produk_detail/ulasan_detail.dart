@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class UlasanDetail extends StatefulWidget {
   final List<dynamic> dataReview;
@@ -241,18 +242,26 @@ Widget kontenRiview(context, size, i, data) {
         ),
       ),
       Container(
-        width: size.width,
-        padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
-        child: Row(
-          children: <Widget>[
-            data[i]['gambar'] == null
-                ? Container()
-                : (data[i]['gambar'] == ""
-                    ? Container()
-                    : gambarReview(context,data[i]['gambar']))
-          ],
-        ),
-      ),
+          width: size.width,
+          padding: EdgeInsets.fromLTRB(11, 0, 11, 15),
+          child: data[i]['gambar'] == null
+              ? Container()
+              : (data[i]['gambar'] == ""
+                  ? Container()
+                  : Container(
+                      alignment: Alignment.center,
+                      width: 100,
+                      height: 100,
+                      // color: Colors.black26,
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            'https://tokoterserah.com/storage/produk/ulasan/' +
+                                data[i]['gambar'],
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
+                      ),
+                    ))),
       SizedBox(
         height: 30,
       ),
@@ -264,19 +273,25 @@ Container gambarReview(BuildContext context, String url_img) {
   final size = MediaQuery.of(context).size;
 
   return Container(
+    width: 100,
+    height: 100,
     padding: EdgeInsets.only(left: 4, right: 4),
     child: Flexible(
-      flex: 1,
       child: Container(
         alignment: Alignment.center,
-        width: (size.width - 58) / 4,
-        height: (size.width - 58) / 4,
-        color: Colors.black26,
-        child: FadeInImage(
-            placeholder: NetworkImage(
-                'https://tokoterserah.com/storage/produk/ulasan/placeholder.jpg'),
-            image: NetworkImage(
-                'https://tokoterserah.com/storage/produk/ulasan/'+url_img)),
+        width: 100,
+        height: 100,
+        // color: Colors.black26,
+        child: CachedNetworkImage(
+          imageUrl: 'https://tokoterserah.com/storage/produk/ulasan/' + url_img,
+          placeholder: (context, url) => CircularProgressIndicator(),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+        ),
+        //  FadeInImage(
+        //     placeholder:AssetImage(
+        //                             'assets/fitness_app/logo.png'),
+        //     image: NetworkImage(
+        //         'https://tokoterserah.com/storage/produk/ulasan/'+url_img)),
       ),
     ),
   );
