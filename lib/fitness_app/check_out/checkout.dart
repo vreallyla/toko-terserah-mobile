@@ -81,6 +81,10 @@ class _CheckOutState extends State<CheckOut> {
   List dataLayanan = [];
   Map<String, dynamic> layananDetail;
 
+  //for event web view callback
+  String tokenMidtrans;
+  String uniCode;
+
   //overlay loading event
   void loadOverlayEvent(bool cond) {
     setState(() {
@@ -255,49 +259,100 @@ class _CheckOutState extends State<CheckOut> {
   }
 
   _getSnapMidtransApi() async {
+    if (tokenMidtrans == null || tokenMidtrans == '') {
+      loadOverlayEvent(true);
+
+      try {
+        final result = await InternetAddress.lookup('google.com');
+        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+          await MidtransModel.getSnap({
+            'pengiriman_id': alamatPengiriman['id'].toString(),
+            'penagihan_id': alamatPenagihan['id'].toString(),
+            'ongkir': (tambahanOngkir).toString(),
+            'discount_price': (potonganVoucher * -1).toString(),
+            'cart_ids': widget.idProducts.join(',').toString(),
+            'weight': beratProduct.toString(),
+
+            'total':
+                (totalProduct + tambahanOngkir + potonganVoucher).toString(),
+          }).then((value) {
+            loadOverlayEvent(false);
+
+            if (value.error) {
+            } else {
+              tokenMidtrans = value.data['snap'];
+              uniCode = value.data['uni_code'];
+              linkWebViewMidtrans();
+              setState(() {});
+              // print('hello');
+            }
+          });
+        }
+      } on SocketException catch (_) {
+        loadOverlayEvent(false);
+
+        isConnect = false;
+        isLoading = false;
+
+        setState(() {});
+      }
+    } else {
+      linkWebViewMidtrans();
+    }
+  }
+
+  linkWebViewMidtrans() async {
+    // print(beratProduct.toString());
+    // print('as');
+    final callbackWebView = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TestWebView(
+            pengirimanId: alamatPengiriman['id'].toString(),
+            penagihanId: alamatPenagihan['id'].toString(),
+            cartIds: widget.idProducts.join(',').toString(),
+            discountPrice: (potonganVoucher * -1).toString(),
+            ongkir: (tambahanOngkir).toString(),
+            total: (totalProduct + tambahanOngkir + potonganVoucher).toString(),
+            snapToken: tokenMidtrans,
+            weight: beratProduct.toString(),
+            note: catatanValue,
+            durasiPengiriman: (layananDetail != null
+                    ? layananDetail.containsKey('cost')
+                    : false)
+                ? layananDetail['cost'][0]['etd']
+                : '-',
+            promoCode: kodeVoucherDigunakan,
+            opsi: pilihanOpsi,
+            kodeKurir: kodeKurir.toString(),
+            layananKurir: layananKurir.toString(),
+            token: tokenFixed,
+          ),
+        ));
+
+    _cekUniCode();
+  }
+
+  _cekUniCode() async {
     loadOverlayEvent(true);
 
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        await MidtransModel.getSnap({
-          'pengiriman_id': alamatPengiriman['id'].toString(),
-          'penagihan_id': alamatPenagihan['id'].toString(),
-          'ongkir': (tambahanOngkir).toString(),
-          'discount_price': (potonganVoucher * -1).toString(),
-          'cart_ids': widget.idProducts.join(',').toString(),
-          'total': (totalProduct + tambahanOngkir + potonganVoucher).toString(),
-        }).then((value) {
+        await MidtransModel.cekUniCode(uniCode).then((value) {
           loadOverlayEvent(false);
 
           if (value.error) {
+            loadNotice(context, 'Terjadi kesalahan!', true, 'OK', () {
+              Navigator.of(context).pop();
+            });
           } else {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TestWebView(
-                    pengirimanId: alamatPengiriman['id'].toString(),
-                    penagihanId: alamatPenagihan['id'].toString(),
-                    cartIds: widget.idProducts.join(',').toString(),
-                    discountPrice: (potonganVoucher * -1).toString(),
-                    ongkir: (tambahanOngkir).toString(),
-                    total: (totalProduct + tambahanOngkir + potonganVoucher)
-                        .toString(),
-                    snapToken: value.data,
-                    weight: beratProduct.toString(),
-                    note: catatanValue,
-                    durasiPengiriman: (layananDetail != null
-                            ? layananDetail.containsKey('cost')
-                            : false)
-                        ? layananDetail['cost'][0]['etd']
-                        : '-',
-                    promoCode: kodeVoucherDigunakan,
-                    opsi: pilihanOpsi,
-                    kodeKurir: kodeKurir.toString(),
-                    layananKurir: layananKurir.toString(),
-                    token: tokenFixed,
-                  ),
-                ));
+            // final reData=jsonDecode(value.data);
+
+            if (value.data['condition']) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home', (Route<dynamic> route) => false);
+            }
             setState(() {});
             // print('hello');
           }
@@ -367,7 +422,7 @@ class _CheckOutState extends State<CheckOut> {
           beratProduct.toString(),
         ).then((value) {
           loadOverlayEvent(false);
-         
+
           isLoading = false;
 
           if (value.error) {
@@ -866,7 +921,7 @@ class _CheckOutState extends State<CheckOut> {
                               pilihanOpsi = '';
                               tambahanOngkir = 0;
                               loadOverlayEvent(true);
-                            
+
                               _getHargaByRajaOngkir();
                             }
 

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'package:flutter/material.dart';
@@ -77,7 +79,7 @@ class _TestWebViewState extends State<TestWebView>
     paramss = paramss + '&cart_ids=' + widget.cartIds;
     paramss = paramss + '&total=' + widget.total;
     paramss = paramss + '&snap_token=' + widget.snapToken;
-
+    log(widget.weight);
     paramss = paramss + '&weight=' + widget.weight;
     paramss = paramss + '&note=' + widget.note;
     paramss = paramss + '&durasi_pengiriman=' + widget.durasiPengiriman;

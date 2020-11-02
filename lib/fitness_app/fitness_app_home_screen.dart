@@ -41,10 +41,10 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
       animationController = AnimationController(
           duration: const Duration(milliseconds: 200), vsync: this);
 
-      if (arguments != null
-          ? (arguments['after_login'] != null ||
-              arguments['after_logout'] != null)
-          : false) {
+    if (arguments != null
+        ? (arguments['after_login'] != null ||
+            arguments['after_logout'] != null)
+        : false) {
         tabIconsList[3].isSelected = true;
       
         tabBody = TrainingScreen(animationController: animationController);
