@@ -15,8 +15,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -26,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (arguments != null) print(arguments);
 
     if (arguments != null ? arguments['after_regist'] : false) {
-      arguments['after_regist']=false;
+      arguments['after_regist'] = false;
       Future.delayed(Duration.zero, () {
         showDialog(
             context: context,
@@ -152,20 +150,25 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        child: Stack(
-          children: [
-            Container(
-              child: ListView(
-                children: <Widget>[
-                  FormLoginView(),
-                  // DividerText(),
-                  // OtherMethodButton(),
-                ],
+      body: WillPopScope(
+        onWillPop: () {
+          Navigator.pop(context, jsonEncode({"load": true}));
+        },
+        child: Container(
+          color: Colors.white,
+          child: Stack(
+            children: [
+              Container(
+                child: ListView(
+                  children: <Widget>[
+                    FormLoginView(),
+                    // DividerText(),
+                    // OtherMethodButton(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

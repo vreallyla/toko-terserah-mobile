@@ -62,8 +62,8 @@ void loadNotice(context, String pesan,bool warning,String textBtn, Function() bt
           content: Builder(
             builder: (context) {
               // Get available height and width of the build area of this widget. Make a choice depending on the size.
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              // var height = MediaQuery.of(context).size.height;
+              // var width = MediaQuery.of(context).size.width;
 
               return Container(
                 height: 120,
@@ -118,8 +118,8 @@ void loadNoticeLock(context, String pesan,bool warning,String textBtn, Function(
           content: Builder(
             builder: (context) {
               // Get available height and width of the build area of this widget. Make a choice depending on the size.
-              var height = MediaQuery.of(context).size.height;
-              var width = MediaQuery.of(context).size.width;
+              // var height = MediaQuery.of(context).size.height;
+              // var width = MediaQuery.of(context).size.width;
 
               return Container(
                 height: 120,

@@ -37,7 +37,7 @@ class _ExpandableCustomState extends State<ExpandableCustom> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
     double _width = MediaQuery.of(context).size.width;
 
     return Container(
