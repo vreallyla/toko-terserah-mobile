@@ -101,6 +101,63 @@ void loadNotice(context, String pesan,bool warning,String textBtn, Function() bt
   });
 }
 
+void loadNoticeLock(context, String pesan,bool warning,String textBtn, Function() btnEvent) {
+  Timer _timer;
+
+  showDialog(
+    barrierDismissible: false,
+      context: context,
+      builder: (BuildContext builderContext) {
+        _timer = Timer(Duration(seconds: 2), () {
+          Navigator.of(context).pop();
+        });
+
+        return new AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          content: Builder(
+            builder: (context) {
+              // Get available height and width of the build area of this widget. Make a choice depending on the size.
+              var height = MediaQuery.of(context).size.height;
+              var width = MediaQuery.of(context).size.width;
+
+              return Container(
+                height: 120,
+                // width: 200,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      child: Text(
+                        pesan,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 100,
+                      child: RaisedButton(
+                        onPressed: () => btnEvent(),
+                        color: warning ? Colors.red : Colors.green,
+                        child: Text(
+                          textBtn,
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      }).then((val) {
+    if (_timer.isActive) {
+      _timer.cancel();
+    }
+  });
+}
+
+
 Widget reqLoad() {
   return Container(
     alignment: Alignment.center,

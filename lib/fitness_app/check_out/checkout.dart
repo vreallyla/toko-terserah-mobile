@@ -350,8 +350,11 @@ class _CheckOutState extends State<CheckOut> {
             // final reData=jsonDecode(value.data);
 
             if (value.data['condition']) {
-              Navigator.of(context).pushNamedAndRemoveUntil(
+              loadNoticeLock(context, 'Pesanan telah dicheckout', true , 'OK', (){
+                Navigator.of(context).pushNamedAndRemoveUntil(
                   '/home', (Route<dynamic> route) => false);
+              });
+              
             }
             setState(() {});
             // print('hello');

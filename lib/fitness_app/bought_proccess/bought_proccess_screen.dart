@@ -364,7 +364,7 @@ class CardBoughts extends StatelessWidget {
     switch (jenis) {
       case 'belum bayar':
         {
-          tagTab = 'MENUNGGzU PEMBAYARAN';
+          tagTab = 'MENUNGGU PEMBAYARAN';
           hei = 250;
           dataCard.add(
               tagCard(tagTab, sizeu, tanggal, inv, jmlhPlus, index, context));
