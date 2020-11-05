@@ -1179,7 +1179,15 @@ class _CheckOutState extends State<CheckOut> {
               width: _width - 30,
               height: 30,
               child: RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/inputalamat',
+                          arguments: null).then((value) async{
+                            canBack = false;
+                            loadOverlayEvent(true);
+                             _getAlamatApi();
+                            
+                          });
+                },
                 color: Colors.green,
                 child: Text(
                   'TAMBAH ALAMAT',
