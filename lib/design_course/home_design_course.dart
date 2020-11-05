@@ -16,6 +16,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 // import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class HomeDesignCourse extends StatefulWidget {
@@ -104,8 +105,8 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
 
   Future getSubKategori() async {
     setState(() {
-        isLoadingSub = true;
-      });
+      isLoadingSub = true;
+    });
     try {
       http.Response item = await http
           .get(globalBaseUrl + 'api/master/sub?nama=' + cariKatagoriInput.text);
@@ -415,10 +416,12 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
           //   // daftar kategori
           //   children: widgetContainerKategori,
           // ),
-          child: isLoadingSub ? Padding(
-            padding: const EdgeInsets.only(top:20.0),
-            child: Text('Loading...'),
-          ): listKategoriCheckBox(context),
+          child: isLoadingSub
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Text('Loading...'),
+                )
+              : listKategoriCheckBox(context),
         ),
         //header
         Container(
@@ -1717,177 +1720,174 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
               controller: _refreshController,
               onRefresh: _onRefresh,
               onLoading: _onLoading,
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.all(5),
-                shrinkWrap: true,
+              child: StaggeredGridView.countBuilder(
+                crossAxisCount: 4,
                 itemCount: dataJson == null ? 0 : dataJson.length,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, i) {
-                  return new SizedBox(
-                    width: sizeu.width / 3,
-                    child: Stack(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, left: 1, right: 5, bottom: 5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 1,
-                                  blurRadius: 7,
-                                  offset: Offset(
-                                      0, 3), // changes position of shadow
-                                ),
-                              ],
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                // Navigate to the second screen using a named route.
-                                // Navigator.pushNamed(context, '/produk');
+                itemBuilder: (BuildContext context, int i) => new SizedBox(
+                  child: Stack(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 5, left: 1, right: 5, bottom: 5),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.grey.withOpacity(0.5),
+                            //     spreadRadius: 1,
+                            //     blurRadius: 7,
+                            //     offset:
+                            //         Offset(0, 3), // changes position of shadow
+                            //   ),
+                            // ],
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              // Navigate to the second screen using a named route.
+                              // Navigator.pushNamed(context, '/produk');
 
-                                _toProductDetail(
-                                  context,
-                                  dataJson[i]["id"].toString(),
-                                );
-                              },
-                              child: Container(
-                                child: Column(
-                                  children: [
-                                    //rubah gambar
-                                    Container(
-                                      height: sizeu.width / 2,
-                                      decoration: new BoxDecoration(
-                                        image: new DecorationImage(
-                                            image: NetworkImage(dataJson[i]
-                                                    ["image_path"] ??
-                                                'https://via.placeholder.com/300'),
-                                            fit: BoxFit.cover),
-                                        color: Colors.grey,
-                                        borderRadius: const BorderRadius.only(
-                                          bottomRight: Radius.circular(0),
-                                          bottomLeft: Radius.circular(0),
-                                          topLeft: Radius.circular(8.0),
-                                          topRight: Radius.circular(8.0),
-                                        ),
+                              _toProductDetail(
+                                context,
+                                dataJson[i]["id"].toString(),
+                              );
+                            },
+                            child: Container(
+                              child: Column(
+                                children: [
+                                  //rubah gambar
+                                  Container(
+                                    height: sizeu.width / 2,
+                                    decoration: new BoxDecoration(
+                                      image: new DecorationImage(
+                                          image: NetworkImage(dataJson[i]
+                                                  ["image_path"] ??
+                                              'https://via.placeholder.com/300'),
+                                          fit: BoxFit.cover),
+                                      color: Colors.grey,
+                                      borderRadius: const BorderRadius.only(
+                                        bottomRight: Radius.circular(0),
+                                        bottomLeft: Radius.circular(0),
+                                        topLeft: Radius.circular(8.0),
+                                        topRight: Radius.circular(8.0),
                                       ),
                                     ),
+                                  ),
 
-                                    //konten
-                                    Container(
-                                      // padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                      height: 110,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(0),
-                                          topRight: Radius.circular(0),
-                                          bottomRight: Radius.circular(8.0),
-                                          bottomLeft: Radius.circular(8.0),
-                                        ),
+                                  //konten
+                                  Container(
+                                    // padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
+                                    padding:
+                                        EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    height: 110,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(0),
+                                        topRight: Radius.circular(0),
+                                        bottomRight: Radius.circular(8.0),
+                                        bottomLeft: Radius.circular(8.0),
                                       ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            alignment: Alignment.topLeft,
-                                            child: RichText(
-                                              overflow: TextOverflow.ellipsis,
-                                              strutStyle:
-                                                  StrutStyle(fontSize: 12.0),
-                                              text: TextSpan(
-                                                  style: TextStyle(
-                                                      color: Colors.black),
-                                                  text:
-                                                      '${dataJson[i]["nama"]}' ??
-                                                          '-'),
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.only(top: 5),
-                                            alignment: Alignment.topLeft,
-                                            child: Text(
-                                              setHarga(dataJson[i]),
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                              maxLines: 2,
-                                            ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Card(
-                                                color: Colors.red[100],
-                                                child: Container(
-                                                    margin: EdgeInsets.all(3),
-                                                    child: Text(
-                                                      '-' +
-                                                          disconCondition(
-                                                                  dataJson[i])
-                                                              .toString() +
-                                                          '%',
-                                                      style: TextStyle(
-                                                        color: Colors.red[800],
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 9,
-                                                      ),
-                                                    )),
-                                              ),
-                                              Text(
-                                                beforeDisc(dataJson[i]),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.topLeft,
+                                          child: RichText(
+                                            overflow: TextOverflow.ellipsis,
+                                            strutStyle:
+                                                StrutStyle(fontSize: 12.0),
+                                            text: TextSpan(
                                                 style: TextStyle(
-                                                    fontSize: 12,
-                                                    decoration: TextDecoration
-                                                        .lineThrough),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ],
+                                                    color: Colors.black),
+                                                text:
+                                                    '${dataJson[i]["nama"]}' ??
+                                                        '-'),
                                           ),
-                                          starJadi(
-                                              double.parse(dataJson[i]
-                                                      ['avg_ulasan']
-                                                  .toString()),
-                                              dataJson[i]['count_ulasan']
-                                                  .toString()),
-                                        ],
-                                      ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.only(top: 5),
+                                          alignment: Alignment.topLeft,
+                                          child: Text(
+                                            setHarga(dataJson[i]),
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                            maxLines: 2,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Card(
+                                              color: Colors.red[100],
+                                              child: Container(
+                                                  margin: EdgeInsets.all(3),
+                                                  child: Text(
+                                                    '-' +
+                                                        disconCondition(
+                                                                dataJson[i])
+                                                            .toString() +
+                                                        '%',
+                                                    style: TextStyle(
+                                                      color: Colors.red[800],
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 9,
+                                                    ),
+                                                  )),
+                                            ),
+                                            Text(
+                                              beforeDisc(dataJson[i]),
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  decoration: TextDecoration
+                                                      .lineThrough),
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          ],
+                                        ),
+                                        starJadi(
+                                            double.parse(dataJson[i]
+                                                    ['avg_ulasan']
+                                                .toString()),
+                                            dataJson[i]['count_ulasan']
+                                                .toString()),
+                                      ],
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.only(
-                              top: 15, left: 10, right: 5, bottom: 16),
-                          alignment: Alignment.topLeft,
-                          child: Card(
-                            color: Colors.green[100],
-                            child: Container(
-                                margin: EdgeInsets.all(3),
-                                child: Text(
-                                  dataJson[i]["isGrosir"] > 0
-                                      ? 'Grosir'
-                                      : 'Retail',
-                                  style: TextStyle(
-                                    color: Colors.green[800],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                  ),
-                                )),
-                          ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(
+                            top: 15, left: 10, right: 5, bottom: 16),
+                        alignment: Alignment.topLeft,
+                        child: Card(
+                          color: Colors.green[100],
+                          child: Container(
+                              margin: EdgeInsets.all(3),
+                              child: Text(
+                                dataJson[i]["isGrosir"] > 0
+                                    ? 'Grosir'
+                                    : 'Retail',
+                                style: TextStyle(
+                                  color: Colors.green[800],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              )),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
+                      ),
+                    ],
+                  ),
+                ),
+                staggeredTileBuilder: (int index) =>
+                    new StaggeredTile.count(2, 3.6),
+                mainAxisSpacing: 4.0,
+                crossAxisSpacing: 4.0,
+              )),
     );
   }
 
