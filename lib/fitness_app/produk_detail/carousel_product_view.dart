@@ -28,7 +28,7 @@ class _CarouselProductView extends State<CarouselProductView> {
                     child: Stack(
                       children: <Widget>[
                         Image.network(
-                          globalBaseUrl+locationProductImage+ item,
+                          item,
                           fit: BoxFit.cover,
                           width: 1000.0,
                           height: size.width - (size.width * 0.05),

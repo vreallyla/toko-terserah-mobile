@@ -17,6 +17,7 @@ String globalPathCart = 'api/cart/';
 String locationAva = 'storage/users/ava/';
 String locationBgPhoto = 'storage/users/background/';
 String locationProductImage = 'storage/produk/thumb/';
+String locationProductImageGaler = 'storage/produk/galeri/';
 String locationBannerImage = "storage/banner/";
 
 // String locationProductImage="storage/produk/thumb/";
@@ -108,9 +109,7 @@ void loadNoticeLock(context, String pesan,bool warning,String textBtn, Function(
     barrierDismissible: false,
       context: context,
       builder: (BuildContext builderContext) {
-        _timer = Timer(Duration(seconds: 2), () {
-          Navigator.of(context).pop();
-        });
+      
 
         return new AlertDialog(
           shape: RoundedRectangleBorder(
@@ -150,11 +149,7 @@ void loadNoticeLock(context, String pesan,bool warning,String textBtn, Function(
             },
           ),
         );
-      }).then((val) {
-    if (_timer.isActive) {
-      _timer.cancel();
-    }
-  });
+      });
 }
 
 

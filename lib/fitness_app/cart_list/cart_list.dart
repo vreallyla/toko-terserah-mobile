@@ -1,4 +1,5 @@
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/CustomShowDialog.dart';
+import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 import 'package:best_flutter_ui_templates/model/register_model.dart';
 import 'package:flutter/material.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
@@ -318,14 +319,7 @@ class _CartListState extends State<CartList> {
     } else {
       // showSnackBar("Lanjut mas Semongko", Colors.green,
       //     FaIcon(FontAwesomeIcons.checkCircle));
-      Navigator.push(
-          //push screen to check out and send parameter
-          context,
-          MaterialPageRoute(
-            builder: (context) => CheckOut(
-              idProducts: _selecteCarts,
-            ),
-          ));
+      _cekProfile();
       //  Navigator.push(
       // //push screen to check out and send parameter
       // context,
@@ -527,6 +521,61 @@ class _CartListState extends State<CartList> {
     );
   }
 
+  //check data profil udh diisi belum?
+  _cekProfile() async {
+    List data = ["1"];
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await KeranjangModel.getCart(data).then((value) {
+          Map<String, dynamic> resProduct = json.decode(value.data);
+          if (value.error) {
+            resError(resProduct);
+          } else {
+            if (resProduct['bio_set']) {
+              print(resProduct);
+              loadNoticeLock(
+                  context,
+                  'Mohon isi data profil untuk data pengiriman terlebih dahulu!',
+                  true,
+                  'OK', () {
+                Navigator.pushReplacementNamed(context, '/profile_detail');
+              });
+            } else {
+              Navigator.push(
+                  //push screen to check out and send parameter
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CheckOut(
+                      idProducts: _selecteCarts,
+                    ),
+                  ));
+            }
+          }
+          isLoading = false;
+
+          setState(() {});
+        });
+      }
+    } on SocketException catch (_) {
+      loadNotice(context, 'Terjadi kesalahan!', true, 'OK', () {
+        Navigator.of(context).pop();
+      });
+
+      isConnect = false;
+      isLoading = false;
+
+      setState(() {});
+    }
+  }
+
+  resError(Map<String, dynamic> resProduct) {
+    isLoading = false;
+
+    setState(() {});
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -597,7 +646,6 @@ class _CartListState extends State<CartList> {
     return Container(
       alignment: Alignment.center,
       color: Color(0xfff0f4f7),
-
       padding: EdgeInsets.only(top: 120),
       child: Column(
         children: [
@@ -999,11 +1047,13 @@ class _CartListState extends State<CartList> {
 
 class FooterApp extends StatelessWidget {
   final int total;
+  final Function checkoutEvent;
 
   FooterApp({
     Key key,
     /*@required*/
     this.total,
+    this.checkoutEvent,
   }) : super(key: key);
 
   @override
@@ -1063,7 +1113,7 @@ class FooterApp extends StatelessWidget {
             InkWell(
               onTap: () {
                 // Navigate to the second screen using a named route.
-                Navigator.pushNamed(context, '/checkout');
+                checkoutEvent();
               },
               child: Container(
                 height: 50,

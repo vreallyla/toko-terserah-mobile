@@ -42,6 +42,15 @@ class MidtransModel {
     paramss=paramss+'&cart_ids='+obj['cart_ids'];
     paramss=paramss+'&total='+obj['total'];
     paramss=paramss+'&weight='+obj['weight'];
+
+    
+    paramss = paramss + '&note=' + obj['note'];
+    paramss = paramss + '&durasi_pengiriman=' + obj['durasi_pengiriman'];
+    paramss = paramss + '&promo_code=' + obj['promo_code'];
+    paramss = paramss + '&opsi=' + obj['opsi'];
+    paramss = paramss + '&kode_kurir=' + obj['kode_kurir'];
+    paramss = paramss + '&layanan_kurir=' + obj['layanan_kurir'];
+    paramss = paramss + '&nama_kurir=' + obj['nama_kurir'];
     
  
     String apiURL = globalBaseUrl  + "api/checkout/midtrans/snap"+paramss;

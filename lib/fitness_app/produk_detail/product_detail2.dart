@@ -338,7 +338,7 @@ class _ProductDetail2State extends State<ProductDetail2>
  */
   void addAllListData() {
     listViews = [];
-
+    print(imageLists);
     listViews.add(CarouselProductView(imageList: imageLists));
 
     listViews.add(TitleNPriceProductView(

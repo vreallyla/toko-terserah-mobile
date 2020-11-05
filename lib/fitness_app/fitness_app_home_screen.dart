@@ -1,10 +1,11 @@
-import 'dart:developer';
+
 
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
 import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'fintness_app_theme.dart';
 import 'my_diary/my_diary_screen.dart';
@@ -20,11 +21,20 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
   AnimationController animationController;
 
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-  int qtyCart = 0;
+  int qtyCart = -1;
+
+  var hello;
 
   Widget tabBody = Container(
     color: FintnessAppTheme.background,
   );
+
+  _getUser() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  hello=  prefs.getString('dataUser');
+  //  prefs.getString('token');
+}
 
   @override
   void initState() {
@@ -46,6 +56,14 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
             arguments['after_logout'] != null)
         : false) {
         tabIconsList[3].isSelected = true;
+// _getUser();
+       
+//        new Future.delayed(Duration(seconds: 0), () {
+//           print(hello);
+//           print('as');
+//        });
+        
+       
       
         tabBody = TrainingScreen(animationController: animationController);
       } else if (arguments != null

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ import 'package:best_flutter_ui_templates/design_course/test.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/apply_voucher_form.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/product_detail_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/midtrans/midtrans_screen.dart';
+import 'package:best_flutter_ui_templates/fitness_app/profil_detail/profile_detail_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
 import 'package:best_flutter_ui_templates/model/alamat_model.dart';
 import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
@@ -76,7 +78,7 @@ class _CheckOutState extends State<CheckOut> {
 
   //opsi pengiriman
   String pilihanOpsi = ''; // '' = belum pilih; logistik;terserah;ambil
-  String kodeKurir = '', layananKurir = ''; // berdasarkan raja ongkir
+  String kodeKurir = '', layananKurir = '',namaKurir=''; // berdasarkan raja ongkir
   List rajaOngkirData = [];
   List dataLayanan = [];
   Map<String, dynamic> layananDetail;
@@ -84,6 +86,8 @@ class _CheckOutState extends State<CheckOut> {
   //for event web view callback
   String tokenMidtrans;
   String uniCode;
+
+  bool canBack = false;
 
   //overlay loading event
   void loadOverlayEvent(bool cond) {
@@ -113,6 +117,7 @@ class _CheckOutState extends State<CheckOut> {
     for (Map e in rajaOngkirData) {
       if (e['code'] == res) {
         List callb = e['costs'];
+        namaKurir=e['name'];
         layananPartision(callb);
         break;
       }
@@ -133,6 +138,15 @@ class _CheckOutState extends State<CheckOut> {
     }
   }
 
+  checkProfileFilled() async {
+    await Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (BuildContext context) => ProfileDetailScreen()));
+    isLoading=true;
+    _getDataApi();
+  }
+
   _getDataApi() async {
     List data = widget.idProducts;
 
@@ -147,6 +161,16 @@ class _CheckOutState extends State<CheckOut> {
             totalProduct = 0;
             productDetail = resProduct;
             List dataPro = productDetail['produk'];
+            log(productDetail['bio_set'].toString());
+            if (productDetail['bio_set']) {
+              // loadNoticeLock(
+              //     context,
+              //     'Mohon isi data profil untuk data pengiriman terlebih dahulu!',
+              //     true,
+              //     'OK', () {
+              //   checkProfileFilled();
+              // });
+            }
 
             for (int i = 0; i < dataPro.length; i++) {
               totalProduct = totalProduct +
@@ -222,7 +246,9 @@ class _CheckOutState extends State<CheckOut> {
   }
 
   _getAlamatApi() async {
-    List data = widget.idProducts;
+    canBack = false;
+    setState(() {});
+    // List data = widget.idProducts;
     // print(data);
     try {
       final result = await InternetAddress.lookup('google.com');
@@ -269,12 +295,23 @@ class _CheckOutState extends State<CheckOut> {
             'pengiriman_id': alamatPengiriman['id'].toString(),
             'penagihan_id': alamatPenagihan['id'].toString(),
             'ongkir': (tambahanOngkir).toString(),
-            'discount_price': (potonganVoucher * -1).toString(),
+            'discount_price': potonganVoucher>0?(potonganVoucher * (potonganVoucher>0 ? -1:1)).toString():'',
             'cart_ids': widget.idProducts.join(',').toString(),
             'weight': beratProduct.toString(),
-
             'total':
                 (totalProduct + tambahanOngkir + potonganVoucher).toString(),
+            'note': catatanValue,
+            'durasi_pengiriman': (layananDetail != null
+                    ? layananDetail.containsKey('cost')
+                    : false)
+                ? layananDetail['cost'][0]['etd']
+                : '-',
+            'promo_code': kodeVoucherDigunakan,
+            'opsi': pilihanOpsi,
+            'kode_kurir': kodeKurir.toString(),
+            'layanan_kurir': layananKurir.toString(),
+            'nama_kurir': namaKurir,
+            
           }).then((value) {
             loadOverlayEvent(false);
 
@@ -311,7 +348,7 @@ class _CheckOutState extends State<CheckOut> {
             pengirimanId: alamatPengiriman['id'].toString(),
             penagihanId: alamatPenagihan['id'].toString(),
             cartIds: widget.idProducts.join(',').toString(),
-            discountPrice: (potonganVoucher * -1).toString(),
+            discountPrice: potonganVoucher>0?(potonganVoucher * (potonganVoucher>0 ? -1:1)).toString():'',
             ongkir: (tambahanOngkir).toString(),
             total: (totalProduct + tambahanOngkir + potonganVoucher).toString(),
             snapToken: tokenMidtrans,
@@ -327,6 +364,8 @@ class _CheckOutState extends State<CheckOut> {
             kodeKurir: kodeKurir.toString(),
             layananKurir: layananKurir.toString(),
             token: tokenFixed,
+            namaKurir: namaKurir,
+
           ),
         ));
 
@@ -350,11 +389,11 @@ class _CheckOutState extends State<CheckOut> {
             // final reData=jsonDecode(value.data);
 
             if (value.data['condition']) {
-              loadNoticeLock(context, 'Pesanan telah dicheckout', true , 'OK', (){
+              loadNoticeLock(context, 'Pesanan telah dicheckout', true, 'OK',
+                  () {
                 Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/home', (Route<dynamic> route) => false);
+                    '/home', (Route<dynamic> route) => false);
               });
-              
             }
             setState(() {});
             // print('hello');
@@ -415,6 +454,8 @@ class _CheckOutState extends State<CheckOut> {
   }
 
   _getHargaByRajaOngkir() async {
+    canBack = false;
+    setState(() {});
     try {
       String idKecamatan = alamatPengiriman['kecamatan_id'].toString();
 
@@ -427,6 +468,10 @@ class _CheckOutState extends State<CheckOut> {
           loadOverlayEvent(false);
 
           isLoading = false;
+
+          setState(() {
+            canBack = true;
+          });
 
           if (value.error) {
             loadNotice(
@@ -443,6 +488,9 @@ class _CheckOutState extends State<CheckOut> {
         });
       }
     } on SocketException catch (_) {
+      setState(() {
+        canBack = true;
+      });
       loadOverlayEvent(false);
       loadNotice(
           context, 'Terjadi kesalahan pada opsi pengiriman!', false, 'OK', () {
@@ -488,181 +536,195 @@ class _CheckOutState extends State<CheckOut> {
   //   super.dispose();
   // }
 
+  backEvent() {
+    if (canBack) {
+      Navigator.of(context).pop();
+    } else {
+      loadNotice(context, 'Tunggu loading selesai!', true, 'OK', () {
+        Navigator.of(context).pop();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     //final wh_ = MediaQuery.of(context).size;
 
-    return new Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey[200],
-        brightness: Brightness.light,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
+    return WillPopScope(
+      onWillPop: () => backEvent(),
+      child: new Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.grey[200],
+          brightness: Brightness.light,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () => backEvent(),
+          ),
+          title: const Text(
+            'Checkout',
+            style: TextStyle(color: Colors.black),
+          ),
+          actions: <Widget>[
+            // IconButton(
+            //   icon: Icon(Icons.notifications),
+            //   onPressed: () {},
+            //   color: Colors.black,
+            // )
+          ],
         ),
-        title: const Text(
-          'Checkout',
-          style: TextStyle(color: Colors.black),
+        bottomNavigationBar: Stack(
+          children: [
+            FooterApp(
+                sendMidtrans: () {
+                  if (pilihanOpsi.length > 0) {
+                    _getSnapMidtransApi();
+                  } else {
+                    loadNotice(
+                        context, 'Harap pilih opsi pengiriman!', true, 'OK',
+                        () {
+                      Navigator.of(context).pop();
+                    });
+                  }
+                },
+                total: (totalProduct + tambahanOngkir + potonganVoucher)
+                    .toString()),
+            loadOverlay
+                ? Container(
+                    width: size.width,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.0),
+                    ))
+                : Text(
+                    '',
+                    style: TextStyle(fontSize: 0),
+                  )
+          ],
         ),
-        actions: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.notifications),
-          //   onPressed: () {},
-          //   color: Colors.black,
-          // )
-        ],
-      ),
-      bottomNavigationBar: Stack(
-        children: [
-          FooterApp(
-              sendMidtrans: () {
-                if (pilihanOpsi.length > 0) {
-                  _getSnapMidtransApi();
-                } else {
-                  loadNotice(
-                      context, 'Harap pilih opsi pengiriman!', true, 'OK', () {
-                    Navigator.of(context).pop();
-                  });
-                }
-              },
-              total:
-                  (totalProduct + tambahanOngkir + potonganVoucher).toString()),
-          loadOverlay
-              ? Container(
-                  width: size.width,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(.0),
-                  ))
-              : Text(
-                  '',
-                  style: TextStyle(fontSize: 0),
-                )
-        ],
-      ),
-      body: isWrong
-          ? pesanFullScreen(() {
-              isWrong = false;
-              isLoading = true;
-              _getDataApi();
-              setState(() {});
-            }, 'Terjadi Kesalahan', subnotice, 'OK')
-          : (!isConnect
-              ? noConnection()
-              : (isLoading
-                  ? reqLoad()
-                  : SlidingUpPanel(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 7,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                      minHeight: 60,
-                      maxHeight: 170,
-                      controller: _pc,
-                      onPanelOpened: () {
-                        showVoucher = true;
-                        setState(() {
-                          print(showVoucher);
-                        });
-                      },
-                      onPanelClosed: () {
-                        showVoucher = false;
-                        setState(() {
-                          print(showVoucher);
-                        });
-                      },
-                      panel: Stack(
-                        children: [
-                          ApplyVoucherForm(
-                              showing: showVoucher,
-                              dataVoucher: dataVoucher,
-                              sendApi: (String kode) {
-                                _checkKodePromo(kode);
-                              }),
-                          loadOverlay
-                              ? Container(
-                                  color: Colors.grey.withOpacity(.0),
-                                )
-                              : Text(
-                                  '',
-                                  style: TextStyle(fontSize: 0),
-                                )
+        body: isWrong
+            ? pesanFullScreen(() {
+                isWrong = false;
+                isLoading = true;
+                _getDataApi();
+                setState(() {});
+              }, 'Terjadi Kesalahan', subnotice, 'OK')
+            : (!isConnect
+                ? noConnection()
+                : (isLoading
+                    ? reqLoad()
+                    : SlidingUpPanel(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 7,
+                            offset: Offset(0, 3), // changes position of shadow
+                          ),
                         ],
-                      ),
-
-                      body: Stack(
-                        children: [
-                          new GestureDetector(
-                              onTap: () {
-                                FocusScope.of(context)
-                                    .requestFocus(new FocusNode());
-                              },
-                              child: _body()),
-                          loadOverlay
-                              ? Container(
-                                  width: size.width,
-                                  height: size.height - 130,
-                                  child: Image.asset(
-                                    'assets/fitness_app/global_loader.gif',
-                                    scale: 5,
-                                  ),
-                                  decoration: BoxDecoration(
+                        minHeight: 60,
+                        maxHeight: 170,
+                        controller: _pc,
+                        onPanelOpened: () {
+                          showVoucher = true;
+                          setState(() {
+                            print(showVoucher);
+                          });
+                        },
+                        onPanelClosed: () {
+                          showVoucher = false;
+                          setState(() {
+                            print(showVoucher);
+                          });
+                        },
+                        panel: Stack(
+                          children: [
+                            ApplyVoucherForm(
+                                showing: showVoucher,
+                                dataVoucher: dataVoucher,
+                                sendApi: (String kode) {
+                                  _checkKodePromo(kode);
+                                }),
+                            loadOverlay
+                                ? Container(
                                     color: Colors.grey.withOpacity(.0),
-                                  ))
-                              : Text(
-                                  '',
-                                  style: TextStyle(fontSize: 0),
-                                )
-                        ],
-                      ),
-                      //slide
-                      collapsed: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 25),
-                          ),
-                          SizedBox(
-                            width: 18,
-                            child: FaIcon(
-                              FontAwesomeIcons.ticketAlt,
-                              color: Colors.green,
-                              size: 18,
+                                  )
+                                : Text(
+                                    '',
+                                    style: TextStyle(fontSize: 0),
+                                  )
+                          ],
+                        ),
+
+                        body: Stack(
+                          children: [
+                            new GestureDetector(
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(new FocusNode());
+                                },
+                                child: _body()),
+                            loadOverlay
+                                ? Container(
+                                    width: size.width,
+                                    height: size.height - 130,
+                                    child: Image.asset(
+                                      'assets/fitness_app/global_loader.gif',
+                                      scale: 5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(.0),
+                                    ))
+                                : Text(
+                                    '',
+                                    style: TextStyle(fontSize: 0),
+                                  )
+                          ],
+                        ),
+                        //slide
+                        collapsed: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 25),
                             ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10),
-                          ),
-                          SizedBox(
-                              width: size.width - 223,
-                              child: Text(dataVoucher.containsKey('caption')
-                                  ? 'Potongan -Rp' +
-                                      decimalPointTwo(potonganVoucher * -1)
-                                  : 'Voucher Diskon')),
-                          SizedBox(
-                            width: 150,
-                            child: RaisedButton(
-                              color: Colors.deepOrange,
-                              child: Text(
-                                dataVoucher.containsKey('caption')
-                                    ? 'VOUCHER LAIN'
-                                    : "GUNAKAN VOUCHER",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12, color: Colors.white),
+                            SizedBox(
+                              width: 18,
+                              child: FaIcon(
+                                FontAwesomeIcons.ticketAlt,
+                                color: Colors.green,
+                                size: 18,
                               ),
-                              onPressed: () => _pc.open(),
                             ),
-                          ),
-                        ],
-                      ),
-                    ))),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            SizedBox(
+                                width: size.width - 223,
+                                child: Text(dataVoucher.containsKey('caption')
+                                    ? 'Potongan -Rp' +
+                                        decimalPointTwo(potonganVoucher * -1)
+                                    : 'Voucher Diskon')),
+                            SizedBox(
+                              width: 150,
+                              child: RaisedButton(
+                                color: Colors.deepOrange,
+                                child: Text(
+                                  dataVoucher.containsKey('caption')
+                                      ? 'VOUCHER LAIN'
+                                      : "GUNAKAN VOUCHER",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.white),
+                                ),
+                                onPressed: () => _pc.open(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ))),
+      ),
     );
   }
 

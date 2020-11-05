@@ -27,6 +27,7 @@ class TestWebView extends StatefulWidget {
     this.opsi,
     this.kodeKurir,
     this.layananKurir,
+    this.namaKurir,
   }) : super(key: key);
 
   final String pengirimanId;
@@ -44,6 +45,7 @@ class TestWebView extends StatefulWidget {
   final String kodeKurir;
   final String layananKurir;
   final String token;
+  final String namaKurir;
   @override
   _TestWebViewState createState() => _TestWebViewState();
 
@@ -88,6 +90,7 @@ class _TestWebViewState extends State<TestWebView>
     paramss = paramss + '&kode_kurir=' + widget.kodeKurir;
     paramss = paramss + '&layanan_kurir=' + widget.layananKurir;
     paramss = paramss + '&token=' + widget.token;
+    paramss = paramss + '&nama_kurir=' + widget.namaKurir;
 
     return paramss;
   }
