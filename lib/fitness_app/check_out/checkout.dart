@@ -78,7 +78,9 @@ class _CheckOutState extends State<CheckOut> {
 
   //opsi pengiriman
   String pilihanOpsi = ''; // '' = belum pilih; logistik;terserah;ambil
-  String kodeKurir = '', layananKurir = '',namaKurir=''; // berdasarkan raja ongkir
+  String kodeKurir = '',
+      layananKurir = '',
+      namaKurir = ''; // berdasarkan raja ongkir
   List rajaOngkirData = [];
   List dataLayanan = [];
   Map<String, dynamic> layananDetail;
@@ -117,7 +119,7 @@ class _CheckOutState extends State<CheckOut> {
     for (Map e in rajaOngkirData) {
       if (e['code'] == res) {
         List callb = e['costs'];
-        namaKurir=e['name'];
+        namaKurir = e['name'];
         layananPartision(callb);
         break;
       }
@@ -143,7 +145,7 @@ class _CheckOutState extends State<CheckOut> {
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => ProfileDetailScreen()));
-    isLoading=true;
+    isLoading = true;
     _getDataApi();
   }
 
@@ -295,7 +297,9 @@ class _CheckOutState extends State<CheckOut> {
             'pengiriman_id': alamatPengiriman['id'].toString(),
             'penagihan_id': alamatPenagihan['id'].toString(),
             'ongkir': (tambahanOngkir).toString(),
-            'discount_price': potonganVoucher>0?(potonganVoucher * (potonganVoucher>0 ? -1:1)).toString():'',
+            'discount_price': potonganVoucher > 0
+                ? (potonganVoucher * (potonganVoucher > 0 ? -1 : 1)).toString()
+                : '',
             'cart_ids': widget.idProducts.join(',').toString(),
             'weight': beratProduct.toString(),
             'total':
@@ -311,7 +315,6 @@ class _CheckOutState extends State<CheckOut> {
             'kode_kurir': kodeKurir.toString(),
             'layanan_kurir': layananKurir.toString(),
             'nama_kurir': namaKurir,
-            
           }).then((value) {
             loadOverlayEvent(false);
 
@@ -348,7 +351,9 @@ class _CheckOutState extends State<CheckOut> {
             pengirimanId: alamatPengiriman['id'].toString(),
             penagihanId: alamatPenagihan['id'].toString(),
             cartIds: widget.idProducts.join(',').toString(),
-            discountPrice: potonganVoucher>0?(potonganVoucher * (potonganVoucher>0 ? -1:1)).toString():'',
+            discountPrice: potonganVoucher > 0
+                ? (potonganVoucher * (potonganVoucher > 0 ? -1 : 1)).toString()
+                : '',
             ongkir: (tambahanOngkir).toString(),
             total: (totalProduct + tambahanOngkir + potonganVoucher).toString(),
             snapToken: tokenMidtrans,
@@ -365,14 +370,16 @@ class _CheckOutState extends State<CheckOut> {
             layananKurir: layananKurir.toString(),
             token: tokenFixed,
             namaKurir: namaKurir,
-
           ),
         ));
-
+   
     _cekUniCode();
   }
 
   _cekUniCode() async {
+     setState(() {
+      canBack = false;
+    });
     loadOverlayEvent(true);
 
     try {
@@ -380,6 +387,9 @@ class _CheckOutState extends State<CheckOut> {
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await MidtransModel.cekUniCode(uniCode).then((value) {
           loadOverlayEvent(false);
+          setState(() {
+            canBack = true;
+          });
 
           if (value.error) {
             loadNotice(context, 'Terjadi kesalahan!', true, 'OK', () {
@@ -402,6 +412,9 @@ class _CheckOutState extends State<CheckOut> {
       }
     } on SocketException catch (_) {
       loadOverlayEvent(false);
+      setState(() {
+        canBack = true;
+      });
 
       isConnect = false;
       isLoading = false;
@@ -793,8 +806,7 @@ class _CheckOutState extends State<CheckOut> {
                 onPressed: () {
                   catatanCollapse = false;
                   setState(() {
-                  catatanValue = catatanInput.text;
-
+                    catatanValue = catatanInput.text;
                   });
                 },
                 color: Colors.green,
@@ -1182,13 +1194,12 @@ class _CheckOutState extends State<CheckOut> {
               height: 30,
               child: RaisedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/inputalamat',
-                          arguments: null).then((value) async{
-                            canBack = false;
-                            loadOverlayEvent(true);
-                             _getAlamatApi();
-                            
-                          });
+                  Navigator.pushNamed(context, '/inputalamat', arguments: null)
+                      .then((value) async {
+                    canBack = false;
+                    loadOverlayEvent(true);
+                    _getAlamatApi();
+                  });
                 },
                 color: Colors.green,
                 child: Text(
@@ -2278,7 +2289,6 @@ class FooterApp extends StatelessWidget {
                   });
                 } else {
                   sendMidtrans();
-                
                 }
               },
               child: Container(

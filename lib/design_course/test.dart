@@ -141,10 +141,11 @@ class _TestWebViewState extends State<TestWebView>
       appBar: new AppBar(
         backgroundColor: Colors.grey[200],
         brightness: Brightness.light,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+        //   onPressed: () => Navigator.of(context).pop(),
+        // ),
+        leading: Text(''),
         title: const Text(
           'Pembayaran',
           style: TextStyle(color: Colors.black),
