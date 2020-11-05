@@ -161,11 +161,28 @@ class _CartListState extends State<CartList> {
     }
   }
 
+  String userData;
+
+  _setUser(String dataa) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  await prefs.setString('dataUser', dataa);
+}
+
+_getUser() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  userData = prefs.getString('dataUser');
+  //  prefs.getString('token');
+}
+
   /**
    * Delete Selected Cart Item
    * 
    */
   _deleteCart(id) async {
+    await _getUser();
+     Map<String, dynamic> dataaUser = json.decode(userData);
     setState(() {
       canBack = false;
     });
@@ -185,6 +202,10 @@ class _CartListState extends State<CartList> {
           isLoading = true;
         });
         _getData();
+
+        dataaUser['count_cart'] =int.parse(dataaUser['count_cart'].toString())-1;
+          await _setUser(json.encode(dataaUser));
+
         showSnackBar(_response['data']['message'], Colors.green,
             Icon(Icons.check_circle_outline));
         setState(() {

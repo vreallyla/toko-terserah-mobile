@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 //import 'dart:developer';
 import 'dart:math' as math;
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
@@ -12,9 +13,12 @@ import '../models/tabIcon_data.dart';
 
 class BottomBarView extends StatefulWidget {
   const BottomBarView(
-      {Key key, this.tabIconsList,
+      {Key key,
+      this.tabIconsList,
       this.changeParentCart,
-       this.changeIndex, this.addClick, this.addQtyCart:-1})
+      this.changeIndex,
+      this.addClick,
+      this.addQtyCart: -1})
       : super(key: key);
 
   final Function(int index) changeIndex;
@@ -35,33 +39,29 @@ class _BottomBarViewState extends State<BottomBarView>
 
   _getCountCart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     dataUser = prefs.getString('dataUser');
-
+  
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
 
       countCart = dataUser['count_cart'];
-     
-      
+      log(countCart.toString());
     }
     // print('test2:'+countCart.toString());
 
     setState(() {});
   }
+  
 
   _checkJmlhCart() async {
-      // Navigator.push returns a Future that completes after calling
-      // Navigator.pop on the Selection Screen.
-      final resultDetail = await Navigator.pushNamed(context, '/cart_list');
-      print(resultDetail);
-      setState(() {
-        widget.changeParentCart(resultDetail);
-      });
-
-      
-      
-    }
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    final resultDetail = await Navigator.pushNamed(context, '/cart_list');
+    print(resultDetail);
+    setState(() {
+      widget.changeParentCart(resultDetail);
+    });
+  }
 
   @override
   void initState() {
@@ -227,7 +227,7 @@ class _BottomBarViewState extends State<BottomBarView>
                           focusColor: Colors.transparent,
                           onTap: () {
                             widget.addClick();
-                           _checkJmlhCart();
+                            _checkJmlhCart();
                           },
                           child: Stack(
                             children: <Widget>[
@@ -249,9 +249,9 @@ class _BottomBarViewState extends State<BottomBarView>
                                   child: Text(
                                     (countCart > 99
                                         ? '99+'
-                                        : (widget.addQtyCart>=0 ? widget.addQtyCart.toString()
-                                         :countCart.toString() )
-                                        ),
+                                        : (widget.addQtyCart >= 0
+                                            ? widget.addQtyCart.toString()
+                                            : countCart.toString())),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.w500,
