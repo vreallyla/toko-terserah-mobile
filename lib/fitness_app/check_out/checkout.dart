@@ -300,7 +300,7 @@ class _CheckOutState extends State<CheckOut> {
             'weight': beratProduct.toString(),
             'total':
                 (totalProduct + tambahanOngkir + potonganVoucher).toString(),
-            'note': catatanValue,
+            'note': catatanInput.text,
             'durasi_pengiriman': (layananDetail != null
                     ? layananDetail.containsKey('cost')
                     : false)
@@ -353,7 +353,7 @@ class _CheckOutState extends State<CheckOut> {
             total: (totalProduct + tambahanOngkir + potonganVoucher).toString(),
             snapToken: tokenMidtrans,
             weight: beratProduct.toString(),
-            note: catatanValue,
+            note: catatanInput.text,
             durasiPengiriman: (layananDetail != null
                     ? layananDetail.containsKey('cost')
                     : false)
@@ -792,8 +792,10 @@ class _CheckOutState extends State<CheckOut> {
               child: RaisedButton(
                 onPressed: () {
                   catatanCollapse = false;
+                  setState(() {
                   catatanValue = catatanInput.text;
-                  setState(() {});
+
+                  });
                 },
                 color: Colors.green,
                 child: Text(
@@ -2276,6 +2278,7 @@ class FooterApp extends StatelessWidget {
                   });
                 } else {
                   sendMidtrans();
+                
                 }
               },
               child: Container(

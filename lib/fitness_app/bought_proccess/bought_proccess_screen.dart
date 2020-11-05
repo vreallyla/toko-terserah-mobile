@@ -149,8 +149,8 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
               if (!widget.backCart) {
                 Navigator.pop(context);
               } else {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/home', (Route<dynamic> route) => false);
+               Navigator.of(context)
+    .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false,arguments: {"after_login":true});
               }
             },
           ),
@@ -196,8 +196,8 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
             if (!widget.backCart) {
               Navigator.pop(context);
             } else {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/home', (Route<dynamic> route) => false);
+               Navigator.of(context)
+    .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false,arguments: {"after_login":true});
                   
             }
           },

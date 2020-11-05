@@ -51,8 +51,6 @@ class MidtransModel {
     paramss = paramss + '&kode_kurir=' + obj['kode_kurir'];
     paramss = paramss + '&layanan_kurir=' + obj['layanan_kurir'];
     paramss = paramss + '&nama_kurir=' + obj['nama_kurir'];
-    
- 
     String apiURL = globalBaseUrl  + "api/checkout/midtrans/snap"+paramss;
     print(apiURL);
    
