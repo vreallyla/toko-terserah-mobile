@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 setHarga(Map<String, dynamic> obj) {
-  return withCurrency(obj['harga_grosir'] != null
+  return withCurrency(obj['isGrosir'] == 1
       ? (obj['diskonGrosir'] != null
           ? obj['harga_diskon_grosir']
           : obj['harga_grosir'])
@@ -16,7 +16,7 @@ setHargaWithQty(Map<String, dynamic> obj, double qty ) {
 }
 
 nilaiDoubleHarga(Map<String, dynamic> obj){
-  return double.parse(obj['harga_grosir'] != null
+  return double.parse(obj['isGrosir'] == 1
       ? (obj['diskonGrosir'] != null
           ? obj['harga_diskon_grosir']
           : obj['harga_grosir'])
