@@ -97,6 +97,58 @@ class LoginModel {
     }
   }
 
+  
+  static Future<LoginModel> loginEmail(String email) async {
+    // final LocalStorage storage = new LocalStorage('auth');
+    String apiURL = globalBaseUrl + globalPathAuth + "login_email";
+
+    var apiResult = await http.post(apiURL,
+        body: {"email": email},
+        headers: {"Accept": "application/json"});
+
+    print('login email status code : ' + apiResult.statusCode.toString());
+
+    try {
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+        await UserModel.akunRes();
+
+        print('post login success');
+
+        _setToken(jsonObject['data']['token']);
+        print(jsonObject['data']['token']);
+        return LoginModel(
+          error: false,
+          data: msgSuccess['MSG_EMAIL'].toString(),
+        );
+      } else if (apiResult.statusCode == 404) {
+        return LoginModel(
+          error: true,
+          data: msgFail['MSG_LOGIN_EXC'].toString(),
+        );
+      } else if (apiResult.statusCode == 400) {
+        return LoginModel(
+          error: true,
+          data: msgFail['MSG_AKTIVASI'].toString(),
+        );
+      } else {
+        return LoginModel(
+          error: true,
+          data: 'Email atau password salah...',
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e);
+      return LoginModel(
+        error: true,
+        data: msgFail['MSG_SYSTEM'],
+      );
+    }
+  }
+
+
   static Future<LoginModel> logout() async {
     try {
       await _getToken();

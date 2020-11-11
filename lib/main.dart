@@ -29,6 +29,10 @@ import 'dart:async';
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'dart:developer';
+import 'dart:core';
+import 'dart:convert';
+
+import 'model/login_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,10 +48,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-   
-
- StreamSubscription _sub;
-
+  StreamSubscription _sub;
+  Uri _uri;
+  String _email;
   // Future<Null> initUniLinks() async {
   //   // ... check initialUri
   //  log("get Link From URL2");
@@ -68,7 +71,25 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       String initialLink = await getInitialLink();
-      print(initialLink ?? "Kosong");
+      // print(initialLink ?? "Kosong");
+      if (initialLink != null) {
+        _uri = Uri.parse(initialLink);
+        print(Uri.parse(initialLink).queryParameters['email']);
+        _email = Uri.parse(initialLink).queryParameters['email'].toString();
+        Future.delayed(Duration(seconds: 1), () {
+          LoginModel.loginEmail(_email).then((value) {
+            // emailInput.text = value.error.toString();
+            if (!value.error) {
+              Navigator.pop(context,jsonEncode({"load":true}));
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home', (Route<dynamic> route) => false,
+                  arguments: {"after_login": true});
+            } else {}
+
+            setState(() {});
+          });
+        });
+      }
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
     } on PlatformException {
@@ -77,7 +98,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-     @override
+  @override
   void initState() {
     // TODO: implement initState
     log("get Link From URL1");
@@ -126,8 +147,8 @@ class _MyAppState extends State<MyApp> {
         '/profile_detail': (context) => ProfileDetailScreen(),
         '/listalamat': (context) => AlamatList(),
         '/inputalamat': (context) => InputAlamat(),
-        '/privacy' : (context) => Privacy(),
-        '/ketentuan' : (context) => Ketentuan()
+        '/privacy': (context) => Privacy(),
+        '/ketentuan': (context) => Ketentuan()
       },
       title: 'Toko Terserah',
       debugShowCheckedModeBanner: false,
@@ -140,7 +161,6 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
 
 class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
