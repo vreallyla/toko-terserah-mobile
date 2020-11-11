@@ -24,9 +24,11 @@ import 'fitness_app/traning/input_alamat.dart';
 import 'fitness_app/traning/privacy.dart';
 import 'fitness_app/traning/ketentuan.dart';
 import 'SplashScreen.dart';
+import 'dart:async';
 
 import 'package:uni_links/uni_links.dart';
 import 'package:flutter/services.dart' show PlatformException;
+import 'dart:developer';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,8 +38,60 @@ void main() async {
   ]).then((_) => runApp(MyApp()));
 }
 
-class MyApp extends StatelessWidget {
-  //  final AnimationController animationController;
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+   
+
+ StreamSubscription _sub;
+
+  // Future<Null> initUniLinks() async {
+  //   // ... check initialUri
+  //  log("get Link From URL2");
+  //   // Attach a listener to the stream
+  //   _sub = getUriLinksStream().listen((Uri uri) {
+  //     // Use the uri and warn the user, if it is not correct
+  //     print(uri);
+  //     print("get Link From URL3");
+  //   }, onError: (err) {
+  //     // Handle exception by warning the user their action did not succeed
+  //     log(err.toString());
+  //   });
+
+  //   // NOTE: Don't forget to call _sub.cancel() in dispose()
+  // }
+
+  Future<Null> initUniLinks() async {
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      String initialLink = await getInitialLink();
+      print(initialLink ?? "Kosong");
+      // Parse the link and warn the user, if it is not correct,
+      // but keep in mind it could be `null`.
+    } on PlatformException {
+      // Handle exception by warning the user their action did not succeed
+      // return?
+    }
+  }
+
+     @override
+  void initState() {
+    // TODO: implement initState
+    log("get Link From URL1");
+    initUniLinks();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _sub.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -86,6 +140,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 
 class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
