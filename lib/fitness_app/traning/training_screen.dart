@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/EventHelper.dart';
+import 'package:best_flutter_ui_templates/fitness_app/membercard/member_card.dart';
 import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
@@ -99,57 +100,63 @@ class _TrainingScreenState extends State<TrainingScreen>
     switch (no) {
       case "barcode":
         {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Dialog(
-                  shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(10.0)), //this right here
-                  child: Container(
-                    height: 200,
-                    color: Colors.black,
-                    child: Padding(
-                      padding: const EdgeInsets.all(0.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(left: 30, bottom: 10),
-                            child: Text(
-                                'Scan Barcode ke Kasir Toko Terserah...',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 18)),
-                          ),
-                          Container(
-                            color: Colors.white,
-                            padding: EdgeInsets.all(5),
-                            height: 100,
-                            child: BarCodeImage(
-                              params: Code39BarCodeParams(
-                                kodeBarcode,
-                                lineWidth:
-                                    2.0, // width for a single black/white bar (default: 2.0)
-                                barHeight:
-                                    90.0, // height for the entire widget (default: 100.0)
-                                withText:
-                                    true, // Render with text label or not (default: false)
-                              ),
-                              onError: (error) {
-                                // Error handler
-                                print('error = $error');
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              });
+        //   showDialog(
+        //       context: context,
+        //       builder: (BuildContext context) {
+        //         return Dialog(
+        //           shape: RoundedRectangleBorder(
+        //               borderRadius:
+        //                   BorderRadius.circular(10.0)), //this right here
+        //           child: Container(
+        //             height: 200,
+        //             color: Colors.black,
+        //             child: Padding(
+        //               padding: const EdgeInsets.all(0.0),
+        //               child: Column(
+        //                 mainAxisAlignment: MainAxisAlignment.center,
+        //                 crossAxisAlignment: CrossAxisAlignment.center,
+        //                 children: [
+        //                   Container(
+        //                     padding: EdgeInsets.only(left: 30, bottom: 10),
+        //                     child: Text(
+        //                         'Scan Barcode ke Kasir Toko Terserah...',
+        //                         style: TextStyle(
+        //                             color: Colors.white,
+        //                             fontWeight: FontWeight.w500,
+        //                             fontSize: 18)),
+        //                   ),
+        //                   Container(
+        //                     color: Colors.white,
+        //                     padding: EdgeInsets.all(5),
+        //                     height: 100,
+        //                     child: BarCodeImage(
+        //                       params: Code39BarCodeParams(
+        //                         kodeBarcode,
+        //                         lineWidth:
+        //                             2.0, // width for a single black/white bar (default: 2.0)
+        //                         barHeight:
+        //                             90.0, // height for the entire widget (default: 100.0)
+        //                         withText:
+        //                             true, // Render with text label or not (default: false)
+        //                       ),
+        //                       onError: (error) {
+        //                         // Error handler
+        //                         print('error = $error');
+        //                       },
+        //                     ),
+        //                   )
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //         );
+        //       });
+        // 
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => MemberCard(
+              token: tokenFixed,
+            ),
+          ));
         }
         break;
 
@@ -501,14 +508,14 @@ class _TrainingScreenState extends State<TrainingScreen>
 
     if (sudahLogin) {
       listViews.add(rowButton(
-        'Lihat Barcode',
+        'Kartu Member',
         FaIcon(
           FontAwesomeIcons.barcode,
           color: Colors.grey,
         ),
         false,
         false,
-        'Gunakan barcode dikasir',
+        'Gunakan kartu dikasir',
         'barcode',
       ));
 
