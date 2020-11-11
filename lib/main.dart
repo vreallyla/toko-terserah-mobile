@@ -25,6 +25,9 @@ import 'fitness_app/traning/privacy.dart';
 import 'fitness_app/traning/ketentuan.dart';
 import 'SplashScreen.dart';
 
+import 'package:uni_links/uni_links.dart';
+import 'package:flutter/services.dart' show PlatformException;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
