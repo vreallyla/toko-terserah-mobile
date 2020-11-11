@@ -45,7 +45,7 @@ class _BottomBarViewState extends State<BottomBarView>
       dataUser = await jsonDecode(dataUser);
 
       countCart = dataUser['count_cart'];
-      log(countCart.toString());
+      // log(countCart.toString());
     }
     // print('test2:'+countCart.toString());
 

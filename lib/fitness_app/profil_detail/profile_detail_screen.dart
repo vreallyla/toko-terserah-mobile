@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as path;
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:async/async.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   @override
@@ -79,7 +80,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         telpInput.text = dataUser['data']['user']['get_bio']['phone'];
         emailInput.text = dataUser['data']['user']['email'];
         usernameInput.text = dataUser['data']['user']['username'];
-        _ava = dataUser['data']['user']['get_bio']['ava'];
+        _ava = dataUser['data']['user']['get_bio']['ava'] ?? 'user-default.png';
         isLoading = false;
       });
     } catch (e) {
@@ -180,7 +181,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
  * 
  */
   Future updatePassword() async {
-
     print("hallo");
     try {
       final response =
@@ -956,10 +956,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
     return WillPopScope(
-        onWillPop: () {
-          Navigator.pop(context, true);
-        },
-          child: new GestureDetector(
+      onWillPop: () {
+        Navigator.pop(context, true);
+      },
+      child: new GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(new FocusNode());
         },
@@ -1063,16 +1063,27 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
                 margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.green[200],
-                      width: 3.0,
+                  border: Border.all(
+                    color: Colors.green[200],
+                    width: 3.0,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: 'https://tokoterserah.com/storage/users/ava/' + _ava ,
+                  placeholder: (context, url) =>
+                      new CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => new Icon(Icons.error),
+                  fit: BoxFit.cover,
+                  imageBuilder: (context, imageProvider) => Container(
+                    width: 80.0,
+                    height: 80.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                          image: imageProvider, fit: BoxFit.cover),
                     ),
-                    shape: BoxShape.circle,
-                    color: Colors.grey),
-                child: Container(
-                  height: 30,
-                  margin: EdgeInsets.only(top: 70, bottom: 20),
-                  alignment: Alignment.center,
+                  ),
                 ),
               ),
               Container(
@@ -1082,13 +1093,6 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 //     top: 120, left: sizeu.width / 2 - 60, bottom: 15),
                 margin: EdgeInsets.only(left: sizeu.width / 2 - 50, top: 40),
                 decoration: BoxDecoration(
-                    image: new DecorationImage(
-                      //Todo render image from API
-                      image: NetworkImage(
-                          'http://101.50.0.89/storage/users/ava/' + _ava ??
-                              'https://via.placeholder.com/300'),
-                      fit: BoxFit.cover,
-                    ),
                     border: Border.all(
                       color: Colors.transparent,
                       width: 3.0,
