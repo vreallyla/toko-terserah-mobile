@@ -994,6 +994,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                         ),
                                       ),
                                     ),
+                                    
                                     Container(
                                       width: 40,
                                       margin:

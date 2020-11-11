@@ -3,6 +3,7 @@
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
 import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
+import 'package:best_flutter_ui_templates/menu/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -210,15 +211,23 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody = WishlistScreen(
+                  // tabBody = WishlistScreen(
                     
-                      animationController: animationController,
-                      funcChangeCartQty: (int qty) {
+                  //     animationController: animationController,
+                  //     funcChangeCartQty: (int qty) {
+                  //       qtyCart = qty;
+                  //       setState(() {});
+                  //     },
+                      
+                  //     );
+                   tabBody =
+                      TrainingScreen(animationController: animationController,
+                           funcChangeCartQty: (int qty) {
                         qtyCart = qty;
                         setState(() {});
                       },
-                      
-                      );
+                  );
+               
                 });
               });
             } else if (index == 3) {
@@ -228,7 +237,19 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                 }
                 setState(() {
                   tabBody =
-                      TrainingScreen(animationController: animationController);
+                      MenuScreen(animationController: animationController, searchAlocation: (String jenis, String search) {
+            setState(() {
+              tabBody = HomeDesignCourse(
+                jenis: jenis,
+                search: search,
+              );
+              tabIconsList.forEach((TabIconData tab) {
+                tab.isSelected = false;
+              });
+
+              tabIconsList[1].isSelected = true;
+            });
+          },);
                 });
               });
             }

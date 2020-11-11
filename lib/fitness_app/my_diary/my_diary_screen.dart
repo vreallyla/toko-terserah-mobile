@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
+import 'package:best_flutter_ui_templates/fitness_app/my_diary/voucher_list_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
@@ -293,21 +294,57 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
           color: Colors.white,
           child: Column(
             children: [
-              TitleView(
-                // otherData:true,
-                funcClick: () {
-                  widget.searchAlocation('semua', '');
+              InkWell(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(
+            builder: (context) => VoucherListScreen(
+            
+            ),
+          ));
                 },
-                titleTxt: 'Jenis Produk',
-                subTxt: 'Lainnya',
-                animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-                    CurvedAnimation(
-                        parent: widget.animationController,
-                        curve: Interval((1 / count) * 2, 1.0,
-                            curve: Curves.fastOutSlowIn))),
-                animationController: widget.animationController,
+                              child: Container(
+                  margin: EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.fromLTRB(15,8,15,8),
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      width:.3,color:Colors.grey.withOpacity(.3)
+                    ),
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0, 1), // changes position of shadow
+                        ),
+                      ]),
+                  child: Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.ticketAlt,color: Colors.green[600],),
+                      Text(' Gunakan Voucher',style: TextStyle(color: Colors.green[600],fontWeight: FontWeight.bold,fontSize: 14),),
+                      Text(' (Tersedia 11 Voucher)',style: TextStyle(color: Colors.grey[500],)),
+                      ],
+                  ),
+                ),
               ),
-              //     MealsListView(
+            
+              // TitleView(
+              //   // otherData:true,
+              //   funcClick: () {
+              //     widget.searchAlocation('semua', '');
+              //   },
+              //   titleTxt: '',
+              //   subTxt: '',
+              //   animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              //       CurvedAnimation(
+              //           parent: widget.animationController,
+              //           curve: Interval((1 / count) * 2, 1.0,
+              //               curve: Curves.fastOutSlowIn))),
+              //   animationController: widget.animationController,
+              // ),
+              // //     MealsListView(
               //   mainScreenAnimation: Tween<double>(begin: 0.0, end: 1.0).animate(
               //       CurvedAnimation(
               //           parent: widget.animationController,

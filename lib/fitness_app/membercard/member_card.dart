@@ -46,11 +46,11 @@ class _MemberCardState extends State<MemberCard>
       appBar: new AppBar(
         backgroundColor: Colors.grey[200],
         brightness: Brightness.light,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-        //   onPressed: () => Navigator.of(context).pop(),
-        // ),
-        leading: Text(''),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        // leading: Text(''),
         title: const Text(
           'Kartu Member',
           style: TextStyle(color: Colors.black),

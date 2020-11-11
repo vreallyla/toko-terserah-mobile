@@ -5,6 +5,7 @@ import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/Constant/EventHelper.dart';
 import 'package:best_flutter_ui_templates/fitness_app/membercard/member_card.dart';
 import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
+import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
 // import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
 import 'package:best_flutter_ui_templates/model/login_model.dart';
 import 'package:best_flutter_ui_templates/model/user_model.dart';
@@ -20,9 +21,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 
 class TrainingScreen extends StatefulWidget {
-  const TrainingScreen({Key key, this.animationController}) : super(key: key);
+  const TrainingScreen({Key key, this.animationController,this.funcChangeCartQty}) : super(key: key);
 
   final AnimationController animationController;
+  final Function(int qty) funcChangeCartQty;
 
   @override
   _TrainingScreenState createState() => _TrainingScreenState();
@@ -31,6 +33,7 @@ class TrainingScreen extends StatefulWidget {
 class _TrainingScreenState extends State<TrainingScreen>
     with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
+  AnimationController animationController;
 
   List<Widget> listViews = <Widget>[];
   bool sudahLogin = false;
@@ -159,6 +162,24 @@ class _TrainingScreenState extends State<TrainingScreen>
           ));
         }
         break;
+      case 'wishlist':
+      {
+        Navigator.push(context, 
+        MaterialPageRoute(
+            builder: (context) => WishlistScreen(
+                    
+                      animationController: animationController,
+                      funcChangeCartQty: (int qty) {
+                       widget.funcChangeCartQty(qty);
+                        setState(() {});
+                      },
+                      
+                      )
+          )
+        
+        );
+      }
+      break;
 
       case 'alamat':
         {
@@ -325,6 +346,11 @@ class _TrainingScreenState extends State<TrainingScreen>
 
     _getToken();
     addAllListData();
+
+
+      animationController = AnimationController(
+          duration: const Duration(milliseconds: 200), vsync: this);
+
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -529,6 +555,18 @@ class _TrainingScreenState extends State<TrainingScreen>
         false,
         '',
         'alamat',
+      ));
+
+      listViews.add(rowButton(
+        'Wishlist',
+        FaIcon(
+          FontAwesomeIcons.heart,
+          color: Colors.grey,
+        ),
+        true,
+        false,
+        '',
+        'wishlist',
       ));
 
       listViews.add(rowButton(

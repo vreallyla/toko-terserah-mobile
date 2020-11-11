@@ -558,6 +558,11 @@ class _WishlistScreenState extends State<WishlistScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            InkWell(
+                              onTap: (){
+                                Navigator.pop(context);
+                              },
+                              child: Icon(Icons.arrow_back_ios)),
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
