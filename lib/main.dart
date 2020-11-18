@@ -74,21 +74,23 @@ class _MyAppState extends State<MyApp> {
       // print(initialLink ?? "Kosong");
       if (initialLink != null) {
         _uri = Uri.parse(initialLink);
-        print(Uri.parse(initialLink).queryParameters['email']);
+        // print(Uri.parse(initialLink).queryParameters['email']);
         _email = Uri.parse(initialLink).queryParameters['email'].toString();
-        Future.delayed(Duration(seconds: 1), () {
-          LoginModel.loginEmail(_email).then((value) {
-            // emailInput.text = value.error.toString();
-            if (!value.error) {
-              Navigator.pop(context,jsonEncode({"load":true}));
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/home', (Route<dynamic> route) => false,
-                  arguments: {"after_login": true});
-            } else {}
+        if (_email != null) {
+          Future.delayed(Duration(seconds: 1), () {
+            LoginModel.loginEmail(_email).then((value) {
+              // emailInput.text = value.error.toString();
+              if (!value.error) {
+                Navigator.pop(context, jsonEncode({"load": true}));
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/home', (Route<dynamic> route) => false,
+                    arguments: {"after_login": true});
+              } else {}
 
-            setState(() {});
+              setState(() {});
+            });
           });
-        });
+        }
       }
       // Parse the link and warn the user, if it is not correct,
       // but keep in mind it could be `null`.
