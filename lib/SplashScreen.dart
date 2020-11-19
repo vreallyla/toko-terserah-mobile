@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fitness_app_home_screen.dart';
-
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -23,7 +21,7 @@ class SplashScreenState extends State<SplashScreen>
 
   void navigationPage() {
     // Navigator.of(context).pushReplacementNamed(PAY_TM);
-    
+
     Navigator.of(context).pushReplacementNamed('/home');
   }
 

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
@@ -9,18 +8,14 @@ import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:best_flutter_ui_templates/design_course/test.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/apply_voucher_form.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/product_detail_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/midtrans/midtrans_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/profil_detail/profile_detail_screen.dart';
-import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
 import 'package:best_flutter_ui_templates/model/alamat_model.dart';
 import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
 import 'package:best_flutter_ui_templates/model/midtrans_model.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'dart:math' as math;
 
 class CheckOut extends StatefulWidget {
   const CheckOut({Key key, this.idProducts}) : super(key: key);
@@ -372,12 +367,12 @@ class _CheckOutState extends State<CheckOut> {
             namaKurir: namaKurir,
           ),
         ));
-   
+
     _cekUniCode();
   }
 
   _cekUniCode() async {
-     setState(() {
+    setState(() {
       canBack = false;
     });
     loadOverlayEvent(true);

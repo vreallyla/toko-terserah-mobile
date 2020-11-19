@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
-//import 'dart:developer';
+
 import 'dart:math' as math;
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
@@ -40,7 +39,7 @@ class _BottomBarViewState extends State<BottomBarView>
   _getCountCart() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dataUser = prefs.getString('dataUser');
-  
+
     if (dataUser != null) {
       dataUser = await jsonDecode(dataUser);
 
@@ -51,7 +50,6 @@ class _BottomBarViewState extends State<BottomBarView>
 
     setState(() {});
   }
-  
 
   _checkJmlhCart() async {
     // Navigator.push returns a Future that completes after calling

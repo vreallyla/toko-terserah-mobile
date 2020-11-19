@@ -1,8 +1,5 @@
-
-
 import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
 import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
-import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
 import 'package:best_flutter_ui_templates/menu/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -31,11 +28,11 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
   );
 
   _getUser() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  hello=  prefs.getString('dataUser');
-  //  prefs.getString('token');
-}
+    hello = prefs.getString('dataUser');
+    //  prefs.getString('token');
+  }
 
   @override
   void initState() {
@@ -52,26 +49,24 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
       animationController = AnimationController(
           duration: const Duration(milliseconds: 200), vsync: this);
 
-    if (arguments != null
-        ? (arguments['after_login'] != null ||
-            arguments['after_logout'] != null)
-        : false) {
+      if (arguments != null
+          ? (arguments['after_login'] != null ||
+              arguments['after_logout'] != null)
+          : false) {
         tabIconsList[3].isSelected = true;
 // _getUser();
-       
+
 //        new Future.delayed(Duration(seconds: 0), () {
 //           print(hello);
 //           print('as');
 //        });
-        
-       
-      
+
         tabBody = TrainingScreen(animationController: animationController);
       } else if (arguments != null
           ? arguments['search_product'] != null
           : false) {
         arguments['search_product'] = null;
-        qtyCart=arguments['qtyCart'];
+        qtyCart = arguments['qtyCart'];
         tabIconsList[1].isSelected = true;
         tabBody = HomeDesignCourse(
           search: arguments['keyword_product'],
@@ -95,7 +90,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
           },
           funcChangeCartQty: (int qty) {
             qtyCart = qty;
-            
+
             setState(() {});
           },
         );
@@ -154,9 +149,9 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
           child: SizedBox(),
         ),
         BottomBarView(
-          changeParentCart:(int jmlh){
+          changeParentCart: (int jmlh) {
             setState(() {
-              qtyCart=jmlh;
+              qtyCart = jmlh;
             });
           },
           addQtyCart: qtyCart,
@@ -186,7 +181,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                     },
                     funcChangeCartQty: (int qty) {
                       qtyCart = qty;
-                    
+
                       setState(() {});
                     },
                   );
@@ -212,22 +207,21 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                 }
                 setState(() {
                   // tabBody = WishlistScreen(
-                    
+
                   //     animationController: animationController,
                   //     funcChangeCartQty: (int qty) {
                   //       qtyCart = qty;
                   //       setState(() {});
                   //     },
-                      
+
                   //     );
-                   tabBody =
-                      TrainingScreen(animationController: animationController,
-                           funcChangeCartQty: (int qty) {
-                        qtyCart = qty;
-                        setState(() {});
-                      },
+                  tabBody = TrainingScreen(
+                    animationController: animationController,
+                    funcChangeCartQty: (int qty) {
+                      qtyCart = qty;
+                      setState(() {});
+                    },
                   );
-               
                 });
               });
             } else if (index == 3) {
@@ -236,20 +230,22 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                   return;
                 }
                 setState(() {
-                  tabBody =
-                      MenuScreen(animationController: animationController, searchAlocation: (String jenis, String search) {
-            setState(() {
-              tabBody = HomeDesignCourse(
-                jenis: jenis,
-                search: search,
-              );
-              tabIconsList.forEach((TabIconData tab) {
-                tab.isSelected = false;
-              });
+                  tabBody = MenuScreen(
+                    animationController: animationController,
+                    searchAlocation: (String jenis, String search) {
+                      setState(() {
+                        tabBody = HomeDesignCourse(
+                          jenis: jenis,
+                          search: search,
+                        );
+                        tabIconsList.forEach((TabIconData tab) {
+                          tab.isSelected = false;
+                        });
 
-              tabIconsList[1].isSelected = true;
-            });
-          },);
+                        tabIconsList[1].isSelected = true;
+                      });
+                    },
+                  );
                 });
               });
             }

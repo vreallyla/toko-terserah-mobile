@@ -1,29 +1,20 @@
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/body_measurement.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/glass_view.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/mediterranesn_diet_view.dart';
 import 'dart:convert';
-// import 'dart:developer';
 import 'dart:io';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
-import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/voucher_list_screen.dart';
 import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
 import 'package:best_flutter_ui_templates/fitness_app/my_diary/item_square_view.dart';
 import 'package:best_flutter_ui_templates/model/product_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-// import 'package:best_flutter_ui_templates/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/running_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-//import 'package:floating_search_bar/floating_search_bar.dart';
 
 class MyDiaryScreen extends StatefulWidget {
   const MyDiaryScreen({
@@ -295,22 +286,21 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
           child: Column(
             children: [
               InkWell(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(
-            builder: (context) => VoucherListScreen(
-            
-            ),
-          ));
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => VoucherListScreen(),
+                      ));
                 },
-                              child: Container(
+                child: Container(
                   margin: EdgeInsets.only(bottom: 8),
-                  padding: EdgeInsets.fromLTRB(15,8,15,8),
+                  padding: EdgeInsets.fromLTRB(15, 8, 15, 8),
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      width:.3,color:Colors.grey.withOpacity(.3)
-                    ),
+                      color: Colors.white,
+                      border: Border.all(
+                          width: .3, color: Colors.grey.withOpacity(.3)),
                       borderRadius: BorderRadius.circular(5),
                       boxShadow: [
                         BoxShadow(
@@ -322,14 +312,26 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                       ]),
                   child: Row(
                     children: [
-                      FaIcon(FontAwesomeIcons.ticketAlt,color: Colors.green[600],),
-                      Text(' Gunakan Voucher',style: TextStyle(color: Colors.green[600],fontWeight: FontWeight.bold,fontSize: 14),),
-                      Text(' (Tersedia 11 Voucher)',style: TextStyle(color: Colors.grey[500],)),
-                      ],
+                      FaIcon(
+                        FontAwesomeIcons.ticketAlt,
+                        color: Colors.green[600],
+                      ),
+                      Text(
+                        ' Gunakan Voucher',
+                        style: TextStyle(
+                            color: Colors.green[600],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14),
+                      ),
+                      Text(' (Tersedia 11 Voucher)',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                          )),
+                    ],
                   ),
                 ),
               ),
-            
+
               // TitleView(
               //   // otherData:true,
               //   funcClick: () {

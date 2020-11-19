@@ -132,41 +132,18 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
 
   // Fetching data from API to Model Products
 
-  Future<List<Products>> testData() async {
-    try {
-      http.Response item = await http.post(globalBaseUrl + 'api/search',
-          headers: {
-            "Accept": "application/json",
-            'Content-type': 'application/json'
-          });
-
-      if (item.statusCode == 200) {
-        Map<String, dynamic> products = jsonDecode(item.body);
-        print(products['data']['produk']);
-        List produk = products['data']['produk'];
-        // for every element of arr map to _fromJson
-        // and convert the array to list
-        return produk.map((e) => _fromJson(e)).toList();
-      }
-
-      return List<Products>();
-    } catch (e) {
-      log("error testData : $e");
-    }
-  }
-
   // /**
   //  * Parsing value from API to model Products
   //  *
   //  */
-  Products _fromJson(Map<String, dynamic> item) {
-    log('id ke-${item['id']}');
-    return new Products(
-      id: item['id'],
-      name: item['nama'],
-      price: item['harga'],
-    );
-  }
+  // Products _fromJson(Map<String, dynamic> item) {
+  //   log('id ke-${item['id']}');
+  //   return new Products(
+  //     id: item['id'],
+  //     name: item['nama'],
+  //     price: item['harga'],
+  //   );
+  // }
 
   ListView listcriteria;
 
@@ -994,7 +971,6 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                         ),
                                       ),
                                     ),
-                                    
                                     Container(
                                       width: 40,
                                       margin:
@@ -1622,10 +1598,8 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
     );
   }
 
-/**
- * TODO:: Show List grid produk toko
- * 
- */
+  //* Show List grid produk toko
+
   Widget getPopularCourseUI() {
     return Container(
       color: Colors.grey.withOpacity(.2),
@@ -1732,16 +1706,16 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                             top: 5, left: 1, right: 5, bottom: 5),
                         child: Container(
                           decoration: BoxDecoration(
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: Colors.grey.withOpacity(0.5),
-                            //     spreadRadius: 1,
-                            //     blurRadius: 7,
-                            //     offset:
-                            //         Offset(0, 3), // changes position of shadow
-                            //   ),
-                            // ],
-                          ),
+                              // boxShadow: [
+                              //   BoxShadow(
+                              //     color: Colors.grey.withOpacity(0.5),
+                              //     spreadRadius: 1,
+                              //     blurRadius: 7,
+                              //     offset:
+                              //         Offset(0, 3), // changes position of shadow
+                              //   ),
+                              // ],
+                              ),
                           child: InkWell(
                             onTap: () {
                               // Navigate to the second screen using a named route.

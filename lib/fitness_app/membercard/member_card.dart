@@ -1,27 +1,17 @@
-import 'dart:developer';
-
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class MemberCard extends StatefulWidget {
   const MemberCard({
     Key key,
     this.token,
-   
   }) : super(key: key);
 
   final String token;
-  
+
   @override
   _MemberCardState createState() => _MemberCardState();
-
-  
 }
 
 class _MemberCardState extends State<MemberCard>
@@ -29,13 +19,9 @@ class _MemberCardState extends State<MemberCard>
   String tokenFixed = '';
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
-
   @override
   void initState() {
-
-    flutterWebviewPlugin.onUrlChanged.listen((String url) {
-    
-    });
+    flutterWebviewPlugin.onUrlChanged.listen((String url) {});
     super.initState();
   }
 

@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
+// import 'dart:developer';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+
 import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
 import 'package:best_flutter_ui_templates/fitness_app/transaksi_detail/transaksi_detail_screen.dart';
 import 'package:best_flutter_ui_templates/model/bought_model.dart';
@@ -109,7 +109,7 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
   }
 
   @override
-  Widget initState() {
+  void initState() {
     _getDataApi(widget.index);
     // globals.tabController = _controller;
     super.initState();
@@ -149,8 +149,9 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
               if (!widget.backCart) {
                 Navigator.pop(context);
               } else {
-               Navigator.of(context)
-    .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false,arguments: {"after_login":true});
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/home', (Route<dynamic> route) => false,
+                    arguments: {"after_login": true});
               }
             },
           ),
@@ -196,9 +197,9 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
             if (!widget.backCart) {
               Navigator.pop(context);
             } else {
-               Navigator.of(context)
-    .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false,arguments: {"after_login":true});
-                  
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  '/home', (Route<dynamic> route) => false,
+                  arguments: {"after_login": true});
             }
           },
           child: TabBarView(
@@ -265,7 +266,7 @@ class EveryTap extends StatefulWidget {
 class _EveryTapState extends State<EveryTap> {
   @override
   void initState() {
-    // TODO: implement initState
+    //  implement initState
     Future.delayed(Duration(seconds: 1), () {
       print(widget.dataHistory.length);
       print('Index Tab (every): ' + widget.index.toString());

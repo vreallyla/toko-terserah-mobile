@@ -1,8 +1,8 @@
 import 'package:best_flutter_ui_templates/fitness_app/produk_detail/CustomShowDialog.dart';
 import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
-import 'package:best_flutter_ui_templates/model/register_model.dart';
+
 import 'package:flutter/material.dart';
-import 'package:best_flutter_ui_templates/model/user_model.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -14,7 +14,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:best_flutter_ui_templates/fitness_app/check_out/checkout.dart';
 import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
-import 'package:best_flutter_ui_templates/design_course/test.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);
@@ -103,7 +102,7 @@ class _CartListState extends State<CartList> {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         await WishlistModel.switchWish(id).then((value) {
-          Map<String, dynamic> res = json.decode(value.data);
+          // Map<String, dynamic> res = json.decode(value.data);
           setState(() {
             canBack = true;
           });
@@ -126,10 +125,8 @@ class _CartListState extends State<CartList> {
     }
   }
 
-  /**
-   * increase decrease qty item
-   * 
-   */
+  // increase decrease qty item
+
   _changeQty(int id, int qty) async {
     setState(() {
       canBack = false;
@@ -164,25 +161,23 @@ class _CartListState extends State<CartList> {
   String userData;
 
   _setUser(String dataa) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  await prefs.setString('dataUser', dataa);
-}
+    await prefs.setString('dataUser', dataa);
+  }
 
-_getUser() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+  _getUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  userData = prefs.getString('dataUser');
-  //  prefs.getString('token');
-}
+    userData = prefs.getString('dataUser');
+    //  prefs.getString('token');
+  }
 
-  /**
-   * Delete Selected Cart Item
-   * 
-   */
+  // Delete Selected Cart Item
+
   _deleteCart(id) async {
     await _getUser();
-     Map<String, dynamic> dataaUser = json.decode(userData);
+    Map<String, dynamic> dataaUser = json.decode(userData);
     setState(() {
       canBack = false;
     });
@@ -203,8 +198,9 @@ _getUser() async {
         });
         _getData();
 
-        dataaUser['count_cart'] =int.parse(dataaUser['count_cart'].toString())-1;
-          await _setUser(json.encode(dataaUser));
+        dataaUser['count_cart'] =
+            int.parse(dataaUser['count_cart'].toString()) - 1;
+        await _setUser(json.encode(dataaUser));
 
         showSnackBar(_response['data']['message'], Colors.green,
             Icon(Icons.check_circle_outline));
@@ -223,29 +219,25 @@ _getUser() async {
     }
   }
 
-  /**
-   * Set Check box active or not by cart_id
-   * 
-   */
-  void _onCartSelected(bool selected, cart_id, total) {
+  //Set Check box active or not by cartId
+
+  void _onCartSelected(bool selected, cartId, total) {
     if (selected == true) {
       setState(() {
-        _selecteCarts.add(cart_id);
+        _selecteCarts.add(cartId);
         _total = _total + int.parse(total);
       });
     } else {
       setState(() {
-        _selecteCarts.remove(cart_id);
+        _selecteCarts.remove(cartId);
         _total = _total - int.parse(total);
       });
     }
     log(_selecteCarts.toString());
   }
 
-/**
- * Select All Cart
- * 
- */
+//Select All Cart
+
   void _checkAllCart() {
     isCheckAll = !isCheckAll;
     if (isCheckAll == true) {
@@ -271,10 +263,8 @@ _getUser() async {
     }
   }
 
-  /**
-   * Confirm delete Item Cart
-   * 
-   */
+  // Confirm delete Item Cart
+
   confirmHapus(context, id) {
     showDialog(
       context: context,
@@ -307,10 +297,8 @@ _getUser() async {
     );
   }
 
-  /**
-   * Cutom Alert response
-   * 
-   */
+  // Cutom Alert response
+
   showSnackBar(String value, Color color, icons) {
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
@@ -329,10 +317,8 @@ _getUser() async {
     ));
   }
 
-/**
- *  send parameter to checkout 
- * 
- */
+// send parameter to checkout
+
   _checkCart() {
     if (_selecteCarts.length < 1) {
       showSnackBar("Item Keranjang belum dipilih", Colors.red,
@@ -352,10 +338,8 @@ _getUser() async {
     }
   }
 
-  /**
-   * Showing Modal sunting item
-   * 
-   */
+  //Showing Modal sunting item
+
   _suntingCart(int i, BuildContext context) {
     final sizeu = MediaQuery.of(context).size;
     double qty = double.parse(_listCart[i]['qty']);
@@ -363,7 +347,7 @@ _getUser() async {
         double.parse(_listCart[i]['get_produk']['min_qty'] ?? '1');
     double maxOrder = double.parse(_listCart[i]['get_produk']['stock'] ?? '0') +
         double.parse(_listCart[i]['qty'] ?? '0');
-    int cart_id = _listCart[i]['id'];
+    int cartId = _listCart[i]['id'];
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -509,7 +493,7 @@ _getUser() async {
                   onPressed: () {
                     // print('Hello');
                     Navigator.of(context).pop();
-                    _changeQty(cart_id, qty.round());
+                    _changeQty(cartId, qty.round());
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -768,7 +752,7 @@ _getUser() async {
 
   Widget cardKerangjang(context, i) {
     final sizeu = MediaQuery.of(context).size;
-    int qty = int.parse(_listCart[i]['qty']);
+    // int qty = int.parse(_listCart[i]['qty']);
 
     return Container(
       height: sizeu.width / 2 - sizeu.width / 15,
@@ -988,7 +972,7 @@ _getUser() async {
   Widget footer(context) {
     final size = MediaQuery.of(context).size;
 
-    bool checkAll = false;
+    // bool checkAll = false;
 
     void toggleCheckbox(bool value) {}
 

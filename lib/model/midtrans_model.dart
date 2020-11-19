@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
 import 'package:http/http.dart' as http;
@@ -30,20 +29,19 @@ class MidtransModel {
     );
   }
 
-  static Future<MidtransModel> getSnap(Map<String,dynamic> obj) async {
+  static Future<MidtransModel> getSnap(Map<String, dynamic> obj) async {
     await _getToken();
 
-    String paramss='';
+    String paramss = '';
 
-    paramss=paramss+'?pengiriman_id='+obj['pengiriman_id'];
-    paramss=paramss+'&penagihan_id='+obj['penagihan_id'];
-    paramss=paramss+'&ongkir='+obj['ongkir'];
-    paramss=paramss+'&discount_price='+obj['discount_price'];
-    paramss=paramss+'&cart_ids='+obj['cart_ids'];
-    paramss=paramss+'&total='+obj['total'];
-    paramss=paramss+'&weight='+obj['weight'];
+    paramss = paramss + '?pengiriman_id=' + obj['pengiriman_id'];
+    paramss = paramss + '&penagihan_id=' + obj['penagihan_id'];
+    paramss = paramss + '&ongkir=' + obj['ongkir'];
+    paramss = paramss + '&discount_price=' + obj['discount_price'];
+    paramss = paramss + '&cart_ids=' + obj['cart_ids'];
+    paramss = paramss + '&total=' + obj['total'];
+    paramss = paramss + '&weight=' + obj['weight'];
 
-    
     paramss = paramss + '&note=' + obj['note'];
     paramss = paramss + '&durasi_pengiriman=' + obj['durasi_pengiriman'];
     paramss = paramss + '&promo_code=' + obj['promo_code'];
@@ -51,24 +49,18 @@ class MidtransModel {
     paramss = paramss + '&kode_kurir=' + obj['kode_kurir'];
     paramss = paramss + '&layanan_kurir=' + obj['layanan_kurir'];
     paramss = paramss + '&nama_kurir=' + obj['nama_kurir'];
-    String apiURL = globalBaseUrl  + "api/checkout/midtrans/snap"+paramss;
+    String apiURL = globalBaseUrl + "api/checkout/midtrans/snap" + paramss;
     print(apiURL);
-   
 
     try {
-      var apiResult = await http.get(apiURL, 
-      
-      headers: {
+      var apiResult = await http.get(apiURL, headers: {
         "Accept": "application/json",
         "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
       });
 
-
       print('snap midtrans status code : ' + apiResult.statusCode.toString());
 
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
-
-
         if (!(apiResult.body is String)) {
           // token untuk kirim request habis
           return MidtransModel(
@@ -81,7 +73,7 @@ class MidtransModel {
 
           return MidtransModel(
             error: false,
-            data: jsonDecode(resData)['data'] ,
+            data: jsonDecode(resData)['data'],
           );
         }
       } else {
@@ -104,25 +96,19 @@ class MidtransModel {
   static Future<MidtransModel> cekUniCode(String unicode) async {
     await _getToken();
 
-  
- 
-    String apiURL = globalBaseUrl  + "api/checkout/midtrans/check/"+unicode;
+    String apiURL = globalBaseUrl + "api/checkout/midtrans/check/" + unicode;
     print(apiURL);
 
     try {
-      var apiResult = await http.get(apiURL, 
-      
-      headers: {
+      var apiResult = await http.get(apiURL, headers: {
         "Accept": "application/json",
         "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
       });
 
-
-      print('cek unicode midtrans status code : ' + apiResult.statusCode.toString());
+      print('cek unicode midtrans status code : ' +
+          apiResult.statusCode.toString());
 
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
-
-
         if (!(apiResult.body is String)) {
           // token untuk kirim request habis
           return MidtransModel(
@@ -135,7 +121,7 @@ class MidtransModel {
 
           return MidtransModel(
             error: false,
-            data: jsonDecode(resData)['data'] ,
+            data: jsonDecode(resData)['data'],
           );
         }
       } else {
@@ -154,6 +140,4 @@ class MidtransModel {
       );
     }
   }
-
-
 }

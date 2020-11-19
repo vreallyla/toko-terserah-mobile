@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 String tokenFixed = '';
 String userData = '';
 
-_setHome(String dataa) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+// _setHome(String dataa) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  await prefs.setString('dataHome', dataa);
-}
+//   await prefs.setString('dataHome', dataa);
+// }
 
 _setUser(String dataa) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -82,7 +82,7 @@ class KeranjangModel {
 
         // print(jsonObject['status']);
 
-        if (jsonObject['status'] != null|| jsonObject['error']==true) {
+        if (jsonObject['status'] != null || jsonObject['error'] == true) {
           // token untuk kirim request habis
           return KeranjangModel(
             error: true,

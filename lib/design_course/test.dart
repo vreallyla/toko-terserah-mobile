@@ -5,9 +5,7 @@ import 'package:best_flutter_ui_templates/fitness_app/bought_proccess/bought_pro
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class TestWebView extends StatefulWidget {
   const TestWebView({
@@ -114,9 +112,9 @@ class _TestWebViewState extends State<TestWebView>
     //  prefs.getString('token');
   }
 
-  _toProsesDashboard()  {
+  _toProsesDashboard() {
     flutterWebviewPlugin.close();
-     Navigator.pushReplacement(
+    Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => BoughtProccessScreen(
