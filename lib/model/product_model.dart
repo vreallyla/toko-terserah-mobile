@@ -94,6 +94,53 @@ class ProductModel {
     }
   }
 
+  static Future<ProductModel> getVoucher(String q) async {
+    await _getToken();
+
+    String apiURL = globalBaseUrl + globalPathProduct + 'voucher_list?q=' + q;
+
+    print(apiURL);
+
+    try {
+      var apiResult = await http.get(apiURL, headers: {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')
+      });
+
+      print('data voucher status code : ' + apiResult.statusCode.toString());
+
+      // print(json.decode(apiResult.body));
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        var jsonObject = json.decode(apiResult.body);
+
+        print('data voucher success');
+
+        // print(jsonObject['status']);
+
+        Map<String, dynamic> resData = json.decode(apiResult.body)['data'];
+
+        return ProductModel(
+          error: jsonObject['error'],
+          data: resData,
+        );
+      } else {
+        // other failed
+        return ProductModel(
+          error: true,
+          data: jsonEncode({"message": msgFail['MSG_WRONG']}),
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e.toString());
+      return ProductModel(
+        error: true,
+        data: jsonEncode({"message": msgFail['MSG_SYSTEM']}),
+      );
+    }
+  }
+
   static Future<ProductModel> getProduct(String id) async {
     await _getToken();
 
@@ -153,7 +200,7 @@ class ProductModel {
     }
   }
 
-  static Future<ProductModel> addToCart(String id,int qty) async {
+  static Future<ProductModel> addToCart(String id, int qty) async {
     await _getToken();
 
     String apiURL = globalBaseUrl + globalPathCart + 'add_cart';
@@ -162,8 +209,8 @@ class ProductModel {
 
     try {
       var apiResult = await http.post(apiURL, body: {
-        "id":id,
-        "qty":qty
+        "id": id,
+        "qty": qty
       }, headers: {
         "Accept": "application/json",
         "Authorization": "Bearer " + (tokenFixed != null ? tokenFixed : '')

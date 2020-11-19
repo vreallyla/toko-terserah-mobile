@@ -46,6 +46,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   List dataTerlaris = [];
   bool isConnect = true;
   int _current = 0;
+  int voucherCount = 0;
 
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
@@ -64,6 +65,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     dataProductBaru = dataRes['newest'];
     dataUnggulan = dataRes['popular'];
     dataTerlaris = dataRes['top_rated'];
+    voucherCount = dataRes['voucher_count'];
 
     addAllListData(context);
     // print(dataHome);
@@ -323,7 +325,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                             fontWeight: FontWeight.bold,
                             fontSize: 14),
                       ),
-                      Text(' (Tersedia 11 Voucher)',
+                      Text(
+                          voucherCount == 0
+                              ? ' (Belum tersedia)'
+                              : ' (Tersedia ${voucherCount.toString()} Voucher)',
                           style: TextStyle(
                             color: Colors.grey[500],
                           )),
