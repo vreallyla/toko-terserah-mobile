@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/detail_card_view.dart';
+import 'package:tokoterserah/Controllers/harga_controller.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/detail_card_view.dart';
 
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/qna_product_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/review_product_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/titlenprice_product_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
-import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
-import 'package:best_flutter_ui_templates/model/product_model.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/qna_product_view.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/review_product_view.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/titlenprice_product_view.dart';
+import 'package:tokoterserah/fitness_app/register/register_screen_i.dart';
+import 'package:tokoterserah/model/keranjang_model.dart';
+import 'package:tokoterserah/model/product_model.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,7 +19,7 @@ import 'package:http/http.dart' as http;
 import 'CustomShowDialog.dart';
 import 'carousel_product_view.dart';
 import 'cart_card_view.dart';
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
 
 class ProductDetail2 extends StatefulWidget {
   const ProductDetail2({Key key, this.productId = ''}) : super(key: key);

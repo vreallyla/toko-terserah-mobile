@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'package:tokoterserah/Constant/MathModify.dart';
 
 class PertanyaanDetail extends StatefulWidget {
   final List<dynamic> dataQna;

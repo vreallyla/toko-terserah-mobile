@@ -1,5 +1,5 @@
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/CustomShowDialog.dart';
-import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/CustomShowDialog.dart';
+import 'package:tokoterserah/model/keranjang_model.dart';
 
 import 'package:flutter/material.dart';
 
@@ -7,13 +7,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
-import 'package:best_flutter_ui_templates/fitness_app/check_out/checkout.dart';
-import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
+import 'package:tokoterserah/fitness_app/check_out/checkout.dart';
+import 'package:tokoterserah/model/wishlist_model.dart';
 
 class CartList extends StatefulWidget {
   const CartList({Key key, this.animationController}) : super(key: key);

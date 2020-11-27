@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:best_flutter_ui_templates/Constant/expandeable_custom.dart';
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/expandeable_custom.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Ketentuan extends StatefulWidget {

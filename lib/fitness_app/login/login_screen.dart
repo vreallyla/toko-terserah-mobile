@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tokoterserah/fitness_app/login/auth_login.dart';
 import '../register/register_screen_i.dart';
 import './form_login_view.dart';
 // import 'package:flutter_facebook_login/flutter_facebook_login.dart';
@@ -162,8 +163,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ListView(
                   children: <Widget>[
                     FormLoginView(),
-                    // DividerText(),
-                    // OtherMethodButton(),
+                    DividerText(),
+                    OtherMethodButton(),
                   ],
                 ),
               ),
@@ -214,7 +215,13 @@ class OtherMethodButton extends StatelessWidget {
               width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                   Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AuthLogin(),
+                      ));
+                },
                 color: Color(0xFFF74933),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

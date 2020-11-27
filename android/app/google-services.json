@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "852553552962",
+    "firebase_url": "https://tokoterserah-mobile.firebaseio.com",
+    "project_id": "tokoterserah-mobile",
+    "storage_bucket": "tokoterserah-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852553552962:android:164b709989d698a8eac9db",
+        "android_client_info": {
+          "package_name": "com.app.tokoterserah"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "852553552962-aorva71l6lac96rrsa41s6patmcfij97.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.tokoterserah",
+            "certificate_hash": "99bcf4f9997bc3544196b88f50a723d8fda3013e"
+          }
+        },
+        {
+          "client_id": "852553552962-mcbgi21rgi7nrbueld9ghlv6f106jumq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY0Ka4yh3aAyiQTENsbWKTWDdvSSzIC2A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "852553552962-mcbgi21rgi7nrbueld9ghlv6f106jumq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

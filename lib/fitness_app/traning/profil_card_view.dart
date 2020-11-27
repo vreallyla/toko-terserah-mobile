@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:core';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
-import 'package:best_flutter_ui_templates/fitness_app/bought_proccess/bought_proccess_screen.dart';
-import 'package:best_flutter_ui_templates/fitness_app/models/meals_list_data.dart';
-//import 'package:best_flutter_ui_templates/main.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/MathModify.dart';
+import 'package:tokoterserah/fitness_app/bought_proccess/bought_proccess_screen.dart';
+import 'package:tokoterserah/fitness_app/models/meals_list_data.dart';
+//import 'package:tokoterserah/main.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

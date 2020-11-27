@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/bought_proccess/bought_proccess_screen.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 

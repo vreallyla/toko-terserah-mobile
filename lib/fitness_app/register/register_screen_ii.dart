@@ -1,9 +1,9 @@
-// import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
+// import 'package:tokoterserah/fitness_app/traning/training_screen.dart';
 import 'dart:convert';
 
-import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
-import 'package:best_flutter_ui_templates/model/register_model.dart';
-import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:tokoterserah/event/animation/spinner.dart';
+import 'package:tokoterserah/model/register_model.dart';
+import 'package:tokoterserah/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';

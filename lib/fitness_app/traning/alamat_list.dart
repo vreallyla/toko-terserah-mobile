@@ -1,15 +1,15 @@
 //import 'dart:ffi';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:expandable/expandable.dart';
 import 'package:http/http.dart';
 import '../produk_detail/CustomShowDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:best_flutter_ui_templates/model/user_model.dart' as user_model;
-//import 'package:best_flutter_ui_templates/model/alamat_model.dart';
-//import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/model/user_model.dart' as user_model;
+//import 'package:tokoterserah/model/alamat_model.dart';
+//import 'package:tokoterserah/Constant/Constant.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:async';

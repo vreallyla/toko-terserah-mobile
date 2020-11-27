@@ -1,5 +1,5 @@
-import 'package:best_flutter_ui_templates/event/animation/spinner.dart';
-import 'package:best_flutter_ui_templates/model/login_model.dart';
+import 'package:tokoterserah/event/animation/spinner.dart';
+import 'package:tokoterserah/model/login_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

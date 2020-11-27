@@ -1,13 +1,13 @@
-import 'package:best_flutter_ui_templates/fitness_app/models/tabIcon_data.dart';
-import 'package:best_flutter_ui_templates/fitness_app/traning/training_screen.dart';
-import 'package:best_flutter_ui_templates/menu/menu_screen.dart';
+import 'package:tokoterserah/fitness_app/models/tabIcon_data.dart';
+import 'package:tokoterserah/fitness_app/traning/training_screen.dart';
+import 'package:tokoterserah/menu/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'fintness_app_theme.dart';
 import 'my_diary/my_diary_screen.dart';
-import 'package:best_flutter_ui_templates/design_course/home_design_course.dart';
+import 'package:tokoterserah/design_course/home_design_course.dart';
 
 class FitnessAppHomeScreen extends StatefulWidget {
   @override

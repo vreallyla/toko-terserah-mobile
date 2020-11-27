@@ -1,4 +1,4 @@
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail2.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/product_detail2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';

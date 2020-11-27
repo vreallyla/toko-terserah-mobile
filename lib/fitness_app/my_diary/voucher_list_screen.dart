@@ -1,7 +1,8 @@
 import 'dart:io';
 
-import 'package:best_flutter_ui_templates/model/product_model.dart';
-import 'package:clipboard_manager/clipboard_manager.dart';
+import 'package:clipboard/clipboard.dart';
+import 'package:tokoterserah/model/product_model.dart';
+// import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
@@ -433,11 +434,14 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                         child: RaisedButton(
                           color: Colors.green,
                           onPressed: () {
-                            ClipboardManager.copyToClipBoard(kode)
-                                .then((result) {
-                              showSnackBar('Berhasil disalin!', Colors.green,
-                                  Icon(Icons.content_copy));
-                            });
+                            // ClipboardManager.copyToClipBoard(kode)
+                            //     .then((result) {
+                            //   showSnackBar('Berhasil disalin!', Colors.green,
+                            //       Icon(Icons.content_copy));
+                            // });
+                            FlutterClipboard.copy(kode).then((value) =>
+                                showSnackBar('Berhasil disalin!', Colors.green,
+                                    Icon(Icons.content_copy)));
                           },
                           child: Text(
                             'Salin',

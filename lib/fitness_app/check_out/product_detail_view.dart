@@ -1,5 +1,5 @@
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
 
 class CheckOutProductDetailView extends StatefulWidget {

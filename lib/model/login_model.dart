@@ -1,8 +1,8 @@
 import 'dart:convert';
 //import 'dart:developer';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/model/user_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

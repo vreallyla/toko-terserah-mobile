@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
 
-import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
-import 'package:best_flutter_ui_templates/fitness_app/transaksi_detail/transaksi_detail_screen.dart';
-import 'package:best_flutter_ui_templates/model/bought_model.dart';
+import 'package:tokoterserah/Controllers/harga_controller.dart';
+import 'package:tokoterserah/fitness_app/transaksi_detail/transaksi_detail_screen.dart';
+import 'package:tokoterserah/model/bought_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

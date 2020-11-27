@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:best_flutter_ui_templates/app_theme.dart';
-import 'package:best_flutter_ui_templates/fitness_app/produk_detail/product_detail.dart';
+import 'package:tokoterserah/app_theme.dart';
+import 'package:tokoterserah/fitness_app/produk_detail/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'fitness_app/fitness_app_home_screen.dart';

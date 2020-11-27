@@ -1,4 +1,4 @@
-name: best_flutter_ui_templates
+name: tokoterserah
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -53,10 +53,13 @@ dependencies:
   url_launcher: ^5.7.5
   flutter_webview_plugin: ^0.3.11
   advance_pdf_viewer: ^1.2.0
-  flutter_rating_bar: ^3.0.1+1
+  # flutter_rating_bar: ^3.0.1+1 ga iso
   flutter_staggered_grid_view: ^0.3.2
   uni_links: ^0.4.0
-  clipboard_manager: ^0.0.1
+  #clipboard_manager: ^0.0.1 ga iso
+  google_sign_in: ^4.5.6
+  clipboard: ^0.1.2+8
+
   
   # mid_flutter: ^0.0.2
   

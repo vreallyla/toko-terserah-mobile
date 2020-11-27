@@ -1,11 +1,11 @@
 //import 'dart:ffi';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+import 'package:tokoterserah/fitness_app/fintness_app_theme.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:best_flutter_ui_templates/model/alamat_model.dart';
-//import 'package:best_flutter_ui_templates/Constant/Constant.dart';
+//import 'package:tokoterserah/model/alamat_model.dart';
+//import 'package:tokoterserah/Constant/Constant.dart';
 import 'dart:convert';
 import 'dart:core';
 import 'package:http/http.dart' as http;

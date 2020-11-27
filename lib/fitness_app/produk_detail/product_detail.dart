@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
+// import 'package:tokoterserah/fitness_app/fintness_app_theme.dart';
 import 'CustomShowDialog.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 // import 'package:flutter';

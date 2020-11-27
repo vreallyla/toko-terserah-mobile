@@ -1,9 +1,9 @@
-import 'package:best_flutter_ui_templates/design_course/design_course_app_theme.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
+import 'package:tokoterserah/design_course/design_course_app_theme.dart';
+import 'package:tokoterserah/fitness_app/fintness_app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:smooth_star_rating/smooth_star_rating.dart';
-import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'package:tokoterserah/Constant/MathModify.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class UlasanDetail extends StatefulWidget {

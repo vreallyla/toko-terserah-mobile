@@ -1,6 +1,6 @@
-import 'package:best_flutter_ui_templates/Controllers/harga_controller.dart';
+import 'package:tokoterserah/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:best_flutter_ui_templates/Constant/MathModify.dart';
+import 'package:tokoterserah/Constant/MathModify.dart';
 import 'ulasan_detail.dart' as ulasan;
 import 'package:cached_network_image/cached_network_image.dart';
 

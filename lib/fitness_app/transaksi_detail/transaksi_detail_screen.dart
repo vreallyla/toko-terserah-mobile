@@ -6,15 +6,16 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:smooth_star_rating/smooth_star_rating.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+// import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:async/async.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/cart_list/cart_list.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/fitness_app/cart_list/cart_list.dart';
 import 'invoice.dart';
 
 class TransaksiDetailScreen extends StatefulWidget {
@@ -417,23 +418,42 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                                               fontWeight: FontWeight.w500,
                                               fontSize: 18)),
                                     ),
-                                    RatingBar(
-                                      initialRating: 3,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
+                                    // RatingBar(
+                                    //   initialRating: 3,
+                                    //   minRating: 1,
+                                    //   direction: Axis.horizontal,
+                                    //   allowHalfRating: true,
+                                    //   itemCount: 5,
+                                    //   itemPadding:
+                                    //       EdgeInsets.symmetric(horizontal: 4.0),
+                                    //   itemBuilder: (context, _) => Icon(
+                                    //     Icons.star,
+                                    //     color: Colors.green,
+                                    //   ),
+                                    //   onRatingUpdate: (rating) {
+                                    //     setState(() {
+                                    //       _star = rating;
+                                    //     });
+                                    //     print(rating);
+                                    //   },
+                                    // ),
+                                    SmoothStarRating(
+                                      rating: _star,
+                                      isReadOnly: false,
+                                      size: 30,
+                                      filledIconData: Icons.star,
+                                      halfFilledIconData: Icons.star_half,
+                                      defaultIconData: Icons.star_border,
+                                      starCount: 5,
                                       allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemPadding:
-                                          EdgeInsets.symmetric(horizontal: 4.0),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.green,
-                                      ),
-                                      onRatingUpdate: (rating) {
+                                      spacing: 2.0,
+                                      onRated: (value) {
+                                        print(
+                                            "rating value dd -> ${value.truncate()}");
                                         setState(() {
-                                          _star = rating;
+                                          _star = value;
                                         });
-                                        print(rating);
+                                        
                                       },
                                     ),
                                     SizedBox(
@@ -553,23 +573,42 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                                               fontWeight: FontWeight.w500,
                                               fontSize: 18)),
                                     ),
-                                    RatingBar(
-                                      initialRating: 3,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
+                                    // RatingBar(
+                                    //   initialRating: 3,
+                                    //   minRating: 1,
+                                    //   direction: Axis.horizontal,
+                                    //   allowHalfRating: true,
+                                    //   itemCount: 5,
+                                    //   itemPadding:
+                                    //       EdgeInsets.symmetric(horizontal: 4.0),
+                                    //   itemBuilder: (context, _) => Icon(
+                                    //     Icons.star,
+                                    //     color: Colors.green,
+                                    //   ),
+                                    //   onRatingUpdate: (rating) {
+                                    //     setState(() {
+                                    //       _star = rating;
+                                    //     });
+                                    //     print(rating);
+                                    //   },
+                                    // ),
+                                    SmoothStarRating(
+                                      rating: _star,
+                                      isReadOnly: false,
+                                      size: 30,
+                                      filledIconData: Icons.star,
+                                      halfFilledIconData: Icons.star_half,
+                                      defaultIconData: Icons.star_border,
+                                      starCount: 5,
                                       allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemPadding:
-                                          EdgeInsets.symmetric(horizontal: 4.0),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.green,
-                                      ),
-                                      onRatingUpdate: (rating) {
+                                      spacing: 2.0,
+                                      onRated: (value) {
+                                        print(
+                                            "rating value dd -> ${value.truncate()}");
                                         setState(() {
-                                          _star = rating;
+                                          _star = value;
                                         });
-                                        print(rating);
+                                        
                                       },
                                     ),
                                     SizedBox(

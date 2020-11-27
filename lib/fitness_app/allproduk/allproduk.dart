@@ -1,12 +1,12 @@
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/body_measurement.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/glass_view.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/ui_view/mediterranesn_diet_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/ui_view/title_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/fintness_app_theme.dart';
-import 'package:best_flutter_ui_templates/fitness_app/my_diary/meals_list_view.dart';
-import 'package:best_flutter_ui_templates/fitness_app/my_diary/all_item_view.dart';
+// import 'package:tokoterserah/fitness_app/ui_view/body_measurement.dart';
+// import 'package:tokoterserah/fitness_app/ui_view/glass_view.dart';
+// import 'package:tokoterserah/fitness_app/ui_view/mediterranesn_diet_view.dart';
+import 'package:tokoterserah/fitness_app/ui_view/title_view.dart';
+import 'package:tokoterserah/fitness_app/fintness_app_theme.dart';
+import 'package:tokoterserah/fitness_app/my_diary/meals_list_view.dart';
+import 'package:tokoterserah/fitness_app/my_diary/all_item_view.dart';
 
-// import 'package:best_flutter_ui_templates/fitness_app/my_diary/water_view.dart';
+// import 'package:tokoterserah/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 //import 'package:floating_search_bar/floating_search_bar.dart';
 

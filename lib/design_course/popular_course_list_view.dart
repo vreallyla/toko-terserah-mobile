@@ -1,4 +1,4 @@
-import 'package:best_flutter_ui_templates/design_course/models/category.dart';
+import 'package:tokoterserah/design_course/models/category.dart';
 import 'package:flutter/material.dart';
 
 class PopularCourseListView extends StatefulWidget {

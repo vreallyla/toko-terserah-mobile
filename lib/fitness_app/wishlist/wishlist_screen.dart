@@ -3,11 +3,11 @@ import 'dart:convert';
 // import 'dart:developer';
 import 'dart:io';
 
-// import 'package:best_flutter_ui_templates/model/user_model.dart';
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
-import 'package:best_flutter_ui_templates/model/keranjang_model.dart';
-import 'package:best_flutter_ui_templates/model/wishlist_model.dart';
+// import 'package:tokoterserah/model/user_model.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/fitness_app/register/register_screen_i.dart';
+import 'package:tokoterserah/model/keranjang_model.dart';
+import 'package:tokoterserah/model/wishlist_model.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

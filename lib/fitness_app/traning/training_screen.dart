@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:best_flutter_ui_templates/Constant/Constant.dart';
-import 'package:best_flutter_ui_templates/Constant/EventHelper.dart';
-import 'package:best_flutter_ui_templates/fitness_app/membercard/member_card.dart';
-import 'package:best_flutter_ui_templates/fitness_app/register/register_screen_i.dart';
-import 'package:best_flutter_ui_templates/fitness_app/wishlist/wishlist_screen.dart';
-// import 'package:best_flutter_ui_templates/fitness_app/login/form_login_view.dart';
-import 'package:best_flutter_ui_templates/model/login_model.dart';
-import 'package:best_flutter_ui_templates/model/user_model.dart';
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:tokoterserah/Constant/EventHelper.dart';
+import 'package:tokoterserah/fitness_app/membercard/member_card.dart';
+import 'package:tokoterserah/fitness_app/register/register_screen_i.dart';
+import 'package:tokoterserah/fitness_app/wishlist/wishlist_screen.dart';
+// import 'package:tokoterserah/fitness_app/login/form_login_view.dart';
+import 'package:tokoterserah/model/login_model.dart';
+import 'package:tokoterserah/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
