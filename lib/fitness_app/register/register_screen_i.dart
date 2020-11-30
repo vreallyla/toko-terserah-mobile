@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:tokoterserah/event/animation/spinner.dart';
+import 'package:tokoterserah/model/login_model.dart';
 import 'package:tokoterserah/model/register_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,12 +11,17 @@ import '../login/login_screen.dart';
 import 'package:tokoterserah/model/user_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'package:http/http.dart' as http;
 
 // For changing the language
 // import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:flutter_cupertino_localizations/flutter_cupertino_localizations.dart';
 
 bool isLoading = false;
+GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
+
 
 class RegisterScreenI extends StatefulWidget {
   const RegisterScreenI({Key key, this.animationController}) : super(key: key);
@@ -24,6 +32,106 @@ class RegisterScreenI extends StatefulWidget {
 }
 
 class _RegisterScreenIState extends State<RegisterScreenI> {
+   bool isConnect = true;
+  bool isLoading = false;
+  String tokenGoogle;
+
+  _getToken() async {
+    setState(() {
+      isConnect = true;
+      isLoading = false;
+    });
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        LoginModel.getTokenLogin().then((v) {
+          isLoading = false;
+          setState(() {});
+          if (v.error) {
+            loadNotice(context, v.data, true, 'OK', () {
+              Navigator.pop(context);
+            });
+          } else {
+            setState(() {
+              tokenGoogle = v.data;
+            });
+            print(tokenGoogle);
+          }
+        });
+      }
+    } on SocketException catch (_) {
+      isConnect = false;
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
+  _loginGoogle(Map res) async {
+    setState(() {
+      isConnect = true;
+      isLoading = false;
+    });
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        LoginModel.loginGoogle(tokenGoogle, res).then((v) {
+          isLoading = false;
+          setState(() {});
+          if (v.error) {
+            loadNotice(context, v.data, true, 'OK', () {
+              Navigator.pop(context);
+            });
+          } else {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                '/home', (Route<dynamic> route) => false,
+                arguments: {"after_login": true});
+          }
+        });
+      }
+    } on SocketException catch (_) {
+      isConnect = false;
+      isLoading = false;
+      setState(() {});
+    }
+  }
+
+
+Future<void> _handleSignIn() async {
+  try {
+    await _googleSignIn.signIn();
+  } catch (error) {
+    print(error);
+  }
+}
+
+Future<void> _handleSignOut() async {
+  _googleSignIn.disconnect();
+}
+
+
+  @override
+  void initState() {
+    _getToken();
+    super.initState();
+    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+      setState(() {});
+
+      if (account != null) {
+        _loginGoogle({
+          'id': account.id,
+          'email': account.email,
+          'name': account.displayName,
+          'ava': account.photoUrl,
+        });
+      }
+      _handleSignOut();
+
+    });
+    _googleSignIn.signInSilently();
+  }
+
+
+  
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -95,10 +203,12 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
                 Container(
                   child: ListView(
                     children: <Widget>[
-                      // OtherMethodButton(),
-                      // DividerText(),
+                      
                       Padding(padding: EdgeInsets.only(top:10)),
                       FormRegister(),
+                      DividerText(),
+                      otherMethodButton(),
+
                     ],
                   ),
                 ),
@@ -118,6 +228,82 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
       ),
     );
   }
+
+  Widget otherMethodButton() {
+    final sizeu = MediaQuery.of(context).size;
+
+    return Container(
+      // height: 230 + sizeu.width / 10,
+      padding: EdgeInsets.fromLTRB(sizeu.width / 10, 15, sizeu.width / 10, 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+              margin: EdgeInsets.only(top: 10),
+              width: sizeu.width-86,
+              // width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
+              height: 40,
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(color: Colors.red)
+                ),
+                onPressed: _handleSignIn,
+                color: Color(0xFFF74933),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      FontAwesomeIcons.google,
+                      size: 15,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      '  DAFTAR DENGAN GOOGLE',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ],
+                ),
+              )),
+          // Container(
+          //     margin: EdgeInsets.only(top: 10, left: 10),
+          //     width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
+          //     height: 40,
+          //     child: RaisedButton(
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(4.0),
+          //         // side: BorderSide(color: Colors.red)
+          //       ),
+          //       onPressed: () {},
+          //       color: Colors.blue[600],
+          //       child: Row(
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: <Widget>[
+          //           FaIcon(
+          //             FontAwesomeIcons.facebookF,
+          //             size: 15,
+          //             color: Colors.white,
+          //           ),
+          //           Text(
+          //             '  FACEBOOK',
+          //             style: TextStyle(
+          //                 fontWeight: FontWeight.bold, color: Colors.white),
+          //           ),
+          //         ],
+          //       ),
+          //     )),
+        
+        ],
+      ),
+    
+    );
+  }
+
 }
 
 class FormRegister extends StatefulWidget {
@@ -406,6 +592,7 @@ class _FormRegisterState extends State<FormRegister> {
       ),
     );
   }
+
 }
 
 class DividerText extends StatelessWidget {
@@ -425,95 +612,6 @@ class DividerText extends StatelessWidget {
             )),
         Expanded(child: Divider()),
       ]),
-    );
-  }
-}
-
-class OtherMethodButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final sizeu = MediaQuery.of(context).size;
-
-    return Container(
-      // height: 230 + sizeu.width / 10,
-      padding: EdgeInsets.fromLTRB(sizeu.width / 10, 15, sizeu.width / 10, 15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
-
-      // child: Row(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: <Widget>[
-      //     Container(
-      //         margin: EdgeInsets.only(top: 10),
-      //         width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
-      //         height: 40,
-      //         child: RaisedButton(
-      //           shape: RoundedRectangleBorder(
-      //             borderRadius: BorderRadius.circular(4.0),
-      //             // side: BorderSide(color: Colors.red)
-      //           ),
-      //           onPressed: () {},
-      //           color: Color(0xFFF74933),
-      //           child: Row(
-      //             mainAxisAlignment: MainAxisAlignment.center,
-      //             children: <Widget>[
-      //               FaIcon(
-      //                 FontAwesomeIcons.google,
-      //                 size: 15,
-      //                 color: Colors.white,
-      //               ),
-      //               Text(
-      //                 '  GOOGLE',
-      //                 style: TextStyle(
-      //                     fontWeight: FontWeight.bold, color: Colors.white),
-      //               ),
-      //             ],
-      //           ),
-      //         )),
-      //     Container(
-      //         margin: EdgeInsets.only(top: 10, left: 10),
-      //         width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
-      //         height: 40,
-      //         child: RaisedButton(
-      //           shape: RoundedRectangleBorder(
-      //             borderRadius: BorderRadius.circular(4.0),
-      //             // side: BorderSide(color: Colors.red)
-      //           ),
-      //           onPressed: () {},
-      //           color: Colors.blue[600],
-      //           child: Row(
-      //             mainAxisAlignment: MainAxisAlignment.center,
-      //             children: <Widget>[
-      //               FaIcon(
-      //                 FontAwesomeIcons.facebookF,
-      //                 size: 15,
-      //                 color: Colors.white,
-      //               ),
-      //               Text(
-      //                 '  FACEBOOK',
-      //                 style: TextStyle(
-      //                     fontWeight: FontWeight.bold, color: Colors.white),
-      //               ),
-      //             ],
-      //           ),
-      //         )),
-      //   ],
-      // ),
-    
-    );
-  }
-
-  Container hintMsg(String msg) {
-    return Container(
-      padding: EdgeInsets.only(top: 4),
-      child: Text(
-        (msg != null ? msg : ''),
-        style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.w500,
-            fontSize: (msg != null ? 13 : 0)),
-      ),
     );
   }
 }

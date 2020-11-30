@@ -20,6 +20,8 @@ class _AuthLoginState extends State<AuthLogin> {
       setState(() {
         _currentUser = account;
       });
+
+      print(_currentUser);
     });
     _googleSignIn.signInSilently();
   }

@@ -53,7 +53,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
           ? (arguments['after_login'] != null ||
               arguments['after_logout'] != null)
           : false) {
-        tabIconsList[3].isSelected = true;
+        tabIconsList[2].isSelected = true;
 // _getUser();
 
 //        new Future.delayed(Duration(seconds: 0), () {

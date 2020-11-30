@@ -97,14 +97,12 @@ class LoginModel {
     }
   }
 
-  
   static Future<LoginModel> loginEmail(String email) async {
     // final LocalStorage storage = new LocalStorage('auth');
     String apiURL = globalBaseUrl + globalPathAuth + "login_email";
 
     var apiResult = await http.post(apiURL,
-        body: {"email": email},
-        headers: {"Accept": "application/json"});
+        body: {"email": email}, headers: {"Accept": "application/json"});
 
     print('login email status code : ' + apiResult.statusCode.toString());
 
@@ -148,6 +146,87 @@ class LoginModel {
     }
   }
 
+  static Future<LoginModel> getTokenLogin() async {
+    // final LocalStorage storage = new LocalStorage('auth');
+    String apiURL = globalBaseUrl + globalPathAuth + "get_kode";
+    print(apiURL);
+
+    var apiResult =
+        await http.get(apiURL, headers: {"Accept": "application/json"});
+
+    print('getTokenLogin status code : ' + apiResult.statusCode.toString());
+
+    try {
+      var jsonObject = json.decode(apiResult.body);
+      // print(jsonObject);
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        await UserModel.akunRes();
+
+        print('post login success');
+
+        print(jsonObject['token']);
+        return LoginModel(
+          error: false,
+          data: jsonObject['token'],
+        );
+      } else {
+        return LoginModel(
+          error: true,
+          data: jsonObject['message'],
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e);
+      return LoginModel(
+        error: true,
+        data: msgFail['MSG_SYSTEM'],
+      );
+    }
+  }
+
+  static Future<LoginModel> loginGoogle(String token,Map res) async {
+    // final LocalStorage storage = new LocalStorage('auth');
+    String apiURL = globalBaseUrl + globalPathAuth + "sosialite";
+    print(apiURL);
+
+    var apiResult =
+        await http.post(apiURL, 
+        body:res,
+        headers: {"Accept": "application/json",'token':token});
+
+    print('sosialite status code : ' + apiResult.statusCode.toString());
+
+    try {
+      var jsonObject = json.decode(apiResult.body);
+      // print(jsonObject);
+
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
+        await UserModel.akunRes();
+        _setToken(jsonObject['token']);
+
+        print('sosialite success');
+
+        return LoginModel(
+          error: false,
+          data: jsonObject['token'],
+        );
+      } else {
+        return LoginModel(
+          error: true,
+          data: jsonObject['message'],
+        );
+      }
+    } catch (e) {
+      print('error catch');
+      print(e);
+      return LoginModel(
+        error: true,
+        data: msgFail['MSG_SYSTEM'],
+      );
+    }
+  }
 
   static Future<LoginModel> logout() async {
     try {
