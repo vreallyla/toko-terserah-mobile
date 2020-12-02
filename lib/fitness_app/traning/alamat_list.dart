@@ -319,6 +319,8 @@ class _AlamatListState extends State<AlamatList> {
   var dataUser;
   String diff;
 
+  
+
   void _getUser() async {
     user_model.UserModel.akunRes();
     print('success');
@@ -336,6 +338,8 @@ class _AlamatListState extends State<AlamatList> {
         print(dataUser['user']['get_alamat']);
         dataUserDefault = dataUser['user']['get_alamat'];
       }
+      print('data user :');
+      print(dataUser['user']['id']);
       if (ishapus == "n") {
         setState(() {});
       }
@@ -443,7 +447,7 @@ class _AlamatListState extends State<AlamatList> {
                     Response responsetemp = await http.get(
                         globalBaseUrl +
                             "api/address?user_id=" +
-                            dataUserDefault[0]["user_id"].toString(),
+                           dataUser['user']['id'].toString(),
                         headers: {
                           "Accept": "application/json",
                           "Authorization":
