@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // ignore: non_constant_identifier_names
 // String globalBaseUrl = "http://101.50.0.89/";
 String globalBaseUrl = "https://tokoterserah.com/";
+// String globalBaseUrl = "http://10.0.2.2:8000/";
 String globalPathAuth = "api/auth/";
 String globalPathWish = 'api/wish/';
 String globalPathProduct = 'api/product/';

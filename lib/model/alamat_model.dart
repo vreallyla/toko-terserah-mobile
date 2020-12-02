@@ -50,9 +50,9 @@ class AlamatModel {
 
       print('data alamat status code : ' + apiResult.statusCode.toString());
           // print(json.decode(apiResult.body));
-
-      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);
+        
+      if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
 
 
         if (json.decode(apiResult.body)['status'] != null) {

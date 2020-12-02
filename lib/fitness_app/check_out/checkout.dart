@@ -158,7 +158,7 @@ class _CheckOutState extends State<CheckOut> {
             totalProduct = 0;
             productDetail = resProduct;
             List dataPro = productDetail['produk'];
-            log(productDetail['bio_set'].toString());
+
             if (productDetail['bio_set']) {
               // loadNoticeLock(
               //     context,
@@ -191,6 +191,8 @@ class _CheckOutState extends State<CheckOut> {
       isLoading = false;
       isWrong = true;
 
+      canBack = true;
+
       setState(() {});
     }
   }
@@ -219,6 +221,7 @@ class _CheckOutState extends State<CheckOut> {
             potonganVoucher = 0;
           }
           setState(() {});
+          print(potonganVoucher);
         });
       }
     } on SocketException catch (_) {
@@ -253,7 +256,9 @@ class _CheckOutState extends State<CheckOut> {
         await AlamatModel.getAlamat().then((value) {
           // isLoading = false;
           Map<String, dynamic> resAlamat = json.decode(value.data);
-
+          setState(() {
+            canBack = true;
+          });
           if (value.error) {
             resError(resAlamat);
           } else {
@@ -266,7 +271,15 @@ class _CheckOutState extends State<CheckOut> {
                     : null);
 
             dataSurabaya = resAlamat['surabaya'];
-            _getHargaByRajaOngkir();
+            if (resAlamat['address'].length > 0) {
+              _getHargaByRajaOngkir();
+            } else {
+              loadOverlayEvent(false);
+
+              isLoading = false;
+
+              canBack = true;
+            }
 
             setState(() {});
           }
@@ -276,6 +289,7 @@ class _CheckOutState extends State<CheckOut> {
       // print('dasd');
       isConnect = false;
       isLoading = false;
+      canBack = true;
 
       setState(() {});
     }
@@ -284,6 +298,10 @@ class _CheckOutState extends State<CheckOut> {
   _getSnapMidtransApi() async {
     if (tokenMidtrans == null || tokenMidtrans == '') {
       loadOverlayEvent(true);
+      setState(() {
+        canBack = false;
+      });
+      print('hello');
 
       try {
         final result = await InternetAddress.lookup('google.com');
@@ -292,9 +310,8 @@ class _CheckOutState extends State<CheckOut> {
             'pengiriman_id': alamatPengiriman['id'].toString(),
             'penagihan_id': alamatPenagihan['id'].toString(),
             'ongkir': (tambahanOngkir).toString(),
-            'discount_price': potonganVoucher > 0
-                ? (potonganVoucher * (potonganVoucher > 0 ? -1 : 1)).toString()
-                : '',
+            'discount_price':
+                potonganVoucher != 0 ? (potonganVoucher * -1).toString() : '',
             'cart_ids': widget.idProducts.join(',').toString(),
             'weight': beratProduct.toString(),
             'total':
@@ -312,6 +329,9 @@ class _CheckOutState extends State<CheckOut> {
             'nama_kurir': namaKurir,
           }).then((value) {
             loadOverlayEvent(false);
+            setState(() {
+              canBack = true;
+            });
 
             if (value.error) {
             } else {
@@ -328,6 +348,7 @@ class _CheckOutState extends State<CheckOut> {
 
         isConnect = false;
         isLoading = false;
+        canBack = true;
 
         setState(() {});
       }
@@ -346,9 +367,8 @@ class _CheckOutState extends State<CheckOut> {
             pengirimanId: alamatPengiriman['id'].toString(),
             penagihanId: alamatPenagihan['id'].toString(),
             cartIds: widget.idProducts.join(',').toString(),
-            discountPrice: potonganVoucher > 0
-                ? (potonganVoucher * (potonganVoucher > 0 ? -1 : 1)).toString()
-                : '',
+            discountPrice:
+                potonganVoucher != 0 ? (potonganVoucher * -1).toString() : '',
             ongkir: (tambahanOngkir).toString(),
             total: (totalProduct + tambahanOngkir + potonganVoucher).toString(),
             snapToken: tokenMidtrans,
@@ -419,6 +439,9 @@ class _CheckOutState extends State<CheckOut> {
   }
 
   Widget noConnection() {
+    setState(() {
+      canBack = true;
+    });
     return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.only(top: 70),
@@ -507,6 +530,7 @@ class _CheckOutState extends State<CheckOut> {
 
       isConnect = false;
       isLoading = false;
+      canBack = true;
 
       setState(() {});
     }
@@ -989,8 +1013,10 @@ class _CheckOutState extends State<CheckOut> {
                         return InkWell(
                           onTap: () {
                             alamatPengiriman = e;
-                            if (alamatPengiriman['get_kecamatan']['kota_id'] !=
-                                    dataSurabaya['id'] ||
+                            if (alamatPengiriman != null &&
+                                    alamatPengiriman['get_kecamatan']
+                                            ['kota_id'] !=
+                                        dataSurabaya['id'] ||
                                 pilihanOpsi == 'logistik') {
                               pilihanOpsi = '';
                               tambahanOngkir = 0;
@@ -2105,7 +2131,8 @@ class _CheckOutState extends State<CheckOut> {
                   flex: 1,
                   child: InkWell(
                     onTap: () {
-                      if (alamatPengiriman['get_kecamatan']['kota_id'] ==
+                      if (alamatPengiriman != null &&
+                          alamatPengiriman['get_kecamatan']['kota_id'] ==
                               dataSurabaya['id'] &&
                           totalProduct > 200000) {
                         setState(() {
@@ -2125,7 +2152,9 @@ class _CheckOutState extends State<CheckOut> {
                           width: 2,
                           color: pilihanOpsi == 'terserah'
                               ? Colors.green
-                              : (alamatPengiriman['get_kecamatan']['kota_id'] ==
+                              : (alamatPengiriman != null &&
+                                      alamatPengiriman['get_kecamatan']
+                                              ['kota_id'] ==
                                           dataSurabaya['id'] &&
                                       totalProduct > 200000
                                   ? Colors.grey.withOpacity(.6)
@@ -2136,7 +2165,9 @@ class _CheckOutState extends State<CheckOut> {
                       child: Text(
                         'Kurir Toko Terserah',
                         style: TextStyle(
-                          color: alamatPengiriman['get_kecamatan']['kota_id'] ==
+                          color: alamatPengiriman != null &&
+                                  alamatPengiriman['get_kecamatan']
+                                          ['kota_id'] ==
                                       dataSurabaya['id'] &&
                                   totalProduct > 200000
                               ? Colors.black
