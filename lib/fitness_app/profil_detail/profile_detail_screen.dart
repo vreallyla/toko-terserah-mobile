@@ -267,7 +267,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             );
           },
           initialDate: selectedDate,
-          firstDate: DateTime(2015, 8),
+          firstDate: DateTime(1920, 8),
           lastDate: DateTime(2101));
       if (picked != null && picked != selectedDate)
         setState(() {

@@ -175,7 +175,7 @@ class _CartListState extends State<CartList> {
 
   // Delete Selected Cart Item
 
-  _deleteCart(id) async {
+  _deleteCart(id,harga) async {
     await _getUser();
     Map<String, dynamic> dataaUser = json.decode(userData);
     setState(() {
@@ -198,6 +198,12 @@ class _CartListState extends State<CartList> {
         });
         _getData();
 
+        if(_total> 0){
+            setState(() {
+              _total = _total - harga;
+          });
+        }
+
         dataaUser['count_cart'] =
             int.parse(dataaUser['count_cart'].toString()) - 1;
         await _setUser(json.encode(dataaUser));
@@ -207,6 +213,9 @@ class _CartListState extends State<CartList> {
         setState(() {
           jmlhCart = _response['data']['count_produk'];
         });
+
+        
+
       } else {
         showSnackBar(
             _response['data']['message'], Colors.red, Icon(Icons.close));
@@ -265,7 +274,8 @@ class _CartListState extends State<CartList> {
 
   // Confirm delete Item Cart
 
-  confirmHapus(context, id) {
+  confirmHapus(context, id,harga) {
+    print(harga);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -281,7 +291,7 @@ class _CartListState extends State<CartList> {
               onPressed: () async {
                 Navigator.of(context).pop();
 
-                _deleteCart(id);
+                _deleteCart(id,harga);
               },
             ),
             FlatButton(
@@ -948,7 +958,7 @@ class _CartListState extends State<CartList> {
                             color: Colors.white,
                             child: FlatButton(
                               onPressed: () {
-                                confirmHapus(context, _listCart[i]['id']);
+                                confirmHapus(context, _listCart[i]['id'],int.parse(_listCart[i]['total']));
                               },
                               shape: RoundedRectangleBorder(
                                   side: BorderSide(color: Colors.white),
