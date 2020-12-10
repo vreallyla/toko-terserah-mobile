@@ -1,13 +1,18 @@
 import 'package:tokoterserah/fitness_app/models/tabIcon_data.dart';
 import 'package:tokoterserah/fitness_app/traning/training_screen.dart';
+import 'package:tokoterserah/menu/faq_screen.dart';
 import 'package:tokoterserah/menu/menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'bottom_navigation_view/bottom_bar_view.dart';
 import 'fintness_app_theme.dart';
 import 'my_diary/my_diary_screen.dart';
 import 'package:tokoterserah/design_course/home_design_course.dart';
+import 'package:tokoterserah/menu/store_screen.dart';
+
+import 'my_diary/voucher_list_screen.dart';
 
 class FitnessAppHomeScreen extends StatefulWidget {
   @override
@@ -232,18 +237,43 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                 setState(() {
                   tabBody = MenuScreen(
                     animationController: animationController,
-                    searchAlocation: (String jenis, String search) {
-                      setState(() {
-                        tabBody = HomeDesignCourse(
-                          jenis: jenis,
-                          search: search,
-                        );
-                        tabIconsList.forEach((TabIconData tab) {
-                          tab.isSelected = false;
-                        });
+                    searchAlocation:
+                        (String jenis, String search, String other) {
+                      if (other == null) {
+                        setState(() {
+                          tabBody = HomeDesignCourse(
+                            jenis: jenis,
+                            search: search,
+                          );
+                          tabIconsList.forEach((TabIconData tab) {
+                            tab.isSelected = false;
+                          });
 
-                        tabIconsList[1].isSelected = true;
-                      });
+                          tabIconsList[1].isSelected = true;
+                        });
+                      } else {
+                        if (other == 'store') {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => StoreScreen(),
+                              ));
+                        } else if ('voucher' == other) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => VoucherListScreen(),
+                              ));
+                        } else if ('cs' == other) {
+                          launch('whatsapp://send?phone=628113051081');
+                        }else if('faq'== other){
+                           Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => FAQScreen(),
+                              ));
+                        }
+                      }
                     },
                   );
                 });

@@ -50,7 +50,7 @@ class ProductModel {
 
       print('data home status code : ' + apiResult.statusCode.toString());
 
-      // print(json.decode(apiResult.body));
+      print(json.decode(apiResult.body));
 
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         var jsonObject = json.decode(apiResult.body);

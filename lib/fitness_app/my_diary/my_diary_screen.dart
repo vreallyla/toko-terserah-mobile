@@ -74,6 +74,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   }
 
   _getDataApi(context) async {
+    print('dasd');
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -84,6 +85,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       }
     } on SocketException catch (_) {
       isConnect = false;
+      print('dasd');
 
       setState(() {});
     }

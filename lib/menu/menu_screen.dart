@@ -13,22 +13,19 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class MenuScreen extends StatefulWidget {
-  const MenuScreen(
-      {Key key, this.animationController,this.searchAlocation })
+  const MenuScreen({Key key, this.animationController, this.searchAlocation})
       : super(key: key);
 
   final AnimationController animationController;
-  final Function(String jenis,String cari) searchAlocation;
- 
+  final Function(String jenis, String cari, String other) searchAlocation;
+
   // final AnimationController animationController;
   @override
   _MenuScreenState createState() => _MenuScreenState();
 }
 
-class _MenuScreenState extends State<MenuScreen>
-    with TickerProviderStateMixin {
+class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   Animation<double> topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
@@ -44,24 +41,20 @@ class _MenuScreenState extends State<MenuScreen>
 
   double topBarOpacity = 0.0;
 
-  
- @override
+  @override
   void initState() {
     topBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
             parent: widget.animationController,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
 
-
-
     // Future.delayed(Duration(seconds: 0), () {
     // getDataApi();
-    Future.delayed(Duration.zero,() {
-    double height=MediaQuery.of(context).size.height;
+    Future.delayed(Duration.zero, () {
+      double height = MediaQuery.of(context).size.height;
 
-    addAllListData(height);
-
-});
+      addAllListData(height);
+    });
     // });
 
     scrollController.addListener(() {
@@ -97,54 +90,136 @@ class _MenuScreenState extends State<MenuScreen>
     // dataWish.add({"nama": "adib"});
 
     // cari textfield
-    listViews.add(
-      Container(
-        height: height-140,
-        color: Colors.white,
+    listViews.add(Container(
+      height: height - 140,
+      color: Colors.white,
       padding: EdgeInsets.fromLTRB(25, 15, 25, 15),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-         
         children: [
-          
-   
-         card('semua','Semua',FaIcon(FontAwesomeIcons.layerGroup,color: Colors.white,)),
-       card('grosir','Grosir',FaIcon(FontAwesomeIcons.boxes,color: Colors.white,)),
-       card('retail','Retail',FaIcon(FontAwesomeIcons.shoppingBag,color: Colors.white,)),
-       
-       ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              card(
+                'semua',
+                'Semua',
+                FaIcon(
+                  FontAwesomeIcons.layerGroup,
+                  color: Colors.white,
+                ),
+                null,
+              ),
+              card(
+                'grosir',
+                'Grosir',
+                FaIcon(
+                  FontAwesomeIcons.boxes,
+                  color: Colors.white,
+                ),
+                null,
+              ),
+              card(
+                'retail',
+                'Retail',
+                FaIcon(
+                  FontAwesomeIcons.shoppingBag,
+                  color: Colors.white,
+                ),
+                null,
+              ),
+            ],
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                card(
+                  'semua',
+                  'Store',
+                  FaIcon(
+                    FontAwesomeIcons.store,
+                    color: Colors.white,
+                  ),
+                  'store',
+                ),
+                card(
+                  'grosir',
+                  'Customer Service',
+                  FaIcon(
+                    FontAwesomeIcons.whatsapp,
+                    color: Colors.white,
+                  ),
+                  'cs',
+                ),
+                card(
+                  'retail',
+                  'Voucher',
+                  FaIcon(
+                    FontAwesomeIcons.gift,
+                    color: Colors.white,
+                  ),
+                  'voucher',
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: card(
+                    'retail',
+                    'FAQ',
+                    FaIcon(
+                      FontAwesomeIcons.question,
+                      color: Colors.white,
+                    ),
+                    'faq',
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
-      )
-    );
+    ));
   }
 
-  Widget card(String jenis,String title,FaIcon icon){
+  Widget card(String jenis, String title, FaIcon icon, String other) {
     return Expanded(
-           flex:1,
-            child: InkWell(
-              onTap: ()=>widget.searchAlocation(jenis,''),
-                          child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-          
-                children:[
-                  Container(
-                    alignment: Alignment.center,
-                    height: 60,
-                    width: 60,
-                    decoration: BoxDecoration(color: Colors.green,
-                    borderRadius: BorderRadius.circular(30)
-                    
-                    ),
-                    child:icon ,
-                ),
-                Container(padding: EdgeInsets.only(top:10),
-                alignment: Alignment.center,
-                child: Text(title,textAlign: TextAlign.center,),)
-                ]
-              ),
+      flex: 1,
+      child: InkWell(
+
+        onTap: () => widget.searchAlocation(jenis, '', other),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Container(
+            alignment: Alignment.center,
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+                color: Colors.green, borderRadius: BorderRadius.circular(30)),
+            child: icon,
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 10),
+            alignment: Alignment.center,
+            child: Text(
+              title,
+              textAlign: TextAlign.center,
             ),
           )
-        ;
+        ]),
+      ),
+    );
   }
 
   Container cardWishlist() {
