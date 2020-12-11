@@ -29,6 +29,17 @@ class _FAQScreenState extends State<FAQScreen> {
         children: [
           cardLink('Cara Belanja', globalBaseUrl + 'faq/cara_belanja'),
           cardLink('Cara Cek Order', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink('Cara Daftar Akun', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink('Cara Ganti Password', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink(
+              'Cara Menggunakan Voucher', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink(
+              'Cara Mengubah Alamat', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink('Cara Menjadi Member', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink('Metode Pembayaran', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink(
+              'Syarat dan Ketentuan', globalBaseUrl + 'faq/cara_cek_order'),
+          cardLink('Tentang Kami', globalBaseUrl + 'faq/cara_cek_order'),
         ],
       ),
     );
