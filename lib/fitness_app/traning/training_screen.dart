@@ -64,6 +64,7 @@ class _TrainingScreenState extends State<TrainingScreen>
           style: TextStyle(
             fontSize: 15,
             color: Colors.grey,
+            
           )));
     }
 
