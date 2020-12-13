@@ -788,9 +788,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Colors.grey, width: 1.0),
+                                            color: Colors.white, width: 2),
                                         borderRadius: BorderRadius.all(
-                                            Radius.circular(10.0))),
+                                            Radius.circular(4.0))),
                                     border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey, width: 5.0),
@@ -802,8 +802,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                               padding: EdgeInsets.only(left: 8),
                             ),
                             SizedBox(
-                                height: 30,
-                                width: 30,
+                                height: 25,
+                                width: 25,
                                 child: InkWell(
                                   onTap: () {
                                     launchWhatsApp(
@@ -811,7 +811,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                         phone: '628113051081');
                                   },
                                   child: FaIcon(
-                                    FontAwesomeIcons.headset,
+                                    FontAwesomeIcons.envelope,
                                     size: 35,
                                     color: topBarOpacity != 1.0
                                         ? Colors.white
