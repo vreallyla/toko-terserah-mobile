@@ -186,6 +186,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     if (!isConnect) {
       listViews.add(noConnection(context));
     } else {
+      listViews.add(Container(
+        child: SizedBox(height: 100),
+      ));
       //carousel
       listViews.add(Stack(
         children: [
@@ -196,7 +199,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                   _current = i;
                 });
               },
-              height: 300.0,
+              height: 200.0,
               aspectRatio: 16 / 9,
               viewportFraction: 1.0,
               initialPage: 0,
@@ -213,12 +216,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               return Builder(
                 builder: (BuildContext context) {
                   return Container(
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      // decoration: BoxDecoration(color: Colors.blueGrey),
-                      child: (dataHome.length > 0
-                          ? CachedNetworkImage(
+                    margin: EdgeInsets.all(5.0),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        child: Stack(
+                          children: <Widget>[
+                         CachedNetworkImage(
                               imageUrl: globalBaseUrl +
                                   locationBannerImage +
                                   i['banner'],
@@ -237,15 +240,16 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                   icon: Icons.refresh, color: Colors.black54),
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
-                            )
-                          : Spinner(
-                              icon: Icons.refresh, color: Colors.black54)));
+                            ),
+                          ],
+                        )),
+                  );
                 },
               );
             }).toList(),
           ),
           Container(
-            margin: EdgeInsets.only(top: 260),
+            margin: EdgeInsets.only(top: 170),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: dataHome.map((url) {
@@ -814,7 +818,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                     FontAwesomeIcons.envelope,
                                     size: 35,
                                     color: topBarOpacity != 1.0
-                                        ? Colors.white
+                                        ? Colors.blueGrey
                                         : Colors.blueGrey,
                                   ),
                                 )),
