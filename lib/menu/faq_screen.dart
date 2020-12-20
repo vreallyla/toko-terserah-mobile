@@ -30,16 +30,19 @@ class _FAQScreenState extends State<FAQScreen> {
           cardLink('Cara Belanja', globalBaseUrl + 'faq/cara_belanja'),
           cardLink('Cara Cek Order', globalBaseUrl + 'faq/cara_cek_order'),
           cardLink('Cara Daftar Akun', globalBaseUrl + 'faq/cara_daftar_akun'),
-          cardLink('Cara Ganti Password', globalBaseUrl + 'faq/cara_cek_order'),
           cardLink(
-              'Cara Menggunakan Voucher', globalBaseUrl + 'faq/cara_cek_order'),
+              'Cara Ganti Password', globalBaseUrl + 'faq/cara_ganti_password'),
+          cardLink('Cara Menggunakan Voucher',
+              globalBaseUrl + 'faq/cara_menggunakan_voucher'),
+          cardLink('Cara Mengubah Alamat',
+              globalBaseUrl + 'faq/cara_mengubah_alamat'),
           cardLink(
-              'Cara Mengubah Alamat', globalBaseUrl + 'faq/cara_cek_order'),
-          cardLink('Cara Menjadi Member', globalBaseUrl + 'faq/cara_cek_order'),
-          cardLink('Metode Pembayaran', globalBaseUrl + 'faq/cara_cek_order'),
+              'Cara Menjadi Member', globalBaseUrl + 'faq/cara_menjadi_member'),
           cardLink(
-              'Syarat dan Ketentuan', globalBaseUrl + 'faq/cara_cek_order'),
-          cardLink('Tentang Kami', globalBaseUrl + 'faq/cara_cek_order'),
+              'Metode Pembayaran', globalBaseUrl + 'faq/metode_pembayaran'),
+          cardLink('Syarat dan Ketentuan',
+              globalBaseUrl + 'faq/syarat_dan_ketentuan'),
+          cardLink('Tentang Kami', globalBaseUrl + 'faq/tentang_kami'),
         ],
       ),
     );
