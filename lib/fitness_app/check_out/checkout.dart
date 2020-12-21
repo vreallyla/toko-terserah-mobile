@@ -746,7 +746,7 @@ class _CheckOutState extends State<CheckOut> {
                           });
                         },
                         panel: Container(
-                          color: Colors.grey[100],
+                          color: showVoucher?Colors.grey[100]:Colors.white,
                           child: Stack(
                             children: [
                               // ApplyVoucherForm(
@@ -2499,7 +2499,8 @@ class FooterApp extends StatelessWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                     Text(
-                      withCurrency(total),
+                      withCurrency(
+                          double.parse(total.toString()) < 0 ? '0' : total),
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 18,
