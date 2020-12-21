@@ -16,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:tokoterserah/model/product_model.dart';
+import 'package:clipboard/clipboard.dart';
 
 class CheckOut extends StatefulWidget {
   const CheckOut({Key key, this.idProducts}) : super(key: key);
@@ -85,6 +87,73 @@ class _CheckOutState extends State<CheckOut> {
   String uniCode;
 
   bool canBack = false;
+
+  //voucher
+  List<Widget> dataRes = [];
+  bool noData = false;
+  List dataVouchers = [];
+  int voucherCount = 0;
+
+  //get data Voucher
+  void addAllData() {
+    dataRes = [];
+    dataVouchers.forEach((element) {
+      dataRes.add(cardVoucher(
+        element['start'],
+        element['end'],
+        element['promo_code'],
+        element['banner'],
+        element['discount'],
+      ));
+    });
+
+    if (dataVouchers.length == 0) {
+      dataRes.add(Center(
+        child: Text(
+          'Voucher tidak tersedia...',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ));
+    }
+    print('asd');
+    setState(() {});
+  }
+
+  _getDataApis(String q) async {
+    isLoading = true;
+    noData = false;
+
+    setState(() {});
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await ProductModel.getVoucher(q).then((v) {
+          print(v.data);
+          isLoading = false;
+          dataVouchers = [];
+          voucherCount = 0;
+
+          if (v.error) {
+            noData = true;
+          } else {
+            dataVouchers = v.data['daftar'];
+            noData = !(v.data['jumlah'] > 0);
+          }
+          addAllData();
+
+          setState(() {});
+        });
+      }
+    } on SocketException catch (_) {
+      noData = true;
+      isLoading = false;
+
+      setState(() {});
+    }
+  }
 
   //overlay loading event
   void loadOverlayEvent(bool cond) {
@@ -553,6 +622,7 @@ class _CheckOutState extends State<CheckOut> {
 
     _getDataApi();
 
+    _getDataApis('');
     // _getSnapMidtransApi();
     super.initState();
   }
@@ -581,6 +651,7 @@ class _CheckOutState extends State<CheckOut> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final paddingPhone = MediaQuery.of(context).padding;
 
     //final wh_ = MediaQuery.of(context).size;
 
@@ -657,7 +728,9 @@ class _CheckOutState extends State<CheckOut> {
                           ),
                         ],
                         minHeight: 60,
-                        maxHeight: 170,
+                        maxHeight: size.height -
+                            paddingPhone.top -
+                            paddingPhone.bottom,
                         controller: _pc,
                         onPanelOpened: () {
                           showVoucher = true;
@@ -665,29 +738,64 @@ class _CheckOutState extends State<CheckOut> {
                             print(showVoucher);
                           });
                         },
+
                         onPanelClosed: () {
                           showVoucher = false;
                           setState(() {
                             print(showVoucher);
                           });
                         },
-                        panel: Stack(
-                          children: [
-                            ApplyVoucherForm(
-                                showing: showVoucher,
-                                dataVoucher: dataVoucher,
-                                sendApi: (String kode) {
-                                  _checkKodePromo(kode);
-                                }),
-                            loadOverlay
-                                ? Container(
-                                    color: Colors.grey.withOpacity(.0),
-                                  )
-                                : Text(
-                                    '',
-                                    style: TextStyle(fontSize: 0),
-                                  )
-                          ],
+                        panel: Container(
+                          color: Colors.grey[100],
+                          child: Stack(
+                            children: [
+                              // ApplyVoucherForm(
+                              //     showing: showVoucher,
+                              //     dataVoucher: dataVoucher,
+                              //     sendApi: (String kode) {
+                              //       _checkKodePromo(kode);
+                              //     }),
+                              !showVoucher
+                                  ? Container()
+                                  : Container(
+                                      width: size.width,
+                                      alignment: Alignment.topCenter,
+                                      child: Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        height: 5,
+                                        width: 120,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                    ),
+                              Container(
+                                margin:
+                                    EdgeInsets.only(top: showVoucher ? 30 : 60),
+                                padding: EdgeInsets.only(
+                                  left: 20,
+                                  right: 20,
+                                ),
+                                height: size.height -
+                                    paddingPhone.top -
+                                    paddingPhone.bottom -
+                                    (showVoucher ? 30 : 60),
+                                child: ListView(
+                                  children: dataRes,
+                                ),
+                              ),
+                              loadOverlay
+                                  ? Container(
+                                      color: Colors.grey.withOpacity(.0),
+                                    )
+                                  : Text(
+                                      '',
+                                      style: TextStyle(fontSize: 0),
+                                    )
+                            ],
+                          ),
                         ),
 
                         body: Stack(
@@ -2267,6 +2375,99 @@ class _CheckOutState extends State<CheckOut> {
         ),
       );
     }
+  }
+
+  Widget cardVoucher(start, end, kode, img, discon) {
+    return Container(
+      width: 240,
+      margin: EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(width: .5, color: Colors.grey[300]),
+      ),
+      child: Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.all(10),
+              // width: 240,
+              height: 110,
+              decoration: new BoxDecoration(
+                image: new DecorationImage(
+                    image:
+                        NetworkImage(img ?? 'https://via.placeholder.com/300'),
+                    fit: BoxFit.fitWidth),
+                borderRadius: const BorderRadius.only(
+                  bottomRight: Radius.circular(0),
+                  bottomLeft: Radius.circular(0),
+                  topLeft: Radius.circular(8.0),
+                  topRight: Radius.circular(8.0),
+                ),
+              ),
+            ),
+            Container(
+              alignment: Alignment.topLeft,
+              margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          kode,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text(
+                          'Rp' + pointGroup(int.parse(discon.toString())),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                        Text(
+                          'Berlaku : ${start} sd ${end}',
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Container(
+                        alignment: Alignment.topRight,
+                        child: RaisedButton(
+                          color: Colors.green,
+                          onPressed: () {
+                            // ClipboardManager.copyToClipBoard(kode)
+                            //     .then((result) {
+                            //   showSnackBar('Berhasil disalin!', Colors.green,
+                            //       Icon(Icons.content_copy));
+                            // });
+                            _checkKodePromo(kode);
+                          },
+                          child: Text(
+                            'PILIH',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ))
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
