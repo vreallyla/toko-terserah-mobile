@@ -134,7 +134,7 @@ class QnAProductView extends StatelessWidget {
                     ],
                   ),
                 ),
-                inkwellQna(context, size)
+                 inkwellQna(context, size)
               ],
             ),
           ),
@@ -167,7 +167,7 @@ class QnAProductView extends StatelessWidget {
   }
 
   Widget inkwellQna(context, size) {
-    if (dataQnA.length > 2) {
+    if (dataQnA.length > 2 || dataQnA.length != null) {
       return InkWell(
         onTap: () {
           // Navigate to the second screen using a named route.
@@ -281,7 +281,7 @@ class QnAProductView extends StatelessWidget {
             ),
             Text(
               '  ' + nama + ' · ',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             Text(
               tanggal,

@@ -66,7 +66,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     dataUnggulan = dataRes['popular'];
     dataTerlaris = dataRes['top_rated'];
     voucherCount = dataRes['voucher_count'];
-
+    print(dataProductBaru);
     addAllListData(context);
     // print(dataHome);
     setState(() {});

@@ -366,7 +366,9 @@ class MealsView extends StatelessWidget {
                       child: Container(
                           margin: EdgeInsets.all(3),
                           child: Text(
-                            'Grosir',
+                             mealsListData["isGrosir"] == 1
+                                    ? 'Grosir'
+                                    : 'Retail',
                             style: TextStyle(
                               color: Colors.green[800],
                               fontWeight: FontWeight.bold,

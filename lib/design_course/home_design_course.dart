@@ -1844,7 +1844,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                           child: Container(
                               margin: EdgeInsets.all(3),
                               child: Text(
-                                dataJson[i]["isGrosir"] > 0
+                                dataJson[i]["isGrosir"] == 1
                                     ? 'Grosir'
                                     : 'Retail',
                                 style: TextStyle(

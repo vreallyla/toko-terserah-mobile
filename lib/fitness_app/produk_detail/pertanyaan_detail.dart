@@ -73,7 +73,7 @@ Container cardPertanyaan(String nama, String tanggal, String konten) {
           ),
           Text(
             '  ' + nama + ' · ',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
           Text(
             tanggal,

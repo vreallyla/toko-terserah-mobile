@@ -250,7 +250,7 @@ class _ProductDetail2State extends State<ProductDetail2>
             addAllListData();
             setState(() {});
             // print(detailProduct['count_ulasan']);
-
+            print(qnAData);
           }
           // _setData();
           // print(value.data);
