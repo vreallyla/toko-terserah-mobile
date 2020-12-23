@@ -265,7 +265,7 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                                 builder: (context) => VoucherListScreen(),
                               ));
                         } else if ('cs' == other) {
-                          launch('whatsapp://send?phone=628113051081');
+                          launch('whatsapp://send?phone=628113191081');
                         }else if('faq'== other){
                            Navigator.push(
                               context,
