@@ -812,7 +812,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                   onTap: () {
                                     launchWhatsApp(
                                         message: 'Hallo min....',
-                                        phone: '628113051081');
+                                        phone: '628113191081');
                                   },
                                   child: FaIcon(
                                     FontAwesomeIcons.envelope,

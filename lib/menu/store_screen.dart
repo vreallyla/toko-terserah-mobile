@@ -60,7 +60,7 @@ class _StoreScreenState extends State<StoreScreen> {
                     child: Text('Senin-Minggu | 09.00-21.00 WIB'),
                   ),
                   InkWell(
-                    onTap: () => _launchMap('tel://+628113051081'),
+                    onTap: () => _launchMap('tel://+628113191081'),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -72,14 +72,14 @@ class _StoreScreenState extends State<StoreScreen> {
                             size: 14,
                           ),
                         ),
-                        Text('  08113051081',
+                        Text('  +62 811-3191-081',
                             style: TextStyle(color: Colors.green))
                       ],
                     ),
                   ),
                   InkWell(
                     onTap: () =>
-                        _launchMap('whatsapp://send?phone=628113051081'),
+                        _launchMap('whatsapp://send?phone=628113191081'),
                     child: Padding(
                       padding: const EdgeInsets.only(
                         top: 10,
@@ -97,7 +97,7 @@ class _StoreScreenState extends State<StoreScreen> {
                             ),
                           ),
                           Text(
-                            '  08113051081',
+                            '  +62 811-3191-081',
                             style: TextStyle(color: Colors.green),
                           )
                         ],
