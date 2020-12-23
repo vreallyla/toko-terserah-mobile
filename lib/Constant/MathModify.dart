@@ -14,7 +14,7 @@ import 'dart:core';
     String enam = '< sehari lalu';
     String tujuh = ' hari yang lalu';
     String delapan = ' minggu yang lalu';
-    String sembilan = ' sebulan lalu';
+    String sembilan = ' bulan lalu';
     String sepuluh = '< setahun lalu';
     String sebelas = ' tahun yang lalu';
     String duabelas = '> 5 tahun';
