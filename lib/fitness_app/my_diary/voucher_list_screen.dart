@@ -445,7 +445,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    flex: 3,
+                    flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -457,7 +457,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                           ),
                         ),
                         Text(
-                          'Berlaku : ${start} sd ${end}',
+                          'Berlaku sampai : ${end}',
                           style: TextStyle(
                             fontSize: 12,
                           ),
@@ -466,7 +466,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                     ),
                   ),
                   Expanded(
-                      flex: 1,
+                      flex: 2,
                       child: Container(
                         alignment: Alignment.topRight,
                         child: RaisedButton(
@@ -558,7 +558,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                                 });
                           },
                           child: Text(
-                            'Barcode',
+                            'Gunakan Offline',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
