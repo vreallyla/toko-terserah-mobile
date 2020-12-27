@@ -1,11 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:clipboard/clipboard.dart';
 import 'package:tokoterserah/model/product_model.dart';
 // import 'package:clipboard_manager/clipboard_manager.dart';
 import 'package:flutter/material.dart';
-
+import 'package:barcode_flutter/barcode_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:tokoterserah/Constant/Constant.dart';
+import 'package:async/async.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VoucherListScreen extends StatefulWidget {
   const VoucherListScreen({Key key, this.animationController})
@@ -29,7 +34,9 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
 
   String _token;
 
-  int jmlhCart = 0;
+  int jmlhCart = 0, user_id;
+
+  var dataUser;
 
   // lock back when load data
   bool canBack = true;
@@ -52,10 +59,23 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
         element['end'],
         element['promo_code'],
         element['banner'],
+        element['id'],
       ));
     });
     print('asd');
     setState(() {});
+  }
+
+  _getUser() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('token');
+      dataUser = jsonDecode(prefs.getString('dataUser'));
+      user_id = dataUser['user']['id'];
+      print(user_id);
+    } catch (e) {
+      print(e);
+    }
   }
 
   _getDataApis(String q) async {
@@ -91,6 +111,28 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
     }
   }
 
+  _postVoucher(int voucher_id) async {
+    try {
+      final response = await http
+          .post(globalBaseUrl + globalPathProduct + 'use_voucher', body: {
+        'user_id': user_id.toString(),
+        'voucher_id': voucher_id.toString()
+      }, headers: {
+        'Authorization': 'bearer ' + _token
+      });
+
+      if (response.statusCode == 200) {
+        showSnackBar("Voucher Telah dipakai", Colors.green, Icon(Icons.check));
+        setState(() {});
+        _getDataApis('');
+      } else {
+        print(json.decode(response.body));
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   /**
    * Cutom Alert response
    * 
@@ -116,6 +158,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
   @override
   void initState() {
     super.initState();
+    _getUser();
     Future.delayed(Duration.zero, () {
       _getDataApis('');
     });
@@ -367,12 +410,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
         ));
   }
 
-  Widget cardVoucher(
-    start,
-    end,
-    kode,
-    img,
-  ) {
+  Widget cardVoucher(start, end, kode, img, voucher_id) {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 10),
@@ -439,12 +477,88 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                             //   showSnackBar('Berhasil disalin!', Colors.green,
                             //       Icon(Icons.content_copy));
                             // });
-                            FlutterClipboard.copy(kode).then((value) =>
-                                showSnackBar('Berhasil disalin!', Colors.green,
-                                    Icon(Icons.content_copy)));
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            10.0)), //this right here
+                                    child: Container(
+                                      height:250,
+                                      color: Colors.black,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.only(
+                                                  left: 30, bottom: 10),
+                                              child: Text(
+                                                  'Scan Barcode ke Kasir Toko Terserah...',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 18)),
+                                            ),
+                                            Container(
+                                                color: Colors.white,
+                                                padding: EdgeInsets.all(5),
+                                                height: 100,
+                                                child: Column(
+                                                  children: [
+                                                    BarCodeImage(
+                                                      params:
+                                                          Code128BarCodeParams(
+                                                        kode,
+                                                        lineWidth:
+                                                            1.2, // width for a single black/white bar (default: 2.0)
+                                                        barHeight:
+                                                            60.0, // height for the entire widget (default: 100.0)
+                                                        withText:
+                                                            false, // Render with text label or not (default: false)
+                                                      ),
+                                                      onError: (error) {
+                                                        // Error handler
+                                                        print('error = $error');
+                                                      },
+                                                    ),
+                                                 
+                                                  ],
+                                                )),
+                                                 RaisedButton(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            new BorderRadius
+                                                                .circular(4.0),
+                                                      ),
+                                                      child: Text(
+                                                        'Gunakan Voucher',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      onPressed: () async {
+                                                        _postVoucher(voucher_id);
+                                                       await Navigator.pop(context);
+                                                      },
+                                                      color: Colors.green,
+                                                    )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                });
                           },
                           child: Text(
-                            'Salin',
+                            'Barcode',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
