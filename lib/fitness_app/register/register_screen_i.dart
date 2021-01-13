@@ -22,7 +22,6 @@ import 'package:http/http.dart' as http;
 bool isLoading = false;
 GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['profile', 'email']);
 
-
 class RegisterScreenI extends StatefulWidget {
   const RegisterScreenI({Key key, this.animationController}) : super(key: key);
 
@@ -32,7 +31,7 @@ class RegisterScreenI extends StatefulWidget {
 }
 
 class _RegisterScreenIState extends State<RegisterScreenI> {
-   bool isConnect = true;
+  bool isConnect = true;
   bool isLoading = false;
   String tokenGoogle;
 
@@ -95,43 +94,59 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
     }
   }
 
-
-Future<void> _handleSignIn() async {
-  try {
-    await _googleSignIn.signIn();
-  } catch (error) {
-    print(error);
+  Future<void> _handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
   }
-}
 
-Future<void> _handleSignOut() async {
-  _googleSignIn.disconnect();
-}
-
+  Future<void> _handleSignOut() async {
+    _googleSignIn.disconnect();
+  }
 
   @override
   void initState() {
     _getToken();
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+    _googleSignIn.onCurrentUserChanged
+        .listen((GoogleSignInAccount account) async {
       setState(() {});
 
       if (account != null) {
-        _loginGoogle({
-          'id': account.id,
-          'email': account.email,
-          'name': account.displayName,
-          'ava': account.photoUrl,
-        });
-      }
-      _handleSignOut();
+        Map res = await setData(account);
+        // await _handleSignOut();
 
+        _loginGoogle(res);
+      }
+      //  loadNotice(context, account.toString()+'kosong', true, 'OK', () {
+      //       Navigator.pop(context);
+      //  });
     });
-    _googleSignIn.signInSilently();
+    _googleSignIn.signInSilently().then((account) async {
+      if (account != null) {
+        setState(() {});
+        Map res = await setData(account);
+        // await _handleSignOut();
+
+        _loginGoogle(res);
+      }
+      //  loadNotice(context, account.toString()+'kosong', true, 'OK', () {
+      //       Navigator.pop(context);
+      //  });
+    });
   }
 
+  setData(account) {
+    return {
+      'id': account.id,
+      'email': account.email,
+      'name': account.displayName,
+      'ava': account.photoUrl,
+    };
+  }
 
-  
   @override
   Widget build(BuildContext context) {
     //final wh_ = MediaQuery.of(context).size;
@@ -203,12 +218,10 @@ Future<void> _handleSignOut() async {
                 Container(
                   child: ListView(
                     children: <Widget>[
-                      
-                      Padding(padding: EdgeInsets.only(top:10)),
+                      Padding(padding: EdgeInsets.only(top: 10)),
                       FormRegister(),
                       DividerText(),
                       otherMethodButton(),
-
                     ],
                   ),
                 ),
@@ -244,7 +257,7 @@ Future<void> _handleSignOut() async {
         children: <Widget>[
           Container(
               margin: EdgeInsets.only(top: 10),
-              width: sizeu.width-86,
+              width: sizeu.width - 86,
               // width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
               height: 40,
               child: RaisedButton(
@@ -297,13 +310,10 @@ Future<void> _handleSignOut() async {
           //         ],
           //       ),
           //     )),
-        
         ],
       ),
-    
     );
   }
-
 }
 
 class FormRegister extends StatefulWidget {
@@ -592,7 +602,6 @@ class _FormRegisterState extends State<FormRegister> {
       ),
     );
   }
-
 }
 
 class DividerText extends StatelessWidget {

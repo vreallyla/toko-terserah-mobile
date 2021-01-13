@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -67,7 +68,9 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        LoginModel.loginGoogle(tokenGoogle, res).then((v) {
+        LoginModel.loginGoogle(tokenGoogle, res).then((v) async {
+          await _handleSignOut();
+
           isLoading = false;
           setState(() {});
           if (v.error) {
@@ -92,21 +95,41 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     _getToken();
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
+    _googleSignIn.onCurrentUserChanged
+        .listen((GoogleSignInAccount account) async {
       setState(() {});
 
       if (account != null) {
-        _loginGoogle({
-          'id': account.id,
-          'email': account.email,
-          'name': account.displayName,
-          'ava': account.photoUrl,
-        });
-      }
-      _handleSignOut();
+        Map res = await setData(account);
+        // await _handleSignOut();
 
+        _loginGoogle(res);
+      }
+      //  loadNotice(context, account.toString()+'kosong', true, 'OK', () {
+      //       Navigator.pop(context);
+      //  });
     });
-    _googleSignIn.signInSilently();
+    _googleSignIn.signInSilently().then((account) async {
+      if (account != null) {
+        setState(() {});
+        Map res = await setData(account);
+        // await _handleSignOut();
+
+        _loginGoogle(res);
+      }
+      //  loadNotice(context, account.toString()+'kosong', true, 'OK', () {
+      //       Navigator.pop(context);
+      //  });
+    });
+  }
+
+  setData(account) {
+    return {
+      'id': account.id,
+      'email': account.email,
+      'name': account.displayName,
+      'ava': account.photoUrl,
+    };
   }
 
   @override
@@ -287,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
               width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
-                onPressed: _handleSignIn,
+                onPressed: () => _handleSignIn(context),
                 color: Color(0xFFF74933),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -354,11 +377,14 @@ class DividerText extends StatelessWidget {
   }
 }
 
-Future<void> _handleSignIn() async {
+Future<void> _handleSignIn(context) async {
   try {
     await _googleSignIn.signIn();
   } catch (error) {
-    print(error);
+    log(error.toString());
+    //  loadNotice(context, error.toString()+'kosong', true, 'OK', () {
+    //           Navigator.pop(error);
+    //      });
   }
 }
 
