@@ -73,7 +73,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           headers: {'Authorization': 'bearer ' + _token});
 
       dataUser = await json.decode(response.body);
-
+      print(dataUser);
       setState(() {
         namaLengkapInput.text = dataUser['data']['user']['name'];
         tglLahirInput.text = dataUser['data']['user']['get_bio']['dob'];
@@ -82,6 +82,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         usernameInput.text = dataUser['data']['user']['username'];
         _ava = dataUser['data']['user']['get_bio']['ava'] ?? 'user-default.png';
         isLoading = false;
+        _gendeRadioButton =  dataUser['data']['user']['get_bio']['gender'];
       });
     } catch (e) {
       print(e);
@@ -156,7 +157,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
       final response =
           await http.post(globalBaseUrl + 'api/profile/update/bio', body: {
         'user_id': dataUser['data']['user']['id'].toString(),
-        'gender': 'pria',
+        'gender': _gendeRadioButton,
         'dob': tglLahirInput.text.toString(),
         'phone': telpInput.text.toString(),
         'name': namaLengkapInput.text
