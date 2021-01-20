@@ -401,7 +401,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                 : Container(
                     margin: EdgeInsets.only(top: 10),
                     width: double.infinity,
-                    height: wh_.height - 190 - bottom,
+                    height: wh_.height - 210 - bottom,
                     child: ListView(
                       children: dataRes,
                     ),

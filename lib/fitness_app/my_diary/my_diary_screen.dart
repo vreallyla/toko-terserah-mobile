@@ -199,7 +199,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                   _current = i;
                 });
               },
-              height: 200.0,
+              height: (size.width-(size.width/2.5)),
               aspectRatio: 16 / 9,
               viewportFraction: 1.0,
               initialPage: 0,
@@ -249,7 +249,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
             }).toList(),
           ),
           Container(
-            margin: EdgeInsets.only(top: 170),
+            margin: EdgeInsets.only(top: (size.width-(size.width/2.5))-30),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: dataHome.map((url) {

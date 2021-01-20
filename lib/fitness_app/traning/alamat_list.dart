@@ -365,12 +365,12 @@ class _AlamatListState extends State<AlamatList> {
               child: Text("Ya"),
               onPressed: () async {
                 ishapus = "y";
-                print("https://tokoterserah.com/" +
+                print(globalBaseUrl +
                     "api/address/delete/" +
                     idx.toString());
                 print(tokenFixed);
                 Response response = await http.post(
-                    "https://tokoterserah.com/" +
+                    globalBaseUrl +
                         "api/address/delete/" +
                         idx.toString(),
                     headers: {
@@ -524,12 +524,12 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                       value: 0,
                       child: InkWell(
                         onTap: () async {
-                          print("https://tokoterserah.com/" +
+                          print(globalBaseUrl +
                               "api/address/set_utama/" +
                               dataUserDefault[index]["id"].toString());
                           print(tokenFixed);
                           Response response = await http.post(
-                              "https://tokoterserah.com/" +
+                              globalBaseUrl +
                                   "api/address/set_utama/" +
                                   dataUserDefault[index]["id"].toString(),
                               headers: {
@@ -794,13 +794,13 @@ class _AlamatTransaksiState extends State<AlamatTransaksi> {
                                       child: Text("Ya"),
                                       onPressed: () async {
                                         ishapus = "y";
-                                        print("https://tokoterserah.com/" +
+                                        print(globalBaseUrl +
                                             "api/address/delete/" +
                                             dataUserDefault[index]["id"]
                                                 .toString());
                                         print(tokenFixed);
                                         Response response = await http.post(
-                                            "https://tokoterserah.com/" +
+                                            globalBaseUrl +
                                                 "api/address/delete/" +
                                                 dataUserDefault[index]["id"]
                                                     .toString(),

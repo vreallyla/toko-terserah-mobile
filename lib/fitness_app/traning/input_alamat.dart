@@ -228,7 +228,7 @@ class _InputAlamatState extends State<InputAlamat> {
                   ),
                   child: RaisedButton(
                     onPressed: () async {
-                      String globalBaseUrl2 = "https://tokoterserah.com/";
+                      String globalBaseUrl2 = globalBaseUrl;
                       body = {
                         'nama': _namapenerimaController.text,
                         'telp': _telpController.text,
