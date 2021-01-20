@@ -46,38 +46,46 @@ class SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          // new Column(
-          //   mainAxisAlignment: MainAxisAlignment.end,
-          //   mainAxisSize: MainAxisSize.min,
-          //   children: <Widget>[
-          //     Padding(
-          //       padding: EdgeInsets.only(bottom: 30.0),
-          //       child: new Image.asset(
-          //         "assets/menu/bank.png",
-          //         height: 25.0,
-          //         fit: BoxFit.scaleDown,
-          //       ),
-          //     )
-          //   ],
-          // ),
-          new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      children: [
+          Image.asset(
+            "assets/fitness_app/splash-bg.jpg",
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover,
+          ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            fit: StackFit.expand,
             children: <Widget>[
-              new Image.asset(
-                "assets/fitness_app/logo-TT.png",
-                width: animation.value * 150,
-                height: animation.value * 150,
-                fit: BoxFit.fitHeight,
+              new Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 30.0),
+                    child: Text("PT. PENTA SURYA PRATAMA",style: TextStyle(
+                      color: Colors.white
+                    ),),
+                  )
+                ],
+              ),
+              new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  new Image.asset(
+                    "assets/fitness_app/splash-logo.png",
+                    width: animation.value * 150,
+                    height: animation.value * 150,
+                    fit: BoxFit.fitHeight,
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }
