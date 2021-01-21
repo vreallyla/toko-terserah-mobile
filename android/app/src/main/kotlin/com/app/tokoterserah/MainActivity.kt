@@ -1,4 +1,4 @@
-package com.app.tokoterserah
+package tokoterserah
 
 import io.flutter.embedding.android.FlutterActivity
 

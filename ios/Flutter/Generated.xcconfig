@@ -1,7 +1,7 @@
 // This is a generated file; do not edit or check into version control.
 FLUTTER_ROOT=/Users/laboratoriumaudit/Documents/fahmi/flutter
-FLUTTER_APPLICATION_PATH=/Users/laboratoriumaudit/Documents/fahmi/mobile_terserah2/tokoterserah
-FLUTTER_TARGET=/Users/laboratoriumaudit/Documents/fahmi/mobile_terserah2/tokoterserah/lib/main.dart
+FLUTTER_APPLICATION_PATH=/Users/laboratoriumaudit/Documents/fahmi/mobile_terserah2/toko-terserah-mobile
+FLUTTER_TARGET=/Users/laboratoriumaudit/Documents/fahmi/mobile_terserah2/toko-terserah-mobile/lib/main.dart
 FLUTTER_BUILD_DIR=build
 SYMROOT=${SOURCE_ROOT}/../build/ios
 FLUTTER_BUILD_NAME=1.0.0
@@ -10,4 +10,4 @@ DART_DEFINES=flutter.inspector.structuredErrors%3Dtrue
 DART_OBFUSCATION=false
 TRACK_WIDGET_CREATION=true
 TREE_SHAKE_ICONS=false
-PACKAGE_CONFIG=/Users/laboratoriumaudit/Documents/fahmi/mobile_terserah2/tokoterserah/.dart_tool/package_config.json
+PACKAGE_CONFIG=/Users/laboratoriumaudit/Documents/fahmi/mobile_terserah2/toko-terserah-mobile/.dart_tool/package_config.json

@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
+//TODO IOS NOT DETECT
+// import 'dart:ffi';
 import 'dart:io';
 
 import 'package:tokoterserah/Constant/Constant.dart';

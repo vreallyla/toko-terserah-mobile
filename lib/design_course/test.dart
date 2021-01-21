@@ -26,6 +26,7 @@ class TestWebView extends StatefulWidget {
     this.kodeKurir,
     this.layananKurir,
     this.namaKurir,
+    this.packing,
   }) : super(key: key);
 
   final String pengirimanId;
@@ -44,6 +45,7 @@ class TestWebView extends StatefulWidget {
   final String layananKurir;
   final String token;
   final String namaKurir;
+  final String packing;
   @override
   _TestWebViewState createState() => _TestWebViewState();
 
@@ -68,6 +70,7 @@ class _TestWebViewState extends State<TestWebView>
     with SingleTickerProviderStateMixin {
   String tokenFixed = '';
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
+  String paramsa='';
 
   params() {
     String paramss = '';
@@ -79,7 +82,7 @@ class _TestWebViewState extends State<TestWebView>
     paramss = paramss + '&cart_ids=' + widget.cartIds;
     paramss = paramss + '&total=' + widget.total;
     paramss = paramss + '&snap_token=' + widget.snapToken;
-    log(widget.weight);
+    // log(widget.weight);
     paramss = paramss + '&weight=' + widget.weight;
     paramss = paramss + '&note=' + widget.note;
     paramss = paramss + '&durasi_pengiriman=' + widget.durasiPengiriman;
@@ -89,19 +92,39 @@ class _TestWebViewState extends State<TestWebView>
     paramss = paramss + '&layanan_kurir=' + widget.layananKurir;
     paramss = paramss + '&token=' + widget.token;
     paramss = paramss + '&nama_kurir=' + widget.namaKurir;
+    paramss = paramss + '&packing=' + widget.packing;
 
-    return paramss;
+   setState(() {
+      paramsa= paramss;
+   });
   }
+
+  // ignore: prefer_collection_literals
+  final Set<JavascriptChannel> jsChannels = [
+    JavascriptChannel(
+        name: 'Print',
+        onMessageReceived: (JavascriptMessage message) {
+          print(message.message);
+        }),
+  ].toSet();
 
   @override
   void initState() {
+    params();
+    // log(globalBaseUrl + 'api/checkout/midtrans/snap-webview' + paramsa);
+  
+
+   
     _getToken();
     flutterWebviewPlugin.onUrlChanged.listen((String url) {
-      print(url);
+      // log(url);
       if (url.indexOf('checkout/midtrans/success') > -1) {
         _toProsesDashboard();
       }
     });
+
+    // print( params());
+
     super.initState();
   }
 
@@ -135,15 +158,18 @@ class _TestWebViewState extends State<TestWebView>
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
-      url: globalBaseUrl + 'api/checkout/midtrans/snap-webview' + params(),
+      url: Uri.encodeFull(globalBaseUrl + 'api/checkout/midtrans/snap-webview'+paramsa),
+      javascriptChannels: jsChannels,
+      // url: 'https://google.com',
+      withLocalStorage: true,
       appBar: new AppBar(
         backgroundColor: Colors.grey[200],
         brightness: Brightness.light,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back_ios, color: Colors.black),
-        //   onPressed: () => Navigator.of(context).pop(),
-        // ),
-        leading: Text(''),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        // leading: Text(''),
         title: const Text(
           'Pembayaran',
           style: TextStyle(color: Colors.black),

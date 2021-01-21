@@ -1,14 +1,19 @@
+import 'dart:developer';
+
 import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:tokoterserah/Controllers/harga_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CheckOutProductDetailView extends StatefulWidget {
   final Map<String, dynamic> product;
+  final Map<String, dynamic> packing;
 
   CheckOutProductDetailView({
     Key key,
     /*@required*/
     this.product,
+    this.packing,
   }) : super(key: key);
 
   @override
@@ -22,7 +27,10 @@ class _CheckOutProductDetailViewState extends State<CheckOutProductDetailView> {
 
   void addAllData() {
     dataList = [];
-    print(widget.product['count_produk']);
+    
+    if(widget.packing['use']){
+      dataList.add(CheckOutCard(product: widget.product['produk'][0],hargaPacking: widget.packing['nominal'],descPacking: widget.packing['desc'],));
+    }
 
     if (widget.product.containsKey('count_produk') &&
         show &&
@@ -125,11 +133,15 @@ class _CheckOutProductDetailViewState extends State<CheckOutProductDetailView> {
 
 class CheckOutCard extends StatelessWidget {
   final Map<String, dynamic> product;
+  final double hargaPacking;
+  final String descPacking;
 
   CheckOutCard({
     Key key,
     /*@required*/
     this.product,
+    this.descPacking,
+    this.hargaPacking:0,
   }) : super(key: key);
 
   @override
@@ -157,22 +169,22 @@ class CheckOutCard extends StatelessWidget {
                             topRight: Radius.circular(8.0),
                           ),
                           image: DecorationImage(
-                                  image: NetworkImage(globalBaseUrl+locationProductImage+
-                                      product['get_produk']
-                                          ['gambar']),
-                                  fit: BoxFit.cover,
-                                ),
+                            image:hargaPacking>0?AssetImage('assets/fitness_app/boxes.png'): NetworkImage(globalBaseUrl +
+                                locationProductImage +
+                                product['get_produk']['gambar']),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       Card(
-                        color: Colors.green[100],
+                        color: hargaPacking>0?Colors.grey:Colors.green[100],
                         child: Container(
                             margin: EdgeInsets.all(2),
                             child: kond
                                 ? Text(
-                                    isGrosir(product['get_produk']),
+                                    hargaPacking>0?'Biaya':isGrosir(product['get_produk']),
                                     style: TextStyle(
-                                      color: Colors.green[800],
+                                      color: hargaPacking>0?Colors.white:Colors.green[800],
                                       fontWeight: FontWeight.bold,
                                       fontSize: 9,
                                     ),
@@ -198,7 +210,7 @@ class CheckOutCard extends StatelessWidget {
                           padding: EdgeInsets.only(bottom: 3),
                           width: sizeu.width - 50 - sizeu.width / 4 - 10,
                           child: Text(
-                            product['get_produk']['nama'],
+                            hargaPacking>0?'Biaya Packing':product['get_produk']['nama'],
                             maxLines: 2,
                             style: TextStyle(
                               fontSize: 15,
@@ -206,11 +218,11 @@ class CheckOutCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          pointGroup(int.parse(product['qty'])) +
+                          hargaPacking>0?descPacking:(pointGroup(int.parse(product['qty'])) +
                               ' Pcs (' +
                               decimalPointTwo(
                                   double.parse(product['berat']) / 1000) +
-                              ' Kg)',
+                              ' Kg)'),
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500,
@@ -239,6 +251,7 @@ class CheckOutCard extends StatelessWidget {
                               // ),
 
                               Text(
+                                hargaPacking>0?NumberFormat.currency(locale: "id_ID", symbol: "Rp").format(hargaPacking):
                                 setHargaWithQty(product['get_produk'],
                                     double.parse(product['qty'])),
                                 maxLines: 2,

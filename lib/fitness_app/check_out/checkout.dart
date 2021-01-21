@@ -69,6 +69,11 @@ class _CheckOutState extends State<CheckOut> {
   double tambahanOngkir = 0;
   double beratProduct = 0;
 
+  //RULE
+  bool additionalPack = false;
+  double hargaPacking = 0;
+  String packDesc = '';
+
   // CATATAN
   String catatanValue = '';
   TextEditingController catatanInput = new TextEditingController();
@@ -219,7 +224,7 @@ class _CheckOutState extends State<CheckOut> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        await KeranjangModel.getCart(data).then((value) {
+        await KeranjangModel.getCart(data).then((value) async {
           Map<String, dynamic> resProduct = json.decode(value.data);
           if (value.error) {
             resError(resProduct);
@@ -245,8 +250,49 @@ class _CheckOutState extends State<CheckOut> {
               beratProduct = beratProduct + (double.parse(dataPro[i]['berat']));
             }
 
+            await _getRuleApi();
+
             _getAlamatApi();
             // print('hello');
+          }
+          setState(() {});
+        });
+      }
+    } on SocketException catch (_) {
+      loadNotice(context, 'Terjadi kesalahan!', true, 'OK', () {
+        Navigator.of(context).pop();
+      });
+
+      isConnect = false;
+      isLoading = false;
+      isWrong = true;
+
+      canBack = true;
+
+      setState(() {});
+    }
+  }
+
+  _getRuleApi() async {
+    List data = widget.idProducts;
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        await KeranjangModel.aditionalPrice().then((value) {
+          Map<String, dynamic> resProduct = json.decode(value.data);
+          if (value.error) {
+            resError(resProduct);
+          } else {
+            setState(() {
+              additionalPack = totalProduct <
+                  double.parse((resProduct['min_transaction'] ?? 0).toString());
+              hargaPacking =
+                  double.parse((additionalPack?(resProduct['packing'] ?? 0):0).toString());
+              packDesc = resProduct['packing_desc'];
+            });
+
+            // print(hargaPacking);
           }
           setState(() {});
         });
@@ -370,7 +416,7 @@ class _CheckOutState extends State<CheckOut> {
       setState(() {
         canBack = false;
       });
-      print('hello');
+  
 
       try {
         final result = await InternetAddress.lookup('google.com');
@@ -379,6 +425,7 @@ class _CheckOutState extends State<CheckOut> {
             'pengiriman_id': alamatPengiriman['id'].toString(),
             'penagihan_id': alamatPenagihan['id'].toString(),
             'ongkir': (tambahanOngkir).toString(),
+            'packing':hargaPacking.toString(),
             'discount_price':
                 potonganVoucher != 0 ? (potonganVoucher * -1).toString() : '',
             'cart_ids': widget.idProducts.join(',').toString(),
@@ -436,6 +483,8 @@ class _CheckOutState extends State<CheckOut> {
             pengirimanId: alamatPengiriman['id'].toString(),
             penagihanId: alamatPenagihan['id'].toString(),
             cartIds: widget.idProducts.join(',').toString(),
+            packing:hargaPacking.toString(),
+
             discountPrice:
                 potonganVoucher != 0 ? (potonganVoucher * -1).toString() : '',
             ongkir: (tambahanOngkir).toString(),
@@ -681,6 +730,7 @@ class _CheckOutState extends State<CheckOut> {
         bottomNavigationBar: Stack(
           children: [
             FooterApp(
+              hargaPacking: hargaPacking,
                 sendMidtrans: () {
                   if (pilihanOpsi.length > 0) {
                     _getSnapMidtransApi();
@@ -746,7 +796,7 @@ class _CheckOutState extends State<CheckOut> {
                           });
                         },
                         panel: Container(
-                          color: showVoucher?Colors.grey[100]:Colors.white,
+                          color: showVoucher ? Colors.grey[100] : Colors.white,
                           child: Stack(
                             children: [
                               // ApplyVoucherForm(
@@ -880,7 +930,10 @@ class _CheckOutState extends State<CheckOut> {
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.only(bottom: 180),
         children: <Widget>[
-          CheckOutProductDetailView(product: productDetail),
+          CheckOutProductDetailView(
+              product: productDetail??{},
+              packing: {"use": additionalPack?? false, "nominal": hargaPacking?? 0,'desc':packDesc?? ''}
+              ),
           // Catatan
           ExpandableCustom(
             show: catatanCollapse,
@@ -2472,11 +2525,12 @@ class _CheckOutState extends State<CheckOut> {
 }
 
 class FooterApp extends StatelessWidget {
-  const FooterApp({Key key, this.sendMidtrans, this.total: '0'})
+  const FooterApp({Key key, this.hargaPacking:0, this.sendMidtrans, this.total: '0'})
       : super(key: key);
 
   final Function() sendMidtrans;
   final String total;
+  final double hargaPacking;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -2500,7 +2554,7 @@ class FooterApp extends StatelessWidget {
                     ),
                     Text(
                       withCurrency(
-                          double.parse(total.toString()) < 0 ? '0' : total),
+                          double.parse(total.toString()) < 0 ? '0' : (double.parse(total)+hargaPacking).toString()),
                       style: TextStyle(
                           color: Colors.green,
                           fontSize: 18,
