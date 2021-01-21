@@ -1790,6 +1790,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                             maxLines: 2,
                                           ),
                                         ),
+                                         dataJson[i]['is_diskon'] == 1 ? 
                                         Row(
                                           children: [
                                             Card(
@@ -1819,7 +1820,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                               textAlign: TextAlign.left,
                                             ),
                                           ],
-                                        ),
+                                        ) : Container(),
                                         starJadi(
                                             double.parse(dataJson[i]
                                                     ['avg_ulasan']

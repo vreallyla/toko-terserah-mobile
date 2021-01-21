@@ -30,7 +30,7 @@ class SplashScreenState extends State<SplashScreen>
     super.initState();
     animationController = new AnimationController(
       vsync: this,
-      duration: new Duration(seconds: 2),
+      duration: new Duration(seconds: 3),
     );
     animation =
         new CurvedAnimation(parent: animationController, curve: Curves.easeOut);
@@ -59,25 +59,25 @@ class SplashScreenState extends State<SplashScreen>
           body: Stack(
             fit: StackFit.expand,
             children: <Widget>[
-              new Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 30.0),
-                    child: Text("PT. PENTA SURYA PRATAMA",style: TextStyle(
-                      color: Colors.white
-                    ),),
-                  )
-                ],
-              ),
+              // new Column(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   mainAxisSize: MainAxisSize.min,
+              //   children: <Widget>[
+              //     Padding(
+              //       padding: EdgeInsets.only(bottom: 30.0),
+              //       child: Text("PT. PENTA SURYA PRATAMA",style: TextStyle(
+              //         color: Colors.white
+              //       ),),
+              //     )
+              //   ],
+              // ),
               new Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   new Image.asset(
-                    "assets/fitness_app/splash-logo.png",
-                    width: animation.value * 150,
-                    height: animation.value * 150,
+                    "assets/fitness_app/splash-logo-black.png",
+                    width: animation.value * 280,
+                    height: animation.value * 280,
                     fit: BoxFit.fitHeight,
                   ),
                 ],
