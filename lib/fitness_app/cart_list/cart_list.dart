@@ -175,7 +175,7 @@ class _CartListState extends State<CartList> {
 
   // Delete Selected Cart Item
 
-  _deleteCart(id,harga) async {
+  _deleteCart(id, harga) async {
     await _getUser();
     Map<String, dynamic> dataaUser = json.decode(userData);
     setState(() {
@@ -198,9 +198,9 @@ class _CartListState extends State<CartList> {
         });
         _getData();
 
-        if(_total> 0){
-            setState(() {
-              _total = _total - harga;
+        if (_total > 0) {
+          setState(() {
+            _total = _total - harga;
           });
         }
 
@@ -213,9 +213,6 @@ class _CartListState extends State<CartList> {
         setState(() {
           jmlhCart = _response['data']['count_produk'];
         });
-
-        
-
       } else {
         showSnackBar(
             _response['data']['message'], Colors.red, Icon(Icons.close));
@@ -274,7 +271,7 @@ class _CartListState extends State<CartList> {
 
   // Confirm delete Item Cart
 
-  confirmHapus(context, id,harga) {
+  confirmHapus(context, id, harga) {
     print(harga);
     showDialog(
       context: context,
@@ -291,7 +288,7 @@ class _CartListState extends State<CartList> {
               onPressed: () async {
                 Navigator.of(context).pop();
 
-                _deleteCart(id,harga);
+                _deleteCart(id, harga);
               },
             ),
             FlatButton(
@@ -310,17 +307,24 @@ class _CartListState extends State<CartList> {
   // Cutom Alert response
 
   showSnackBar(String value, Color color, icons) {
+    final sizeu = MediaQuery.of(context).size;
+
+    
+
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: Row(
-        children: <Widget>[
-          icons,
-          SizedBox(
-            width: 20,
-          ),
-          Text(value)
-        ],
+      content: SizedBox(
+          width:sizeu.width,
+        child: Row(
+          children: <Widget>[
+            icons,
+            SizedBox(
+              width: 20,
+            ),
+            SizedBox(width: sizeu.width - 100, child: Text(value,overflow: TextOverflow.ellipsis,))
+          ],
+        ),
       ),
       backgroundColor: color,
       duration: Duration(seconds: 3),
@@ -958,7 +962,8 @@ class _CartListState extends State<CartList> {
                             color: Colors.white,
                             child: FlatButton(
                               onPressed: () {
-                                confirmHapus(context, _listCart[i]['id'],int.parse(_listCart[i]['total']));
+                                confirmHapus(context, _listCart[i]['id'],
+                                    int.parse(_listCart[i]['total']));
                               },
                               shape: RoundedRectangleBorder(
                                   side: BorderSide(color: Colors.white),
