@@ -165,6 +165,7 @@ class _ProductDetail2State extends State<ProductDetail2>
     showDialog(
       context: context,
       builder: (BuildContext context) {
+        print(detailProduct);
         return CustomAlertDialog(
           content: Container(
             width: MediaQuery.of(context).size.width,
@@ -338,7 +339,7 @@ class _ProductDetail2State extends State<ProductDetail2>
  */
   void addAllListData() {
     listViews = [];
-    print(imageLists);
+    // print(imageLists);
     listViews.add(CarouselProductView(imageList: imageLists));
 
     listViews.add(TitleNPriceProductView(
@@ -347,7 +348,7 @@ class _ProductDetail2State extends State<ProductDetail2>
           loadOverlayEvent(cond);
         }));
     Map<String, dynamic> mapDetailCard = detailProduct;
-
+    // print(detailProduct);
     listViews.add(DetailCardView(
       detailList: mapDetailCard,
       title: 'Deskripsi',
@@ -431,7 +432,7 @@ class _ProductDetail2State extends State<ProductDetail2>
                             if (detailProduct.containsKey('nama')) {
                               jmlh_pcs = setMinOrder(detailProduct).round();
                             }
-                            print(detailProduct);
+                            // print(detailProduct);
                             if (isLogin) {
                               showAddDialog(context);
                             } else {

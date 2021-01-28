@@ -276,7 +276,7 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                                 new Text(
                                     pointGroup(int.parse(
                                             widget.detailList['stock'])) +
-                                        " pcs ",
+                                        (isGrosir(widget.detailList)=='Grosir'?' dus':" pcs "),
                                     style: TextStyle(
                                         fontSize: 13,
                                         color: Colors.green,
@@ -319,7 +319,7 @@ class _TitleNPriceProductViewState extends State<TitleNPriceProductView> {
                                           ? int.parse(
                                               widget.detailList['min_qty'])
                                           : 1) +
-                                      " pcs ",
+                                       (isGrosir(widget.detailList)=='Grosir'?' dus':" pcs "),
                                   style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.green,

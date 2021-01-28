@@ -316,7 +316,9 @@ class MealsView extends StatelessWidget {
                                               child: Container(
                                                   margin: EdgeInsets.all(2),
                                                   child: Text(
-                                                    (stok.toString() + ' pcs'),
+                                                    (stok.toString() + (product['isGrosir'] == 1
+                                                        ? ' dus'
+                                                        : ' pcs')),
                                                     style: TextStyle(
                                                       color: Colors.blue[800],
                                                       fontWeight:

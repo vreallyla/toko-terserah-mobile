@@ -1,3 +1,4 @@
+import 'package:tokoterserah/Controllers/harga_controller.dart';
 import 'package:tokoterserah/fitness_app/produk_detail/CustomShowDialog.dart';
 import 'package:tokoterserah/model/keranjang_model.dart';
 
@@ -444,7 +445,9 @@ class _CartListState extends State<CartList> {
                                   child: Container(
                                       margin: EdgeInsets.all(2),
                                       child: Text(
-                                        '${_listCart[i]['qty']} pcs',
+                                        '${_listCart[i]['qty']} '+(_listCart[i]['get_produk']
+                                                    ['isGrosir'] ==
+                                                1?'dus':'pcs'),
                                         style: TextStyle(
                                           color: Colors.blue[800],
                                           fontWeight: FontWeight.bold,
@@ -457,7 +460,9 @@ class _CartListState extends State<CartList> {
                                   child: Container(
                                       margin: EdgeInsets.all(2),
                                       child: Text(
-                                        'Tersedia ${_listCart[i]['get_produk']['stock'] ?? 0} pcs',
+                                        'Tersedia ${_listCart[i]['get_produk']['stock'] ?? 0} '+(_listCart[i]['get_produk']
+                                                    ['isGrosir'] ==
+                                                1?'dus':'pcs'),
                                         style: TextStyle(
                                           color: Colors.red[800],
                                           fontWeight: FontWeight.bold,
@@ -482,8 +487,10 @@ class _CartListState extends State<CartList> {
                               width: sizeu.width - 50 - sizeu.width / 4 - 10,
                               child: Text(
                                 'Minimal ' +
-                                    '${_listCart[i]['get_produk']['min_qty'] ?? 1}' +
-                                    ' Pcs',
+                                    '${_listCart[i]['get_produk']['min_qty'] ?? 1} ' +
+                                    (_listCart[i]['get_produk']
+                                                    ['isGrosir'] ==
+                                                1?'dus':'pcs'),
                                 maxLines: 1,
                                 style: TextStyle(
                                     fontSize: 13, color: Colors.blueGrey),
@@ -875,7 +882,9 @@ class _CartListState extends State<CartList> {
                             child: Container(
                                 margin: EdgeInsets.all(2),
                                 child: Text(
-                                  '${_listCart[i]['qty']} pcs',
+                                  '${_listCart[i]['qty']} '+(_listCart[i]['get_produk']
+                                                    ['isGrosir'] ==
+                                                1?'dus':'pcs'),
                                   style: TextStyle(
                                     color: Colors.blue[800],
                                     fontWeight: FontWeight.bold,

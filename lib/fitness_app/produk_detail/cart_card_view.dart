@@ -5,11 +5,11 @@ import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CardCardView extends StatelessWidget {
-  const CardCardView({Key key, this.dataProduct, this.getPcs}) : super(key: key);
+  const CardCardView({Key key, this.dataProduct, this.getPcs})
+      : super(key: key);
 
   final Map<String, dynamic> dataProduct;
   final Function(int value) getPcs;
-
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class CardCardView extends StatelessWidget {
     // getPcs(setMinOrder(dataProduct).round());
 
     return Container(
-      height: sizeu.width / 2 - sizeu.width / 15+3,
+      height: sizeu.width / 2 - sizeu.width / 15 + 3,
       padding: EdgeInsets.fromLTRB(15, 0, 0, 5),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -38,15 +38,16 @@ class CardCardView extends StatelessWidget {
                 Container(
                   height: sizeu.width / 4 / 1.5,
                   width: sizeu.width / 4 / 1.5,
-                  margin: EdgeInsets.only(top:20),
-                  child: Image.network(
-                    globalBaseUrl +
-                        locationProductImage +
-                        dataProduct['gambar'],
-                    fit: BoxFit.cover,
-                    width: sizeu.width / 4 / 1.5,
-                    height: sizeu.width / 4 / 1.5,
-                  ),
+                  margin: EdgeInsets.only(top: 20),
+                  child:
+                      Image.network(
+                     
+                            dataProduct['gambar'],
+                        fit: BoxFit.cover,
+                        width: sizeu.width / 4 / 1.5,
+                        height: sizeu.width / 4 / 1.5,
+                      ),
+               
                   decoration: BoxDecoration(
                     color: Colors.black26,
                     borderRadius: const BorderRadius.only(
@@ -58,10 +59,11 @@ class CardCardView extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top:20),
+                  margin: EdgeInsets.only(top: 20),
 
                   height: (sizeu.width / 3) + 15,
-                  width: sizeu.width - sizeu.width / 4 / 1.5 - 20 - 100 - 30+68,
+                  width:
+                      sizeu.width - sizeu.width / 4 / 1.5 - 20 - 100 - 30 + 68,
                   // color: Colors.red,
                   padding: EdgeInsets.only(left: 10),
                   child: Column(
@@ -99,7 +101,10 @@ class CardCardView extends StatelessWidget {
                             child: Container(
                                 margin: EdgeInsets.all(2),
                                 child: Text(
-                                  (dataProduct['stock'] + ' pcs'),
+                                  (dataProduct['stock'] +
+                                      (isGrosir(dataProduct) == 'Grosir'
+                                          ? ' dus'
+                                          : ' pcs')),
                                   style: TextStyle(
                                     color: Colors.blue[800],
                                     fontWeight: FontWeight.bold,
@@ -129,31 +134,30 @@ class CardCardView extends StatelessWidget {
                               TextStyle(fontSize: 13, color: Colors.blueGrey),
                         ),
                       ),
-                      
-                        SpinBox(
-                          min: setMinOrder(dataProduct),
-                          max: double.parse(dataProduct['stock']),
-                          value: setMinOrder(dataProduct),
-                          onChanged: (value) {
-                            // print(int.parse(value.toString()));
-                            getPcs(value.round());
-                          },
-                        ),
-                     
-                   
+                      SpinBox(
+                        min: setMinOrder(dataProduct),
+                        max: double.parse(dataProduct['stock']),
+                        value: setMinOrder(dataProduct),
+                        onChanged: (value) {
+                          // print(int.parse(value.toString()));
+                          getPcs(value.round());
+                        },
+                      ),
                     ],
                   ),
                 ),
                 Container(
                   alignment: Alignment.topRight,
                   child: InkWell(
-                    onTap: (){
-                      Navigator.of(context).pop();
-                    },
-                    child: FaIcon(FontAwesomeIcons.times,color: Colors.grey.withOpacity(.8),)),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: FaIcon(
+                        FontAwesomeIcons.times,
+                        color: Colors.grey.withOpacity(.8),
+                      )),
                 )
               ]),
-       
         ],
       ),
     );
