@@ -167,7 +167,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
   //variable range harga
   TextEditingController minHargaInput = new TextEditingController();
   TextEditingController maxHargaInput = new TextEditingController();
-  RangeValues _currentRangeValues = RangeValues(0, 300000);
+  RangeValues _currentRangeValues = RangeValues(0, 30000000);
 
   void setKatagoriListAll(context) {
     // collectKategori = [];
