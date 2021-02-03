@@ -453,7 +453,6 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                                         setState(() {
                                           _star = value;
                                         });
-                                        
                                       },
                                     ),
                                     SizedBox(
@@ -608,7 +607,6 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                                         setState(() {
                                           _star = value;
                                         });
-                                        
                                       },
                                     ),
                                     SizedBox(
@@ -756,7 +754,7 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                                 height: 1.0,
                               ))),
                     )
-                  : (_data['data']['tgl_diterima'] == null
+                  : (_data['data']['is_kurir_terserah'] == 1
                       ? PreferredSize(
                           preferredSize: Size.fromHeight(80.0),
                           child: BottomAppBar(
@@ -777,26 +775,47 @@ class _TransaksiDetailScreenState extends State<TransaksiDetailScreen> {
                                     color: Colors.green,
                                   ))),
                         )
-                      : PreferredSize(
-                          preferredSize: Size.fromHeight(80.0),
-                          child: BottomAppBar(
-                              child: Container(
-                                  padding: EdgeInsets.only(
-                                    left: 15,
-                                    right: 15,
-                                  ),
-                                  child: RaisedButton(
-                                    onPressed: () {
-                                      //Jika barang telah sampai dan sudah diterima
-                                      reorder(context);
-                                    },
-                                    child: Text(
-                                      'PESAN ULANG',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    color: Colors.green,
-                                  ))),
-                        )))),
+                      : (_data['data']['tgl_diterima'] == null
+                          ? PreferredSize(
+                              preferredSize: Size.fromHeight(80.0),
+                              child: BottomAppBar(
+                                  child: Container(
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      child: RaisedButton(
+                                        onPressed: () {
+                                          //Jika Barang Sudah dikirim Tapi belum Diterima
+                                          confirm(context);
+                                        },
+                                        child: Text(
+                                          'Tandai Barang Telah Diterima',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        color: Colors.green,
+                                      ))),
+                            )
+                          : PreferredSize(
+                              preferredSize: Size.fromHeight(80.0),
+                              child: BottomAppBar(
+                                  child: Container(
+                                      padding: EdgeInsets.only(
+                                        left: 15,
+                                        right: 15,
+                                      ),
+                                      child: RaisedButton(
+                                        onPressed: () {
+                                          //Jika barang telah sampai dan sudah diterima
+                                          reorder(context);
+                                        },
+                                        child: Text(
+                                          'PESAN ULANG',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        color: Colors.green,
+                                      ))),
+                            ))))),
       body: isLoading
           ? reqLoad()
           : Container(
