@@ -4,7 +4,7 @@ import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:tokoterserah/fitness_app/bought_proccess/bought_proccess_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TestWebView extends StatefulWidget {
@@ -70,7 +70,7 @@ class _TestWebViewState extends State<TestWebView>
     with SingleTickerProviderStateMixin {
   String tokenFixed = '';
   final flutterWebviewPlugin = new FlutterWebviewPlugin();
-  String paramsa='';
+  String paramsa = '';
 
   params() {
     String paramss = '';
@@ -94,9 +94,9 @@ class _TestWebViewState extends State<TestWebView>
     paramss = paramss + '&nama_kurir=' + widget.namaKurir;
     paramss = paramss + '&packing=' + widget.packing;
 
-   setState(() {
-      paramsa= paramss;
-   });
+    setState(() {
+      paramsa = paramss;
+    });
   }
 
   // ignore: prefer_collection_literals
@@ -112,14 +112,21 @@ class _TestWebViewState extends State<TestWebView>
   void initState() {
     params();
     // log(globalBaseUrl + 'api/checkout/midtrans/snap-webview' + paramsa);
-  
 
-   
     _getToken();
-    flutterWebviewPlugin.onUrlChanged.listen((String url) {
+    flutterWebviewPlugin.onUrlChanged.listen((String url) async {
       // log(url);
       if (url.indexOf('checkout/midtrans/success') > -1) {
         _toProsesDashboard();
+      } else if (url.startsWith("gojek")) { 
+        //open Gojek App
+        await flutterWebviewPlugin.stopLoading();
+        await flutterWebviewPlugin.goBack();
+        if (await canLaunch(url)) {
+          await launch(url);
+          return;
+        }
+        print("couldn't launch deeplink $url");
       }
     });
 
@@ -158,10 +165,12 @@ class _TestWebViewState extends State<TestWebView>
   @override
   Widget build(BuildContext context) {
     return WebviewScaffold(
-      url: Uri.encodeFull(globalBaseUrl + 'api/checkout/midtrans/snap-webview'+paramsa),
+      url: Uri.encodeFull(
+          globalBaseUrl + 'api/checkout/midtrans/snap-webview' + paramsa),
       javascriptChannels: jsChannels,
       // url: 'https://google.com',
       withLocalStorage: true,
+
       appBar: new AppBar(
         backgroundColor: Colors.grey[200],
         brightness: Brightness.light,
