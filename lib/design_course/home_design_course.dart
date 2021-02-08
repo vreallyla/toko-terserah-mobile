@@ -635,7 +635,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
       if (_valueAkhir <= _valueAwal) {
         maxHargaInput.text = awal;
       }
-      _currentRangeValues = RangeValues(_valueAwal, 100000);
+      _currentRangeValues = RangeValues(_valueAwal, 30000000);
     } catch (e) {
       log("eror : " + e.toString());
     }
@@ -1300,8 +1300,8 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                               child: RangeSlider(
                                                 values: _currentRangeValues,
                                                 min: 0,
-                                                max: 300000,
-                                                divisions: 300000,
+                                                max: 30000000,
+                                                divisions: 30000000,
                                                 labels: RangeLabels(
                                                   _currentRangeValues.start
                                                       .round()
@@ -1362,7 +1362,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                         _jenisProdukRadioButton = "semua";
 
                                         _currentRangeValues =
-                                            RangeValues(0.0, 300000.0);
+                                            RangeValues(0.0, 30000000);
                                         minHargaInput.text = '';
                                         maxHargaInput.text = '';
 

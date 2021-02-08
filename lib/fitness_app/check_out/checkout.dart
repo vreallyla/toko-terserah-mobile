@@ -205,7 +205,7 @@ class _CheckOutState extends State<CheckOut> {
       }
       return etd.toLowerCase() + unit;
     } else {
-      return 'N/A';
+      return '2-3 hari';
     }
   }
 
@@ -631,7 +631,7 @@ class _CheckOutState extends State<CheckOut> {
           } else {
             rajaOngkirData = json.decode(value.data)['results'];
 
-            // print('hello');
+            print(rajaOngkirData);
           }
           setState(() {});
         });
@@ -1989,12 +1989,12 @@ class _CheckOutState extends State<CheckOut> {
               padding: EdgeInsets.only(top: 5, bottom: 5),
               child: Row(
                 children: [
-                  //jne
+                  //jnt
                   InkWell(
                     onTap: () {
-                      kodeKurir = 'jne';
+                      kodeKurir = 'jnt';
                       layananKurir = '';
-                      selectionCorierData('jne');
+                      selectionCorierData('J&T');
 
                       // layananPartision(rajaOngkirData)
                       setState(() {});
@@ -2006,14 +2006,14 @@ class _CheckOutState extends State<CheckOut> {
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 2,
-                          color: kodeKurir == 'jne'
+                          color: kodeKurir == 'jnt'
                               ? Colors.green
                               : Colors.grey.withOpacity(.6),
                         ),
                         color: Colors.white,
                       ),
                       child: Image.asset(
-                        'assets/fitness_app/jne.png',
+                        'assets/fitness_app/j&t.png',
                         fit: BoxFit.fitWidth,
                         // scale: 1,
                       ),
@@ -2281,7 +2281,7 @@ class _CheckOutState extends State<CheckOut> {
                         color: Colors.white,
                       ),
                       child: Text(
-                        'Logistik (JNE/POS/TIKI)',
+                        'Logistik (J&T/POS/TIKI)',
                         textAlign: TextAlign.center,
                       ),
                     ),
