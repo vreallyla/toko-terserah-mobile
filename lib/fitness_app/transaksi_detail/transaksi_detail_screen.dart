@@ -1112,121 +1112,240 @@ class TrackerTransaksi extends StatelessWidget {
             ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 shrinkWrap: true,
+                reverse: kurir == "jnt" ? true : false,
                 itemCount:
                     dataTracking.length == null ? 0 : dataTracking.length,
                 itemBuilder: (context, i) {
-                  if (i == 0) {
-                    return Stack(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(
-                            left: 15,
-                          ),
-                          padding: EdgeInsets.only(left: 15, bottom: 15),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              left:
-                                  BorderSide(width: 0.5, color: Colors.black54),
+                  if (kurir != "jnt") {
+                    if (i == 0) {
+                      return Stack(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 15,
                             ),
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              //lokasi tracker
-                              Container(
-                                width: size.width - 30 - 30,
-                                child: Text(
-                                  '${dataTracking[i]['manifest_description']}',
-                                  style: TextStyle(
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18),
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Container(
-                                width: size.width - 30 - 30,
-                                padding: EdgeInsets.only(top: 5),
-                                child: Text(
-                                    '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )'),
-                              ),
-                              Container(
-                                width: size.width - 30 - 30,
-                                padding: EdgeInsets.only(top: 5),
-                                child: Text(
-                                    '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
-                                    style: TextStyle(color: Colors.green)),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(top: 10, left: 10.5),
+                            padding: EdgeInsets.only(left: 15, bottom: 15),
                             decoration: BoxDecoration(
-                              color: Colors.green[300],
+                              border: Border(
+                                left: BorderSide(
+                                    width: 0.5, color: Colors.black54),
+                              ),
+                              color: Colors.white,
                             ),
-                            height: 10,
-                            width: 10),
-                      ],
-                    );
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                //lokasi tracker
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  child: Text(
+                                    '${dataTracking[i]['manifest_description']} ${dataTracking[i]['city_name']}',
+                                    style: TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18),
+                                    maxLines: 2,
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                      '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )'),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                      '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
+                                      style: TextStyle(color: Colors.green)),
+                                )
+                              ],
+                            ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(top: 10, left: 10.5),
+                              decoration: BoxDecoration(
+                                color: Colors.green[300],
+                              ),
+                              height: 10,
+                              width: 10),
+                        ],
+                      );
+                    } else {
+                      return Stack(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 15,
+                            ),
+                            padding: EdgeInsets.only(left: 15, bottom: 15),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                    width: 0.5, color: Colors.black54),
+                              ),
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                //lokasi tracker
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  child: Text(
+                                    '${dataTracking[i]['manifest_description']} ${dataTracking[i]['city_name']}',
+                                    style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18),
+                                    maxLines: 2,
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )',
+                                    style: TextStyle(color: Colors.grey[500]),
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                      '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
+                                      style:
+                                          TextStyle(color: Colors.grey[500])),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(top: 10, left: 10.5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[500],
+                              ),
+                              height: 10,
+                              width: 10),
+                        ],
+                      );
+                    }
                   } else {
-                    return Stack(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(
-                            left: 15,
-                          ),
-                          padding: EdgeInsets.only(left: 15, bottom: 15),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              left:
-                                  BorderSide(width: 0.5, color: Colors.black54),
+                    if (i == dataTracking.length - 1 ) {
+                      return Stack(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 15,
                             ),
-                            color: Colors.white,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              //lokasi tracker
-                              Container(
-                                width: size.width - 30 - 30,
-                                child: Text(
-                                  '${dataTracking[i]['manifest_description']}',
-                                  style: TextStyle(
-                                      color: Colors.grey[500],
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18),
-                                  maxLines: 2,
-                                ),
-                              ),
-                              Container(
-                                width: size.width - 30 - 30,
-                                padding: EdgeInsets.only(top: 5),
-                                child: Text(
-                                  '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )',
-                                  style: TextStyle(color: Colors.grey[500]),
-                                ),
-                              ),
-                              Container(
-                                width: size.width - 30 - 30,
-                                padding: EdgeInsets.only(top: 5),
-                                child: Text(
-                                    '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
-                                    style: TextStyle(color: Colors.grey[500])),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                            margin: EdgeInsets.only(top: 10, left: 10.5),
+                            padding: EdgeInsets.only(left: 15, bottom: 15),
                             decoration: BoxDecoration(
-                              color: Colors.grey[500],
+                              border: Border(
+                                left: BorderSide(
+                                    width: 0.5, color: Colors.black54),
+                              ),
+                              color: Colors.white,
                             ),
-                            height: 10,
-                            width: 10),
-                      ],
-                    );
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                //lokasi tracker
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  child: Text(
+                                    '${dataTracking[i]['manifest_description']} ${dataTracking[i]['city_name']}',
+                                    style: TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18),
+                                    maxLines: 2,
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                      '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )'),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                      '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
+                                      style: TextStyle(color: Colors.green)),
+                                )
+                              ],
+                            ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(top: 10, left: 10.5),
+                              decoration: BoxDecoration(
+                                color: Colors.green[300],
+                              ),
+                              height: 10,
+                              width: 10),
+                        ],
+                      );
+                    } else {
+                      return Stack(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 15,
+                            ),
+                            padding: EdgeInsets.only(left: 15, bottom: 15),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                    width: 0.5, color: Colors.black54),
+                              ),
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                //lokasi tracker
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  child: Text(
+                                    '${dataTracking[i]['manifest_description']} ${dataTracking[i]['city_name']}',
+                                    style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 18),
+                                    maxLines: 2,
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    '${kurir.toUpperCase()} ( ${layanan.toUpperCase()} )',
+                                    style: TextStyle(color: Colors.grey[500]),
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width - 30 - 30,
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                      '${dateFormat.format(DateTime.parse(dataTracking[i]['manifest_date']))} | ${dataTracking[i]['manifest_time']}',
+                                      style:
+                                          TextStyle(color: Colors.grey[500])),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(top: 10, left: 10.5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[500],
+                              ),
+                              height: 10,
+                              width: 10),
+                        ],
+                      );
+                    }
                   }
                 }),
           ],

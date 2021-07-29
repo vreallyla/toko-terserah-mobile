@@ -86,7 +86,7 @@ class RegisterModel {
 
       print('register status code : ' + apiResult.statusCode.toString());
       final ress = json.decode(apiResult.body);
-      // print(ress);
+      print(ress);
 
       if (apiResult.statusCode == 201 || apiResult.statusCode == 200) {
         await setToken(ress['verifyToken']);

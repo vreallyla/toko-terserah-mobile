@@ -110,9 +110,11 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
 
   @override
   void initState() {
-    _getDataApi(widget.index);
+    
     // globals.tabController = _controller;
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getDataApi(widget.index));
+
   }
 
   bool _mounted = true;
@@ -144,7 +146,7 @@ class _BoughtProccessScreenState extends State<BoughtProccessScreen>
             style: TextStyle(color: Colors.black),
           ),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(Icons.arrow_back_ios, color: Colors.black),
             onPressed: () {
               if (!widget.backCart) {
                 Navigator.pop(context);
@@ -558,6 +560,7 @@ class CardBoughts extends StatelessWidget {
                             ),
                             maxLines: 3,
                           ),
+                          if(jmlhPlus!='0')
                           Padding(
                             padding: const EdgeInsets.only(top: 3),
                             child: Text(

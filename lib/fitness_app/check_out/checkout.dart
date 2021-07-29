@@ -667,13 +667,13 @@ class _CheckOutState extends State<CheckOut> {
   // ignore: must_call_super
   void initState() {
     isLoading = true;
-    _getToken();
-
-    _getDataApi();
-
-    _getDataApis('');
+    
     // _getSnapMidtransApi();
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getToken());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getDataApi());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getDataApis(''));
+
   }
 
   ExpansionPanelList listcheckout;

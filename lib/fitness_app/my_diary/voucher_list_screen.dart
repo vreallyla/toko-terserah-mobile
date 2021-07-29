@@ -220,7 +220,8 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
                 //     : (!isConnect
                 //         ? noConnection()
                 //         : (!isLoading ? mainContainter(context) : reqLoad()))),
-                mainContainter(context, bottom)),
+                mainContainter(context, bottom)
+                ),
       ),
     );
   }
@@ -356,7 +357,7 @@ class _VoucherListScreenState extends State<VoucherListScreen> {
             ),
             noData || isLoading
                 ? Container(
-                    height: wh_.height - 190 - bottom,
+                    height: wh_.height - 190 - bottom -20,
                     width: double.infinity,
                     margin: EdgeInsets.only(top: 10),
                     decoration: BoxDecoration(

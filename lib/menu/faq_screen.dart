@@ -18,6 +18,13 @@ class _FAQScreenState extends State<FAQScreen> {
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
+        leading: Transform.translate(
+        offset: Offset(-5, 0),
+        child: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black54),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
         brightness: Brightness.light,
         backgroundColor: Colors.grey[200],
         title: const Text(

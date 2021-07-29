@@ -592,7 +592,7 @@ class HeaderPage extends StatelessWidget {
       leading: Transform.translate(
         offset: Offset(-5, 0),
         child: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black54),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black54),
           onPressed: () => Navigator.pop(context, countCard),
         ),
       ),

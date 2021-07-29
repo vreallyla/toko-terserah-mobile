@@ -51,6 +51,7 @@ class LoginModel {
   static Future<LoginModel> loginManual(String email, String pass) async {
     // final LocalStorage storage = new LocalStorage('auth');
     String apiURL = globalBaseUrl + globalPathAuth + "login";
+    print(apiURL);
 
     var apiResult = await http.post(apiURL,
         body: {"email": email, "password": pass},
@@ -150,6 +151,10 @@ class LoginModel {
     // final LocalStorage storage = new LocalStorage('auth');
     String apiURL = globalBaseUrl + globalPathAuth + "get_kode";
     print(apiURL);
+    // return LoginModel(
+    //   error:false,
+    //   data:"\$2y\$10\$NwwJAcKJxAlMKIvWzGQzQeaehv9VPNwPC4wlWdl.XgbM1am0vbBGi"
+    // );
 
     var apiResult =
         await http.get(apiURL, headers: {"Accept": "application/json"});
@@ -171,6 +176,7 @@ class LoginModel {
           data: jsonObject['token'],
         );
       } else {
+        print(jsonObject);
         return LoginModel(
           error: true,
           data: jsonObject['message'],

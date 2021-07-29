@@ -20,6 +20,13 @@ class _StoreScreenState extends State<StoreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Transform.translate(
+        offset: Offset(0, 0),
+        child: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black54),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),

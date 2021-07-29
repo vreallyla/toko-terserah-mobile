@@ -1,15 +1,19 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:tokoterserah/fitness_app/login/auth_login.dart';
 import 'package:tokoterserah/model/login_model.dart';
 import '../register/register_screen_i.dart';
 import './form_login_view.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/services.dart';
+
 
 import 'package:http/http.dart' as http;
 
@@ -29,8 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isConnect = true;
   bool isLoading = false;
   String tokenGoogle;
+  String _authStatus = 'Unknown';
 
-  _getToken() async {
+  Future<void> _getToken() async {
     setState(() {
       isConnect = true;
       isLoading = false;
@@ -93,8 +98,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    _getToken();
+    
     super.initState();
+    
+
+  
     _googleSignIn.onCurrentUserChanged
         .listen((GoogleSignInAccount account) async {
       setState(() {});
@@ -121,6 +129,8 @@ class _LoginScreenState extends State<LoginScreen> {
       //       Navigator.pop(context);
       //  });
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getToken());
   }
 
   setData(account) {
@@ -129,6 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
       'email': account.email,
       'name': account.displayName,
       'ava': account.photoUrl,
+      'provider': 'google'
     };
   }
 
@@ -310,14 +321,14 @@ class _LoginScreenState extends State<LoginScreen> {
               width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
-                onPressed: () => _handleSignIn(context),
+                onPressed: () => _handleSignIn(context,'GOOGLE'),
                 color: Color(0xFFF74933),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     FaIcon(
                       FontAwesomeIcons.google,
-                      size: 15,
+                      size: 18,
                       color: Colors.white,
                     ),
                     Text(
@@ -328,25 +339,48 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               )),
+          Container(
+              margin: EdgeInsets.only(top: 15),
+              width: sizeu.width - sizeu.width / 5,
+              height: 40,
+              child: RaisedButton(
+                onPressed: () => _handleSignIn(context,'APPLE'),
+                color: Colors.grey[100],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      FontAwesomeIcons.apple,
+                      size: 24,
+                      color: Colors.black,
+                    ),
+                    Text(
+                      '  MASUK DENGAN APPLE',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ],
+                ),
+              )),
           // Container(
           //     margin: EdgeInsets.only(top: 10),
           //     width: sizeu.width - sizeu.width / 5,
           //     height: 40,
           //     child: RaisedButton(
           //       onPressed: () {},
-          //       color: Colors.blue[600],
+          //       color: Colors.white70,
           //       child: Row(
           //         mainAxisAlignment: MainAxisAlignment.center,
           //         children: <Widget>[
           //           FaIcon(
-          //             FontAwesomeIcons.facebookF,
-          //             size: 15,
-          //             color: Colors.white,
+          //             FontAwesomeIcons.apple,
+          //             size: 20,
+          //             color: Colors.black,
           //           ),
           //           Text(
-          //             '  FACEBOOK',
+          //             '  MASUK DENGAN APPLE',
           //             style: TextStyle(
-          //                 fontWeight: FontWeight.bold, color: Colors.white),
+          //                 fontWeight: FontWeight.bold, color: Colors.black),
           //           ),
           //         ],
           //       ),
@@ -354,6 +388,68 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleSignIn(context, ops) async {
+    try {
+      switch (ops) {
+        case 'GOOGLE':
+          await _googleSignIn.signIn();
+
+          break;
+        case 'APPLE':
+          var rand = new Random();
+          var angka = rand.nextInt(5);
+
+          final credential = await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            webAuthenticationOptions: WebAuthenticationOptions(
+              clientId: 'com.app.tokoterserah',
+              redirectUri: Uri.parse(
+                'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+              ),
+            ),
+            // TODO: Remove these if you have no need for them
+            nonce: 'example-nonce',
+            state: 'example-state',
+          );
+
+          List<String> resApple = credential.toString().split(", ");
+
+          print(resApple);
+
+          if (resApple[3] == 'null') {
+            return loadNotice(
+                context, 'Untuk melanjutkan membutuhkan Email!', true, 'OK',
+                () {
+              Navigator.of(context).pop();
+            });
+          } else {
+            Map<String, String> res = {
+              'id': resApple[0].toString().split("(")[1],
+              'email': resApple[3],
+              'name': resApple[1] + ' ' + resApple[2],
+              'ava': globalBaseUrl +
+                  'images/faces/' +
+                  (angka + 1).toString() +
+                  '.jpg',
+              'provider': 'Apple'
+            };
+
+            await _loginGoogle(res);
+          }
+          break;
+        default:
+      }
+    } catch (error) {
+      print(error.toString());
+      //  loadNotice(context, error.toString()+'kosong', true, 'OK', () {
+      //           Navigator.pop(error);
+      //      });
+    }
   }
 }
 
@@ -374,17 +470,6 @@ class DividerText extends StatelessWidget {
         Expanded(child: Divider()),
       ]),
     );
-  }
-}
-
-Future<void> _handleSignIn(context) async {
-  try {
-    await _googleSignIn.signIn();
-  } catch (error) {
-    log(error.toString());
-    //  loadNotice(context, error.toString()+'kosong', true, 'OK', () {
-    //           Navigator.pop(error);
-    //      });
   }
 }
 

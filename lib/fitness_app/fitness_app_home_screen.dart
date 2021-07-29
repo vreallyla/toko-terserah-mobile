@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:tokoterserah/fitness_app/models/tabIcon_data.dart';
 import 'package:tokoterserah/fitness_app/traning/training_screen.dart';
 import 'package:tokoterserah/menu/faq_screen.dart';
@@ -142,6 +145,27 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
     );
   }
 
+  void launchWhatsApp({
+    @required String phone,
+    @required String message,
+  }) async {
+    String url() {
+      if (Platform.isIOS) {
+        return "whatsapp://wa.me/$phone/?text=${Uri.parse(message)}";
+      } else {
+        return "whatsapp://send?phone=$phone&text=${Uri.parse(message)}";
+      }
+    }
+
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      // throw 'Could not launch ${url()}';
+      loadNotice(context, 'Whatsapp belum terinstall...', false, 'OK',
+          () => Navigator.of(context).pop());
+    }
+  }
+
   Future<bool> getData() async {
     await Future<dynamic>.delayed(const Duration(milliseconds: 200));
     return true;
@@ -265,9 +289,10 @@ class _FitnessAppHomeScreenState extends State<FitnessAppHomeScreen>
                                 builder: (context) => VoucherListScreen(),
                               ));
                         } else if ('cs' == other) {
-                          launch('whatsapp://send?phone=628113191081');
-                        }else if('faq'== other){
-                           Navigator.push(
+                          launchWhatsApp(
+                              message: 'Hallo min....', phone: '628113191081');
+                        } else if ('faq' == other) {
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => FAQScreen(),

@@ -13,6 +13,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Toko Terserah"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false">
         <activity

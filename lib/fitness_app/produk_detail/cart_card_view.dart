@@ -18,7 +18,7 @@ class CardCardView extends StatelessWidget {
     // getPcs(setMinOrder(dataProduct).round());
 
     return Container(
-      height: sizeu.width / 2 - sizeu.width / 15 + 3,
+      height: sizeu.width / 2 - sizeu.width / 15 + 3+20,
       padding: EdgeInsets.fromLTRB(15, 0, 0, 5),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -61,7 +61,7 @@ class CardCardView extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(top: 20),
 
-                  height: (sizeu.width / 3) + 15,
+                  height: (sizeu.width / 3) + 20,
                   width:
                       sizeu.width - sizeu.width / 4 / 1.5 - 20 - 100 - 30 + 68,
                   // color: Colors.red,

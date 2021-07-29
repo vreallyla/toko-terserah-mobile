@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:tokoterserah/Constant/Constant.dart';
 import 'package:tokoterserah/event/animation/spinner.dart';
 import 'package:tokoterserah/model/login_model.dart';
@@ -73,7 +75,9 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        LoginModel.loginGoogle(tokenGoogle, res).then((v) {
+        LoginModel.loginGoogle(tokenGoogle, res).then((v) async{
+          await _handleSignOut();
+
           isLoading = false;
           setState(() {});
           if (v.error) {
@@ -94,13 +98,68 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
     }
   }
 
-  Future<void> _handleSignIn() async {
+  Future<void> _handleSignIn(context, ops) async {
     try {
-      await _googleSignIn.signIn();
+      switch (ops) {
+        case 'GOOGLE':
+          await _googleSignIn.signIn();
+
+          break;
+        case 'APPLE':
+          var rand = new Random();
+          var angka = rand.nextInt(5);
+
+          final credential = await SignInWithApple.getAppleIDCredential(
+            scopes: [
+              AppleIDAuthorizationScopes.email,
+              AppleIDAuthorizationScopes.fullName,
+            ],
+            webAuthenticationOptions: WebAuthenticationOptions(
+              clientId: 'com.app.tokoterserah',
+              redirectUri: Uri.parse(
+                'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+              ),
+            ),
+            // TODO: Remove these if you have no need for them
+            nonce: 'example-nonce',
+            state: 'example-state',
+          );
+
+          List<String> resApple = credential.toString().split(", ");
+
+          print(resApple);
+
+          if (resApple[3] == 'null') {
+            return loadNotice(
+                context, 'Untuk melanjutkan membutuhkan Email!', true, 'OK',
+                () {
+              Navigator.of(context).pop();
+            });
+          } else {
+            Map<String, String> res = {
+              'id': resApple[0].toString().split("(")[1],
+              'email': resApple[3],
+              'name': resApple[1] + ' ' + resApple[2],
+              'ava': globalBaseUrl +
+                  'images/faces/' +
+                  (angka + 1).toString() +
+                  '.jpg',
+              'provider': 'Apple'
+            };
+
+            await _loginGoogle(res);
+          }
+          break;
+        default:
+      }
     } catch (error) {
-      print(error);
+      print(error.toString());
+      //  loadNotice(context, error.toString()+'kosong', true, 'OK', () {
+      //           Navigator.pop(error);
+      //      });
     }
   }
+
 
   Future<void> _handleSignOut() async {
     _googleSignIn.disconnect();
@@ -252,27 +311,22 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
         color: Colors.white,
       ),
 
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-              margin: EdgeInsets.only(top: 10),
-              width: sizeu.width - 86,
-              // width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,
+             Container(
+              margin: EdgeInsets.only(top: 5),
+              width: sizeu.width - sizeu.width / 5,
               height: 40,
               child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  // side: BorderSide(color: Colors.red)
-                ),
-                onPressed: _handleSignIn,
+                onPressed: () => _handleSignIn(context,'GOOGLE'),
                 color: Color(0xFFF74933),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     FaIcon(
                       FontAwesomeIcons.google,
-                      size: 15,
+                      size: 18,
                       color: Colors.white,
                     ),
                     Text(
@@ -283,6 +337,30 @@ class _RegisterScreenIState extends State<RegisterScreenI> {
                   ],
                 ),
               )),
+          Container(
+              margin: EdgeInsets.only(top: 15),
+              width: sizeu.width - sizeu.width / 5,
+              height: 40,
+              child: RaisedButton(
+                onPressed: () => _handleSignIn(context,'APPLE'),
+                color: Colors.grey[100],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    FaIcon(
+                      FontAwesomeIcons.apple,
+                      size: 24,
+                      color: Colors.black,
+                    ),
+                    Text(
+                      '  LANJUTKAN DENGAN APPLE',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ],
+                ),
+              )),
+        
           // Container(
           //     margin: EdgeInsets.only(top: 10, left: 10),
           //     width: (sizeu.width - ((sizeu.width / 10) * 2) - 10) / 2,

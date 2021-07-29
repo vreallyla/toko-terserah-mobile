@@ -77,6 +77,13 @@ class _MemberCardState extends State<MemberCard>
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+                onPressed: () {
+                    Navigator.of(context).pop();
+                 
+                },
+              ),
       ),
       body: Container(
         child: Column(

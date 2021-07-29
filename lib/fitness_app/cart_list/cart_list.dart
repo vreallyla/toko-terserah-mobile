@@ -234,10 +234,22 @@ class _CartListState extends State<CartList> {
         _selecteCarts.add(cartId);
         _total = _total + int.parse(total);
       });
+
+      if(_selecteCarts.length==_listCart.length){
+       setState(() {
+         isCheckAll=true;
+       });
+
+      }
     } else {
       setState(() {
         _selecteCarts.remove(cartId);
         _total = _total - int.parse(total);
+
+        if(_selecteCarts.length!=_listCart.length){
+      
+         isCheckAll=false;
+       }
       });
     }
     log(_selecteCarts.toString());
@@ -310,20 +322,23 @@ class _CartListState extends State<CartList> {
   showSnackBar(String value, Color color, icons) {
     final sizeu = MediaQuery.of(context).size;
 
-    
-
     FocusScope.of(context).requestFocus(new FocusNode());
     _scaffoldKey.currentState?.removeCurrentSnackBar();
     _scaffoldKey.currentState.showSnackBar(new SnackBar(
       content: SizedBox(
-          width:sizeu.width,
+        width: sizeu.width,
         child: Row(
           children: <Widget>[
             icons,
             SizedBox(
               width: 20,
             ),
-            SizedBox(width: sizeu.width - 100, child: Text(value,overflow: TextOverflow.ellipsis,))
+            SizedBox(
+                width: sizeu.width - 100,
+                child: Text(
+                  value,
+                  overflow: TextOverflow.ellipsis,
+                ))
           ],
         ),
       ),
@@ -445,9 +460,12 @@ class _CartListState extends State<CartList> {
                                   child: Container(
                                       margin: EdgeInsets.all(2),
                                       child: Text(
-                                        '${_listCart[i]['qty']} '+(_listCart[i]['get_produk']
-                                                    ['isGrosir'] ==
-                                                1?'dus':'pcs'),
+                                        '${_listCart[i]['qty']} ' +
+                                            (_listCart[i]['get_produk']
+                                                        ['isGrosir'] ==
+                                                    1
+                                                ? 'dus'
+                                                : 'pcs'),
                                         style: TextStyle(
                                           color: Colors.blue[800],
                                           fontWeight: FontWeight.bold,
@@ -460,9 +478,12 @@ class _CartListState extends State<CartList> {
                                   child: Container(
                                       margin: EdgeInsets.all(2),
                                       child: Text(
-                                        'Tersedia ${_listCart[i]['get_produk']['stock'] ?? 0} '+(_listCart[i]['get_produk']
-                                                    ['isGrosir'] ==
-                                                1?'dus':'pcs'),
+                                        'Tersedia ${_listCart[i]['get_produk']['stock'] ?? 0} ' +
+                                            (_listCart[i]['get_produk']
+                                                        ['isGrosir'] ==
+                                                    1
+                                                ? 'dus'
+                                                : 'pcs'),
                                         style: TextStyle(
                                           color: Colors.red[800],
                                           fontWeight: FontWeight.bold,
@@ -488,9 +509,9 @@ class _CartListState extends State<CartList> {
                               child: Text(
                                 'Minimal ' +
                                     '${_listCart[i]['get_produk']['min_qty'] ?? 1} ' +
-                                    (_listCart[i]['get_produk']
-                                                    ['isGrosir'] ==
-                                                1?'dus':'pcs'),
+                                    (_listCart[i]['get_produk']['isGrosir'] == 1
+                                        ? 'dus'
+                                        : 'pcs'),
                                 maxLines: 1,
                                 style: TextStyle(
                                     fontSize: 13, color: Colors.blueGrey),
@@ -606,11 +627,11 @@ class _CartListState extends State<CartList> {
   void initState() {
     // TODO: implement initState
 
-    _getToken();
-    Future.delayed(Duration(seconds: 1), () {
-      _getData();
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _getToken());
+    Future.delayed(Duration(seconds: 1), () {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _getData());
+    });
   }
 
   @override
@@ -814,6 +835,7 @@ class _CartListState extends State<CartList> {
                   child: Checkbox(
                     value: _selecteCarts.contains(_listCart[i]['id']),
                     onChanged: (bool selected) {
+                      
                       _onCartSelected(
                           selected, _listCart[i]['id'], _listCart[i]['total']);
                     },
@@ -882,9 +904,11 @@ class _CartListState extends State<CartList> {
                             child: Container(
                                 margin: EdgeInsets.all(2),
                                 child: Text(
-                                  '${_listCart[i]['qty']} '+(_listCart[i]['get_produk']
-                                                    ['isGrosir'] ==
-                                                1?'dus':'pcs'),
+                                  '${_listCart[i]['qty']} ' +
+                                      (_listCart[i]['get_produk']['isGrosir'] ==
+                                              1
+                                          ? 'dus'
+                                          : 'pcs'),
                                   style: TextStyle(
                                     color: Colors.blue[800],
                                     fontWeight: FontWeight.bold,
@@ -914,7 +938,7 @@ class _CartListState extends State<CartList> {
               height: (sizeu.width / 2 - sizeu.width / 15) -
                   30 -
                   (sizeu.width / 3 - sizeu.width / 17),
-              margin: EdgeInsets.only(left: sizeu.width / 4 / 1.5 + 30),
+              margin: EdgeInsets.only(left: sizeu.width - 290),
               // color: Colors.yellow,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,

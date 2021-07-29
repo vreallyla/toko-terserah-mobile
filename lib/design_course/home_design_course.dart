@@ -69,7 +69,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
 
   Future getData() async {
     try {
-      print(_selecteCategorys.join(','));
+      // print(_selecteCategorys.join(','));
       var param = jsonEncode({
         "limit": _limit.toString(),
         "name": editingController.text,
@@ -80,7 +80,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
             _selecteCategorys.length > 0 ? _selecteCategorys.join(',') : null
       });
 
-      print(param);
+      // print(param);
       http.Response item = await http.post(globalBaseUrl + 'api/search',
           body: param,
           headers: {
@@ -94,7 +94,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
 
         setState(() {
           dataJson = products['data']['produk'];
-          print(dataJson);
+          // print(dataJson);
           isLoading = false;
         });
       }
@@ -405,8 +405,8 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
           alignment: Alignment.bottomLeft,
           padding: EdgeInsets.only(left: 10, bottom: 10),
           height: _selecteCategorys.length > 0
-              ? ((_selecteCategorys.length / 2).ceil() > 1 ? 160 : 120)
-              : 80,
+              ? ((_selecteCategorys.length / 2).ceil() > 1 ? 210 : 170)
+              : 128,
           decoration: BoxDecoration(
             // border: Border(
             //   bottom: BorderSide(
@@ -786,642 +786,645 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
       onTap: () {
         FocusScope.of(context).requestFocus(new FocusNode());
       },
-      child: Container(
-        color: DesignCourseAppTheme.nearlyWhite,
-        child: Scaffold(
-          key: _scaffoldKey,
-          endDrawer: Container(
-            width: sizeu.width - sizeu.width / 5,
-            child: Drawer(
-                child: (isKategori
-                    ? kategoriDetail(sizeu)
-                    : Stack(
-                        children: <Widget>[
-                          //header
-                          Container(
-                            alignment: Alignment.bottomLeft,
-                            padding: EdgeInsets.only(left: 10, bottom: 10),
-                            height: 70,
-                            color: Colors.blueGrey.withOpacity(.2),
-                            width: sizeu.width,
-                            child: Text(
-                              'Filter',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w500),
+      child: SafeArea(
+       
+        child: Container(
+          color: DesignCourseAppTheme.nearlyWhite,
+          child: Scaffold(
+            key: _scaffoldKey,
+            endDrawer: Container(
+              width: sizeu.width - sizeu.width / 5,
+              child: Drawer(
+                  child: (isKategori
+                      ? kategoriDetail(sizeu)
+                      : Stack(
+                          children: <Widget>[
+                            //header
+                            Container(
+                              alignment: Alignment.bottomLeft,
+                              padding: EdgeInsets.only(left: 10, bottom: 10),
+                              height: 70,
+                              color: Colors.blueGrey.withOpacity(.2),
+                              width: sizeu.width,
+                              child: Text(
+                                'Filter',
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w500),
+                              ),
                             ),
-                          ),
-                          //body
-                          Container(
-                            margin: EdgeInsets.only(top: 70, bottom: 130),
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            color: Colors.white,
-                            child: ListView(children: <Widget>[
-                              // kategori produk
-                              Container(
-                                padding: EdgeInsets.only(bottom: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text(
-                                        'Kategori Produk',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
+                            //body
+                            Container(
+                              margin: EdgeInsets.only(top: 70, bottom: 130),
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              color: Colors.white,
+                              child: ListView(children: <Widget>[
+                                // kategori produk
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text(
+                                          'Kategori Produk',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      margin:
-                                          EdgeInsets.only(top: 5, bottom: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blueGrey.withOpacity(0.2),
-                                        border: Border(
-                                          top: BorderSide(
-                                              width: 2, color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                        padding: EdgeInsets.only(top: 0),
-                                        // height: 40,
+                                      Container(
+                                        width: 40,
+                                        margin:
+                                            EdgeInsets.only(top: 5, bottom: 5),
                                         decoration: BoxDecoration(
-                                            // border: Border.all(
-                                            //   color: Colors.black26,
-                                            // ),
-                                            // borderRadius: BorderRadius.circular(4),
-                                            color: Colors.blueGrey
-                                                .withOpacity(.2)),
-                                        child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: <Widget>[
-                                              InkWell(
-                                                onTap: () {
-                                                  isKategori = true;
-                                                  setKatagoriListAll(context);
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                  constraints: BoxConstraints(
-                                                      minHeight: 40,
-                                                      maxHeight: 100),
-                                                  width: sizeu.width -
-                                                      sizeu.width / 5 -
-                                                      20 -
-                                                      30,
-                                                  // color: Colors.black,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                            .fromLTRB(
-                                                        10, 12, 0, 12),
-                                                    child: _selecteCategorys
-                                                                .length ==
-                                                            0
-                                                        ? Text(
-                                                            'Pilih Kategori',
-                                                            style: TextStyle(
-                                                              color: Colors
-                                                                  .blueGrey,
-                                                            ),
-                                                          )
-                                                        : ListView.builder(
-                                                            // physics: const BouncingScrollPhysics(),
-
-                                                            shrinkWrap: true,
-                                                            itemCount: _selecteCategorys
-                                                                        .length >
-                                                                    0
-                                                                ? (_selecteCategorys
-                                                                            .length /
-                                                                        2)
-                                                                    .ceil()
-                                                                : 0,
-                                                            scrollDirection:
-                                                                Axis.vertical,
-                                                            itemBuilder:
-                                                                (context, i) {
-                                                              return Container(
-                                                                padding: EdgeInsets
-                                                                    .only(
-                                                                        left: 0,
-                                                                        right:
-                                                                            7,
-                                                                        top: i >
-                                                                                0
-                                                                            ? 10
-                                                                            : 0),
-                                                                child: Row(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children:
-                                                                      pickKategoriSearch(
-                                                                          i),
-                                                                ),
-                                                              );
-                                                            }),
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(
-                                                alignment: Alignment.topCenter,
-                                                width: 30,
-                                                // color: Colors.black,
-                                                child: SizedBox(
-                                                  height: 40,
-                                                  width: 30,
-                                                  child: IconButton(
-                                                    color: Colors.blueGrey,
-                                                    icon: FaIcon(
-                                                        FontAwesomeIcons.times),
-                                                    iconSize: 13,
-                                                    tooltip: 'Close',
-                                                    onPressed: () {
-                                                      //event hapus data multiple kategori produk
-                                                      _selectKategoriDetail =
-                                                          [];
-                                                      _selecteCategorys = [];
-
-                                                      setState(() {});
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ]))
-                                  ],
-                                ),
-                              ),
-
-                              //jenis produk
-                              Container(
-                                padding: EdgeInsets.only(bottom: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text(
-                                        'Jenis Produk',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      margin:
-                                          EdgeInsets.only(top: 5, bottom: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blueGrey.withOpacity(0.2),
-                                        border: Border(
-                                          top: BorderSide(
-                                              width: 2, color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.only(top: 5),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _jenisProdukRadioButton =
-                                                      'semua';
-                                                });
-                                              },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                padding: EdgeInsets.all(8),
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                // width: sizeu.width-(sizeu.width/5)-21,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                    color: checkBorderChanges(
-                                                        'semua'),
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    SizedBox(
-                                                      width: 18,
-                                                      height: 18,
-                                                      child: Radio(
-                                                        activeColor:
-                                                            Colors.green,
-                                                        value: 'semua',
-                                                        groupValue:
-                                                            _jenisProdukRadioButton,
-                                                        onChanged:
-                                                            radioButtonChanges,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 6),
-                                                      child: Text(
-                                                        "Semua",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                          color: Colors.blueGrey.withOpacity(0.2),
+                                          border: Border(
+                                            top: BorderSide(
+                                                width: 2, color: Colors.green),
                                           ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _jenisProdukRadioButton =
-                                                      'grosir';
-                                                });
-                                              },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                padding: EdgeInsets.all(8),
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                // width: sizeu.width-(sizeu.width/5)-21,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                    color: checkBorderChanges(
-                                                        'grosir'),
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    SizedBox(
-                                                      width: 18,
-                                                      height: 18,
-                                                      child: Radio(
-                                                        activeColor:
-                                                            Colors.green,
-                                                        value: 'grosir',
-                                                        groupValue:
-                                                            _jenisProdukRadioButton,
-                                                        onChanged:
-                                                            radioButtonChanges,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 6),
-                                                      child: Text(
-                                                        "Grosir",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _jenisProdukRadioButton =
-                                                      'retail';
-                                                });
-                                              },
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                padding: EdgeInsets.all(8),
-                                                margin:
-                                                    EdgeInsets.only(right: 5),
-                                                // width: sizeu.width-(sizeu.width/5)-21,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                    color: checkBorderChanges(
-                                                        'retail'),
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    SizedBox(
-                                                      width: 18,
-                                                      height: 18,
-                                                      child: Radio(
-                                                        activeColor:
-                                                            Colors.green,
-                                                        value: 'retail',
-                                                        groupValue:
-                                                            _jenisProdukRadioButton,
-                                                        onChanged:
-                                                            radioButtonChanges,
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      padding: EdgeInsets.only(
-                                                          left: 6),
-                                                      child: Text(
-                                                        "Retail",
-                                                        style: TextStyle(
-                                                            fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-
-                              //harga produk
-                              Container(
-                                padding: EdgeInsets.only(bottom: 20),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Container(
-                                      child: Text(
-                                        'Harga Produk',
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
-                                    ),
-                                    Container(
-                                      width: 40,
-                                      margin:
-                                          EdgeInsets.only(top: 5, bottom: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blueGrey.withOpacity(0.2),
-                                        border: Border(
-                                          top: BorderSide(
-                                              width: 2, color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                        margin: EdgeInsets.only(top: 3),
-                                        padding: EdgeInsets.only(top: 5),
-                                        height: 90,
-                                        width:
-                                            sizeu.width - sizeu.width / 5 - 10,
-                                        color: Colors.blueGrey.withOpacity(.2),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.all(5),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SizedBox(
-                                                    height: 35,
-                                                    width: 110,
-                                                    child: TextField(
-                                                        // enabled: false,
-                                                        readOnly: true,
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.blueGrey,
-                                                            fontSize: 13.0),
-                                                        controller:
-                                                            minHargaInput,
-                                                        onChanged: (text) {
-                                                          //Set value to slider
-                                                          print(text);
-                                                        },
-                                                        onSubmitted: (text) {
-                                                          setState(() {
-                                                            _inputToSlider(
-                                                                text,
-                                                                maxHargaInput
-                                                                    .text);
-                                                          });
-                                                        },
-                                                        // onSubmitted: (_) =>
-                                                        //     FocusScope.of(
-                                                        //             context)
-                                                        //         .nextFocus(),
-                                                        decoration:
-                                                            defaultInput(
-                                                                'Terendah',
-                                                                false)),
-                                                  ),
-                                                  Container(
+                                      Container(
+                                          padding: EdgeInsets.only(top: 0),
+                                          // height: 40,
+                                          decoration: BoxDecoration(
+                                              // border: Border.all(
+                                              //   color: Colors.black26,
+                                              // ),
+                                              // borderRadius: BorderRadius.circular(4),
+                                              color: Colors.blueGrey
+                                                  .withOpacity(.2)),
+                                          child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                InkWell(
+                                                  onTap: () {
+                                                    isKategori = true;
+                                                    setKatagoriListAll(context);
+                                                    setState(() {});
+                                                  },
+                                                  child: Container(
+                                                    constraints: BoxConstraints(
+                                                        minHeight: 40,
+                                                        maxHeight: 100),
                                                     width: sizeu.width -
                                                         sizeu.width / 5 -
-                                                        230 -
+                                                        20 -
                                                         30,
-                                                    alignment: Alignment.center,
-                                                    child: Text(
-                                                      '-',
-                                                      style: TextStyle(
-                                                          fontSize: 25,
-                                                          color:
-                                                              Colors.blueGrey),
+                                                    // color: Colors.black,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .fromLTRB(
+                                                          10, 12, 0, 12),
+                                                      child: _selecteCategorys
+                                                                  .length ==
+                                                              0
+                                                          ? Text(
+                                                              'Pilih Kategori',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .blueGrey,
+                                                              ),
+                                                            )
+                                                          : ListView.builder(
+                                                              // physics: const BouncingScrollPhysics(),
+
+                                                              shrinkWrap: true,
+                                                              itemCount: _selecteCategorys
+                                                                          .length >
+                                                                      0
+                                                                  ? (_selecteCategorys
+                                                                              .length /
+                                                                          2)
+                                                                      .ceil()
+                                                                  : 0,
+                                                              scrollDirection:
+                                                                  Axis.vertical,
+                                                              itemBuilder:
+                                                                  (context, i) {
+                                                                return Container(
+                                                                  padding: EdgeInsets
+                                                                      .only(
+                                                                          left: 0,
+                                                                          right:
+                                                                              7,
+                                                                          top: i >
+                                                                                  0
+                                                                              ? 10
+                                                                              : 0),
+                                                                  child: Row(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children:
+                                                                        pickKategoriSearch(
+                                                                            i),
+                                                                  ),
+                                                                );
+                                                              }),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    height: 35,
-                                                    width: 120,
-                                                    child: TextField(
-                                                        // enabled: false,
-                                                        readOnly: true,
-                                                        keyboardType:
-                                                            TextInputType
-                                                                .number,
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.blueGrey,
-                                                            fontSize: 13.0),
-                                                        controller:
-                                                            maxHargaInput,
-                                                        onChanged: (text) {
-                                                          //Set value to slider
-                                                          // _inputToSlider(
-                                                          //     minHargaInput
-                                                          //         .text,
-                                                          //     text);
-                                                        },
-                                                        onSubmitted: (text) {
-                                                          _inputToSlider(
-                                                              minHargaInput
-                                                                  .text,
-                                                              text);
-                                                        },
-                                                        // onSubmitted: (_) =>
-                                                        //     FocusScope.of(
-                                                        //             context)
-                                                        //         .nextFocus(),
-                                                        decoration:
-                                                            defaultInput(
-                                                                'Tertinggi',
-                                                                false)),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: 30,
-                                              child: RangeSlider(
-                                                values: _currentRangeValues,
-                                                min: 0,
-                                                max: 30000000,
-                                                divisions: 30000000,
-                                                labels: RangeLabels(
-                                                  _currentRangeValues.start
-                                                      .round()
-                                                      .toString(),
-                                                  _currentRangeValues.end
-                                                      .round()
-                                                      .toString(),
                                                 ),
-                                                onChanged:
-                                                    (RangeValues values) {
+                                                Container(
+                                                  alignment: Alignment.topCenter,
+                                                  width: 30,
+                                                  // color: Colors.black,
+                                                  child: SizedBox(
+                                                    height: 40,
+                                                    width: 30,
+                                                    child: IconButton(
+                                                      color: Colors.blueGrey,
+                                                      icon: FaIcon(
+                                                          FontAwesomeIcons.times),
+                                                      iconSize: 13,
+                                                      tooltip: 'Close',
+                                                      onPressed: () {
+                                                        //event hapus data multiple kategori produk
+                                                        _selectKategoriDetail =
+                                                            [];
+                                                        _selecteCategorys = [];
+
+                                                        setState(() {});
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ]))
+                                    ],
+                                  ),
+                                ),
+
+                                //jenis produk
+                                Container(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text(
+                                          'Jenis Produk',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 40,
+                                        margin:
+                                            EdgeInsets.only(top: 5, bottom: 5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey.withOpacity(0.2),
+                                          border: Border(
+                                            top: BorderSide(
+                                                width: 2, color: Colors.green),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(top: 5),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: GestureDetector(
+                                                onTap: () {
                                                   setState(() {
-                                                    //set max and min input from values range
-                                                    minHargaInput.text =
-                                                        values.start.toString();
-                                                    maxHargaInput.text =
-                                                        values.end.toString();
-                                                    _currentRangeValues =
-                                                        values;
+                                                    _jenisProdukRadioButton =
+                                                        'semua';
                                                   });
                                                 },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  padding: EdgeInsets.all(8),
+                                                  margin:
+                                                      EdgeInsets.only(right: 5),
+                                                  // width: sizeu.width-(sizeu.width/5)-21,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: checkBorderChanges(
+                                                          'semua'),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(4),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      SizedBox(
+                                                        width: 18,
+                                                        height: 18,
+                                                        child: Radio(
+                                                          activeColor:
+                                                              Colors.green,
+                                                          value: 'semua',
+                                                          groupValue:
+                                                              _jenisProdukRadioButton,
+                                                          onChanged:
+                                                              radioButtonChanges,
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding: EdgeInsets.only(
+                                                            left: 6),
+                                                        child: Text(
+                                                          "Semua",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               ),
-                                            )
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _jenisProdukRadioButton =
+                                                        'grosir';
+                                                  });
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  padding: EdgeInsets.all(8),
+                                                  margin:
+                                                      EdgeInsets.only(right: 5),
+                                                  // width: sizeu.width-(sizeu.width/5)-21,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: checkBorderChanges(
+                                                          'grosir'),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(4),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      SizedBox(
+                                                        width: 18,
+                                                        height: 18,
+                                                        child: Radio(
+                                                          activeColor:
+                                                              Colors.green,
+                                                          value: 'grosir',
+                                                          groupValue:
+                                                              _jenisProdukRadioButton,
+                                                          onChanged:
+                                                              radioButtonChanges,
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding: EdgeInsets.only(
+                                                            left: 6),
+                                                        child: Text(
+                                                          "Grosir",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _jenisProdukRadioButton =
+                                                        'retail';
+                                                  });
+                                                },
+                                                child: Container(
+                                                  alignment: Alignment.center,
+                                                  padding: EdgeInsets.all(8),
+                                                  margin:
+                                                      EdgeInsets.only(right: 5),
+                                                  // width: sizeu.width-(sizeu.width/5)-21,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: checkBorderChanges(
+                                                          'retail'),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(4),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      SizedBox(
+                                                        width: 18,
+                                                        height: 18,
+                                                        child: Radio(
+                                                          activeColor:
+                                                              Colors.green,
+                                                          value: 'retail',
+                                                          groupValue:
+                                                              _jenisProdukRadioButton,
+                                                          onChanged:
+                                                              radioButtonChanges,
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding: EdgeInsets.only(
+                                                            left: 6),
+                                                        child: Text(
+                                                          "Retail",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ],
-                                        ))
-                                  ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ]),
-                          ),
-                          //footer
-                          Container(
-                            margin: EdgeInsets.only(top: sizeu.height - 150),
-                            padding: EdgeInsets.only(top: 15, right: 20),
-                            // alignment: Alignment.topRight,
-                            height: 140,
-                            width: sizeu.width,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
+
+                                //harga produk
                                 Container(
-                                    height: 30,
-                                    child: RaisedButton(
-                                      color: Colors.white,
-                                      shape: RoundedRectangleBorder(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        child: Text(
+                                          'Harga Produk',
+                                          style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        width: 40,
+                                        margin:
+                                            EdgeInsets.only(top: 5, bottom: 5),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueGrey.withOpacity(0.2),
+                                          border: Border(
+                                            top: BorderSide(
+                                                width: 2, color: Colors.green),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                          margin: EdgeInsets.only(top: 3),
+                                          padding: EdgeInsets.only(top: 5),
+                                          height: 90,
+                                          width:
+                                              sizeu.width - sizeu.width / 5 - 10,
+                                          color: Colors.blueGrey.withOpacity(.2),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(5),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    SizedBox(
+                                                      height: 35,
+                                                      width: 110,
+                                                      child: TextField(
+                                                          // enabled: false,
+                                                          readOnly: true,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.blueGrey,
+                                                              fontSize: 13.0),
+                                                          controller:
+                                                              minHargaInput,
+                                                          onChanged: (text) {
+                                                            //Set value to slider
+                                                            print(text);
+                                                          },
+                                                          onSubmitted: (text) {
+                                                            setState(() {
+                                                              _inputToSlider(
+                                                                  text,
+                                                                  maxHargaInput
+                                                                      .text);
+                                                            });
+                                                          },
+                                                          // onSubmitted: (_) =>
+                                                          //     FocusScope.of(
+                                                          //             context)
+                                                          //         .nextFocus(),
+                                                          decoration:
+                                                              defaultInput(
+                                                                  'Terendah',
+                                                                  false)),
+                                                    ),
+                                                    Container(
+                                                      width: sizeu.width -
+                                                          sizeu.width / 5 -
+                                                          230 -
+                                                          30,
+                                                      alignment: Alignment.center,
+                                                      child: Text(
+                                                        '-',
+                                                        style: TextStyle(
+                                                            fontSize: 25,
+                                                            color:
+                                                                Colors.blueGrey),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 35,
+                                                      width: 120,
+                                                      child: TextField(
+                                                          // enabled: false,
+                                                          readOnly: true,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.blueGrey,
+                                                              fontSize: 13.0),
+                                                          controller:
+                                                              maxHargaInput,
+                                                          onChanged: (text) {
+                                                            //Set value to slider
+                                                            // _inputToSlider(
+                                                            //     minHargaInput
+                                                            //         .text,
+                                                            //     text);
+                                                          },
+                                                          onSubmitted: (text) {
+                                                            _inputToSlider(
+                                                                minHargaInput
+                                                                    .text,
+                                                                text);
+                                                          },
+                                                          // onSubmitted: (_) =>
+                                                          //     FocusScope.of(
+                                                          //             context)
+                                                          //         .nextFocus(),
+                                                          decoration:
+                                                              defaultInput(
+                                                                  'Tertinggi',
+                                                                  false)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 30,
+                                                child: RangeSlider(
+                                                  values: _currentRangeValues,
+                                                  min: 0,
+                                                  max: 30000000,
+                                                  divisions: 30000000,
+                                                  labels: RangeLabels(
+                                                    _currentRangeValues.start
+                                                        .round()
+                                                        .toString(),
+                                                    _currentRangeValues.end
+                                                        .round()
+                                                        .toString(),
+                                                  ),
+                                                  onChanged:
+                                                      (RangeValues values) {
+                                                    setState(() {
+                                                      //set max and min input from values range
+                                                      minHargaInput.text =
+                                                          values.start.toString();
+                                                      maxHargaInput.text =
+                                                          values.end.toString();
+                                                      _currentRangeValues =
+                                                          values;
+                                                    });
+                                                  },
+                                                ),
+                                              )
+                                            ],
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                              ]),
+                            ),
+                            //footer
+                            Container(
+                              margin: EdgeInsets.only(top: sizeu.height - 150),
+                              padding: EdgeInsets.only(top: 15, right: 20),
+                              // alignment: Alignment.topRight,
+                              height: 140,
+                              width: sizeu.width,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Container(
+                                      height: 30,
+                                      child: RaisedButton(
+                                        color: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4.0),
+                                            side:
+                                                BorderSide(color: Colors.green)),
+                                        child: Text(
+                                          'RESET',
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.green),
+                                        ),
+                                        onPressed: () {
+                                          _selectKategoriDetail = [];
+                                          _selecteCategorys = [];
+                                          _jenisProdukRadioButton = "semua";
+
+                                          _currentRangeValues =
+                                              RangeValues(0.0, 30000000);
+                                          minHargaInput.text = '';
+                                          maxHargaInput.text = '';
+
+                                          setState(() {});
+                                          // _closeEndDrawer();
+                                        },
+                                      )),
+                                  Container(
+                                      margin: EdgeInsets.only(left: 10),
+                                      height: 30,
+                                      child: RaisedButton(
+                                        shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(4.0),
-                                          side:
-                                              BorderSide(color: Colors.green)),
-                                      child: Text(
-                                        'RESET',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.green),
-                                      ),
-                                      onPressed: () {
-                                        _selectKategoriDetail = [];
-                                        _selecteCategorys = [];
-                                        _jenisProdukRadioButton = "semua";
-
-                                        _currentRangeValues =
-                                            RangeValues(0.0, 30000000);
-                                        minHargaInput.text = '';
-                                        maxHargaInput.text = '';
-
-                                        setState(() {});
-                                        // _closeEndDrawer();
-                                      },
-                                    )),
-                                Container(
-                                    margin: EdgeInsets.only(left: 10),
-                                    height: 30,
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(4.0),
-                                        // side: BorderSide(color: Colors.green)
-                                      ),
-                                      color: Colors.green,
-                                      child: Text(
-                                        'SET',
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.white),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        Future.delayed(Duration(seconds: 1),
-                                            () {
-                                          getData();
-                                        });
-                                        _closeEndDrawer();
-                                      },
-                                    ))
-                              ],
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey.withOpacity(.2),
-                              border: Border(
-                                top: BorderSide(
-                                    width: .5,
-                                    color: Colors.blueGrey.withOpacity(.2)),
+                                          // side: BorderSide(color: Colors.green)
+                                        ),
+                                        color: Colors.green,
+                                        child: Text(
+                                          'SET',
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.white),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          Future.delayed(Duration(seconds: 1),
+                                              () {
+                                            getData();
+                                          });
+                                          _closeEndDrawer();
+                                        },
+                                      ))
+                                ],
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.withOpacity(.2),
+                                border: Border(
+                                  top: BorderSide(
+                                      width: .5,
+                                      color: Colors.blueGrey.withOpacity(.2)),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ))),
+                          ],
+                        ))),
+            ),
+            backgroundColor: Colors.transparent,
+            appBar: PreferredSize(
+                preferredSize: Size.fromHeight(60), child: headerSection()),
+            body: isLoading
+                ? reqLoad()
+                : Column(
+                    children: <Widget>[
+                      Flexible(
+                        child: getPopularCourseUI(),
+                      ),
+                    ],
+                  ),
           ),
-          backgroundColor: Colors.transparent,
-          appBar: PreferredSize(
-              preferredSize: Size.fromHeight(60), child: headerSection()),
-          body: isLoading
-              ? reqLoad()
-              : Column(
-                  children: <Widget>[
-                    Flexible(
-                      child: getPopularCourseUI(),
-                    ),
-                  ],
-                ),
         ),
       ),
     );
@@ -1452,7 +1455,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
     double topBarOpacity = 0.0;
     var sizeu = MediaQuery.of(context).size;
     return Container(
-      padding: EdgeInsets.only(top: 30),
+      padding: EdgeInsets.only(top: 10),
       height: 110,
       decoration: BoxDecoration(
         color: FintnessAppTheme.white.withOpacity(topBarOpacity),
@@ -1731,7 +1734,7 @@ class _HomeDesignCourseState extends State<HomeDesignCourse> {
                                 children: [
                                   //rubah gambar
                                   Container(
-                                    height: sizeu.width / 2,
+                                    height: (sizeu.width / 2)-5,
                                     decoration: new BoxDecoration(
                                       image: new DecorationImage(
                                           image: NetworkImage(dataJson[i]

@@ -60,13 +60,15 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     // dataHome = json.decode(prefs.getString('dataHome'));
 
     // log(prefs.getString('dataHome').toString());
+   if(dataRes['message']==null){
     dataHome = dataRes['banner'];
     dataFlashSale = dataRes['flash_sale'];
     dataProductBaru = dataRes['newest'];
     dataUnggulan = dataRes['popular'];
     dataTerlaris = dataRes['top_rated'];
     voucherCount = dataRes['voucher_count'];
-    print(dataProductBaru);
+   }
+  
     addAllListData(context);
     // print(dataHome);
     setState(() {});
@@ -74,7 +76,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   }
 
   _getDataApi(context) async {
-    print('dasd');
+  
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -85,7 +87,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       }
     } on SocketException catch (_) {
       isConnect = false;
-      print('dasd');
+  
 
       setState(() {});
     }
@@ -697,7 +699,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     if (await canLaunch(url())) {
       await launch(url());
     } else {
-      throw 'Could not launch ${url()}';
+      // throw 'Could not launch ${url()}';
+      loadNotice(context, 'Whatsapp belum terinstall...', false, 'OK', ()=> Navigator.of(context).pop());
     }
   }
 

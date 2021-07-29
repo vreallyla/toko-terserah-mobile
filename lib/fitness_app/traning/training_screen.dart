@@ -21,7 +21,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 
 class TrainingScreen extends StatefulWidget {
-  const TrainingScreen({Key key, this.animationController,this.funcChangeCartQty}) : super(key: key);
+  const TrainingScreen(
+      {Key key, this.animationController, this.funcChangeCartQty})
+      : super(key: key);
 
   final AnimationController animationController;
   final Function(int qty) funcChangeCartQty;
@@ -64,7 +66,6 @@ class _TrainingScreenState extends State<TrainingScreen>
           style: TextStyle(
             fontSize: 15,
             color: Colors.grey,
-            
           )));
     }
 
@@ -98,89 +99,108 @@ class _TrainingScreenState extends State<TrainingScreen>
     );
   }
 
+  void launchWhatsApp({
+    @required String phone,
+    @required String message,
+  }) async {
+    String url() {
+      if (Platform.isIOS) {
+        return "whatsapp://wa.me/$phone/?text=${Uri.parse(message)}";
+      } else {
+        return "whatsapp://send?phone=$phone&text=${Uri.parse(message)}";
+      }
+    }
+
+    if (await canLaunch(url())) {
+      await launch(url());
+    } else {
+      // throw 'Could not launch ${url()}';
+      loadNotice(context, 'Whatsapp belum terinstall...', false, 'OK',
+          () => Navigator.of(context).pop());
+    }
+  }
+
   void eclick(String no) {
     // AnimationController animationController;
 
     switch (no) {
       case "barcode":
         {
-        //   showDialog(
-        //       context: context,
-        //       builder: (BuildContext context) {
-        //         return Dialog(
-        //           shape: RoundedRectangleBorder(
-        //               borderRadius:
-        //                   BorderRadius.circular(10.0)), //this right here
-        //           child: Container(
-        //             height: 200,
-        //             color: Colors.black,
-        //             child: Padding(
-        //               padding: const EdgeInsets.all(0.0),
-        //               child: Column(
-        //                 mainAxisAlignment: MainAxisAlignment.center,
-        //                 crossAxisAlignment: CrossAxisAlignment.center,
-        //                 children: [
-        //                   Container(
-        //                     padding: EdgeInsets.only(left: 30, bottom: 10),
-        //                     child: Text(
-        //                         'Scan Barcode ke Kasir Toko Terserah...',
-        //                         style: TextStyle(
-        //                             color: Colors.white,
-        //                             fontWeight: FontWeight.w500,
-        //                             fontSize: 18)),
-        //                   ),
-        //                   Container(
-        //                     color: Colors.white,
-        //                     padding: EdgeInsets.all(5),
-        //                     height: 100,
-        //                     child: BarCodeImage(
-        //                       params: Code39BarCodeParams(
-        //                         kodeBarcode,
-        //                         lineWidth:
-        //                             2.0, // width for a single black/white bar (default: 2.0)
-        //                         barHeight:
-        //                             90.0, // height for the entire widget (default: 100.0)
-        //                         withText:
-        //                             true, // Render with text label or not (default: false)
-        //                       ),
-        //                       onError: (error) {
-        //                         // Error handler
-        //                         print('error = $error');
-        //                       },
-        //                     ),
-        //                   )
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         );
-        //       });
-        // 
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => MemberCard(
-              token: tokenFixed,
-            ),
-          ));
+          //   showDialog(
+          //       context: context,
+          //       builder: (BuildContext context) {
+          //         return Dialog(
+          //           shape: RoundedRectangleBorder(
+          //               borderRadius:
+          //                   BorderRadius.circular(10.0)), //this right here
+          //           child: Container(
+          //             height: 200,
+          //             color: Colors.black,
+          //             child: Padding(
+          //               padding: const EdgeInsets.all(0.0),
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.center,
+          //                 crossAxisAlignment: CrossAxisAlignment.center,
+          //                 children: [
+          //                   Container(
+          //                     padding: EdgeInsets.only(left: 30, bottom: 10),
+          //                     child: Text(
+          //                         'Scan Barcode ke Kasir Toko Terserah...',
+          //                         style: TextStyle(
+          //                             color: Colors.white,
+          //                             fontWeight: FontWeight.w500,
+          //                             fontSize: 18)),
+          //                   ),
+          //                   Container(
+          //                     color: Colors.white,
+          //                     padding: EdgeInsets.all(5),
+          //                     height: 100,
+          //                     child: BarCodeImage(
+          //                       params: Code39BarCodeParams(
+          //                         kodeBarcode,
+          //                         lineWidth:
+          //                             2.0, // width for a single black/white bar (default: 2.0)
+          //                         barHeight:
+          //                             90.0, // height for the entire widget (default: 100.0)
+          //                         withText:
+          //                             true, // Render with text label or not (default: false)
+          //                       ),
+          //                       onError: (error) {
+          //                         // Error handler
+          //                         print('error = $error');
+          //                       },
+          //                     ),
+          //                   )
+          //                 ],
+          //               ),
+          //             ),
+          //           ),
+          //         );
+          //       });
+          //
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MemberCard(
+                  token: tokenFixed,
+                ),
+              ));
         }
         break;
       case 'wishlist':
-      {
-        Navigator.push(context, 
-        MaterialPageRoute(
-            builder: (context) => WishlistScreen(
-                    
-                      animationController: animationController,
-                      funcChangeCartQty: (int qty) {
-                       widget.funcChangeCartQty(qty);
-                        setState(() {});
-                      },
-                      
-                      )
-          )
-        
-        );
-      }
-      break;
+        {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => WishlistScreen(
+                        animationController: animationController,
+                        funcChangeCartQty: (int qty) {
+                          widget.funcChangeCartQty(qty);
+                          setState(() {});
+                        },
+                      )));
+        }
+        break;
 
       case 'alamat':
         {
@@ -189,7 +209,7 @@ class _TrainingScreenState extends State<TrainingScreen>
         break;
       case 'hub':
         {
-          launch("tel://+628113051081");
+          launchWhatsApp(message: 'Hallo min....', phone: '628113191081');
         }
         break;
       case 'ketentuan':
@@ -348,10 +368,8 @@ class _TrainingScreenState extends State<TrainingScreen>
     _getToken();
     addAllListData();
 
-
-      animationController = AnimationController(
-          duration: const Duration(milliseconds: 200), vsync: this);
-
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 200), vsync: this);
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {

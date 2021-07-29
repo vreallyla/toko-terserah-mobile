@@ -3,6 +3,7 @@ import 'package:tokoterserah/app_theme.dart';
 import 'package:tokoterserah/fitness_app/produk_detail/product_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tokoterserah/tracking_transparent.dart';
 import 'fitness_app/fitness_app_home_screen.dart';
 import 'fitness_app/produk_detail/product_detail.dart';
 import 'fitness_app/produk_detail/pertanyaan_detail.dart';
@@ -150,7 +151,8 @@ class _MyAppState extends State<MyApp> {
         '/listalamat': (context) => AlamatList(),
         '/inputalamat': (context) => InputAlamat(),
         '/privacy': (context) => Privacy(),
-        '/ketentuan': (context) => Ketentuan()
+        '/ketentuan': (context) => Ketentuan(),
+        '/tracking_transparent': (context) => TrackingTransparent(),
       },
       title: 'Toko Terserah',
       debugShowCheckedModeBanner: false,

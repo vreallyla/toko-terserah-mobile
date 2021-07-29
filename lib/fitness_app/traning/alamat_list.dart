@@ -319,8 +319,6 @@ class _AlamatListState extends State<AlamatList> {
   var dataUser;
   String diff;
 
-  
-
   void _getUser() async {
     user_model.UserModel.akunRes();
     print('success');
@@ -365,14 +363,10 @@ class _AlamatListState extends State<AlamatList> {
               child: Text("Ya"),
               onPressed: () async {
                 ishapus = "y";
-                print(globalBaseUrl +
-                    "api/address/delete/" +
-                    idx.toString());
+                print(globalBaseUrl + "api/address/delete/" + idx.toString());
                 print(tokenFixed);
                 Response response = await http.post(
-                    globalBaseUrl +
-                        "api/address/delete/" +
-                        idx.toString(),
+                    globalBaseUrl + "api/address/delete/" + idx.toString(),
                     headers: {
                       "Accept": "application/json",
                       "Authorization":
@@ -418,6 +412,12 @@ class _AlamatListState extends State<AlamatList> {
     //final wh_ = MediaQuery.of(context).size;
     return new Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
@@ -447,7 +447,7 @@ class _AlamatListState extends State<AlamatList> {
                     Response responsetemp = await http.get(
                         globalBaseUrl +
                             "api/address?user_id=" +
-                           dataUser['user']['id'].toString(),
+                            dataUser['user']['id'].toString(),
                         headers: {
                           "Accept": "application/json",
                           "Authorization":

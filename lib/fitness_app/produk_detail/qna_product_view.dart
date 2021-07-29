@@ -78,7 +78,7 @@ class QnAProductView extends StatelessWidget {
                               'AJUKAN PERTANYAAN',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 18.0,
+                                fontSize: 17.0,
                                 fontFamily: 'helvetica_neue_light',
                               ),
                               textAlign: TextAlign.center,
@@ -120,14 +120,14 @@ class QnAProductView extends StatelessWidget {
                       Text(
                         'Pertanyaan',
                         style: TextStyle(
-                          fontSize: 25,
+                          fontSize: 23,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        '  (${dataQnA.length == null ? 0 : dataQnA.length})',
+                        '(${dataQnA.length == null ? 0 : dataQnA.length})',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           color: Colors.black45,
                         ),
                       ),
@@ -156,7 +156,7 @@ class QnAProductView extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.green,
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -185,7 +185,7 @@ class QnAProductView extends StatelessWidget {
           alignment: Alignment.centerRight,
           child: Text('Lihat Semua',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 17,
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
               )),
@@ -207,7 +207,7 @@ class QnAProductView extends StatelessWidget {
         ],
       );
     } else {
-      return Text("belum ada Pertanyaan untuk produk ini");
+      return Container(child: Text("belum ada Pertanyaan untuk produk ini"), padding: EdgeInsets.only(top:5,bottom:15),);
     }
   }
 
